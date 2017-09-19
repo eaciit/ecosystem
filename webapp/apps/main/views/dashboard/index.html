@@ -3,15 +3,140 @@
 </script>
 <!-- content -->
 
+<script src="{{ NoCacheUrl "/main/static/core/js/map-template.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/core/js/dashboard-index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/dashboard-index.css" }}" />
 
 <div class="row">
 
-  <div class="col-xs-2">
-    <div class="panel ez no-padding hardcore">
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
       <div class="panel-heading">
-        <h3 class="panel-title bold">Total Entities</h3>
+        <span>Total Entities (ETB+NTB)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart1">
+
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Number of Buyers</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart2">
+
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Number of Sellers</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart3">
+
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>In Flows ($M)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart4">
+
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Out Flows ($M)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart5">
+
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Pipeline Workbench ($M)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart6">
+
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+
+  <div class="col-lg-12">
+    <div class="panel ez no-padding hardcore">
+      <div class="panel-body no-padding">
+        <div id="map" class="map"></div>
       </div>
     </div>
   </div>
