@@ -103,6 +103,9 @@ dashboard.generateMap = function () {
       }
     }]
   });
+
+  $("#map").unbind("mousewheel");
+  $("#map").unbind("DOMMouseScroll");
 }
 
 $(window).load(function () {
