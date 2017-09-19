@@ -1,5 +1,15 @@
 var dashboard = {}
+dashboard.entities = ko.observableArray([])
+dashboard.activeEntity = ko.observable()
+
 var widget = {}
+
+// Dummy Data 
+dashboard.entities([{
+  name: "Unilever ID",
+  location: [-6.1751, 106.8650],
+  value: 4
+}])
 
 widget.buildChart = function (id, data) {
   $(id).kendoChart({
@@ -81,14 +91,6 @@ dashboard.generateMap = function () {
     controls: {
       navigator: false
     },
-    layerDefaults: {
-      marker: {
-        tooltip: {
-          autoHide: true,
-          content: "Foo"
-        }
-      }
-    },
     center: [18.062312304546726, 108.28125],
     zoom: 3,
     layers: [{
@@ -98,14 +100,64 @@ dashboard.generateMap = function () {
       },
       style: {
         fill: {
-          opacity: 0.8
+          opacity: 0.5
         }
       }
-    }]
+    }, {
+      type: "bubble",
+      style: {
+        fill: {
+          color: "#3A539B",
+          opacity: 0.4
+        },
+        stroke: {
+          width: 0
+        }
+      },
+      dataSource: {
+        data: dashboard.entities()
+      },
+      locationField: "location",
+      valueField: "value"
+    }],
+    shapeCreated: onShapeCreated,
+    shapeClick: onClickShape,
+    shapeMouseEnter: onShapeMouseEnter,
+    shapeMouseLeave: onShapeMouseLeave
   });
 
-  $("#map").unbind("mousewheel");
-  $("#map").unbind("DOMMouseScroll");
+  $("#map").unbind("mousewheel")
+  $("#map").unbind("DOMMouseScroll")
+
+  function onShapeCreated(e) {
+
+  }
+
+  function onClickShape(e) {
+    dashboard.showMapDetails()
+    dashboard.activeEntity(e.shape.dataItem)
+    $("#mapDetailModal").modal("show")
+  }
+
+  var activeShape
+
+  function onShapeMouseEnter(e) {
+    e.shape.options.fill.set("opacity", 0.7)
+    e.shape.options.stroke.set("width", 1)
+    activeShape = e.shape
+    $("#map").css("cursor", "pointer")
+  }
+
+  function onShapeMouseLeave(e) {
+    e.shape.options.set("fill.opacity", 0.4)
+    e.shape.options.stroke.set("width", 0)
+    $("#map").css("cursor", "inherit")
+  }
+
+}
+
+dashboard.showMapDetails = function() {
+
 }
 
 $(window).load(function () {
