@@ -4,6 +4,6 @@ username=
 password=
 dbtimeout=10
 loginexpired=72000
-port=8051
+port=8068
 uploadpath=./../assets/main/images/upload
 landingpage=/main/dashboard/index
