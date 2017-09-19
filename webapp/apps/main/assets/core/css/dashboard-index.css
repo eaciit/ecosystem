@@ -40,6 +40,11 @@ html {
 .map {
   height: 600px;
   background-color: #22313F;
+  border-radius: 5px;
+}
+
+.map:focus {
+  outline: none;
 }
 
 .table.ez thead {
