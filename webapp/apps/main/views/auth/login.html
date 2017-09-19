@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<!--  manifest="/main/static/core/manifest.appcache" -->
+<head>
+    <!-- Layout initiated, developed, & maintained by Noval Agung Prayogo.
+         Everyone are allowed to use this layout as a reference or even copying it.
+         But please, try to write good-readable-reusable-modular code :-) -->
+
+    {{template "_head.html"}}
+</head>
+<body class="page-login">
+
+    <div class="layout-container">
+        <div class="layout-content" data-bind="with: viewModel">
+
+			<script>viewModel.title('Login')</script>
+            <!-- content -->
+
+			<script src="{{ NoCacheUrl "/main/static/core/js/auth-login.js" }}"></script>
+			<link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/auth-login.css" }}" />
+
+			<div class="page-content page-login" data-bind="with: pageLogin">
+				<div class="left-side" style="background-image: url('/main/static/core/images/loginwall.jpg')"></div>
+				<div class="right-side">
+					<form data-bind="with: userData">
+						<div class="logo">
+							<img src="/main/static/core/images/logo-login.png">
+						</div>
+						<div class="form-group">
+							<label>Username</label>
+							<input required type="text" class="form-control input-sm" placeholder="Username" data-bind="value: username">
+						</div>
+						<div class="form-group">
+							<label>Password</label>
+							<input required type="password" class="form-control input-sm" placeholder="Password" data-bind="value: password">
+						</div>
+						<div class="pull-right">
+							<button type="submit" class="btn btn-sm btn-primary">
+								<i class="fa fa-paper-plane"></i>&nbsp; Submit
+							</button>
+						</div>
+						<div class="pull-left">
+							<a href="#" class="forgot-password">Can't access your account?</a>
+						</div>
+						<div class="clearfix"></div>
+						<div class="footnote">
+							<label><b>© 2013 - 2017 EACIIT Pte Ltd</b></label>
+							<label>Earnings & Cash Improvement Information Technologies</label>
+						</div>
+					</form>
+				</div>
+			</div>
+
+
+            <!-- avoid broken tag -->
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    {{template "_loader.html"}}
+
+    <script>
+        ko.applyBindings(viewModel);
+    </script>
+</body>
+</html>

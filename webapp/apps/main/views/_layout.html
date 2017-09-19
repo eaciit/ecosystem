@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<!--  manifest="/main/static/core/manifest.appcache" -->
+<head>
+    <!-- Layout initiated, developed, & maintained by Noval Agung Prayogo.
+         Everyone are allowed to use this layout as a reference or even copying it.
+         But please, try to write good-readable-reusable-modular code :-) -->
+
+    {{template "_head.html"}}
+</head>
+<body>
+    {{template "_sidebar.html"}}
+
+    <div class="layout-container">
+        <div class="layout-content" data-bind="with: viewModel">
+            {{.Content}}
+
+            <!-- avoid broken tag -->
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    {{template "_loader.html"}}
+
+    <script>
+        ko.applyBindings(viewModel);
+    </script>
+</body>
+</html>

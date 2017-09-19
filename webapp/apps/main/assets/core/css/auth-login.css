@@ -1,0 +1,50 @@
+.left-side {
+    background: #007dba no-repeat center top;
+    background-size: cover;
+    height: 100vh;
+    z-index: 99;
+    margin-right: 330px;
+}
+
+.right-side {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 330px;
+    padding: 10px;
+    background: repeating-linear-gradient(45deg, white, white 10px, #fcfcfc 10px, #fcfcfc 20px);
+}
+.right-side .logo {
+    text-align: center;
+    margin-bottom: 40px;
+    margin-top: 80px;
+}
+.right-side .logo img {
+    height: 100px;
+}
+.right-side form {
+    width: 240px;
+    margin: 0px auto;
+}
+.right-side form .form-group .form-control {
+    box-shadow: none;
+    border-radius: 0px;
+    border-color: #F0F3F4;
+    padding: 5px 8px;
+}
+.right-side form .forgot-password {
+    border-bottom: 1px solid #337ab7;
+    color: #337ab7;
+    display: block;
+    margin-top: 4px;
+}
+.right-side form .footnote {
+    margin-top: 20px;
+}
+.right-side form .footnote label {
+    font-weight: normal;
+    font-size: 12px;
+    margin-bottom: 4px;
+    line-height: 16px;
+}

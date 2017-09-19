@@ -1,0 +1,14 @@
+.access-menu-tree ul {
+    padding-left: 25px;
+}
+.access-menu-tree ul li a {
+    cursor: pointer;
+}
+.access-menu-tree ul li a:hover {
+    font-weight: bold;
+}
+
+.panel .panel-heading .btn-add {
+    position: absolute;
+    margin-left: 10px;
+}

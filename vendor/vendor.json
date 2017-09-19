@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "m+V6BXnNHJ0dmDmFLG8jNq/a5vs=",
+			"path": "github.com/eaciit/acl/v1.0",
+			"revision": "25e8d93d31d9f036b0f7c66b0f93beef1051b4d8",
+			"revisionTime": "2016-11-22T04:48:54Z"
+		}
+	],
+	"rootPath": "eaciit/scb-eco"
+}

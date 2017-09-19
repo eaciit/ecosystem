@@ -1,0 +1,28 @@
+.no-padding {
+  padding: 0;
+}
+
+.no-padding.hardcore {
+  padding: 0 !important;
+}
+
+.panel.ez {
+  border: none;
+}
+
+.panel.ez .panel-heading {
+  padding-bottom: 0;
+}
+
+.table.ez {
+  font-size: 12px;
+}
+
+.table.ez th {
+  font-size: 14px;
+  border: none !important;
+}
+
+.table.ez td {
+  padding: 4px 10px;
+}
