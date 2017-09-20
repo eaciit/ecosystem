@@ -134,39 +134,12 @@ func (b *BaseController) SetResponseTypeAJAX(k *knot.WebContext) {
 }
 
 func (b *BaseController) ValidateAccessOfRequestedURL(k *knot.WebContext) bool {
-	config := GetConfig()
 	unauthorizedErrorMessage := GetUnauthorizedMessageAsQueryString(k)
-
-	isOK := false
-	b.Authenticate(k, func() {
-		landingPagePath := strings.Trim(config.GetString("landingpage"), ` /`)
-		requestedPath := strings.Trim(k.Request.URL.Path, ` /`)
-		requestedPathComponent := strings.Split(requestedPath, "/")
-		parentRequestedPath := strings.Join(requestedPathComponent[:len(requestedPathComponent)-1], "/")
-
-		for _, each := range LoginDataAccessMenu {
-			eachURL := strings.Trim(each.Url, ` /`)
-			eachURLComponent := strings.Split(eachURL, "/")
-			parentEachURL := strings.Join(eachURLComponent[:len(eachURLComponent)-1], "/")
-
-			if eachURL == requestedPath || parentEachURL == parentRequestedPath {
-				tk.Println("---> allowed", requestedPath)
-				isOK = true
-				return
-			}
-		}
-
-		if landingPagePath == requestedPath {
-			// if requested page is landing page, then ok
-		} else {
-			parts := strings.Split(landingPagePath, `/`)
-			b.Redirect(k, parts[1], parts[2]+unauthorizedErrorMessage)
-		}
-	}, func() {
+	b.Authenticate(k, nil, func() {
 		b.Redirect(k, "auth", "login"+unauthorizedErrorMessage)
 	})
 
-	return isOK
+	return true
 }
 
 func (b *BaseController) Redirect(k *knot.WebContext, controller string, action string) {
