@@ -43,30 +43,42 @@ dashboard.payment = [{
 }]
 
 dashboard.mapsdata1 = [{
+        _id:1,
         location: [-7.274879, 111.6099528],
         name: "Jakarta, Indonesia",
+        entities:"MEGLOBAL INTERNATIONAL FZE"
     },
     {
+        _id:2,
         location: [1.3440852, 103.6839573],
         name: "Singapore, Singapore",
+        entities:"MEGLOBAL INTERNATIONAL FZE"
     }
 ]
 dashboard.mapsdata2 = [{
+        _id:21,
         location: [13.7245601,100.4930264],
         name: "Bangkok, Thailand",
+        entities:"MEGLOBAL INTERNATIONAL FZE"
     },
     {
+        _id:22,
         location: [25.0171608,121.3662942],
         name: "Taipei, Taiwan",
+        entities:"MEGLOBAL INTERNATIONAL FZE"
     }
 ]
 dashboard.mapsdata3 = [{
+        _id:31,
         location: [35.006095,135.7259306],
         name: "Kyoto, Japan",
+        entities:"MEGLOBAL INTERNATIONAL FZE"
     },
     {
+        _id:32,
         location: [37.5650172,126.8494673],
         name: "Seol, South Korea",
+        entities:"MEGLOBAL INTERNATIONAL FZE"
     }
 ]
 
@@ -207,9 +219,10 @@ dashboard.generateMap = function() {
             titleField: "name"
         }],
         shapeCreated: onShapeCreated,
-        shapeClick: onClickShape,
+        // shapeClick: onClickShape,
         shapeMouseEnter: onShapeMouseEnter,
-        shapeMouseLeave: onShapeMouseLeave
+        shapeMouseLeave: onShapeMouseLeave,
+        markerClick: onClickMarker,
     });
 
     $("#map").unbind("mousewheel")
@@ -221,7 +234,7 @@ dashboard.generateMap = function() {
 
     function onClickShape(e) {
         dashboard.showMapDetails()
-        dashboard.activeEntity(e.shape.dataItem)
+        dashboard.activeEntity(e.shape.dataItem.name)
         $("#mapDetailModal").modal("show")
     }
 
@@ -240,6 +253,17 @@ dashboard.generateMap = function() {
         $("#map").css("cursor", "inherit")
     }
 
+    function onClickMarker(e) {
+        console.log(e)
+        dashboard.showMapDetails()
+        dashboard.activeEntity(e.marker.dataItem.entities)
+        $("#mapDetailModal").modal("show")
+    }
+}
+
+dashboard.btnTrade = function(){
+  $("#groupbuttondetail").hide()
+  $("#tradetabs").show()
 }
 
 dashboard.showMapDetails = function() {
@@ -248,6 +272,5 @@ dashboard.showMapDetails = function() {
 
 $(window).load(function() {
     widget.generateCharts()
-
     dashboard.generateMap()
 })
