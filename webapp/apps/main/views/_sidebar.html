@@ -1,3 +1,23 @@
+<div class="layout-sidebar">
+  <ul class="nav navbar-nav">
+    <li>
+      <a href="#" class="toggler">
+        <i class="fa fa-lg fa-bars"></i>
+      </a>
+    </li>
+  </ul>
+  <ul class="nav navbar-nav">
+    {{UnescapeHTML "<!-- ko foreach: dataNavigationMenuTree -->"}}
+    <li>
+      <a data-bind="attr: { title: Title, href: Url }, css: { 'active': (window.location.pathname == Url) }">
+        <i class="fa" data-bind="attr: { class: 'fa fa-' + Icon }"></i>
+        &nbsp; <span data-bind="text: Title">&nbsp;</span>
+      </a>
+    </li>
+    {{UnescapeHTML "<!-- /ko -->"}}
+  </ul>
+</div>
+
 <div class="layout-header">
   <div class="navbar-header">
     <a class="navbar-brand" target="_blank" href="/">
@@ -15,19 +35,7 @@
           <i class="fa fa-lg fa-ellipsis-v"></i>
         </a>
         <ul class="dropdown-menu">
-
-          {{UnescapeHTML "<!-- ko foreach: dataNavigationMenuTree -->"}}
-          <li>
-            <a data-bind="attr: { title: Title, href: Url }, css: { 'active': (window.location.pathname == Url) }">
-              <i class="fa" data-bind="attr: { class: 'fa fa-' + Icon }"></i>
-              &nbsp;
-              <span data-bind="text: Title">&nbsp;</span>
-            </a>
-          </li>
-          {{UnescapeHTML "<!-- /ko -->"}}
-          
-          <li role="separator" class="divider"></li>
-          <li><a href="#"><i class="fa fa-sign-out"></i>&nbsp;Logout</a></li>
+          <li><a href="/main/auth/dologout"><i class="fa fa-sign-out"></i>&nbsp;Logout</a></li>
         </ul>
       </li>
     </ul>
