@@ -1,174 +1,236 @@
 <script>
-    viewModel.title('Dashboard')
+  viewModel.title('Dashboard')
 </script>
 <!-- content -->
 <script src="{{ NoCacheUrl "/main/static/core/js/map-template.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/core/js/dashboard-index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/dashboard-index.css" }}" />
 <div class="row">
-    <div id="filter" class="col-sm-9 bottom-padding">
-        <div class="col-sm-2"> 
-            <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.region, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Region',filter: 'contains'}"></select>
-        </div>
-        <div class="col-sm-2">
-            <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.country, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Country',filter: 'contains'}"></select>
-        </div>
-        <div class="col-sm-2">
-            <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.businessmatric, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Business',filter: 'contains'}"></select>
-        </div>
-        <div class="col-sm-2">
-            <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.payment, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Payment',filter: 'contains'}"></select>
-        </div>
-        <div class="col-sm-2">
-            <input type="text" id="date" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade'}" class="filter-space">
-        </div>
+  <div id="filter" class="col-sm-12 bottom-padding contain-fluid">
+    <div class="filtergroup"> 
+      <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.region, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Region',filter: 'contains'}"></select>
     </div>
+    <div class="filtergroup">
+      <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.country, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Country',filter: 'contains'}"></select>
+    </div>
+    <div class="filtergroup">
+      <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.businessmatric, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Business',filter: 'contains'}"></select>
+    </div>
+    <div class="filtergroup">
+      <select name="Site" style="width:200px" class="full-width filter-space" data-bind="kendoDropDownList: { data: dashboard.payment, dataValueField: 'value', dataTextField: 'text',optionLabel:'Select Payment',filter: 'contains'}"></select>
+    </div>
+    <div class="filtergroup">
+      <input type="text" id="date" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade'}" class="filter-space">
+    </div>
+  </div>
 </div>
 <div class="row">
-    <div class="col-sm-2">
-        <div class="panel ez no-padding hardcore widget">
-            <div class="panel-heading">
-                <span>Total Entities (ETB+NTB)</span>
-            </div>
-            <div class="panel-body widget-body">
-                <div class="widget-left">19</div>
-                <div class="widget-right">
-                    <div class="chart-container" id="widgetChart1">
-                    </div>
-                    <div>
-                        <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-                        <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
-                    </div>
-                </div>
-            </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Total Entities (ETB+NTB)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart1">
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="col-sm-2">
-        <div class="panel ez no-padding hardcore widget">
-            <div class="panel-heading">
-                <span>Number of Buyers</span>
-            </div>
-            <div class="panel-body widget-body">
-                <div class="widget-left">19</div>
-                <div class="widget-right">
-                    <div class="chart-container" id="widgetChart2">
-                    </div>
-                    <div>
-                        <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-                        <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Number of Buyers</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart2">
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="col-sm-2">
-        <div class="panel ez no-padding hardcore widget">
-            <div class="panel-heading">
-                <span>Number of Sellers</span>
-            </div>
-            <div class="panel-body widget-body">
-                <div class="widget-left">19</div>
-                <div class="widget-right">
-                    <div class="chart-container" id="widgetChart3">
-                    </div>
-                    <div>
-                        <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-                        <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Number of Sellers</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart3">
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="col-sm-2">
-        <div class="panel ez no-padding hardcore widget">
-            <div class="panel-heading">
-                <span>In Flows ($M)</span>
-            </div>
-            <div class="panel-body widget-body">
-                <div class="widget-left">19</div>
-                <div class="widget-right">
-                    <div class="chart-container" id="widgetChart4">
-                    </div>
-                    <div>
-                        <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-                        <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>In Flows ($M)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart4">
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="col-sm-2">
-        <div class="panel ez no-padding hardcore widget">
-            <div class="panel-heading">
-                <span>Out Flows ($M)</span>
-            </div>
-            <div class="panel-body widget-body">
-                <div class="widget-left">19</div>
-                <div class="widget-right">
-                    <div class="chart-container" id="widgetChart5">
-                    </div>
-                    <div>
-                        <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-                        <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Out Flows ($M)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart5">
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="col-sm-2">
-        <div class="panel ez no-padding hardcore widget">
-            <div class="panel-heading">
-                <span>Pipeline Workbench ($M)</span>
-            </div>
-            <div class="panel-body widget-body">
-                <div class="widget-left">19</div>
-                <div class="widget-right">
-                    <div class="chart-container" id="widgetChart6">
-                    </div>
-                    <div>
-                        <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-                        <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Pipeline Workbench ($M)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">19</div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart6">
+          </div>
+          <div>
+            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
+            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 <div id="maps" class="row">
-    <div class="col-lg-12">
-        <div class="panel ez no-padding hardcore">
-            <div class="panel-body no-padding">
-                <div id="map" class="map"></div>
-                <div class="row groupbox">
-                    <div class="box redbox">
-                        Domicile<br/>Group
-                    </div>
-                    <div class="box bluebox">
-                        28<br/>ETB
-                    </div>
-                    <div class="box greenbox">
-                        63<br/>NTB
-                    </div>
-                </div>
-            </div>
+  <div class="col-lg-12">
+    <div class="panel ez no-padding hardcore">
+      <div class="panel-body no-padding">
+        <div id="map" class="map"></div>
+        <div class="row groupbox">
+          <div class="box redbox">
+            Domicile<br/>Group
+          </div>
+          <div class="box bluebox">
+            28<br/>ETB
+          </div>
+          <div class="box greenbox">
+            63<br/>NTB
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 <div id="mapDetailModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" data-bind="text: dashboard.activeEntity()"></h4>
-            </div>
-            <div class="modal-body">
-                <div class="col-sm-6">
-                </div>
-                <div class="col-sm-6">
-                </div>
-                <div class="col-sm-12">
-                </div>
-            </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" data-bind="text: dashboard.activeEntity()"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row" id="groupbuttondetail">
+          <div class="col-sm-6 align-center top-margin">
+            <button type="button" class="btn btn-flat"> Cash <i class="fa fa-play-circle-o" aria-hidden="true"></i></button>
+          </div>
+          <div class="col-sm-6 align-center top-margin">
+            <button type="button" class="btn btn-flat" data-bind="click:dashboard.btnTrade"> Trade <i class="fa fa-play-circle-o" aria-hidden="true"></i></button>
+          </div>
+          <div class="col-sm-12 align-center top-margin">
+            <button type="button" class="btn btn-flat"> Network Diagram <i class="fa fa-play-circle-o" aria-hidden="true"></i></button>
+          </div>
         </div>
+        <div class="row" id="tradetabs" style="display:none" >
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active tab1"><a href="#Flows" aria-controls="Flows" role="tab" data-toggle="tab">Flows</a></li>
+            <li role="presentation"><a href="#Trade" class="" aria-controls="Trade" role="tab" data-toggle="tab">Trade</a></li>
+          </ul>
+          <div class="tab-content">
+            <!--panel list-->
+            <div role="tabpanel" class="tab-pane active" id="Flows">
+              <div class="row align-center top-padding">
+                IN $19,000,000.00
+              </div>
+              <div id="flows-in" class="row align-center">
+              <i class="fa fa-play fa-out fa-hide" aria-hidden="true"></i>
+                <table id="table-flows-in" width="80%" style="margin-left: auto;margin-right: auto;display:inline;">
+                  <tr>
+                    <td width="20%" class="black-color">data1</td>
+                    <td width="40%" class="blue-color">data2</td>
+                    <td width="30%" class="green-color">data3</td>
+                    <td width="10%" class="grey-color">data4</td>
+                  </tr>
+                </table> 
+                <i class="fa fa-play fa-in" aria-hidden="true"></i>            
+              </div>
+              <div class="row align-center top-padding">
+                OUT $9,000,000.00
+              </div>
+              <div id="flows-out" class="row align-center">              
+                <i class="fa fa-play fa-out" aria-hidden="true"></i>               
+                <table id="table-flows-out" width="80%" style="margin-left: auto;margin-right: auto;display:inline">
+                  <tr>
+                    <td width="10%" class="black-color">data1</td>
+                    <td width="20%" class="blue-color">data2</td>
+                    <td width="40%" class="green-color">data3</td>
+                    <td width="30%" class="grey-color">data4</td>
+                  </tr>
+                </table>
+                <i class="fa fa-play fa-in fa-hide" aria-hidden="true"></i>
+              </div>
+            </div>
+            <!--panel Create-->
+            <div role="tabpanel" class="tab-pane" id="Trade">
+              <div class="row align-center">
+                <label class="texthead">Product Mix</label>
+              </div>
+              <div class="box-product">
+                <label>Trade 1</label>
+              </div>
+             <div class="box-product">
+                <label>Trade 2</label>
+              </div>
+              <div class="box-product">
+                <label>Trade 3</label>
+              </div>
+            </div>
+            <!--panel Draft-->
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
