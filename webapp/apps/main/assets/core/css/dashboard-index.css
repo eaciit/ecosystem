@@ -74,3 +74,80 @@ html {
   color: white !important;
 }
 
+.bottom-padding {
+  padding-bottom: 20px;
+}
+
+#filter .k-dropdown .k-state-default {
+  background: #22313F ;
+  border-color: #22313F ;
+  color: #ffffff ;
+}
+
+#filter .k-input {
+  color:#ffffff ;
+  background: #22313F ;
+}
+
+#filter .k-picker-wrap{
+  background: #22313F ;
+  border-color: #22313F ;
+  color: #ffffff ;
+}
+
+#filter .k-picker-wrap.k-state-default>.k-select {
+    border-color: #22313F;
+}
+
+#maps .k-i-marker-pin-target:before {
+    content: none;
+}
+
+#maps .k-map .k-marker.k-icon.k-i-marker-pin-blue {
+  background-image: url(../../3rdparty/kendoui/styles/Bootstrap/markers.png);
+}
+
+#maps .k-map .k-marker.k-icon.k-i-marker-pin-green {
+  background-image: url(../../3rdparty/kendoui/styles/Metro/markers.png);
+}
+
+#maps .k-map .k-marker.k-icon.k-i-marker-pin-red {
+  background-image: url(../../3rdparty/kendoui/styles/Material/markers.png);
+}
+
+.box {
+    width: 100px;
+    height: 60px;
+    -webkit-border-radius: 25px 20px 20px 20px;
+    -moz-border-radius: 25px 20px 20px 20px;
+    border-radius: 15px 15px 15px 15px;
+    border: 2px solid #FFFFFF;
+    /*background-color: #E3A20B;*/
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 8px;
+    margin-bottom: 5px;
+    position: initial;
+    color: #ffffff
+}
+
+.box.redbox {
+  background-color: #e15613;
+}
+
+.box.bluebox {
+  background-color: #428bca;
+}
+
+.box.greenbox {
+  background-color: #8ebc00;
+}
+
+.groupbox  {
+    position: absolute;
+    bottom: 18px;
+    left: 23px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+

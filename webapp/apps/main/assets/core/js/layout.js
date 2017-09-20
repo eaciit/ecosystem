@@ -179,41 +179,30 @@ viewModel.registerSidebarToggle = function () {
   })
 }
 
-viewModel.dataNavigationMenuFlat = ko.observableArray([])
 viewModel.dataNavigationMenuTree = ko.observableArray([])
 
 viewModel.getNavigationMenu = function () {
-  viewModel.ajaxPostCallback('/main/access/getaccessmenuforcurrentuser', {}, function (data) {
-    if (data.length == 0) {
-      return
-    }
-
-    data.forEach(function (d) {
-      d.Submenu = []
-    })
-
-    var menu = []
-
-    data.filter(function (d) {
-      return d.Category == 1
-    }).forEach(function (d) {
-      menu.push(d)
-    })
-
-    data.filter(function (d) {
-      return d.Category == 2
-    }).forEach(function (d) {
-      var parent = menu.find(function (e) {
-        return e._id == d.ParentId
-      })
-      parent.Submenu.push(d)
-    })
-
-    viewModel.dataNavigationMenuFlat(data)
-    viewModel.dataNavigationMenuTree(menu)
-  }, {
-    loader: false
-  })
+  viewModel.dataNavigationMenuTree([{
+    Icon: "bar-chart",
+    Title: "Dashboard",
+    Url: "/main/dashboard/index"
+  },{
+    Icon: "",
+    Title: "Counter Party View",
+    Url: "/main/counterparty/index"
+  },{
+    Icon: "",
+    Title: "Missed Flow Analysis",
+    Url: "/main/missedflow/index"
+  },{
+    Icon: "cog",
+    Title: "Recommend Engine",
+    Url: "/main/recommendengine/index"
+  },{
+    Icon: "database",
+    Title: "Master Data",
+    Url: "/main/access/master"
+  }])
 }
 
 viewModel.checkLoadedPageAccess = function () {
