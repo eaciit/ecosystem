@@ -83,20 +83,20 @@ html {
 }
 
 #filter .k-dropdown .k-state-default {
-  background: #22313F ;
-  border-color: #22313F ;
-  color: #ffffff ;
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
 }
 
 #filter .k-input {
-  color:#ffffff ;
-  background: #22313F ;
+  color: #ffffff;
+  background: #22313F;
 }
 
-#filter .k-picker-wrap{
-  background: #22313F ;
-  border-color: #22313F ;
-  color: #ffffff ;
+#filter .k-picker-wrap {
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
 }
 
 #filter .k-picker-wrap.k-state-default>.k-select {
@@ -178,8 +178,8 @@ html {
 
 #mapDetailModal .modal-header {
   background: #1e88e5;
-  color:#ffffff;
-  border-bottom:#1e88e5; 
+  color: #ffffff;
+  border-bottom: #1e88e5;
 }
 
 #mapDetailModal .modal-body {
@@ -194,13 +194,13 @@ html {
 }
 
 .filtergroup {
-  float:left;
-  margin-right:10px; 
+  float: left;
+  margin-right: 10px;
 }
 
 .black-color {
   background: #000000;
-  border-color:#000000;
+  border-color: #000000;
 }
 
 .blue-color {
@@ -234,18 +234,18 @@ html {
 
 .fa-in {
   font-size: 40px;
-  transform: translate(-3px,4px);
+  transform: translate(-3px, 4px);
   color: #4472c4;
 }
 
 .fa-out {
   font-size: 40px;
-  transform: rotate(180deg) translate(-3px,-4px);
+  transform: rotate(180deg) translate(-3px, -4px);
   color: #4472c4;
 }
 
 .fa-hide {
-  visibility:hidden;
+  visibility: hidden;
 }
 
 #tradetabs .nav-tabs>li {
@@ -259,7 +259,9 @@ html {
   margin: 15px;
 }
 
-#tradetabs .nav-tabs>li>a, .nav-tabs>li>a:focus, .nav-tabs>li>a:hover {
+#tradetabs .nav-tabs>li>a,
+.nav-tabs>li>a:focus,
+.nav-tabs>li>a:hover {
   color: #ffffff;
   cursor: default;
   background-color: #313a49;
@@ -268,7 +270,9 @@ html {
   cursor: pointer;
 }
 
-#tradetabs .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+#tradetabs .nav-tabs>li.active>a,
+.nav-tabs>li.active>a:focus,
+.nav-tabs>li.active>a:hover {
   color: #ffffff;
   cursor: default;
   background-color: #404b5f;
@@ -278,11 +282,10 @@ html {
 }
 
 #tradetabs .nav-tabs {
-  border-bottom: none; 
+  border-bottom: none;
 }
 
 .nav-tabs>li>a {
-  border-top-left-radius:0px;
-  border-top-right-radius:0px;
-
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 }
