@@ -3,26 +3,13 @@
 }
 
 .link {
-  fill: none;
-  stroke: #666;
-  stroke-width: 1.5px;
+  stroke: #999;
+  stroke-opacity: .6;
+  stroke-width: 1px;
 }
 
-#licensing {
-  fill: green;
-}
-
-.link.licensing {
-  stroke: green;
-}
-
-.link.resolved {
-  stroke-dasharray: 0,2 1;
-}
-
-circle {
-  fill: #3A539B;
-  stroke: #333;
+.node circle {
+  stroke: #fff;
   stroke-width: 1.5px;
 }
 

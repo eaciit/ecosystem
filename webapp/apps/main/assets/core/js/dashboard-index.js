@@ -83,14 +83,6 @@ dashboard.mapsdata3 = [{
 ]
 
 var widget = {}
-
-// Dummy Data 
-dashboard.entities([{
-  name: "Unilever ID",
-  location: [-6.1751, 106.8650],
-  value: 4
-}])
-
 widget.buildChart = function (id, data) {
   $(id).kendoChart({
     title: {
@@ -184,22 +176,6 @@ dashboard.generateMap = function () {
         }
       }
     }, {
-      type: "bubble",
-      style: {
-        fill: {
-          color: "#3A539B",
-          opacity: 0.4
-        },
-        stroke: {
-          width: 0
-        }
-      },
-      dataSource: {
-        data: dashboard.entities()
-      },
-      locationField: "location",
-      valueField: "value"
-    }, {
       type: "marker",
       dataSource: dashboard.mapsdata1,
       shape: "pinRed",
@@ -218,43 +194,13 @@ dashboard.generateMap = function () {
       locationField: "location",
       titleField: "name"
     }],
-    shapeCreated: onShapeCreated,
-    // shapeClick: onClickShape,
-    shapeMouseEnter: onShapeMouseEnter,
-    shapeMouseLeave: onShapeMouseLeave,
-    markerClick: onClickMarker,
+    markerClick: onClickMarker
   });
 
   $("#map").unbind("mousewheel")
   $("#map").unbind("DOMMouseScroll")
 
-  function onShapeCreated(e) {
-
-  }
-
-  function onClickShape(e) {
-    dashboard.showMapDetails()
-    dashboard.activeEntity(e.shape.dataItem.name)
-    $("#mapDetailModal").modal("show")
-  }
-
-  var activeShape
-
-  function onShapeMouseEnter(e) {
-    e.shape.options.fill.set("opacity", 0.7)
-    e.shape.options.stroke.set("width", 1)
-    activeShape = e.shape
-    $("#map").css("cursor", "pointer")
-  }
-
-  function onShapeMouseLeave(e) {
-    e.shape.options.set("fill.opacity", 0.4)
-    e.shape.options.stroke.set("width", 0)
-    $("#map").css("cursor", "inherit")
-  }
-
   function onClickMarker(e) {
-    console.log(e)
     dashboard.showMapDetails()
     dashboard.activeEntity(e.marker.dataItem.entities)
     $("#mapDetailModal").modal("show")
