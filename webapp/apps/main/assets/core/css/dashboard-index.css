@@ -108,37 +108,38 @@ html {
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-blue {
-  background-image: url(../../3rdparty/kendoui/styles/Bootstrap/markers_2x.png);
+  background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersblue.png);
   background-repeat: no-repeat;
-  background-position: cover;
+  /*background-position: cover;*/
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-green {
-  background-image: url(../../3rdparty/kendoui/styles/Metro/markers_2x.png);
+  background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersgreen.png);
   background-repeat: no-repeat;
-  background-size: cover;
+  /*background-size: cover;*/
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-red {
-  background-image: url(../../3rdparty/kendoui/styles/Material/markers_2x.png);
+  background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersred.png);
   background-repeat: no-repeat;
-  background-size: cover;
+  /*background-size: cover;*/
 }
 
 .box {
-  width: 100px;
-  height: 60px;
-  -webkit-border-radius: 25px 20px 20px 20px;
-  -moz-border-radius: 25px 20px 20px 20px;
-  border-radius: 15px 15px 15px 15px;
-  border: 2px solid #FFFFFF;
-  /*background-color: #E3A20B;*/
+  width: 60px;
+  height: 40px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  border: 1px solid #FFFFFF;
   text-align: center;
   vertical-align: middle;
-  padding-top: 8px;
+  padding-top: 5px;
   margin-bottom: 5px;
   position: initial;
-  color: #ffffff
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: normal;
 }
 
 .box.redbox {
