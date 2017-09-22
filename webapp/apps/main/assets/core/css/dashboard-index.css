@@ -78,57 +78,67 @@ html {
   padding-bottom: 20px;
 }
 
+.top-padding {
+  padding-top: 20px;
+}
+
 #filter .k-dropdown .k-state-default {
-  background: #22313F ;
-  border-color: #22313F ;
-  color: #ffffff ;
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
 }
 
 #filter .k-input {
-  color:#ffffff ;
-  background: #22313F ;
+  color: #ffffff;
+  background: #22313F;
 }
 
-#filter .k-picker-wrap{
-  background: #22313F ;
-  border-color: #22313F ;
-  color: #ffffff ;
+#filter .k-picker-wrap {
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
 }
 
 #filter .k-picker-wrap.k-state-default>.k-select {
-    border-color: #22313F;
+  border-color: #22313F;
 }
 
 #maps .k-i-marker-pin-target:before {
-    content: none;
+  content: none;
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-blue {
-  background-image: url(../../3rdparty/kendoui/styles/Bootstrap/markers.png);
+  background-image: url(../../3rdparty/kendoui/styles/Bootstrap/markers_2x.png);
+  background-repeat: no-repeat;
+  background-position: cover;
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-green {
-  background-image: url(../../3rdparty/kendoui/styles/Metro/markers.png);
+  background-image: url(../../3rdparty/kendoui/styles/Metro/markers_2x.png);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-red {
-  background-image: url(../../3rdparty/kendoui/styles/Material/markers.png);
+  background-image: url(../../3rdparty/kendoui/styles/Material/markers_2x.png);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .box {
-    width: 100px;
-    height: 60px;
-    -webkit-border-radius: 25px 20px 20px 20px;
-    -moz-border-radius: 25px 20px 20px 20px;
-    border-radius: 15px 15px 15px 15px;
-    border: 2px solid #FFFFFF;
-    /*background-color: #E3A20B;*/
-    text-align: center;
-    vertical-align: middle;
-    padding-top: 8px;
-    margin-bottom: 5px;
-    position: initial;
-    color: #ffffff
+  width: 100px;
+  height: 60px;
+  -webkit-border-radius: 25px 20px 20px 20px;
+  -moz-border-radius: 25px 20px 20px 20px;
+  border-radius: 15px 15px 15px 15px;
+  border: 2px solid #FFFFFF;
+  /*background-color: #E3A20B;*/
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 8px;
+  margin-bottom: 5px;
+  position: initial;
+  color: #ffffff
 }
 
 .box.redbox {
@@ -143,6 +153,7 @@ html {
   background-color: #8ebc00;
 }
 
+<<<<<<< HEAD
 .groupbox  {
     position: absolute;
     bottom: 18px;
@@ -151,3 +162,141 @@ html {
     margin-left: 0px;
 }
 
+=======
+.groupbox {
+  position: absolute;
+  bottom: 18px;
+  left: 23px;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+#mapDetailModal .btn.btn-flat {
+  width: 215px;
+  background: #576379;
+  font-size: 20px;
+}
+
+#mapDetailModal .btn.btn-flat:hover {
+  color: #91a2c3;
+}
+
+#mapDetailModal .btn.btn-flat .fa {
+  float: right;
+  padding-top: 5px;
+}
+
+#mapDetailModal .modal-header {
+  background: #1e88e5;
+  color: #ffffff;
+  border-bottom: #1e88e5;
+}
+
+#mapDetailModal .modal-body {
+  background: #404b5f;
+  color: #ffffff;
+  position: relative;
+  padding: 0px 5px 15px 5px;
+}
+
+.top-margin {
+  margin-top: 20px;
+}
+
+.filtergroup {
+  float: left;
+  margin-right: 10px;
+}
+
+.black-color {
+  background: #000000;
+  border-color: #000000;
+}
+
+.blue-color {
+  background: #0070c0;
+}
+
+.green-color {
+  background: #60d5a8;
+}
+
+.grey-color {
+  background: #8faadc;
+}
+
+.box-product {
+  width: 100%;
+  height: 30px;
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 8px;
+  margin-bottom: 5px;
+  position: initial;
+  color: #ffffff;
+  background: #4f5f79;
+}
+
+.texthead {
+  padding-top: 15px;
+  font-size: 22px;
+}
+
+.fa-in {
+  font-size: 40px;
+  transform: translate(-3px, 4px);
+  color: #4472c4;
+}
+
+.fa-out {
+  font-size: 40px;
+  transform: rotate(180deg) translate(-3px, -4px);
+  color: #4472c4;
+}
+
+.fa-hide {
+  visibility: hidden;
+}
+
+#tradetabs .nav-tabs>li {
+  float: left;
+  margin-bottom: -1px;
+  width: 50%;
+  text-align: center;
+}
+
+.tab-pane {
+  margin: 15px;
+}
+
+#tradetabs .nav-tabs>li>a,
+.nav-tabs>li>a:focus,
+.nav-tabs>li>a:hover {
+  color: #ffffff;
+  cursor: default;
+  background-color: #313a49;
+  border-bottom-color: transparent;
+  border-color: #313a49;
+  cursor: pointer;
+}
+
+#tradetabs .nav-tabs>li.active>a,
+.nav-tabs>li.active>a:focus,
+.nav-tabs>li.active>a:hover {
+  color: #ffffff;
+  cursor: default;
+  background-color: #404b5f;
+  border-bottom-color: transparent;
+  border-color: #404b5f;
+  cursor: pointer;
+}
+
+#tradetabs .nav-tabs {
+  border-bottom: none;
+}
+
+.nav-tabs>li>a {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+>>>>>>> eaciit/master

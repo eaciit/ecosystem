@@ -187,11 +187,11 @@ viewModel.getNavigationMenu = function () {
     Title: "Dashboard",
     Url: "/main/dashboard/index"
   },{
-    Icon: "",
+    Icon: "sitemap",
     Title: "Counter Party View",
     Url: "/main/counterparty/index"
   },{
-    Icon: "",
+    Icon: "random",
     Title: "Missed Flow Analysis",
     Url: "/main/missedflow/index"
   },{
