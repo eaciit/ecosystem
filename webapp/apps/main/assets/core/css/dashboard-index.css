@@ -110,19 +110,19 @@ html {
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-blue {
   background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersblue.png);
   background-repeat: no-repeat;
-  /*background-position: cover;*/
+  background-position: center bottom;
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-green {
   background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersgreen.png);
   background-repeat: no-repeat;
-  /*background-size: cover;*/
+  background-position: center bottom;
 }
 
 #maps .k-map .k-marker.k-icon.k-i-marker-pin-red {
   background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersred.png);
   background-repeat: no-repeat;
-  /*background-size: cover;*/
+  background-position: center bottom;
 }
 
 .box {
