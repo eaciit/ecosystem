@@ -21,7 +21,8 @@ counterpary.generateGraph = function () {
   var links = [{
       source: "Ibrahim Fibres",
       target: "MEGLOBAL INTERNATIONAL FZE",
-      type: "missed"
+      type: "missed",
+
     },
     {
       source: "Bhilosha Ind",
