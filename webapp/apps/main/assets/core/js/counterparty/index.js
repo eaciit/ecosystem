@@ -86,7 +86,8 @@ counterpary.generateGraph = function () {
       .attr("class", "link")
       .attr('marker-end', 'url(#arrowhead)')
 
-    link.append("title")
+    link.append("div")
+      .attr("class", "sc")
       .text(function (d) {
         return d.type
       })  
