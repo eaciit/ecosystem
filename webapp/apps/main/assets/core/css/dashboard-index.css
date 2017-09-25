@@ -154,6 +154,16 @@ html {
   background-color: #8ebc00;
 }
 
+<<<<<<< HEAD
+.groupbox  {
+    position: absolute;
+    bottom: 18px;
+    left: 23px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+=======
 .groupbox {
   position: absolute;
   bottom: 18px;
@@ -290,3 +300,4 @@ html {
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
 }
+>>>>>>> eaciit/master

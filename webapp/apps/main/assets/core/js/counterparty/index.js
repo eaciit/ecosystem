@@ -32,7 +32,7 @@ counterpary.generateGraph = function () {
     {
       source: "ICI Pakistan",
       target: "MEGLOBAL INTERNATIONAL FZE",
-      type: "missed"
+      type: "missedffd"
     },
     {
       source: "Reliance Ind",
@@ -58,11 +58,11 @@ counterpary.generateGraph = function () {
     .attrs({
       'id': 'arrowhead',
       'viewBox': '-0 -5 10 10',
-      'refX': 30,
+      'refX': 37,
       'refY': 0,
       'orient': 'auto',
-      'markerWidth': 5,
-      'markerHeight': 5,
+      'markerWidth': 25,
+      'markerHeight': 25,
       'xoverflow': 'visible'
     })
     .append('svg:path')
@@ -73,7 +73,7 @@ counterpary.generateGraph = function () {
   var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) {
       return d.id
-    }).distance(100).strength(1))
+    }).distance(300).strength(1))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2))
 
@@ -87,10 +87,11 @@ counterpary.generateGraph = function () {
       .attr("class", "link")
       .attr('marker-end', 'url(#arrowhead)')
 
-    link.append("title")
+    link.append("div")
+      .attr("class", "sc")
       .text(function (d) {
         return d.type
-      })
+      })  
 
     edgepaths = svg.selectAll(".edgepath")
       .data(links)
@@ -131,6 +132,7 @@ counterpary.generateGraph = function () {
         return d.type
       })
 
+
     node = svg.selectAll(".node")
       .data(nodes)
       .enter()
@@ -143,7 +145,7 @@ counterpary.generateGraph = function () {
       )
 
     node.append("circle")
-      .attr("r", 10)
+      .attr("r", 67)
       .style("fill", function (d) {
         return colors(d.group)
       })
@@ -151,11 +153,12 @@ counterpary.generateGraph = function () {
     node.append("title")
       .text(function (d) {
         return d.id
-      })
+      })  
 
     node.append("text")
-      .attr("dx", 12)
+      .attr("dx", -25)
       .attr("dy", 5)
+      .attr("class", "inhtml")
       .text(function (d) {
         return d.id
       })
