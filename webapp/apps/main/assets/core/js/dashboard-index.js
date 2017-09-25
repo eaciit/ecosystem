@@ -216,6 +216,10 @@ dashboard.showMapDetails = function () {
 
 }
 
+dashboard.network_diagram = function () {
+  location.href = 'http://localhost:8068/main/counterparty/index'
+}
+
 $(window).load(function () {
   widget.generateCharts()
   dashboard.generateMap()

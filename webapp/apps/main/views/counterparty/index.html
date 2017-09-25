@@ -8,18 +8,55 @@
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty/index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/index.css" }}" />
 
-<div class="container-fluid">
+<div class="row" id="filter">
+   <div class="menu_counterparty">
+      <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpary.meglobal, dataValueField: 'value', dataTextField: 'text',optionLabel:'Meglobal',filter: 'contains'}"></select>
+   </div>
+   <div class="menu_counterparty">
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpary.buyer, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains'}"></select> 
+   </div>
+   <div class="menu_counterparty">
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpary.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains'}"></select>
+   </div>
+   <div class="menu_counterparty">
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpary.top, dataValueField: 'value', dataTextField: 'text',optionLabel:'Top 10',filter: 'contains'}"></select>
+   </div>
+   <div class="menu_counterparty">
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpary.flows, dataValueField: 'value', dataTextField: 'text',optionLabel:'Flows >$50M',filter: 'contains'}"></select>
+   </div>
+   <div class="menu_counterparty">
+      <div id="radioBtn" class="btn-group">
+         <a class="btn btn-primary btn-xs active" data-toggle="happy" data-title="Y">Y</a>
+         <a class="btn btn-primary btn-xs notActive" data-toggle="happy" data-title="M">M</a>
+      </div>
+      <input type="hidden" name="happy" id="happy">
+   </div>
+   <div class="menu_counterparty">
+      <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade'}" class="filter-space">
+   </div>
+   <div class="menu_counterparty">
+      <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM', start: 'year'}" class="filter-space">
+   </div>
+   <div class="menu_counterparty">
+      <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
+   </div>
+   <div class="menu_counterparty">
+      <img width="20px"src="/main/static/3rdparty/img/pdf.png" alt="pdf">
+   </div>
+</div>
+
   <!-- <div id="graph" class="graph">
 
-  </div> -->
-
-<div style="position:relative;">
+  </div> --> 
+<div align="center">  
+<div class="pre-scrollable" style="min-height:600px; overflow-y: hidden; ">
+<div style="position:relative; display: table-cell; vertical-align: middle;">
 
 <!--table -->
 <div border="1px" style="	 width: 600px; height: 	600px; display: table;" align="center">
 
 <div align="center"  style="display: table-cell; vertical-align: middle; ">
-<div style="padding: 20px;z-index:1000; position:relative;border-radius: 10px;	 	 background-color: #00bcd4; width:130px ">MEGLOBAL INTERNATION FZE
+<div style="padding: 20px;z-index:1; position:relative;border-radius: 10px;	 	 background-color: #00bcd4; width:130px ">MEGLOBAL INTERNATION FZE
 </div>
 </div>
 
@@ -53,7 +90,7 @@ bottom: 76px;
 left:20px;
 display: table;
   text-align: center;
-  z-index:1000; 
+  z-index:1; 
   position:absolute;
   border-radius: 50%;
    background-color: #4b7082; 
@@ -99,7 +136,7 @@ color:#fff;
 bottom: 331px;
 display: table;
   text-align: center;
-  z-index:1000; 
+  z-index:1; 
   position:absolute;
   border-radius: 50%;
    background-color: #4b7082; 
@@ -136,7 +173,7 @@ color:#fff;
 bottom: 490px;
 display: table;
   text-align: center;
-  z-index:1000; 
+  z-index:1; 
   position:absolute;
   border-radius: 50%;
    background-color: #4b7082; 
@@ -174,7 +211,7 @@ color:#fff;
 bottom: 450px;
 display: table;
   text-align: center;
-  z-index:1000; 
+  z-index:1; 
   position:absolute;
   border-radius: 50%;
    background-color: #4b7082; 
@@ -211,7 +248,7 @@ bottom: 180px;
 left:450px;
 display: table;
   text-align: center;
-  z-index:1000; 
+  z-index:1; 
   position:absolute;
   border-radius: 50%;
    background-color: #36bae1; 
@@ -221,24 +258,46 @@ display: table;
   </div>
   <!--end border -->
 
+</div>
+</div>
+</div>
 
-  <div style="position: absolute;
+<div align="right" >
+  <div style="
   display: table; text-align: center;
   color: #fff;
   border-radius: 10px; 
   background-color: #436780;
   bottom: 90px;
-  left:400px;
-  width: 450px;
-  height: 70px;">
-  <div align="center" style="display: table-row; border: solid 1px red">Legend</div>
- <div style="display: table-cell;">sfs</div>
-  <div style="display: table-cell;">sfs</div>
-  <div style="display: table-cell;">sfs</div>
-  <div style="display: table-cell;">sfs</div>
-  </div>
-
+  width: 410px;
+  height: 73px;
+  margin-right: 9px;">
+ 
+<div class="row">
+<div class="col-lg-12" style="padding-top: 5px; font-weight: bold;">Legend</div>
 </div>
-
+<div class="row" style="padding-top: 8px; font-size: 10px;">
+  <div class="col-lg-3 col-xs-3">
+  <div>Counterparties</div>
+   <div style="position: relative;margin:10px 15px 2px 15px;border-bottom:2px solid #36bae1;">
+     <div style="position: absolute; bottom: -8px; left: 64px; color: #36bae1"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
+   </div>
+  </div> 
+   <div class="col-lg-3  col-xs-3">
+   <div>Intragroup</div>
+    <div style="position: relative; margin:10px 15px 2px 15px;border-bottom:2px solid #f8f8f8;">
+      <div style="position: absolute; right:0; bottom: -8px; left: 64px; color:"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
+    </div>
+   </div> 
+    <div class="col-lg-3  col-xs-3">
+    <div>Missed Flows</div>
+    <div style="margin:10px 15px 2px 15px;border-bottom:3px dashed #f8f8f8;"></div>
+    </div> 
+     <div class="col-lg-3  col-xs-3" ><div style="margin-right:7px; 
+     border-radius:50%;
+     height:30px;border: 0px solid red;background-color: #f8f8f8; color: #151b3a">Opportunity</div></div> 
+</div>
+  </div>
+  </div>
 
 </div>
