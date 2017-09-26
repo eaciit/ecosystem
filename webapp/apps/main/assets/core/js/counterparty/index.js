@@ -1,5 +1,42 @@
 var counterpary = {}
 
+counterpary.meglobal = [{
+  "value": "ASA",
+  "text": "ASA"
+}, {
+  "value": "AME",
+  "text": "AME"
+}]
+counterpary.buyer = [{
+  "value": 1,
+  "text": "Ibrahim Fibres"
+}, {
+  "value": 2,
+  "text": "Reliance Ind"
+}]
+counterpary.group = [{
+  "value": "ETB",
+  "text": "ETB"
+}, {
+  "value": "NTB",
+  "text": "NTB"
+}]
+counterpary.top = [{
+  "value": 5,
+  "text": "Top 5"
+}, {
+  "value": 3,
+  "text": "Top 3"
+}]
+counterpary.flows = [{
+  "value": 31,
+  "text": "Flows>$30M"
+}, {
+  "value": 100,
+  "text": "Flows>$100M"
+}]
+
+
 counterpary.generateGraph = function () {
   var nodes = [{
     id: "Ibrahim Fibres",
@@ -21,8 +58,7 @@ counterpary.generateGraph = function () {
   var links = [{
       source: "Ibrahim Fibres",
       target: "MEGLOBAL INTERNATIONAL FZE",
-      type: "missed",
-
+      type: "missed"
     },
     {
       source: "Bhilosha Ind",
@@ -224,7 +260,30 @@ counterpary.generateGraph = function () {
     d.fx = undefined
     d.fy = undefined
   }
+
+  $('#month').data('kendoDatePicker').enable(false);
+
+  $('#radioBtn a').on('click', function(){
+    var sel = $(this).data('title');
+    var tog = $(this).data('toggle');
+    $('#'+tog).prop('value', sel);
+    if (sel=="M"){
+         $('#year').data('kendoDatePicker').enable(false);
+         $('#month').data('kendoDatePicker').enable(true);
+      }
+    else if(sel== "Y")
+      {
+        $('#year').data('kendoDatePicker').enable(true);
+        $('#month').data('kendoDatePicker').enable(false);
+      }
+    
+    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
+    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
+})
+
 }
+
+
 
 $(window).load(function () {
   counterpary.generateGraph()
