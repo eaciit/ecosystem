@@ -12,10 +12,10 @@ counterpartymain.meglobal = [{
 }]
 counterpartymain.buyer = [{
   "value": 1,
-  "text": "Ibrahim Fibres"
+  "text": "Supplier"
 }, {
   "value": 2,
-  "text": "Reliance Ind"
+  "text": "Buyer"
 }]
 counterpartymain.group = [{
   "value": "ETB",
@@ -171,7 +171,7 @@ counterpartymain.generateGraph = function() {
         }
         return "linkdash"
       })
-      .attr('marker-end', 'url(#arrowhead)')
+    // .attr('marker-end', 'url(#arrowhead)')
 
     link.append("title")
       .text(function(d) {
@@ -257,6 +257,23 @@ counterpartymain.generateGraph = function() {
               .style("top", (d3.event.pageY) + "px")
               .style("padding-top", "30px")
               .style("padding-left", "30px")
+
+            d3.selectAll("circle").transition().duration(500)
+              .style("opacity", function(o) {
+                return o === d ? 1 : .1;
+              });
+
+            d3.selectAll("text").transition().duration(500)
+              .style("opacity", function(o) {
+                return o === d ? 1 : .1;
+              });
+
+            d3.selectAll(".link").transition().duration(500)
+              .style("opacity", .1);
+
+            d3.selectAll(".linkdash").transition().duration(500)
+              .style("opacity", .1);
+
             return
           }
           counterpartymain.dataDetailItemsETB(d.listdetail[0])
@@ -265,9 +282,24 @@ counterpartymain.generateGraph = function() {
             .style("top", (d3.event.pageY) + "px")
             .style("padding-top", "30px")
             .style("padding-left", "30px")
+
+          d3.selectAll("circle").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+
+          d3.selectAll("text").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+
+          d3.selectAll(".link").transition().duration(500)
+            .style("opacity", .1);
+
+          d3.selectAll(".linkdash").transition().duration(500)
+            .style("opacity", 1);
         }
       })
-
 
     node.append("title")
       .text(function(d) {
@@ -353,26 +385,25 @@ counterpartymain.generateGraph = function() {
     d.fx = undefined
     d.fy = undefined
   }
-
-  function close() {
-    console.log("CLOSE KIE")
-    div.transition()
-      .duration(500)
-      .style("opacity", 0);
-  }
 }
 
 counterpartymain.close = function() {
   div.transition()
     .duration(500)
     .style("opacity", 0);
-
+  d3.selectAll("circle").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll("text").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll(".link").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll(".linkdash").transition().duration(500)
+    .style("opacity", 1);
 }
 
 $(window).load(function() {
   counterpartymain.generateGraph()
   $('#month').data('kendoDatePicker').enable(false);
-
   $('#radioBtn a').on('click', function() {
     var sel = $(this).data('title');
     var tog = $(this).data('toggle');
