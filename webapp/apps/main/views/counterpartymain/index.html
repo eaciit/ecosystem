@@ -6,9 +6,19 @@
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v4.min.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-selection-multi.v1.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty-main.js" }}"></script>
-<!-- <script src="{{ NoCacheUrl "/main/static/3rdparty/tipsy/jquery.tipsy.js" }}"></script>
-<link rel="stylesheet" href="{{ NoCacheUrl "/main/static/3rdparty/tipsy/tipsy.css" }}" /> -->
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty-main.css" }}" />
+<script id="listdetailntb" type="text/html">
+  <li><span data-bind="text:accopening"></span></li>
+  <li><span data-bind="text:general"></span></li>
+  <li><span data-bind="text:fx"></span></li>
+  <li><span data-bind="text:s2b"></span></li>
+  <li><span data-bind="text:credit"></span></li>
+</script>
+<script id="listdetailetb" type="text/html">
+  <li><span data-bind="text: notrx"></span></li>
+  <li>Average Transaction Value :<br/> Monthly : $<span data-bind="text:monthly"></span>M<br/>Yearly : $<span data-bind="text:yearly"></span>M</li>
+  <li><span data-bind="text:recieved"></span></li>
+</script>
 <div class="row" id="filter">
    <div class="menu_counterpartymain">
       <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.meglobal, dataValueField: 'value', dataTextField: 'text',optionLabel:'Meglobal',filter: 'contains'}"></select>
@@ -60,18 +70,23 @@
       </div>
     </div>
 </div>
-<div id="counterpartyModal" data-toggle="tooltip" data-placement="left" style="opacity:0">
+<div id="counterpartyModalNTB" data-toggle="tooltip" data-placement="left" style="opacity:0">
     <div class="row header align-center">
     <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
        <h4 data-bind="text:counterpartymain.headtext"></h4>
     </div>
     <div class="row body">
-             <ul class="top-padding">
-          <li>Account Opening</li>
-          <li> General Banking</li>
-          <li>Fx</li>
-          <li>S2B</li>
-          <li>Credits</li>
+          <ul class="top-padding" data-bind="template:{name:'listdetailntb', foreach:counterpartymain.dataDetailItemsNTB}">
+        </ul>
+    </div>
+</div>
+<div id="counterpartyModalETB" data-toggle="tooltip" data-placement="left" style="opacity:0">
+    <div class="row header align-center">
+    <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
+       <h4 data-bind="text:counterpartymain.headtext"></h4>
+    </div>
+    <div class="row body">
+          <ul class="top-padding" data-bind="template:{name:'listdetailetb', foreach:counterpartymain.dataDetailItemsETB}">
         </ul>
     </div>
 </div>

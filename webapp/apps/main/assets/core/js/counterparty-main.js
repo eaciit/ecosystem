@@ -1,5 +1,7 @@
 var counterpartymain = {}
 counterpartymain.headtext = ko.observable()
+counterpartymain.dataDetailItemsNTB = ko.observableArray([])
+counterpartymain.dataDetailItemsETB = ko.observableArray([])
 
 counterpartymain.meglobal = [{
   "value": "ASA",
@@ -46,22 +48,48 @@ counterpartymain.generateGraph = function() {
     id: "Ibrahim Fibres",
     group: 2,
     type: "ETB",
-    limited: 40
+    limited: 40,
+    listdetail: [{
+      "notrx": "ETB/002/2017/0001",
+      "monthly": 50,
+      "yearly": 500,
+      "recieved": "Receivable Service (RS)"
+    }]
   }, {
     id: "Bhilosha Ind",
     group: 2,
     type: "ETB",
-    limited: 200
+    limited: 200,
+    listdetail: [{
+      "notrx": "ETB/002/2017/0002",
+      "monthly": 10,
+      "yearly": 230,
+      "recieved": "Receivable Service (RS)"
+    }]
   }, {
     id: "ICI Pakistan",
     group: 2,
     type: "NTB",
-    limited: 60
+    limited: 60,
+    listdetail: [{
+      "accopening": "Account Opening",
+      "general": "General Banking",
+      "fx": "FX",
+      "s2b": "S2B",
+      "credit": "Credits"
+    }]
   }, {
     id: "Reliance Ind",
     group: 2,
     type: "NTB",
-    limited: 135
+    limited: 135,
+    listdetail: [{
+      "accopening": "Account Opening",
+      "general": "General Banking",
+      "fx": "FX",
+      "s2b": "S2B",
+      "credit": "Credits"
+    }]
   }, {
     id: "MEGLOBAL",
     group: 1,
@@ -216,14 +244,23 @@ counterpartymain.generateGraph = function() {
         }
         return "#587b9e"
       })
-      .on("click", function(d){
+      .on("click", function(d) {
         if (d.type != "CENTER") {
           counterpartymain.headtext(d.type)
-
           div.transition()
             .duration(200)
             .style("opacity", 1);
-          div.html($("#counterpartyModal").html())
+          if (d.type == "NTB") {
+            counterpartymain.dataDetailItemsNTB(d.listdetail[0])
+            div.html($("#counterpartyModalNTB").html())
+              .style("left", (d3.event.pageX) + "px")
+              .style("top", (d3.event.pageY) + "px")
+              .style("padding-top", "30px")
+              .style("padding-left", "30px")
+            return
+          }
+          counterpartymain.dataDetailItemsETB(d.listdetail[0])
+          div.html($("#counterpartyModalETB").html())
             .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY) + "px")
             .style("padding-top", "30px")
@@ -250,10 +287,10 @@ counterpartymain.generateGraph = function() {
       .attr("dy", "1.35em")
       .attr("text-anchor", "middle")
       .text(function(d) {
-        if(d.type != "CENTER"){
-          return "$"+ d.limited + "M"
-        }  
-        return d.limited      
+        if (d.type != "CENTER") {
+          return "$" + d.limited + "M"
+        }
+        return d.limited
       })
 
     simulation
@@ -325,11 +362,11 @@ counterpartymain.generateGraph = function() {
   }
 }
 
-counterpartymain.close = function(){
-    console.log("CLOSE KIE")
-    div.transition()
-      .duration(500)
-      .style("opacity", 0);
+counterpartymain.close = function() {
+  div.transition()
+    .duration(500)
+    .style("opacity", 0);
+
 }
 
 $(window).load(function() {
