@@ -281,6 +281,36 @@ counterpary.generateGraph = function () {
     $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 })
 
+var s = 2
+var i = 0
+var mynode ='<div align="center" class="titletext">'+
+    '<div style="position: relative">UTI Bank $107M'+
+      '<div class="titletextafter"></div>'+
+      '<div class="linkdashed" style=""></div>'+
+    '</div>'+
+'</div>'+
+'<div class="newtitle" >'+
+   '<div class="afternewtitle">Reliance Ind<br>IN</div>'+
+'</div>'+
+'<div class="iconright">'+
+   '<i class="fa fa-caret-right" aria-hidden="true"></i>'+
+'</div>'
+
+for (i = 1; i < 2; i++) { 
+alert(9)
+  $("#showing").append(mynode);
+  // $("#jo"+s+"").css({
+  //   'color':'#fff',
+  //   'background-color': 'red',
+  //   'position':'absolute',
+  //   'transform':'rotate('+tf+'deg)',
+  //   'width': wd+'px',
+  //   'left': mg+'px',
+  //   'bottom': bt+'px'
+  //   });
+}
+
+
 }
 
 
