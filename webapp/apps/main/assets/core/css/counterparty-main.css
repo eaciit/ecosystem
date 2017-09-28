@@ -1,0 +1,100 @@
+.box {
+  width: 60px;
+  height: 40px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  border: 1px solid #FFFFFF;
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 15px;
+  margin-bottom: 5px;
+  position: initial;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+.box.lightblue {
+  background-color: #68c4fc;
+  float: left;
+}
+
+.box.darkblue {
+  background-color: #587b9e;
+  float: left;
+}
+
+.groupbox {
+  position: absolute;
+  bottom: 18px;
+  right: 23px;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.graph {
+  height: 600px;
+}
+
+.link {
+  stroke: #587b9e;
+  stroke-opacity: .6;
+  stroke-width: 1px;
+  stroke-dasharray: 2;
+}
+
+.linkdash {
+
+  stroke: #68c4fc;
+  stroke-opacity: .6;
+  stroke-width: 1px;
+  
+}
+
+.node circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.menu_counterpartymain{
+  display: inline-block;
+  font-size: 11px;
+  padding-right: 15px; 
+}
+
+#radioBtn .notActive{
+    color: #3276b1;
+    background-color: #fff;
+}
+
+#filter .k-dropdown .k-state-default {
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
+}
+
+#filter .k-input {
+  color: #ffffff;
+  background: #22313F;
+}
+
+#filter .k-picker-wrap {
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
+}
+
+#filter .k-picker-wrap.k-state-default>.k-select {
+  border-color: #22313F;
+}
+
+.active{
+  min-width: 50px;
+  min-height: 25px;
+}
+
+.notActive{
+  min-width: 50px;
+  min-height: 25px;
+}
