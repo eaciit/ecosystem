@@ -24,7 +24,7 @@
       <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.meglobal, dataValueField: 'value', dataTextField: 'text',optionLabel:'Meglobal',filter: 'contains'}"></select>
    </div>
    <div class="menu_counterpartymain">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.buyer, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains'}"></select> 
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.buyer, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}}"></select> 
    </div>
    <div class="menu_counterpartymain">
       <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains'}"></select>
@@ -43,10 +43,10 @@
       <input type="hidden" name="happy" id="happy">
    </div>
    <div class="menu_counterpartymain">
-      <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade'}" class="filter-space">
+      <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy',depth:'decade', start: 'decade'}" class="filter-space">
    </div>
    <div class="menu_counterpartymain">
-      <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM', start: 'year'}" class="filter-space">
+      <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM',depth:'year', start: 'year'}" class="filter-space">
    </div>
    <div class="menu_counterpartymain">
       <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
@@ -59,6 +59,7 @@
     <div class="panel ez no-padding hardcore">
       <div class="panel-body no-padding">        
         <div id="graph" class="graph"></div> 
+        <canvas id="bubble" class="graph" style="display:none" width="800px" height="600px"></canvas> 
         <div class="row groupbox">
           <div class="box lightblue">
 	            ETB

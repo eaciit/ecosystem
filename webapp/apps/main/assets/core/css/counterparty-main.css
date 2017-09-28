@@ -129,3 +129,7 @@ div.tooltip .body {
   border:1px solid #1e88e5;
 
 }
+
+#bubble circle {
+margin: 20px;
+}

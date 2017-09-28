@@ -11,10 +11,10 @@ counterpartymain.meglobal = [{
   "text": "AME"
 }]
 counterpartymain.buyer = [{
-  "value": 1,
+  "value": "Supplier",
   "text": "Supplier"
 }, {
-  "value": 2,
+  "value": "Buyer",
   "text": "Buyer"
 }]
 counterpartymain.group = [{
@@ -387,6 +387,125 @@ counterpartymain.generateGraph = function() {
   }
 }
 
+counterpartymain.generateGraphBubble = function() {
+   var nodes = [{
+    id: "Ibrahim Fibres",
+    group: 2,
+    type: "ETB",
+    limited: 40,
+    listdetail: [{
+      "notrx": "ETB/002/2017/0001",
+      "monthly": 50,
+      "yearly": 500,
+      "recieved": "Receivable Service (RS)"
+    }]
+  }, {
+    id: "Bhilosha Ind",
+    group: 2,
+    type: "ETB",
+    limited: 200,
+    listdetail: [{
+      "notrx": "ETB/002/2017/0002",
+      "monthly": 10,
+      "yearly": 230,
+      "recieved": "Receivable Service (RS)"
+    }]
+  }, {
+    id: "ICI Pakistan",
+    group: 2,
+    type: "NTB",
+    limited: 60,
+    listdetail: [{
+      "accopening": "Account Opening",
+      "general": "General Banking",
+      "fx": "FX",
+      "s2b": "S2B",
+      "credit": "Credits"
+    }]
+  }, {
+    id: "Reliance Ind",
+    group: 2,
+    type: "NTB",
+    limited: 135,
+    listdetail: [{
+      "accopening": "Account Opening",
+      "general": "General Banking",
+      "fx": "FX",
+      "s2b": "S2B",
+      "credit": "Credits"
+    }]
+  }]
+  var canvas = document.querySelector("#bubble"),
+      context = canvas.getContext("2d")
+      width = canvas.width,
+      height = canvas.height,
+      tau = 2 * Math.PI;
+
+  // var nodes = d3.range(1000).map(function(i) {
+  //   return {
+  //     r: Math.random() * 14 + 4
+  //   };
+  // });
+
+  var simulation = d3.forceSimulation(nodes)
+      .velocityDecay(0.2)
+      .force("x", d3.forceX().strength(0.002))
+      .force("y", d3.forceY().strength(0.002))
+      .force("collide", d3.forceCollide().radius(function(d) { return d.limited/4; }).iterations(2))
+      .on("tick", ticked);
+
+  function ticked() {
+    context.clearRect(0, 0, width, height);
+    context.save();
+    context.translate(width / 2, height / 2);
+    
+    nodes.forEach(function(d) {            
+      if (d.type == "ETB") {
+        context.beginPath();
+        context.moveTo(d.x + d.limited/2, d.y);      
+        context.fillStyle = "#68c4fc" 
+        context.arc(d.x, d.y, d.limited/2, 0, tau);
+        context.fill(); 
+        context.closePath();       
+
+      } else {
+        context.beginPath();
+        context.moveTo(d.x + d.limited/2, d.y);
+        context.fillStyle = "#587b9e"  
+        context.arc(d.x, d.y, d.limited/2, 0, tau);
+        context.fill();   
+        context.closePath();    
+      } 
+        context.beginPath();
+        context.fillStyle = 'white';
+        context.textAlign = 'center';
+        context.fillText(d.limited, d.x, d.y); 
+        context.closePath(); 
+
+    });
+    // context.fillStyle = "#ddd";
+    // context.fill();
+    // context.strokeStyle = "#333";
+    // context.stroke();
+
+    context.restore();
+  }
+
+  // $("#chart").kendoChart({
+  //     dataSource: {
+  //         data: salesData
+  //     },
+  //     series: [{
+  //         name: "Sales",
+  //         type: "bubble",
+  //         xField: "numberOfSales",
+  //         yField: "volume",
+  //         sizeField: "marketShare"
+  //     }]
+  // });
+
+}
+
 counterpartymain.close = function() {
   div.transition()
     .duration(500)
@@ -399,6 +518,19 @@ counterpartymain.close = function() {
     .style("opacity", 1);
   d3.selectAll(".linkdash").transition().duration(500)
     .style("opacity", 1);
+}
+
+counterpartymain.onChangeBuyerSupplier = function(e) {
+  if (e != "") {
+    // console.log(e)
+    $("#graph").hide()
+    $("#bubble").show()
+    counterpartymain.generateGraphBubble()
+    return
+  }
+  $("#graph").show()
+  $("#bubble").hide()
+  counterpartymain.generateGraph()
 }
 
 $(window).load(function() {
