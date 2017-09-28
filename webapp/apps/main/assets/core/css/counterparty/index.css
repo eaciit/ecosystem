@@ -196,6 +196,12 @@ text {
     color:red;/*#72eaf0*/
     z-index:2; 
     top:36px;
+    left:70px;
+  }
+  .arrowright{
+    position: absolute;
+    color:red;/*#72eaf0*/
+    z-index:2; 
+    top:36px;
     left:170px;
-
   }
