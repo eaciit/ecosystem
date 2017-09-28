@@ -297,7 +297,7 @@ counterpartymain.generateGraph = function() {
             .style("opacity", .1);
 
           d3.selectAll(".linkdash").transition().duration(500)
-            .style("opacity", 1);
+            .style("opacity", .1);
         }
       })
 
