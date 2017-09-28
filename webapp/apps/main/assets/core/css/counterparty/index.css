@@ -81,6 +81,9 @@ text {
 }
 
 /* append graph*/
+.main-node-two{
+    color:#fff;
+}
 .titletext{
     width: 250px;
     height: 50px;
@@ -138,4 +141,61 @@ text {
     transform: rotate(-40deg);
     z-index:1200; 
     position:absolute;
+  }
+
+  .titletext{
+    width: 250px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    border: 2px dashed #b5b0ac; 
+    border-radius: 50%;
+    height:  80px;
+    background-color: #f8f8f8;
+    position: absolute;
+    bottom: 170px;
+    left: 40px;
+    transform: rotate(-40deg);
+  }
+  .titletextafter{
+    width:190px;
+    border-bottom:3px solid #72eaf0; 
+    left:30px; 
+    position: absolute; 
+    height:   3px; 
+    bottom: 5px;
+  }
+  .linkdashed{
+    width:190px;
+    border-bottom:5px dashed #54787a; 
+    left:30px; 
+    position: absolute; 
+    height:  5px; 
+    bottom: -3px;
+  }
+  .newtitle{
+    height: 100px;
+    color:#fff;
+    bottom: 76px;
+    left:20px;
+    display: table;
+    text-align: center;
+    z-index:1; 
+    position:absolute;
+    border-radius: 50%;
+    background-color: #4b7082; 
+    width:100px; 
+  }
+  .afternewtitle{
+    padding: 12px 12px 3px 12px; 
+    display: table-cell; 
+    vertical-align: middle;
+  }
+  .arrowleft{
+    position: absolute;
+    color:red;/*#72eaf0*/
+    z-index:2; 
+    top:36px;
+    left:170px;
+
   }
