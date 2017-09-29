@@ -281,6 +281,126 @@ counterpary.generateGraph = function () {
     $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 })
 
+var dgraph = [
+  {
+    "bottom": 170,
+    "left": 40,
+    "transform":-40,
+    "bbottom":76 ,
+    "bleft":20,
+    "linklabel": "UTI Bank $107M",
+    "nodelabel": "Relliance Ind",
+    "nodelabel2": "IN"
+  },
+  {
+    "bottom": 300,
+    "left": 20,
+    "transform":21,
+    "bbottom": 331,
+    "bleft": 0,
+    "linklabel": "Various Banks $121M SCB",
+    "nodelabel": "Ibrahim Fibres",
+    "nodelabel2": "Pak"
+  },
+  {
+    "bottom": 380,
+    "left": 160,
+    "transform":-90,
+    "bbottom": 490,
+    "bleft": 240,
+    "linklabel": "$154M SBI",
+    "nodelabel": "Bhilosha Ind",
+    "nodelabel2": "Ind"
+  },
+  {
+    "bottom": 360,
+    "left": 290,
+    "transform":-50,
+    "bbottom": 450,
+    "bleft": 450,
+    "linklabel": "$94M UBL",
+    "nodelabel": "ICI Pakistan",
+    "nodelabel2": "Pak"
+  },
+  {
+    "bottom": 200,
+    "left": 310,
+    "transform":16,
+    "bbottom": 160,
+    "bleft": 510,
+    "linklabel": "$5M",
+    "nodelabel": "PWC",
+    "nodelabel2": "UK"
+  }
+]
+
+  for ( var key in dgraph ) { 
+    if(key > 1 && dgraph[key].nodelabel != "PWC"){
+      var aleft = '<i class="fa fa-caret-left arrowleft" aria-hidden="true"></i>'
+    }else{
+      var aleft = '<i class="fa fa-caret-right arrowright" aria-hidden="true"></i>'
+    }
+  var mynode ='<div align="center" id="jo'+key+'"class="titletext">'+
+                '<div style="position: relative" ><span id="linklabel'+key+'"></span>'+
+                  '<div class="titletextafter"></div>'+
+                  '<div class="linkdashed" style=""></div>'+
+                '</div>'+
+                ''+aleft+''+
+            '</div>'+
+            '<div class="newtitle" id="bubble'+key+'" >'+
+               '<div class="afternewtitle" ><span id="nodelabel'+key+'"></span></div>'+
+            '</div>'
+//alert(key)
+// var $new = $('#new_div');
+// $('#original_div').append($new);
+// $new.show('slow');
+  $("#showing").append(mynode);
+      $("#jo"+key+"").css({
+      //'color':'#fff',
+     // 'background-color': 'red',
+      'bottom':  dgraph[key].bottom+'px',
+      'left': dgraph[key].left+'px',
+      'transform':'rotate('+dgraph[key].transform+'deg)',
+  //   'position':'absolute',
+  //   'transform':'rotate('+tf+'deg)',
+  //   'width': wd+'px',
+  //   'left': mg+'px',
+  //   'bottom': bt+'px'
+    });
+       $("#bubble"+key+"").css({
+            'bottom':  dgraph[key].bbottom+'px',
+            'left': dgraph[key].bleft+'px',
+         });
+       if(dgraph[key].nodelabel == "PWC"){
+            // $( "ul.level-2" ).children().css( "background-color", "red" );
+            $("#bubble"+key+"").css({"background-color":"#00bcd4"});
+            $("#jo"+key+"").find(".linkdashed").css({"border":"0px"});
+           // $("#jo"+key+"").find(".titletext").css({"background-color":"none"});
+            $("#jo"+key+"").css({"border":"0px", "background-color":"#fff"})
+       }
+       $("#linklabel"+key+"").text(dgraph[key].linklabel);
+       $("#nodelabel"+key+"").html(dgraph[key].nodelabel+"<br>"+dgraph[key].nodelabel2);
+}
+
+ 
+$(".afternewtitle").click(function(){
+ // $("#popover-content").text("okelah");
+//$(this).popover('toggle');
+  
+  var bubbletitle = $(this).find("span").html()
+ //alert(bubbletitle)
+  var arr = bubbletitle.split('<br>')
+  var arr1 = arr[0]
+  var arr2 = arr[1]
+  $(".modal-title").html(arr1 +" - "+ arr2)
+  $('#Modal').modal('show')
+   //$('#popover').popover();   
+  
+          
+});
+
+  
+
 }
 
 
