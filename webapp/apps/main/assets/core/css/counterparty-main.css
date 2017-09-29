@@ -26,9 +26,9 @@
 }
 
 .groupbox {
-  position: absolute;
+  position: relative;
   bottom: 18px;
-  right: 23px;
+  left: 23px;
   margin-right: 0px;
   margin-left: 0px;
 }
@@ -97,4 +97,35 @@
 .notActive{
   min-width: 50px;
   min-height: 25px;
+}
+
+.top-padding {
+  padding-top: 20px; 
+}
+
+div.tooltip {   
+  position: absolute;           
+  width: 230px;
+  height: 200px;          
+  margin-top: 2px; 
+  font: 12px sans-serif;        
+  border: 0px;      
+  pointer-events: auto;         
+}
+
+div.tooltip .header {
+  background: #1e88e5;
+  color: #ffffff;
+  border-bottom: #1e88e5;
+  text-align: center;
+  padding-right: 5px;
+}
+
+div.tooltip .body {
+  background: #fff;
+  color: #000;
+  position: relative;
+  padding: 0px 5px 15px 5px;
+  border:1px solid #1e88e5;
+
 }
