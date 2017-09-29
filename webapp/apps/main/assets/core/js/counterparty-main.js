@@ -1,4 +1,7 @@
 var counterpartymain = {}
+counterpartymain.headtext = ko.observable()
+counterpartymain.dataDetailItemsNTB = ko.observableArray([])
+counterpartymain.dataDetailItemsETB = ko.observableArray([])
 
 counterpartymain.meglobal = [{
   "value": "ASA",
@@ -9,10 +12,10 @@ counterpartymain.meglobal = [{
 }]
 counterpartymain.buyer = [{
   "value": 1,
-  "text": "Ibrahim Fibres"
+  "text": "Supplier"
 }, {
   "value": 2,
-  "text": "Reliance Ind"
+  "text": "Buyer"
 }]
 counterpartymain.group = [{
   "value": "ETB",
@@ -36,70 +39,101 @@ counterpartymain.flows = [{
   "text": "Flows>$100M"
 }]
 
+var div = d3.select("body").append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+
 counterpartymain.generateGraph = function() {
   var nodes = [{
     id: "Ibrahim Fibres",
     group: 2,
     type: "ETB",
-    limited: 40
+    limited: 40,
+    listdetail: [{
+      "notrx": "ETB/002/2017/0001",
+      "monthly": 50,
+      "yearly": 500,
+      "recieved": "Receivable Service (RS)"
+    }]
   }, {
     id: "Bhilosha Ind",
     group: 2,
     type: "ETB",
-    limited: 200
+    limited: 200,
+    listdetail: [{
+      "notrx": "ETB/002/2017/0002",
+      "monthly": 10,
+      "yearly": 230,
+      "recieved": "Receivable Service (RS)"
+    }]
   }, {
     id: "ICI Pakistan",
     group: 2,
     type: "NTB",
-    limited: 60
+    limited: 60,
+    listdetail: [{
+      "accopening": "Account Opening",
+      "general": "General Banking",
+      "fx": "FX",
+      "s2b": "S2B",
+      "credit": "Credits"
+    }]
   }, {
     id: "Reliance Ind",
     group: 2,
     type: "NTB",
-    limited: 135
+    limited: 135,
+    listdetail: [{
+      "accopening": "Account Opening",
+      "general": "General Banking",
+      "fx": "FX",
+      "s2b": "S2B",
+      "credit": "Credits"
+    }]
   }, {
-    id: "MEGLOBAL INTERNATIONAL FZE",
+    id: "MEGLOBAL",
     group: 1,
-    type: "CENTER"
+    type: "CENTER",
+    limited: "INTERNATIONAL FZE"
   }]
 
   var links = [{
       source: "Ibrahim Fibres",
-      target: "MEGLOBAL INTERNATIONAL FZE",
+      target: "MEGLOBAL",
       type: "ETB",
 
     },
     {
       source: "Bhilosha Ind",
-      target: "MEGLOBAL INTERNATIONAL FZE",
+      target: "MEGLOBAL",
       type: "ETB"
     },
     {
       source: "ICI Pakistan",
-      target: "MEGLOBAL INTERNATIONAL FZE",
+      target: "MEGLOBAL",
       type: "NTB"
     },
     {
       source: "Reliance Ind",
-      target: "MEGLOBAL INTERNATIONAL FZE",
+      target: "MEGLOBAL",
       type: "NTB"
     }
   ]
+
+  function createSvgEl(name) {
+    return document.createElementNS('http://www.w3.org/2000/svg', name);
+  }
 
   var width = $("#graph").width(),
     height = $("#graph").height()
 
   var colors = d3.scaleOrdinal(d3.schemeCategory20c)
-  // var colors = d3.rgb("#68c4fc","#587b9e")
-  // colors.toString();
 
   var svg = d3.select("#graph")
     .append("svg")
     .attr("width", width)
     .attr("height", height),
     node, link
-
-  console.log(svg)
 
   svg.append('defs').append('marker')
     .attrs({
@@ -137,7 +171,7 @@ counterpartymain.generateGraph = function() {
         }
         return "linkdash"
       })
-      .attr('marker-end', 'url(#arrowhead)')
+    // .attr('marker-end', 'url(#arrowhead)')
 
     link.append("title")
       .text(function(d) {
@@ -195,7 +229,12 @@ counterpartymain.generateGraph = function() {
       )
 
     node.append("circle")
-      .attr("r", 50)
+      .attr("r", function(d) {
+        if (d.type == "CENTER") {
+          return 70
+        }
+        return 50
+      })
       .attr("id", function(d) {
         return d.id
       })
@@ -206,7 +245,60 @@ counterpartymain.generateGraph = function() {
         return "#587b9e"
       })
       .on("click", function(d) {
-        console.log(d.id)
+        if (d.type != "CENTER") {
+          counterpartymain.headtext(d.type)
+          div.transition()
+            .duration(200)
+            .style("opacity", 1);
+          if (d.type == "NTB") {
+            counterpartymain.dataDetailItemsNTB(d.listdetail[0])
+            div.html($("#counterpartyModalNTB").html())
+              .style("left", (d3.event.pageX) + "px")
+              .style("top", (d3.event.pageY) + "px")
+              .style("padding-top", "30px")
+              .style("padding-left", "30px")
+
+            d3.selectAll("circle").transition().duration(500)
+              .style("opacity", function(o) {
+                return o === d ? 1 : .1;
+              });
+
+            d3.selectAll("text").transition().duration(500)
+              .style("opacity", function(o) {
+                return o === d ? 1 : .1;
+              });
+
+            d3.selectAll(".link").transition().duration(500)
+              .style("opacity", .1);
+
+            d3.selectAll(".linkdash").transition().duration(500)
+              .style("opacity", .1);
+
+            return
+          }
+          counterpartymain.dataDetailItemsETB(d.listdetail[0])
+          div.html($("#counterpartyModalETB").html())
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY) + "px")
+            .style("padding-top", "30px")
+            .style("padding-left", "30px")
+
+          d3.selectAll("circle").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+
+          d3.selectAll("text").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+
+          d3.selectAll(".link").transition().duration(500)
+            .style("opacity", .1);
+
+          d3.selectAll(".linkdash").transition().duration(500)
+            .style("opacity", .1);
+        }
       })
 
     node.append("title")
@@ -216,7 +308,7 @@ counterpartymain.generateGraph = function() {
 
     node.append("text")
       .attr("x", 0)
-      .attr("dy", ".35em")
+      .attr("dy", ".25em")
       .attr("text-anchor", "middle")
       .text(function(d) {
         return d.id
@@ -227,6 +319,9 @@ counterpartymain.generateGraph = function() {
       .attr("dy", "1.35em")
       .attr("text-anchor", "middle")
       .text(function(d) {
+        if (d.type != "CENTER") {
+          return "$" + d.limited + "M"
+        }
         return d.limited
       })
 
@@ -292,23 +387,37 @@ counterpartymain.generateGraph = function() {
   }
 }
 
+counterpartymain.close = function() {
+  div.transition()
+    .duration(500)
+    .style("opacity", 0);
+  d3.selectAll("circle").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll("text").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll(".link").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll(".linkdash").transition().duration(500)
+    .style("opacity", 1);
+}
+
 $(window).load(function() {
   counterpartymain.generateGraph()
   $('#month').data('kendoDatePicker').enable(false);
-
   $('#radioBtn a').on('click', function() {
-  var sel = $(this).data('title');
-  var tog = $(this).data('toggle');
-  $('#' + tog).prop('value', sel);
-  if (sel == "M") {
-    $('#year').data('kendoDatePicker').enable(false);
-    $('#month').data('kendoDatePicker').enable(true);
-  } else if (sel == "Y") {
-    $('#year').data('kendoDatePicker').enable(true);
-    $('#month').data('kendoDatePicker').enable(false);
-  }
+    var sel = $(this).data('title');
+    var tog = $(this).data('toggle');
+    $('#' + tog).prop('value', sel);
+    if (sel == "M") {
+      $('#year').data('kendoDatePicker').enable(false);
+      $('#month').data('kendoDatePicker').enable(true);
+    } else if (sel == "Y") {
+      $('#year').data('kendoDatePicker').enable(true);
+      $('#month').data('kendoDatePicker').enable(false);
+    }
 
-  $('a[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
-  $('a[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
+    $('a[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
+    $('a[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
   })
+
 })
