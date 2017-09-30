@@ -157,6 +157,9 @@ counterpartymain.generateGraph = function() {
     }).distance(300).strength(1))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("collision", d3.forceCollide().radius(function(d) {
+      return 50 + 10;
+    }))
 
   update(links, nodes)
 
@@ -222,11 +225,11 @@ counterpartymain.generateGraph = function() {
       .enter()
       .append("g")
       .attr("class", "node")
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended)
-      )
+      // .call(d3.drag()
+      //   .on("start", dragstarted)
+      //   .on("drag", dragged)
+      //   .on("end", dragended)
+      // )
 
     node.append("circle")
       .attr("r", function(d) {
@@ -244,6 +247,7 @@ counterpartymain.generateGraph = function() {
         }
         return "#587b9e"
       })
+
       .on("click", function(d) {
         if (d.type != "CENTER") {
           counterpartymain.headtext(d.type)
@@ -324,13 +328,6 @@ counterpartymain.generateGraph = function() {
         }
         return d.limited
       })
-
-    simulation
-      .nodes(nodes)
-      .on("tick", ticked)
-
-    simulation.force("link")
-      .links(links)
   }
 
   function ticked() {
@@ -349,6 +346,12 @@ counterpartymain.generateGraph = function() {
       })
 
     node
+      .attr("cx", function(d) {
+        return d.x;
+      })
+      .attr("cy", function(d) {
+        return d.y;
+      })
       .attr("transform", function(d) {
         return "translate(" + d.x + ", " + d.y + ")"
       })
@@ -369,6 +372,13 @@ counterpartymain.generateGraph = function() {
     })
   }
 
+  simulation
+    .nodes(nodes)
+    .on("tick", ticked)
+
+  simulation.force("link")
+    .links(links)
+
   function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart()
     d.fx = d.x
@@ -388,7 +398,7 @@ counterpartymain.generateGraph = function() {
 }
 
 counterpartymain.generateGraphBubble = function() {
-   var nodes = [{
+  var nodes = [{
     id: "Ibrahim Fibres",
     group: 2,
     type: "ETB",
@@ -435,74 +445,236 @@ counterpartymain.generateGraphBubble = function() {
       "credit": "Credits"
     }]
   }]
-  var canvas = document.querySelector("#bubble"),
-      context = canvas.getContext("2d")
-      width = canvas.width,
-      height = canvas.height,
-      tau = 2 * Math.PI;
 
-  // var nodes = d3.range(1000).map(function(i) {
-  //   return {
-  //     r: Math.random() * 14 + 4
-  //   };
-  // });
+  // normalize circle
+  function preprocess(nod) {
+    var max = _.maxBy(nod, "limited").limited;
+    var min = _.minBy(nod, "limited").limited;
 
-  var simulation = d3.forceSimulation(nodes)
-      .velocityDecay(0.2)
-      .force("x", d3.forceX().strength(0.002))
-      .force("y", d3.forceY().strength(0.002))
-      .force("collide", d3.forceCollide().radius(function(d) { return d.limited/4; }).iterations(2))
-      .on("tick", ticked);
-
-  function ticked() {
-    context.clearRect(0, 0, width, height);
-    context.save();
-    context.translate(width / 2, height / 2);
-    
-    nodes.forEach(function(d) {            
-      if (d.type == "ETB") {
-        context.beginPath();
-        context.moveTo(d.x + d.limited/2, d.y);      
-        context.fillStyle = "#68c4fc" 
-        context.arc(d.x, d.y, d.limited/2, 0, tau);
-        context.fill(); 
-        context.closePath();       
-
+    m = _.map(nod, function (it) {
+      it.r = (it.limited - min) / (max-min) + 0.50;
+      it.r = it.r * 70;
+      if (it.type == "ETB") {
+        it.fill = "#68c4fc";
       } else {
-        context.beginPath();
-        context.moveTo(d.x + d.limited/2, d.y);
-        context.fillStyle = "#587b9e"  
-        context.arc(d.x, d.y, d.limited/2, 0, tau);
-        context.fill();   
-        context.closePath();    
-      } 
-        context.beginPath();
-        context.fillStyle = 'white';
-        context.textAlign = 'center';
-        context.fillText(d.limited, d.x, d.y); 
-        context.closePath(); 
+        it.fill = "#587b9e";
+      }
+      return it;
+    })
 
-    });
-    // context.fillStyle = "#ddd";
-    // context.fill();
-    // context.strokeStyle = "#333";
-    // context.stroke();
+    m.unshift({});
 
-    context.restore();
+    return m;
   }
 
-  // $("#chart").kendoChart({
-  //     dataSource: {
-  //         data: salesData
-  //     },
-  //     series: [{
-  //         name: "Sales",
-  //         type: "bubble",
-  //         xField: "numberOfSales",
-  //         yField: "volume",
-  //         sizeField: "marketShare"
-  //     }]
-  // });
+  nodes = preprocess(nodes);
+  var chart = bubbleChart().width(600).height(400);
+  d3.selectAll('#bubble').data(nodes).call(chart);
+
+  function bubbleChart() {
+    var width = 960,
+      height = 960,
+      maxRadius = 6,
+      columnForColors = "category",
+      columnForRadius = "views";
+
+  function chart(selection) {
+        var data = selection.enter().data();
+        var div = selection,
+            svg = div.selectAll('svg');
+        svg.attr('width', width).attr('height', height);
+
+        var tooltip = selection
+            .append("div")
+            .style("position", "absolute")
+            .style("visibility", "hidden")
+            // .style("color", "white")
+            // .style("padding", "8px")
+            // .style("background-color", "#626D71")
+            // .style("border-radius", "6px")
+            // .style("text-align", "center")
+            // .style("font-family", "monospace")
+            // .style("width", "400px")
+            .text("");
+
+
+        var simulation = d3.forceSimulation(data)
+            .force("charge", d3.forceManyBody().strength([-50]))
+            .force("x", d3.forceX())
+            .force("y", d3.forceY())
+            .force("collision", d3.forceCollide().radius(function(d) {
+              return d.r + 10;
+            }))
+            .on("tick", ticked);
+
+        function ticked(e) {
+            node.attr("cx", function(d) {
+                    return d.x;
+                })
+                .attr("cy", function(d) {
+                    return d.y;
+                })
+                .attr('transform', function (d) {
+                  return 'translate(' + [width / 2 + d.x, height / 2 + d.y] + ')';
+                })
+        }
+
+        var node = svg.selectAll("g")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr('r', function(d) {
+                //return scaleRadius(d[columnForRadius])
+                return d.r;
+            })
+            .on("mouseover", function(d) {
+                tooltip.html($("#datadetailgraph").html());
+                return tooltip.style("visibility", "visible");
+            })
+            .on("mousemove", function() {
+                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", function() {
+                return tooltip.style("visibility", "hidden");
+            });
+
+        node.append("circle")
+            .attr('r', function(d) {
+                //return scaleRadius(d[columnForRadius])
+                return d.r;
+            })
+            .style("fill", function(d) {
+                //return colorCircles(d[columnForColors])
+                return d.fill;
+            })
+            // .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
+
+
+          node.append("text")
+          .attr("x", 0)
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          .text(function(d) {
+            if (d.type != "CENTER") {
+              return "$" + d.limited + "M"
+            }
+            return d.limited
+          })
+    }
+
+    function _old_chart(selection) {
+      var data = selection.enter().data();
+      var div = selection,
+        svg = div.selectAll('svg');
+      svg.attr('width', width).attr('height', height);
+
+      var tooltip = selection
+        .append("div")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("color", "white")
+        .style("padding", "8px")
+        .style("background-color", "#626D71")
+        .style("border-radius", "6px")
+        .style("text-align", "center")
+        .style("font-family", "monospace")
+        .style("width", "400px")
+        .text("");
+
+
+      var simulation = d3.forceSimulation(data)
+        .force("charge", d3.forceManyBody().strength([-50]))
+        .force("x", d3.forceX())
+        .force("y", d3.forceY())
+        .on("tick", ticked);
+
+      function ticked(e) {
+        node.attr("cx", function(d) {
+            return d.x;
+          })
+          .attr("cy", function(d) {
+            return d.y;
+          });
+      }
+
+      // var colorCircles = d3.scaleOrdinal(d3.schemeCategory10);
+      // var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
+      //     return +d[columnForRadius];
+      // }), d3.max(data, function(d) {
+      //     return +d[columnForRadius];
+      // })]).range([5, 18])
+
+      var node = svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr('r', function(d) {
+          return d.limited / 2
+        })
+        .style("fill", function(d) {
+          if (d.type == "ETB") {
+            return "#68c4fc"
+          }
+          return "#587b9e"
+        })
+        .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
+        .on("mouseover", function(d) {
+          tooltip.html("HALLO");
+          return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", function() {
+          return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", function() {
+          return tooltip.style("visibility", "hidden");
+        });
+
+      node.append("text")
+        .attr("x", 0)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .text(function(d) {
+          if (d.type != "CENTER") {
+            return "$" + d.limited + "M"
+          }
+          return d.limited
+        })
+    }
+
+    chart.width = function(value) {
+      if (!arguments.length) {
+        return width;
+      }
+      width = value;
+      return chart;
+    };
+
+    chart.height = function(value) {
+      if (!arguments.length) {
+        return height;
+      }
+      height = value;
+      return chart;
+    };
+
+    chart.columnForColors = function(value) {
+      if (!arguments.columnForColors) {
+        return columnForColors;
+      }
+      columnForColors = value;
+      return chart;
+    };
+
+    chart.columnForRadius = function(value) {
+      if (!arguments.columnForRadius) {
+        return columnForRadius;
+      }
+      columnForRadius = value;
+      return chart;
+    };
+
+    return chart;
+  }
 
 }
 
@@ -522,7 +694,6 @@ counterpartymain.close = function() {
 
 counterpartymain.onChangeBuyerSupplier = function(e) {
   if (e != "") {
-    // console.log(e)
     $("#graph").hide()
     $("#bubble").show()
     counterpartymain.generateGraphBubble()
@@ -547,7 +718,6 @@ $(window).load(function() {
       $('#year').data('kendoDatePicker').enable(true);
       $('#month').data('kendoDatePicker').enable(false);
     }
-
     $('a[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
     $('a[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
   })

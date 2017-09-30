@@ -59,7 +59,7 @@
     <div class="panel ez no-padding hardcore">
       <div class="panel-body no-padding">        
         <div id="graph" class="graph"></div> 
-        <canvas id="bubble" class="graph" style="display:none" width="800px" height="600px"></canvas> 
+        <div id="bubble" class="graph" style="display:none"><svg></svg></div> 
         <div class="row groupbox">
           <div class="box lightblue">
 	            ETB
@@ -87,7 +87,78 @@
        <h4 data-bind="text:counterpartymain.headtext"></h4>
     </div>
     <div class="row body">
-          <ul class="top-padding" data-bind="template:{name:'listdetailetb', foreach:counterpartymain.dataDetailItemsETB}">
+          <ul class="top-padding" data-bind="template:{name:'listdetailetb', foreach:counterpartymain.dataDetailItemsETB}" >
         </ul>
     </div>
+</div>
+<div id="datadetailgraph" class="modal fade" role="dialog" style="opacity:0">
+   <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content" style="border-radius: 0px; border:0px">
+         <div class="modal-header" style="background-color:  #373949; color: #fff; border-radius: 0px; border: 0px">
+            <button type="button" style="color: #fff" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Form</h4>
+         </div>
+         <div class="modal-body" style="background-color: #373949; ">
+            <form class="form-horizontal"   style="">
+               <div style="font-weight:   bold; font-size:  15px">
+                  <table class="table" style="color:  #fff; background-color:  #828282">
+                     <thead>
+                        <tr>
+                           <th>Bank</th>
+                           <th>Product</th>
+                           <th>Flow</th>
+                           <th>No. of Transactions</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td>FIBB</td>
+                           <td>TRADE</td>
+                           <td>$8.44m</td>
+                           <td align="center">2</td>
+                        </tr>
+                        <tr>
+                           <td>FIBB</td>
+                           <td>TRADE</td>
+                           <td>$8.44m</td>
+                           <td align="center">2</td>
+                        </tr>
+                        <tr>
+                           <td>FIBB</td>
+                           <td>TRADE</td>
+                           <td>$8.44m</td>
+                           <td align="center">2</td>
+                        </tr>
+                        <tr>
+                           <td>FIBB</td>
+                           <td>TRADE</td>
+                           <td>$8.44m</td>
+                           <td align="center">2</td>
+                        </tr>
+                        <tr>
+                           <td>FIBB</td>
+                           <td>TRADE</td>
+                           <td>$8.44m</td>
+                           <td align="center">2</td>
+                        </tr>
+                        <tr>
+                           <td>FIBB</td>
+                           <td>TRADE</td>
+                           <td>$8.44m</td>
+                           <td align="center">2</td>
+                        </tr>
+                        <tr>
+                           <td>FIBB</td>
+                           <td>TRADE</td>
+                           <td>$8.44m</td>
+                           <td align="center">2</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
 </div>
