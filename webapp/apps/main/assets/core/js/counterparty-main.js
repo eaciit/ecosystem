@@ -2,7 +2,8 @@ var counterpartymain = {}
 counterpartymain.headtext = ko.observable()
 counterpartymain.dataDetailItemsNTB = ko.observableArray([])
 counterpartymain.dataDetailItemsETB = ko.observableArray([])
-
+counterpartymain.dataMasterBubble = ko.observableArray([])
+counterpartymain.dataDetailItemsGraphBubble = ko.observableArray([])
 counterpartymain.meglobal = [{
   "value": "ASA",
   "text": "ASA"
@@ -174,7 +175,6 @@ counterpartymain.generateGraph = function() {
         }
         return "linkdash"
       })
-    // .attr('marker-end', 'url(#arrowhead)')
 
     link.append("title")
       .text(function(d) {
@@ -225,11 +225,6 @@ counterpartymain.generateGraph = function() {
       .enter()
       .append("g")
       .attr("class", "node")
-      // .call(d3.drag()
-      //   .on("start", dragstarted)
-      //   .on("drag", dragged)
-      //   .on("end", dragended)
-      // )
 
     node.append("circle")
       .attr("r", function(d) {
@@ -404,10 +399,20 @@ counterpartymain.generateGraphBubble = function() {
     type: "ETB",
     limited: 40,
     listdetail: [{
-      "notrx": "ETB/002/2017/0001",
-      "monthly": 50,
-      "yearly": 500,
-      "recieved": "Receivable Service (RS)"
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
     }]
   }, {
     id: "Bhilosha Ind",
@@ -415,10 +420,20 @@ counterpartymain.generateGraphBubble = function() {
     type: "ETB",
     limited: 200,
     listdetail: [{
-      "notrx": "ETB/002/2017/0002",
-      "monthly": 10,
-      "yearly": 230,
-      "recieved": "Receivable Service (RS)"
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
     }]
   }, {
     id: "ICI Pakistan",
@@ -426,11 +441,20 @@ counterpartymain.generateGraphBubble = function() {
     type: "NTB",
     limited: 60,
     listdetail: [{
-      "accopening": "Account Opening",
-      "general": "General Banking",
-      "fx": "FX",
-      "s2b": "S2B",
-      "credit": "Credits"
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
     }]
   }, {
     id: "Reliance Ind",
@@ -438,21 +462,32 @@ counterpartymain.generateGraphBubble = function() {
     type: "NTB",
     limited: 135,
     listdetail: [{
-      "accopening": "Account Opening",
-      "general": "General Banking",
-      "fx": "FX",
-      "s2b": "S2B",
-      "credit": "Credits"
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
     }]
   }]
+
+  counterpartymain.dataMasterBubble(nodes)
 
   // normalize circle
   function preprocess(nod) {
     var max = _.maxBy(nod, "limited").limited;
     var min = _.minBy(nod, "limited").limited;
 
-    m = _.map(nod, function (it) {
-      it.r = (it.limited - min) / (max-min) + 0.50;
+    m = _.map(nod, function(it) {
+      it.r = (it.limited - min) / (max - min) + 0.50;
       it.r = it.r * 70;
       if (it.type == "ETB") {
         it.fill = "#68c4fc";
@@ -478,91 +513,7 @@ counterpartymain.generateGraphBubble = function() {
       columnForColors = "category",
       columnForRadius = "views";
 
-  function chart(selection) {
-        var data = selection.enter().data();
-        var div = selection,
-            svg = div.selectAll('svg');
-        svg.attr('width', width).attr('height', height);
-
-        var tooltip = selection
-            .append("div")
-            .style("position", "absolute")
-            .style("visibility", "hidden")
-            // .style("color", "white")
-            // .style("padding", "8px")
-            // .style("background-color", "#626D71")
-            // .style("border-radius", "6px")
-            // .style("text-align", "center")
-            // .style("font-family", "monospace")
-            // .style("width", "400px")
-            .text("");
-
-
-        var simulation = d3.forceSimulation(data)
-            .force("charge", d3.forceManyBody().strength([-50]))
-            .force("x", d3.forceX())
-            .force("y", d3.forceY())
-            .force("collision", d3.forceCollide().radius(function(d) {
-              return d.r + 10;
-            }))
-            .on("tick", ticked);
-
-        function ticked(e) {
-            node.attr("cx", function(d) {
-                    return d.x;
-                })
-                .attr("cy", function(d) {
-                    return d.y;
-                })
-                .attr('transform', function (d) {
-                  return 'translate(' + [width / 2 + d.x, height / 2 + d.y] + ')';
-                })
-        }
-
-        var node = svg.selectAll("g")
-            .data(data)
-            .enter()
-            .append("g")
-            .attr('r', function(d) {
-                //return scaleRadius(d[columnForRadius])
-                return d.r;
-            })
-            .on("mouseover", function(d) {
-                tooltip.html($("#datadetailgraph").html());
-                return tooltip.style("visibility", "visible");
-            })
-            .on("mousemove", function() {
-                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
-            })
-            .on("mouseout", function() {
-                return tooltip.style("visibility", "hidden");
-            });
-
-        node.append("circle")
-            .attr('r', function(d) {
-                //return scaleRadius(d[columnForRadius])
-                return d.r;
-            })
-            .style("fill", function(d) {
-                //return colorCircles(d[columnForColors])
-                return d.fill;
-            })
-            // .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
-
-
-          node.append("text")
-          .attr("x", 0)
-          .attr("dy", ".35em")
-          .attr("text-anchor", "middle")
-          .text(function(d) {
-            if (d.type != "CENTER") {
-              return "$" + d.limited + "M"
-            }
-            return d.limited
-          })
-    }
-
-    function _old_chart(selection) {
+    function chart(selection) {
       var data = selection.enter().data();
       var div = selection,
         svg = div.selectAll('svg');
@@ -572,20 +523,16 @@ counterpartymain.generateGraphBubble = function() {
         .append("div")
         .style("position", "absolute")
         .style("visibility", "hidden")
-        .style("color", "white")
-        .style("padding", "8px")
-        .style("background-color", "#626D71")
-        .style("border-radius", "6px")
-        .style("text-align", "center")
-        .style("font-family", "monospace")
-        .style("width", "400px")
+        .attr("class", "tooltipbubble")
         .text("");
-
 
       var simulation = d3.forceSimulation(data)
         .force("charge", d3.forceManyBody().strength([-50]))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
+        .force("collision", d3.forceCollide().radius(function(d) {
+          return d.r + 10;
+        }))
         .on("tick", ticked);
 
       function ticked(e) {
@@ -594,40 +541,48 @@ counterpartymain.generateGraphBubble = function() {
           })
           .attr("cy", function(d) {
             return d.y;
-          });
+          })
+          .attr('transform', function(d) {
+            return 'translate(' + [width / 2 + d.x, height / 2 + d.y] + ')';
+          })
       }
 
-      // var colorCircles = d3.scaleOrdinal(d3.schemeCategory10);
-      // var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
-      //     return +d[columnForRadius];
-      // }), d3.max(data, function(d) {
-      //     return +d[columnForRadius];
-      // })]).range([5, 18])
-
-      var node = svg.selectAll("circle")
+      var node = svg.selectAll("g")
         .data(data)
         .enter()
-        .append("circle")
+        .append("g")
         .attr('r', function(d) {
-          return d.limited / 2
+          return d.r;
+        })
+        .on("click", function(d) {
+          counterpartymain.dataDetailItemsGraphBubble([])
+          var masterdata = counterpartymain.dataMasterBubble()
+          var data = _.find(masterdata, function(d) {
+            return d.id == d.id
+          })
+          counterpartymain.dataDetailItemsGraphBubble(data.listdetail)
+          tooltip.html($("#datadetailgraph").html());
+          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+          tooltip.style("visibility", "visible");
+
+          d3.selectAll("circle").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+          d3.selectAll("text").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+          return
+        })
+
+      node.append("circle")
+        .attr('r', function(d) {
+          return d.r;
         })
         .style("fill", function(d) {
-          if (d.type == "ETB") {
-            return "#68c4fc"
-          }
-          return "#587b9e"
+          return d.fill;
         })
-        .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
-        .on("mouseover", function(d) {
-          tooltip.html("HALLO");
-          return tooltip.style("visibility", "visible");
-        })
-        .on("mousemove", function() {
-          return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
-        })
-        .on("mouseout", function() {
-          return tooltip.style("visibility", "hidden");
-        });
 
       node.append("text")
         .attr("x", 0)
@@ -672,10 +627,8 @@ counterpartymain.generateGraphBubble = function() {
       columnForRadius = value;
       return chart;
     };
-
     return chart;
   }
-
 }
 
 counterpartymain.close = function() {
@@ -689,6 +642,14 @@ counterpartymain.close = function() {
   d3.selectAll(".link").transition().duration(500)
     .style("opacity", 1);
   d3.selectAll(".linkdash").transition().duration(500)
+    .style("opacity", 1);
+}
+
+counterpartymain.closeBubbleChart = function() {
+  $(".tooltipbubble").attr("style", "visibility:hidden;top:-10px;left:10px;position: absolute;");
+  d3.selectAll("circle").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll("text").transition().duration(500)
     .style("opacity", 1);
 }
 
