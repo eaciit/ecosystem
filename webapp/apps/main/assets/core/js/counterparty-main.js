@@ -2,7 +2,8 @@ var counterpartymain = {}
 counterpartymain.headtext = ko.observable()
 counterpartymain.dataDetailItemsNTB = ko.observableArray([])
 counterpartymain.dataDetailItemsETB = ko.observableArray([])
-
+counterpartymain.dataMasterBubble = ko.observableArray([])
+counterpartymain.dataDetailItemsGraphBubble = ko.observableArray([])
 counterpartymain.meglobal = [{
   "value": "ASA",
   "text": "ASA"
@@ -11,10 +12,10 @@ counterpartymain.meglobal = [{
   "text": "AME"
 }]
 counterpartymain.buyer = [{
-  "value": 1,
+  "value": "Supplier",
   "text": "Supplier"
 }, {
-  "value": 2,
+  "value": "Buyer",
   "text": "Buyer"
 }]
 counterpartymain.group = [{
@@ -157,6 +158,9 @@ counterpartymain.generateGraph = function() {
     }).distance(300).strength(1))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("collision", d3.forceCollide().radius(function(d) {
+      return 50 + 10;
+    }))
 
   update(links, nodes)
 
@@ -171,7 +175,6 @@ counterpartymain.generateGraph = function() {
         }
         return "linkdash"
       })
-    // .attr('marker-end', 'url(#arrowhead)')
 
     link.append("title")
       .text(function(d) {
@@ -222,11 +225,6 @@ counterpartymain.generateGraph = function() {
       .enter()
       .append("g")
       .attr("class", "node")
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended)
-      )
 
     node.append("circle")
       .attr("r", function(d) {
@@ -244,6 +242,7 @@ counterpartymain.generateGraph = function() {
         }
         return "#587b9e"
       })
+
       .on("click", function(d) {
         if (d.type != "CENTER") {
           counterpartymain.headtext(d.type)
@@ -324,13 +323,6 @@ counterpartymain.generateGraph = function() {
         }
         return d.limited
       })
-
-    simulation
-      .nodes(nodes)
-      .on("tick", ticked)
-
-    simulation.force("link")
-      .links(links)
   }
 
   function ticked() {
@@ -349,6 +341,12 @@ counterpartymain.generateGraph = function() {
       })
 
     node
+      .attr("cx", function(d) {
+        return d.x;
+      })
+      .attr("cy", function(d) {
+        return d.y;
+      })
       .attr("transform", function(d) {
         return "translate(" + d.x + ", " + d.y + ")"
       })
@@ -369,6 +367,13 @@ counterpartymain.generateGraph = function() {
     })
   }
 
+  simulation
+    .nodes(nodes)
+    .on("tick", ticked)
+
+  simulation.force("link")
+    .links(links)
+
   function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart()
     d.fx = d.x
@@ -387,6 +392,245 @@ counterpartymain.generateGraph = function() {
   }
 }
 
+counterpartymain.generateGraphBubble = function() {
+  var nodes = [{
+    id: "Ibrahim Fibres",
+    group: 2,
+    type: "ETB",
+    limited: 40,
+    listdetail: [{
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
+    }]
+  }, {
+    id: "Bhilosha Ind",
+    group: 2,
+    type: "ETB",
+    limited: 200,
+    listdetail: [{
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
+    }]
+  }, {
+    id: "ICI Pakistan",
+    group: 2,
+    type: "NTB",
+    limited: 60,
+    listdetail: [{
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
+    }]
+  }, {
+    id: "Reliance Ind",
+    group: 2,
+    type: "NTB",
+    limited: 135,
+    listdetail: [{
+      "bank": "FIBB",
+      "product": "TRADE",
+      "flow": 8.44,
+      "not": 2
+    }, {
+      "bank": "HBKS",
+      "product": "TRADE",
+      "flow": 3.40,
+      "not": 1
+    }, {
+      "bank": "HCEB",
+      "product": "TRADE",
+      "flow": 8.95,
+      "not": 2
+    }]
+  }]
+
+  counterpartymain.dataMasterBubble(nodes)
+
+  // normalize circle
+  function preprocess(nod) {
+    var max = _.maxBy(nod, "limited").limited;
+    var min = _.minBy(nod, "limited").limited;
+
+    m = _.map(nod, function(it) {
+      it.r = (it.limited - min) / (max - min) + 0.50;
+      it.r = it.r * 70;
+      if (it.type == "ETB") {
+        it.fill = "#68c4fc";
+      } else {
+        it.fill = "#587b9e";
+      }
+      return it;
+    })
+
+    m.unshift({});
+
+    return m;
+  }
+
+  nodes = preprocess(nodes);
+  var chart = bubbleChart().width(600).height(400);
+  d3.selectAll('#bubble').data(nodes).call(chart);
+
+  function bubbleChart() {
+    var width = 960,
+      height = 960,
+      maxRadius = 6,
+      columnForColors = "category",
+      columnForRadius = "views";
+
+    function chart(selection) {
+      var data = selection.enter().data();
+      var div = selection,
+        svg = div.selectAll('svg');
+      svg.attr('width', width).attr('height', height);
+
+      var tooltip = selection
+        .append("div")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .attr("class", "tooltipbubble")
+        .text("");
+
+      var simulation = d3.forceSimulation(data)
+        .force("charge", d3.forceManyBody().strength([-50]))
+        .force("x", d3.forceX())
+        .force("y", d3.forceY())
+        .force("collision", d3.forceCollide().radius(function(d) {
+          return d.r + 10;
+        }))
+        .on("tick", ticked);
+
+      function ticked(e) {
+        node.attr("cx", function(d) {
+            return d.x;
+          })
+          .attr("cy", function(d) {
+            return d.y;
+          })
+          .attr('transform', function(d) {
+            return 'translate(' + [width / 2 + d.x, height / 2 + d.y] + ')';
+          })
+      }
+
+      var node = svg.selectAll("g")
+        .data(data)
+        .enter()
+        .append("g")
+        .attr('r', function(d) {
+          return d.r;
+        })
+        .on("click", function(d) {
+          counterpartymain.dataDetailItemsGraphBubble([])
+          var masterdata = counterpartymain.dataMasterBubble()
+          var data = _.find(masterdata, function(d) {
+            return d.id == d.id
+          })
+          counterpartymain.dataDetailItemsGraphBubble(data.listdetail)
+          tooltip.html($("#datadetailgraph").html());
+          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+          tooltip.style("visibility", "visible");
+
+          d3.selectAll("circle").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+          d3.selectAll("text").transition().duration(500)
+            .style("opacity", function(o) {
+              return o === d ? 1 : .1;
+            });
+          return
+        })
+
+      node.append("circle")
+        .attr('r', function(d) {
+          return d.r;
+        })
+        .style("fill", function(d) {
+          return d.fill;
+        })
+
+      node.append("text")
+        .attr("x", 0)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .text(function(d) {
+          if (d.type != "CENTER") {
+            return "$" + d.limited + "M"
+          }
+          return d.limited
+        })
+    }
+
+    chart.width = function(value) {
+      if (!arguments.length) {
+        return width;
+      }
+      width = value;
+      return chart;
+    };
+
+    chart.height = function(value) {
+      if (!arguments.length) {
+        return height;
+      }
+      height = value;
+      return chart;
+    };
+
+    chart.columnForColors = function(value) {
+      if (!arguments.columnForColors) {
+        return columnForColors;
+      }
+      columnForColors = value;
+      return chart;
+    };
+
+    chart.columnForRadius = function(value) {
+      if (!arguments.columnForRadius) {
+        return columnForRadius;
+      }
+      columnForRadius = value;
+      return chart;
+    };
+    return chart;
+  }
+}
+
 counterpartymain.close = function() {
   div.transition()
     .duration(500)
@@ -399,6 +643,26 @@ counterpartymain.close = function() {
     .style("opacity", 1);
   d3.selectAll(".linkdash").transition().duration(500)
     .style("opacity", 1);
+}
+
+counterpartymain.closeBubbleChart = function() {
+  $(".tooltipbubble").attr("style", "visibility:hidden;top:-10px;left:10px;position: absolute;");
+  d3.selectAll("circle").transition().duration(500)
+    .style("opacity", 1);
+  d3.selectAll("text").transition().duration(500)
+    .style("opacity", 1);
+}
+
+counterpartymain.onChangeBuyerSupplier = function(e) {
+  if (e != "") {
+    $("#graph").hide()
+    $("#bubble").show()
+    counterpartymain.generateGraphBubble()
+    return
+  }
+  $("#graph").show()
+  $("#bubble").hide()
+  counterpartymain.generateGraph()
 }
 
 $(window).load(function() {
@@ -415,7 +679,6 @@ $(window).load(function() {
       $('#year').data('kendoDatePicker').enable(true);
       $('#month').data('kendoDatePicker').enable(false);
     }
-
     $('a[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
     $('a[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
   })
