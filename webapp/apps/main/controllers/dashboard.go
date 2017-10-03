@@ -19,7 +19,7 @@ func (c *DashboardController) Index(k *knot.WebContext) interface{} {
 	return c.SetViewData(nil)
 }
 
-func (c *DashboardController) GetNumberOfETB(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -40,20 +40,86 @@ func (c *DashboardController) GetNumberOfETB(k *knot.WebContext) interface{} {
 	return c.SetResultOK(results[0].GetString("value"))
 }
 
-func (c *DashboardController) GetNumberOfBuyer(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
 	}
 
-	return c.SetResultOK(tk.M{"makan": "ikan"})
+	sql := "SELECT COUNT(*) AS value FROM table1"
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(results[0].GetString("value"))
 }
 
-func (c *DashboardController) GetNumberOfSeller(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
 	}
 
-	return c.SetResultOK(nil)
+	sql := "SELECT COUNT(*) AS value FROM table1"
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(results[0].GetString("value"))
+}
+
+func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	sql := "SELECT COUNT(*) AS value FROM table1"
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(results[0].GetString("value"))
+}
+
+func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	sql := "SELECT COUNT(*) AS value FROM table1"
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(results[0].GetString("value"))
 }

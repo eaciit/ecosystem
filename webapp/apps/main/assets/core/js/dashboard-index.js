@@ -83,6 +83,14 @@ dashboard.mapsdata3 = [{
 ]
 
 var widget = {}
+
+widget.ETB = ko.observable(0)
+widget.Buyer = ko.observable(0)
+widget.Seller = ko.observable(0)
+widget.InFlow = ko.observable(0)
+widget.OutFlow = ko.observable(0)
+widget.Pipeline = ko.observable(0)
+
 widget.buildChart = function (id, data) {
   $(id).kendoChart({
     title: {
@@ -156,6 +164,28 @@ widget.generateCharts = function () {
   widget.generateChart6()
 }
 
+widget.loadData = function () {
+  viewModel.ajaxPostCallback("/main/dashboard/getetb", {}, function(data) {
+    widget.ETB(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getbuyer", {}, function(data) {
+    widget.Buyer(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getseller", {}, function(data) {
+    widget.Seller(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getinflow", {}, function(data) {
+    widget.InFlow(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getoutflow", {}, function(data) {
+    widget.OutFlow(data)
+  })
+}
+
 dashboard.generateMap = function () {
   var template = mapTemplate
 
@@ -216,12 +246,8 @@ dashboard.showMapDetails = function () {
 
 }
 
-// dashboard.network_diagram = function () {
-//   // location.href = 'http://localhost:8068/main/counterparty/index'
-//   location.href = 'NoCacheUrl '/main/counterparty/index' 
-// }
-
 $(window).load(function () {
+  widget.loadData()
   widget.generateCharts()
   dashboard.generateMap()
 })
