@@ -121,6 +121,7 @@ counterpartymain.generateGraph = function() {
     }
   ]
 
+  $("#graph").html("")
   function createSvgEl(name) {
     return document.createElementNS('http://www.w3.org/2000/svg', name);
   }
@@ -225,30 +226,13 @@ counterpartymain.generateGraph = function() {
       .enter()
       .append("g")
       .attr("class", "node")
-      .call(d3.drag()
+            .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended)
       )
-
-    node.append("circle")
-      .attr("r", function(d) {
-        if (d.type == "CENTER") {
-          return 70
-        }
-        return 50
-      })
-      .attr("id", function(d) {
-        return d.id
-      })
-      .style("fill", function(d) {
-        if (d.type == "ETB") {
-          return "#68c4fc"
-        }
-        return "#587b9e"
-      })
-
       .on("click", function(d) {
+        console.log(d, d3)
         if (d.type != "CENTER") {
           counterpartymain.headtext(d.type)
           div.transition()
@@ -257,10 +241,11 @@ counterpartymain.generateGraph = function() {
           if (d.type == "NTB") {
             counterpartymain.dataDetailItemsNTB(d.listdetail[0])
             div.html($("#counterpartyModalNTB").html())
-              .style("left", (d3.event.pageX) + "px")
-              .style("top", (d3.event.pageY) + "px")
-              .style("padding-top", "30px")
-              .style("padding-left", "30px")
+            .style("left", (d3.select(this).attr("cx"))+50+ "px")     
+            .style("top", (d3.select(this).attr("cy")) +50+ "px")
+            .style("margin-top", "50px")
+            .style("margin-left", "120px")
+
 
             d3.selectAll("circle").transition().duration(500)
               .style("opacity", function(o) {
@@ -282,10 +267,11 @@ counterpartymain.generateGraph = function() {
           }
           counterpartymain.dataDetailItemsETB(d.listdetail[0])
           div.html($("#counterpartyModalETB").html())
-            .style("left", (d3.event.pageX) + "px")
-            .style("top", (d3.event.pageY) + "px")
-            .style("padding-top", "30px")
-            .style("padding-left", "30px")
+            .style("left", (d3.select(this).attr("cx"))+50+ "px")     
+            .style("top", (d3.select(this).attr("cy")) +50+ "px")
+            .style("margin-top", "50px")
+            .style("margin-left", "120px")
+
 
           d3.selectAll("circle").transition().duration(500)
             .style("opacity", function(o) {
@@ -303,6 +289,23 @@ counterpartymain.generateGraph = function() {
           d3.selectAll(".linkdash").transition().duration(500)
             .style("opacity", .1);
         }
+      })
+
+    node.append("circle")
+      .attr("r", function(d) {
+        if (d.type == "CENTER") {
+          return 70
+        }
+        return 50
+      })
+      .attr("id", function(d) {
+        return d.id
+      })
+      .style("fill", function(d) {
+        if (d.type == "ETB") {
+          return "#68c4fc"
+        }
+        return "#587b9e"
       })
 
     node.append("title")
@@ -506,14 +509,15 @@ counterpartymain.generateGraphBubble = function() {
 
     return m;
   }
-
+  var width = $("#bubble").width(),
+    height = $("#bubble").height()
   nodes = preprocess(nodes);
-  var chart = bubbleChart().width(600).height(400);
+  var chart = bubbleChart().width(width).height(height);
   d3.selectAll('#bubble').data(nodes).call(chart);
 
   function bubbleChart() {
-    var width = 960,
-      height = 960,
+    // var width = 960,
+    //   height = 960,
       maxRadius = 6,
       columnForColors = "category",
       columnForRadius = "views";
@@ -559,7 +563,7 @@ counterpartymain.generateGraphBubble = function() {
         .attr('r', function(d) {
           return d.r;
         })
-        .on("click", function(d) {
+        .on("click", function(d, ev, eb, mn) {
           counterpartymain.dataDetailItemsGraphBubble([])
           var masterdata = counterpartymain.dataMasterBubble()
           var data = _.find(masterdata, function(d) {
@@ -567,7 +571,10 @@ counterpartymain.generateGraphBubble = function() {
           })
           counterpartymain.dataDetailItemsGraphBubble(data.listdetail)
           tooltip.html($("#datadetailgraph").html());
-          tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+          tooltip.style("margin-top", "70px")
+          tooltip.style("margin-left", "60px")
+            tooltip.style("left", d.x + width / 2 + d.r + 5 +  "px")     
+          tooltip.style("top", d.y + height / 2 + "px")
           tooltip.style("visibility", "visible");
 
           d3.selectAll("circle").transition().duration(500)
@@ -662,11 +669,13 @@ counterpartymain.onChangeBuyerSupplier = function(e) {
   if (e != "") {
     $("#graph").hide()
     $("#bubble").show()
+    counterpartymain.close()
     counterpartymain.generateGraphBubble()
     return
   }
   $("#graph").show()
   $("#bubble").hide()
+  counterpartymain.closeBubbleChart()
   counterpartymain.generateGraph()
 }
 
