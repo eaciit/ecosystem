@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eaciit/acl/v2.0"
 	db "github.com/eaciit/dbox"
 	_ "github.com/eaciit/dbox/dbc/mongo"
 	tk "github.com/eaciit/toolkit"
@@ -127,128 +126,6 @@ func ReadConfig(anything interface{}) tk.M {
 
 	cacheConfig = res
 	return res
-}
-
-func PrepareDefaultData(acli *acl.ACLInstance) error {
-	username := "eaciit"
-
-	user := new(acl.User)
-	err := acli.FindUserByLoginID(user, username)
-	if err == nil || user.LoginID == username {
-		return err
-	}
-
-	// ========= access menu
-
-	access1 := new(acl.Access)
-	access1.ID = "dashboard"
-	access1.Title = "Dashboard"
-	access1.Category = 1
-	access1.Icon = "bar-chart"
-	access1.Url = "/main/dashboard/index"
-	access1.Index = 1
-	access1.Enable = true
-	err = acli.Save(access1)
-	if err != nil {
-		return err
-	}
-
-	access2 := new(acl.Access)
-	access2.ID = "master_data"
-	access2.Title = "Master Data"
-	access2.Category = 1
-	access2.Icon = "database"
-	access2.Url = "/main/access/master"
-	access2.Index = 2
-	access2.Enable = true
-	err = acli.Save(access2)
-	if err != nil {
-		return err
-	}
-
-	access3 := new(acl.Access)
-	access3.ID = "logout"
-	access3.Title = "Logout"
-	access3.Category = 1
-	access3.Icon = "sign-out"
-	access3.Url = "/main/auth/dologout"
-	access3.Index = 3
-	access3.Enable = true
-	err = acli.Save(access3)
-	if err != nil {
-		return err
-	}
-
-	// ======= groups
-
-	group1 := new(acl.Group)
-	group1.ID = "admin"
-	group1.Title = "admin"
-	group1.Enable = true
-	group1.Grants = []acl.AccessGrant{
-		{AccessID: access1.ID, AccessValue: 1}, // dashboard
-		{AccessID: access2.ID, AccessValue: 1}, // master
-		{AccessID: access3.ID, AccessValue: 1}, // logout
-	}
-	group1.GroupConf = tk.M{}
-	group1.MemberConf = tk.M{}
-	err = acli.Save(group1)
-	if err != nil {
-		return err
-	}
-
-	group2 := new(acl.Group)
-	group2.ID = "user"
-	group2.Title = "user"
-	group2.Enable = true
-	group2.Grants = []acl.AccessGrant{
-		{AccessID: access1.ID, AccessValue: 1}, // dashboard
-		{AccessID: access3.ID, AccessValue: 1}, // logout
-	}
-	group2.GroupConf = tk.M{}
-	group2.MemberConf = tk.M{}
-	err = acli.Save(group2)
-	if err != nil {
-		return err
-	}
-
-	// ====== user
-
-	password := "Password.1"
-
-	user1 := new(acl.User)
-	user1.ID = tk.RandomString(32)
-	user1.LoginID = "eaciit"
-	user1.FullName = "EACIIT"
-	user1.Email = "admin@eaciit.com"
-	user1.Enable = true
-	user1.Groups = []string{group1.ID} // [admin]
-	err = acli.Save(user1)
-	if err != nil {
-		return err
-	}
-	err = acli.ChangePassword(user1.ID, password)
-	if err != nil {
-		return err
-	}
-
-	user2 := new(acl.User)
-	user2.ID = tk.RandomString(32)
-	user2.LoginID = "user"
-	user2.FullName = "Standard User"
-	user2.Email = "user@eaciit.com"
-	user2.Enable = true
-	user2.Groups = []string{group2.ID} // [user]
-	err = acli.Save(user2)
-	if err != nil {
-		return err
-	}
-	err = acli.ChangePassword(user2.ID, password)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func Println(a ...interface{}) {

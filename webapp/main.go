@@ -18,7 +18,8 @@ func main() {
 
 	otherRoutes := make(map[string]knot.FnContent)
 	otherRoutes["/"] = func(k *knot.WebContext) interface{} {
-		urlLoginPage := "/main/auth/login"
+		// urlLoginPage := "/main/auth/login"
+		urlLoginPage := config.GetString("landingpage")
 		urlLandingPage := config.GetString("landingpage")
 
 		if k.Session(controllers.SESSION_KEY, "") == "" {
