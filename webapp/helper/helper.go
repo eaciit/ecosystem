@@ -2,15 +2,18 @@ package helper
 
 import (
 	"bufio"
+	"database/sql"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"time"
 
+	"github.com/eaciit/sqlh"
+
 	db "github.com/eaciit/dbox"
-	_ "github.com/eaciit/dbox/dbc/mongo"
 	tk "github.com/eaciit/toolkit"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -55,7 +58,7 @@ func GetCurrentFolderName(anything interface{}) string {
 	return folderName
 }
 
-func PrepareConnection(anything interface{}) (db.IConnection, error) {
+func PrepareConnection(anything interface{}) (*sql.DB, error) {
 	config := ReadConfig(anything)
 	connInfo := &db.ConnectionInfo{
 		Host:     config.GetString("host"),
@@ -67,12 +70,8 @@ func PrepareConnection(anything interface{}) (db.IConnection, error) {
 
 	Println("Connecting to database server", connInfo.Host, connInfo.Database)
 
-	conn, err := db.NewConnection("mongo", connInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	err = conn.Connect()
+	sqlconn := connInfo.UserName + ":" + connInfo.Password + "@tcp(" + connInfo.Host + ")/" + connInfo.Database
+	conn, err := sqlh.Connect("mysql", sqlconn)
 	if err != nil {
 		return nil, err
 	}

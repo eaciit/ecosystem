@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/eaciit/knot/knot.v1"
-	"github.com/eaciit/orm"
 	"github.com/eaciit/toolkit"
 )
 
@@ -21,19 +20,16 @@ func init() {
 	helper.Println("Registering", appName, "@", appFolderPath)
 
 	// ==== prepare database connection
-	conn, err := helper.PrepareConnection(ForgetMe{})
+	db, err := helper.PrepareConnection(ForgetMe{})
 	if err != nil {
 		helper.Println(err.Error())
 		os.Exit(0)
 	}
 
-	// ==== save connection to controller context
-	ctx := orm.New(conn)
 	baseCtrl := new(controllers.BaseController)
 	// baseCtrl.NoLogin = true
-	baseCtrl.Conn = conn
+	baseCtrl.Db = db
 	baseCtrl.AppName = appName
-	baseCtrl.Ctx = ctx
 
 	// create the application
 	app := knot.NewApp(appName)

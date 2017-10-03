@@ -1,15 +1,14 @@
 package controllers
 
 import (
+	"database/sql"
 	"eaciit/scb-eco/webapp/helper"
 	"errors"
 	"net/http"
 
 	"strings"
 
-	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
-	"github.com/eaciit/orm"
 	tk "github.com/eaciit/toolkit"
 )
 
@@ -17,8 +16,7 @@ type IBaseController interface{}
 
 type BaseController struct {
 	base    IBaseController
-	Ctx     *orm.DataContext
-	Conn    dbox.IConnection
+	Db      *sql.DB
 	AppName string
 	NoLogin bool
 }

@@ -3,10 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "m+V6BXnNHJ0dmDmFLG8jNq/a5vs=",
-			"path": "github.com/eaciit/acl/v1.0",
-			"revision": "25e8d93d31d9f036b0f7c66b0f93beef1051b4d8",
-			"revisionTime": "2016-11-22T04:48:54Z"
+			"checksumSHA1": "4uy6IXRcZZp4j9vhiGJTRi9qxW0=",
+			"path": "github.com/eaciit/sqlh",
+			"revision": "eb9020b31a83b0f72105a7c6ca4755b5433cef65",
+			"revisionTime": "2017-10-03T01:59:35Z"
 		}
 	],
 	"rootPath": "eaciit/scb-eco"
