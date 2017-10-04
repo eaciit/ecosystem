@@ -106,9 +106,13 @@ widget.buildChart = function (id, data) {
     chartArea: {
       background: ""
     },
+    tooltip: {
+      visible: true
+    },
     legend: {
       visible: false
     },
+    seriesColors: ["#1e88e5"],
     series: [{
       type: "line",
       data: data,

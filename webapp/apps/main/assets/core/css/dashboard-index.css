@@ -2,6 +2,14 @@ html {
   background-color: #ECF0F1 !important;
 }
 
+.green-text {
+  color: #1E824C;
+}
+
+.red-text {
+  color: #CF000F;
+}
+
 .layout-content {
   background-color: #ECF0F1 !important;
 }
@@ -17,13 +25,13 @@ html {
 }
 
 .widget-body .widget-left {
-  width: 30%;
-  font-size: 3em;
+  width: 40%;
+  font-size: 2em;
   float: left;
 }
 
 .widget-body .widget-right {
-  width: 70%;
+  width: 60%;
   float: right;
   text-align: right;
 }

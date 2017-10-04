@@ -38,8 +38,11 @@
           <div class="chart-container" id="widgetChart1">
           </div>
           <div>
-            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-            <span>Y<i class="fa fa-fw fa-caret-up"></i><span data-bind="text: widget.ETBYearChange"></span></span>
+            <span>
+              Y
+              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.ETBYearChange() > 0, 'red-text fa-caret-down': widget.ETBYearChange() < 0}"></i>
+              <span data-bind="text: widget.ETBYearChange"></span>
+            </span>
           </div>
         </div>
       </div>
@@ -56,8 +59,11 @@
           <div class="chart-container" id="widgetChart2">
           </div>
           <div>
-            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-            <span>Y<i class="fa fa-fw fa-caret-up"></i><span data-bind="text: widget.BuyerYearChange"></span></span>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.BuyerYearChange() > 0, 'red-text fa-caret-down': widget.BuyerYearChange() < 0}"></i>
+              <span data-bind="text: widget.BuyerYearChange"></span>
+            </span>
           </div>
         </div>
       </div>
@@ -74,8 +80,11 @@
           <div class="chart-container" id="widgetChart3">
           </div>
           <div>
-            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-            <span>Y<i class="fa fa-fw fa-caret-up"></i><span data-bind="text: widget.SellerYearChange"></span></span>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.SellerYearChange() > 0, 'red-text fa-caret-down': widget.SellerYearChange() < 0}"></i>
+              <span data-bind="text: widget.SellerYearChange"></span>
+            </span>
           </div>
         </div>
       </div>
@@ -84,16 +93,19 @@
   <div class="col-sm-2">
     <div class="panel ez no-padding hardcore widget">
       <div class="panel-heading">
-        <span>In Flows ($M)</span>
+        <span>In Flows ($B)</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left" data-bind="text: widget.InFlow"></div>
+        <div class="widget-left" data-bind="text: kendo.toString(widget.InFlow() / 1000000000, 'n2')"></div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart4">
           </div>
           <div>
-            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-            <span>Y<i class="fa fa-fw fa-caret-up"></i><span data-bind="text: widget.InFlowYearChange"></span></span>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.InFlowYearChange() > 0, 'red-text fa-caret-down': widget.InFlowYearChange() < 0}"></i>
+              <span data-bind="text: kendo.toString(widget.InFlowYearChange() / 1000000000, 'n2')"></span>
+            </span>
           </div>
         </div>
       </div>
@@ -102,16 +114,19 @@
   <div class="col-sm-2">
     <div class="panel ez no-padding hardcore widget">
       <div class="panel-heading">
-        <span>Out Flows ($M)</span>
+        <span>Out Flows ($B)</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left" data-bind="text: widget.OutFlow"></div>
+        <div class="widget-left" data-bind="text: kendo.toString(widget.OutFlow() / 1000000000, 'n2')"></div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart5">
           </div>
           <div>
-            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-            <span>Y<i class="fa fa-fw fa-caret-up"></i><span data-bind="text: widget.OutFlowYearChange"></span></span>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.OutFlowYearChange() > 0, 'red-text fa-caret-down': widget.OutFlowYearChange() < 0}"></i>
+              <span data-bind="text: kendo.toString(widget.OutFlowYearChange() / 1000000000, 'n2')"></span>
+            </span>
           </div>
         </div>
       </div>
@@ -120,7 +135,7 @@
   <div class="col-sm-2">
     <div class="panel ez no-padding hardcore widget">
       <div class="panel-heading">
-        <span>Pipeline Workbench ($M)</span>
+        <span>Pipeline Workbench ($B)</span>
       </div>
       <div class="panel-body widget-body">
         <div class="widget-left"data-bind="text: widget.Pipeline"></div>
@@ -128,8 +143,11 @@
           <div class="chart-container" id="widgetChart6">
           </div>
           <div>
-            <span class="left-caret">Q<i class="fa fa-fw fa-caret-up"></i>4</span>
-            <span>Y<i class="fa fa-fw fa-caret-up"></i>11</span>
+            <span>
+              Y
+              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.PipelineYearChange() > 0, 'red-text fa-caret-down': widget.PipelineYearChange() < 0}"></i>
+              <span data-bind="text: widget.PipelineYearChange"></span>
+            </span>
           </div>
         </div>
       </div>
