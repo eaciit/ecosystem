@@ -137,7 +137,7 @@ widget.generateChart1 = function () {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashbord/getchartetb", param, function(data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartetb", param, function(data) {
     widget.buildChart("#widgetChart1", data)
   })
 }
@@ -147,7 +147,7 @@ widget.generateChart2 = function () {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashbord/getchartbuyer", param, function(data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartbuyer", param, function(data) {
     widget.buildChart("#widgetChart2", data)
   })
 }
@@ -157,7 +157,7 @@ widget.generateChart3 = function () {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashbord/getchartseller", param, function(data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartseller", param, function(data) {
     widget.buildChart("#widgetChart3", data)
   })
 }
@@ -167,7 +167,7 @@ widget.generateChart4 = function () {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashbord/getchartinflow", param, function(data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartinflow", param, function(data) {
     widget.buildChart("#widgetChart4", data)
   })
 }
@@ -177,7 +177,7 @@ widget.generateChart5 = function () {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashbord/getchartoutflow", param, function(data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartoutflow", param, function(data) {
     widget.buildChart("#widgetChart5", data)
   })
 }
