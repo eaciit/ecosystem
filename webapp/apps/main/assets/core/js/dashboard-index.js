@@ -72,7 +72,7 @@ dashboard.generateMap = function () {
   var highlightedMapAlpha = 0.8
   var circledMapAlpha = 0.5
   var template = kendo.template($("#tooltip-template").html())
-  var popup = $("<div class='bubble-tooltip box bluebox'>Foo</div>")
+  var popup = $("<div class='bubble-tooltip'>Foo</div>")
     .appendTo(document.body)
     .kendoPopup()
     .data("kendoPopup")
@@ -107,7 +107,6 @@ dashboard.generateMap = function () {
           }
         }
       }],
-      shapeClick: onClickShape,
       shapeMouseEnter: onShapeMouseEnter,
       shapeMouseLeave: onShapeMouseLeave
     });
@@ -116,26 +115,17 @@ dashboard.generateMap = function () {
     $("#map").unbind("DOMMouseScroll")
   })
 
-  function onClickShape(e) {
-    var shape = e.shape;
-    if (e.shape.dataItem === undefined) {
-      return
-    }
-
-    dashboard.showMapDetails(e.shape.dataItem)
-  }
-
   function onShapeMouseEnter(e) {
     e.shape.options.fill.set("opacity", highlightedMapAlpha);
     activeShape = e.shape;
     activeShape.options.set("stroke", { width: 1, color: "#fff" });
+    $("#map").css("cursor", "pointer");    
 
     if (e.shape.dataItem === undefined) {
       return
     }
 
-    $("#map").css("cursor", "pointer");
-
+    dashboard.activeEntities(e.shape.dataItem)
     var data = e.shape.dataItem
 
     var oe = e.originalEvent;
@@ -157,16 +147,18 @@ dashboard.generateMap = function () {
       popup.element.kendoStop(true, true);
     }
   }
+
+  dashboard.showMapDetails = function (i) {
+    $("#mapDetailModal").modal("show")
+  
+    popup.close();
+    popup.element.kendoStop(true, true);
+  }
 }
 
 dashboard.btnTrade = function () {
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
-}
-
-dashboard.showMapDetails = function (e) {
-  dashboard.activeEntities(e)
-  $("#mapDetailModal").modal("show")
 }
 
 var widget = {}

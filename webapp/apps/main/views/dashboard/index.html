@@ -299,6 +299,19 @@
 </div>
 
 <script id="tooltip-template" type="text/x-kendo-template">
-  <div class="head">#= kendo.toString(value, "n0") #</div>
-  <div>#= name #</div>
+  <div class="head">
+    <p>
+      #= value #
+      #= name #
+    </p>
+  </div>
+  <div>
+    <table>
+      # entities.forEach(function(e, i) { #
+        <tr>
+          <td onclick="dashboard.showMapDetails(#= i #)">#= e #</td>
+        </tr>
+      # }) #
+    </table>
+  </div>
 </script>

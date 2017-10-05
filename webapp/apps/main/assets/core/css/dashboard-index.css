@@ -59,12 +59,27 @@ html {
 }
 
 .bubble-tooltip {
+  text-align: left;  
+  background-color: #428bca;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid white;
+}
+
+.bubble-tooltip > div {
   padding: 5px 10px;
-  text-align: center;  
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .bubble-tooltip .head {
-  font-size: 1.5em;
+  font-weight: bold;
+  background-color: #1F3A93;
+}
+
+.bubble-tooltip table tr td:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .table.ez thead {
