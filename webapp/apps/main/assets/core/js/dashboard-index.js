@@ -100,6 +100,9 @@ widget.PipelineYearChange = ko.observable(1.54)
 
 widget.buildChart = function (id, data, unit) {
   var chartParam = {
+    dataSource: {
+      data: data
+    },
     title: {
       text: ""
     },
@@ -107,21 +110,23 @@ widget.buildChart = function (id, data, unit) {
       background: ""
     },
     tooltip: {
-      visible: true
+      visible: true,
+      template: "#= moment(category, 'YYYYMM').format('MMM YY') # : #= value #"
     },
     legend: {
       visible: false
     },
     seriesColors: ["#1e88e5"],
     series: [{
+      field: "value",
       type: "line",
-      data: data,
       style: "smooth",
       markers: {
         visible: false
       }
     }],
     categoryAxis: {
+      field: "category",
       visible: false,
       majorGridLines: {
         visible: false
@@ -136,8 +141,8 @@ widget.buildChart = function (id, data, unit) {
   }
 
   if (unit) {
-    chartParam.tooltip.template = "#= kendo.toString(value, 'n2')#B"
-  } 
+    chartParam.tooltip.template = "#= moment(category, 'YYYYMM').format('MMM YY') # : #= kendo.toString(value, 'n2')#B"
+  }
 
   $(id).kendoChart(chartParam)
 }

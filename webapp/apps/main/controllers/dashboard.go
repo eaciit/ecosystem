@@ -346,7 +346,7 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := "SELECT Growth AS value FROM eco_test LIMIT 10"
+	sql := "SELECT growth AS value, transaction_month AS category FROM eco_test LIMIT 10"
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -373,7 +373,7 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := "SELECT Growth AS value FROM eco_test LIMIT 10"
+	sql := "SELECT growth AS value, transaction_month AS category FROM eco_test LIMIT 10"
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -400,7 +400,7 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := "SELECT Growth AS value FROM eco_test LIMIT 10"
+	sql := "SELECT growth AS value, transaction_month AS category FROM eco_test LIMIT 10"
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -427,7 +427,7 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := "SELECT Growth AS value FROM eco_test LIMIT 10"
+	sql := "SELECT growth AS value, transaction_month AS category FROM eco_test LIMIT 10"
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -454,7 +454,7 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := "SELECT Growth AS value FROM eco_test LIMIT 10"
+	sql := "SELECT growth AS value, transaction_month AS category FROM eco_test LIMIT 10"
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
