@@ -225,6 +225,11 @@ counterpartymain.generateGraph = function() {
       .enter()
       .append("g")
       .attr("class", "node")
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+      )
 
     node.append("circle")
       .attr("r", function(d) {
