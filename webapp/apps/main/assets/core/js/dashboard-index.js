@@ -58,7 +58,7 @@ dashboard.getMapData = function (callback) {
             name: c.name,
             entities: entities,
             value: entities.length
-          };
+          }
         })
         .value()
 
@@ -109,17 +109,20 @@ dashboard.generateMap = function () {
       }],
       shapeMouseEnter: onShapeMouseEnter,
       shapeMouseLeave: onShapeMouseLeave
-    });
+    })
 
     $("#map").unbind("mousewheel")
     $("#map").unbind("DOMMouseScroll")
   })
 
   function onShapeMouseEnter(e) {
-    e.shape.options.fill.set("opacity", highlightedMapAlpha);
-    activeShape = e.shape;
-    activeShape.options.set("stroke", { width: 1, color: "#fff" });
-    $("#map").css("cursor", "pointer");    
+    e.shape.options.fill.set("opacity", highlightedMapAlpha)
+    activeShape = e.shape
+    activeShape.options.set("stroke", {
+      width: 1,
+      color: "#fff"
+    })
+    $("#map").css("cursor", "pointer")
 
     if (e.shape.dataItem === undefined) {
       return
@@ -128,32 +131,43 @@ dashboard.generateMap = function () {
     dashboard.activeEntities(e.shape.dataItem)
     var data = e.shape.dataItem
 
-    var oe = e.originalEvent;
-    var x = oe.pageX || oe.clientX;
-    var y = oe.pageY || oe.clientY;
+    var oe = e.originalEvent
+    var x = oe.pageX || oe.clientX
+    var y = oe.pageY || oe.clientY
 
-    popup.element.html(template(data));
-    popup.open(x, y);
+    popup.element.html(template(data))
+    popup.open(x, y)
   }
 
   function onShapeMouseLeave(e) {
-    e.shape.options.set("fill.opacity", circledMapAlpha);
-    e.shape.options.set("stroke", { width: 0, color: "#fff" });
+    e.shape.options.set("fill.opacity", circledMapAlpha)
+    e.shape.options.set("stroke", {
+      width: 0,
+      color: "#fff"
+    })
 
-    $("#map").css("cursor", "inherit");
+    $("#map").css("cursor", "inherit")
 
     if (!$(e.originalEvent.relatedTarget).is(".k-popup, .k-animation-container")) {
-      popup.close();
-      popup.element.kendoStop(true, true);
+      popup.close()
+      popup.element.kendoStop(true, true)
     }
   }
 
   dashboard.showMapDetails = function (i) {
-    $("#mapDetailModal").modal("show")
-  
-    popup.close();
-    popup.element.kendoStop(true, true);
+    dashboard.getEntityDetail(dashboard.activeEntities().entities[i])
+
+    popup.close()
+    popup.element.kendoStop(true, true)
   }
+}
+
+dashboard.getEntityDetail = function (entityName) {
+  viewModel.ajaxPostCallback("/main/dashboard/getentitydetail", {
+    entityName: entityName
+  }, function(data) {
+    $("#mapDetailModal").modal("show")
+  })
 }
 
 dashboard.btnTrade = function () {
@@ -163,19 +177,19 @@ dashboard.btnTrade = function () {
 
 var widget = {}
 
-widget.ETB = ko.observable(0)
-widget.Buyer = ko.observable(0)
-widget.Seller = ko.observable(0)
-widget.InFlow = ko.observable(0)
-widget.OutFlow = ko.observable(0)
-widget.Pipeline = ko.observable(4.01)
+widget.etb = ko.observable(0)
+widget.buyer = ko.observable(0)
+widget.seller = ko.observable(0)
+widget.inFlow = ko.observable(0)
+widget.outFlow = ko.observable(0)
+widget.pipeline = ko.observable(4.01)
 
-widget.ETBYearChange = ko.observable(0)
-widget.BuyerYearChange = ko.observable(0)
-widget.SellerYearChange = ko.observable(0)
-widget.InFlowYearChange = ko.observable(0)
-widget.OutFlowYearChange = ko.observable(0)
-widget.PipelineYearChange = ko.observable(1.54)
+widget.etbYearChange = ko.observable(0)
+widget.buyerYearChange = ko.observable(0)
+widget.sellerYearChange = ko.observable(0)
+widget.inFlowYearChange = ko.observable(0)
+widget.outFlowYearChange = ko.observable(0)
+widget.pipelineYearChange = ko.observable(1.54)
 
 widget.buildChart = function (id, data, unit) {
   var chartParam = {
@@ -305,44 +319,44 @@ widget.generateCharts = function () {
 widget.loadData = function () {
   // Loading current data
   viewModel.ajaxPostCallback("/main/dashboard/getetb", {}, function (data) {
-    widget.ETB(data)
+    widget.etb(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getbuyer", {}, function (data) {
-    widget.Buyer(data)
+    widget.buyer(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getseller", {}, function (data) {
-    widget.Seller(data)
+    widget.seller(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getinflow", {}, function (data) {
-    widget.InFlow(data)
+    widget.inFlow(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getoutflow", {}, function (data) {
-    widget.OutFlow(data)
+    widget.outFlow(data)
   })
 
   // Loading annualy change data
   viewModel.ajaxPostCallback("/main/dashboard/getyearchangeetb", {}, function (data) {
-    widget.ETBYearChange(data)
+    widget.etbYearChange(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getyearchangebuyer", {}, function (data) {
-    widget.BuyerYearChange(data)
+    widget.buyerYearChange(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getyearchangeseller", {}, function (data) {
-    widget.SellerYearChange(data)
+    widget.sellerYearChange(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getyearchangeinflow", {}, function (data) {
-    widget.InFlowYearChange(data)
+    widget.inFlowYearChange(data)
   })
 
   viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", {}, function (data) {
-    widget.OutFlowYearChange(data)
+    widget.outFlowYearChange(data)
   })
 }
 

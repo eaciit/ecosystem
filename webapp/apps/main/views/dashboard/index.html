@@ -34,11 +34,11 @@
       </div>
       <div class="panel-body widget-body">
         <div class="widget-left">
-          <p data-bind="text: widget.ETB"></p>
+          <p data-bind="text: widget.etb"></p>
           <span>
             Q
-            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.ETBYearChange() > 0, 'red-text fa-caret-down': widget.ETBYearChange() < 0}"></i>
-            <span data-bind="text: widget.ETBYearChange"></span>
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.etbYearChange() > 0, 'red-text fa-caret-down': widget.etbYearChange() < 0}"></i>
+            <span data-bind="text: widget.etbYearChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -47,8 +47,8 @@
           <div>
             <span>
               Y
-              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.ETBYearChange() > 0, 'red-text fa-caret-down': widget.ETBYearChange() < 0}"></i>
-              <span data-bind="text: widget.ETBYearChange"></span>
+              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.etbYearChange() > 0, 'red-text fa-caret-down': widget.etbYearChange() < 0}"></i>
+              <span data-bind="text: widget.etbYearChange"></span>
             </span>
           </div>
         </div>
@@ -62,11 +62,11 @@
       </div>
       <div class="panel-body widget-body">
         <div class="widget-left">
-          <p data-bind="text: widget.Buyer"></p>
+          <p data-bind="text: widget.buyer"></p>
           <span>
             Q
-            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.BuyerYearChange() > 0, 'red-text fa-caret-down': widget.BuyerYearChange() < 0}"></i>
-            <span data-bind="text: widget.BuyerYearChange"></span>
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.buyerYearChange() > 0, 'red-text fa-caret-down': widget.buyerYearChange() < 0}"></i>
+            <span data-bind="text: widget.buyerYearChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -75,8 +75,8 @@
           <div>
             <span>
               Y
-              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.BuyerYearChange() > 0, 'red-text fa-caret-down': widget.BuyerYearChange() < 0}"></i>
-              <span data-bind="text: widget.BuyerYearChange"></span>
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.buyerYearChange() > 0, 'red-text fa-caret-down': widget.buyerYearChange() < 0}"></i>
+              <span data-bind="text: widget.buyerYearChange"></span>
             </span>
           </div>
         </div>
@@ -90,11 +90,11 @@
       </div>
       <div class="panel-body widget-body">
         <div class="widget-left">
-          <p data-bind="text: widget.Seller"></p>
+          <p data-bind="text: widget.seller"></p>
           <span>
             Q
-            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.SellerYearChange() > 0, 'red-text fa-caret-down': widget.SellerYearChange() < 0}"></i>
-            <span data-bind="text: widget.SellerYearChange"></span>
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.sellerYearChange() > 0, 'red-text fa-caret-down': widget.sellerYearChange() < 0}"></i>
+            <span data-bind="text: widget.sellerYearChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -103,8 +103,8 @@
           <div>
             <span>
               Y
-              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.SellerYearChange() > 0, 'red-text fa-caret-down': widget.SellerYearChange() < 0}"></i>
-              <span data-bind="text: widget.SellerYearChange"></span>
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.sellerYearChange() > 0, 'red-text fa-caret-down': widget.sellerYearChange() < 0}"></i>
+              <span data-bind="text: widget.sellerYearChange"></span>
             </span>
           </div>
         </div>
@@ -118,11 +118,11 @@
       </div>
       <div class="panel-body widget-body">
         <div class="widget-left">
-          <p data-bind="text: kendo.toString(widget.InFlow() / 1000000000, 'n2')"></p>
+          <p data-bind="text: kendo.toString(widget.inFlow() / 1000000000, 'n2')"></p>
           <span>
             Q
-            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.InFlowYearChange() > 0, 'red-text fa-caret-down': widget.InFlowYearChange() < 0}"></i>
-            <span data-bind="text: widget.InFlowYearChange"></span>
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
+            <span data-bind="text: widget.inFlowYearChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -131,8 +131,8 @@
           <div>
             <span>
               Y
-              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.InFlowYearChange() > 0, 'red-text fa-caret-down': widget.InFlowYearChange() < 0}"></i>
-              <span data-bind="text: kendo.toString(widget.InFlowYearChange() / 1000000000, 'n2')"></span>
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
+              <span data-bind="text: kendo.toString(widget.inFlowYearChange() / 1000000000, 'n2')"></span>
             </span>
           </div>
         </div>
@@ -146,11 +146,11 @@
       </div>
       <div class="panel-body widget-body">
         <div class="widget-left">
-          <p data-bind="text: kendo.toString(widget.OutFlow() / 1000000000, 'n2')"></p>
+          <p data-bind="text: kendo.toString(widget.outFlow() / 1000000000, 'n2')"></p>
           <span>
             Q
-            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.OutFlowYearChange() > 0, 'red-text fa-caret-down': widget.OutFlowYearChange() < 0}"></i>
-            <span data-bind="text: kendo.toString(widget.OutFlowYearChange() / 1000000000, 'n2')"></span>
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.outFlowYearChange() > 0, 'red-text fa-caret-down': widget.outFlowYearChange() < 0}"></i>
+            <span data-bind="text: kendo.toString(widget.outFlowYearChange() / 1000000000, 'n2')"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -159,8 +159,8 @@
           <div>
             <span>
               Y
-              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.OutFlowYearChange() > 0, 'red-text fa-caret-down': widget.OutFlowYearChange() < 0}"></i>
-              <span data-bind="text: kendo.toString(widget.OutFlowYearChange() / 1000000000, 'n2')"></span>
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.outFlowYearChange() > 0, 'red-text fa-caret-down': widget.outFlowYearChange() < 0}"></i>
+              <span data-bind="text: kendo.toString(widget.outFlowYearChange() / 1000000000, 'n2')"></span>
             </span>
           </div>
         </div>
@@ -174,11 +174,11 @@
       </div>
       <div class="panel-body widget-body">
         <div class="widget-left">
-          <p data-bind="text: widget.Pipeline"></p>
+          <p data-bind="text: widget.pipeline"></p>
           <span>
             Q
-            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.PipelineYearChange() > 0, 'red-text fa-caret-down': widget.PipelineYearChange() < 0}"></i>
-            <span data-bind="text: widget.PipelineYearChange"></span>
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.pipelineYearChange() > 0, 'red-text fa-caret-down': widget.pipelineYearChange() < 0}"></i>
+            <span data-bind="text: widget.pipelineYearChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -187,8 +187,8 @@
           <div>
             <span>
               Y
-              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.PipelineYearChange() > 0, 'red-text fa-caret-down': widget.PipelineYearChange() < 0}"></i>
-              <span data-bind="text: widget.PipelineYearChange"></span>
+              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.pipelineYearChange() > 0, 'red-text fa-caret-down': widget.pipelineYearChange() < 0}"></i>
+              <span data-bind="text: widget.pipelineYearChange"></span>
             </span>
           </div>
         </div>
@@ -206,7 +206,7 @@
             Domicile<br/>Group
           </div>
           <div class="box bluebox">
-            <span data-bind="text: widget.ETB"></span><br/>ETB
+            <span data-bind="text: widget.etb"></span><br/>ETB
           </div>
           <div class="box greenbox">
             63<br/>NTB

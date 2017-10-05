@@ -7,8 +7,9 @@ import (
 )
 
 type DashboardPayload struct {
-	fromYearMonth int
-	toYearMonth   int
+	FromYearMonth int
+	ToYearMonth   int
+	EntityName    string
 }
 
 type DashboardController struct {
@@ -38,6 +39,33 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 
 	results := []tk.M{}
 	err := qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(results)
+}
+
+func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	sql := "SELECT country, customer AS entity FROM eaciit_test.eco_test;"
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
