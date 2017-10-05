@@ -33,7 +33,14 @@
         <span>ETB</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left" data-bind="text: widget.ETB"></div>
+        <div class="widget-left">
+          <p data-bind="text: widget.ETB"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.ETBYearChange() > 0, 'red-text fa-caret-down': widget.ETBYearChange() < 0}"></i>
+            <span data-bind="text: widget.ETBYearChange"></span>
+          </span>
+        </div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart1">
           </div>
@@ -54,7 +61,14 @@
         <span>Buyers</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left" data-bind="text: widget.Buyer"></div>
+        <div class="widget-left">
+          <p data-bind="text: widget.Buyer"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.BuyerYearChange() > 0, 'red-text fa-caret-down': widget.BuyerYearChange() < 0}"></i>
+            <span data-bind="text: widget.BuyerYearChange"></span>
+          </span>
+        </div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart2">
           </div>
@@ -72,10 +86,17 @@
   <div class="col-sm-2">
     <div class="panel ez no-padding hardcore widget">
       <div class="panel-heading">
-        <span>Sellers</span>
+        <span>Suppliers</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left" data-bind="text: widget.Seller"></div>
+        <div class="widget-left">
+          <p data-bind="text: widget.Seller"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.SellerYearChange() > 0, 'red-text fa-caret-down': widget.SellerYearChange() < 0}"></i>
+            <span data-bind="text: widget.SellerYearChange"></span>
+          </span>
+        </div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart3">
           </div>
@@ -96,7 +117,14 @@
         <span>In Flows ($B)</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left" data-bind="text: kendo.toString(widget.InFlow() / 1000000000, 'n2')"></div>
+        <div class="widget-left">
+          <p data-bind="text: kendo.toString(widget.InFlow() / 1000000000, 'n2')"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.InFlowYearChange() > 0, 'red-text fa-caret-down': widget.InFlowYearChange() < 0}"></i>
+            <span data-bind="text: widget.InFlowYearChange"></span>
+          </span>
+        </div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart4">
           </div>
@@ -117,7 +145,14 @@
         <span>Out Flows ($B)</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left" data-bind="text: kendo.toString(widget.OutFlow() / 1000000000, 'n2')"></div>
+        <div class="widget-left">
+          <p data-bind="text: kendo.toString(widget.OutFlow() / 1000000000, 'n2')"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.OutFlowYearChange() > 0, 'red-text fa-caret-down': widget.OutFlowYearChange() < 0}"></i>
+            <span data-bind="text: kendo.toString(widget.OutFlowYearChange() / 1000000000, 'n2')"></span>
+          </span>
+        </div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart5">
           </div>
@@ -138,7 +173,14 @@
         <span>Pipeline Workbench ($B)</span>
       </div>
       <div class="panel-body widget-body">
-        <div class="widget-left"data-bind="text: widget.Pipeline"></div>
+        <div class="widget-left">
+          <p data-bind="text: widget.Pipeline"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.PipelineYearChange() > 0, 'red-text fa-caret-down': widget.PipelineYearChange() < 0}"></i>
+            <span data-bind="text: widget.PipelineYearChange"></span>
+          </span>
+        </div>
         <div class="widget-right">
           <div class="chart-container" id="widgetChart6">
           </div>

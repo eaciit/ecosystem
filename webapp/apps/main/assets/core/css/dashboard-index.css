@@ -26,8 +26,11 @@ html {
 
 .widget-body .widget-left {
   width: 40%;
-  font-size: 2em;
   float: left;
+}
+
+.widget-body .widget-left > p {
+  font-size: 2em;
 }
 
 .widget-body .widget-right {
