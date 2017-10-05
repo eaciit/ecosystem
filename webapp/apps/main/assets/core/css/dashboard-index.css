@@ -58,6 +58,15 @@ html {
   outline: none;
 }
 
+.bubble-tooltip {
+  padding: 5px 10px;
+  text-align: center;  
+}
+
+.bubble-tooltip .head {
+  font-size: 1.5em;
+}
+
 .table.ez thead {
   background-color: #4183D7;
 }

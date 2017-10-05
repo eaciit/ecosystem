@@ -206,7 +206,7 @@
             Domicile<br/>Group
           </div>
           <div class="box bluebox">
-            28<br/>ETB
+            <span data-bind="text: widget.ETB"></span><br/>ETB
           </div>
           <div class="box greenbox">
             63<br/>NTB
@@ -216,12 +216,14 @@
     </div>
   </div>
 </div>
+
+<!-- Template -->
 <div id="mapDetailModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title" data-bind="text: dashboard.activeEntity()"></h4>
+        <h4 class="modal-title" data-bind="text: dashboard.activeEntities().name"></h4>
       </div>
       <div class="modal-body">
         <div class="row" id="groupbuttondetail">
@@ -274,7 +276,7 @@
                 <i class="fa fa-play fa-in fa-hide" aria-hidden="true"></i>
               </div>
             </div>
-            <!--panel Create-->
+
             <div role="tabpanel" class="tab-pane" id="Trade">
               <div class="row align-center">
                 <label class="texthead">Product Mix</label>
@@ -289,10 +291,14 @@
                 <label>Trade 3</label>
               </div>
             </div>
-            <!--panel Draft-->
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script id="tooltip-template" type="text/x-kendo-template">
+  <div class="head">#= kendo.toString(value, "n0") #</div>
+  <div>#= name #</div>
+</script>

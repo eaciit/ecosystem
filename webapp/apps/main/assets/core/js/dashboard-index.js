@@ -1,6 +1,5 @@
 var dashboard = {}
-dashboard.entities = ko.observableArray([])
-dashboard.activeEntity = ko.observable()
+dashboard.activeEntities = ko.observable({})
 dashboard.region = [{
   "value": "ASA",
   "text": "ASA"
@@ -42,45 +41,133 @@ dashboard.payment = [{
   "text": "Installment"
 }]
 
-dashboard.mapsdata1 = [{
-    _id: 1,
-    location: [-7.274879, 111.6099528],
-    name: "Jakarta, Indonesia",
-    entities: "MEGLOBAL INTERNATIONAL FZE"
-  },
-  {
-    _id: 2,
-    location: [1.3440852, 103.6839573],
-    name: "Singapore, Singapore",
-    entities: "MEGLOBAL INTERNATIONAL FZE"
+dashboard.getMapData = function (callback) {
+  viewModel.ajaxPostCallback("/main/dashboard/getmapdata", {}, function (data) {
+    $.getJSON("/main/static/core/js/countries.json", function (countries) {
+      var result = _(data)
+        .groupBy('country')
+        .map(function (items, e) {
+          var c = _.find(countries, {
+            "country_code": e
+          })
+          var entities = _.map(items, 'entity')
+
+          return {
+            country: e,
+            location: c.latlng,
+            name: c.name,
+            entities: entities,
+            value: entities.length
+          };
+        })
+        .value()
+
+      callback(result)
+    })
+  })
+}
+
+dashboard.generateMap = function () {
+  var activeShape
+  var highlightedMapAlpha = 0.8
+  var circledMapAlpha = 0.5
+  var template = kendo.template($("#tooltip-template").html())
+  var popup = $("<div class='bubble-tooltip box bluebox'>Foo</div>")
+    .appendTo(document.body)
+    .kendoPopup()
+    .data("kendoPopup")
+
+  dashboard.getMapData(function (data) {
+    $("#map").kendoMap({
+      controls: {
+        navigator: false
+      },
+      center: [18.062312304546726, 108.28125],
+      zoom: 3,
+      layers: [{
+        type: "shape",
+        dataSource: {
+          data: mapTemplate.features,
+        },
+        style: {
+          fill: {
+            opacity: 0.5
+          }
+        }
+      }, {
+        type: "bubble",
+        dataSource: data,
+        style: {
+          fill: {
+            color: "#19B5FE",
+            opacity: circledMapAlpha
+          },
+          stroke: {
+            width: 0
+          }
+        }
+      }],
+      shapeClick: onClickShape,
+      shapeMouseEnter: onShapeMouseEnter,
+      shapeMouseLeave: onShapeMouseLeave
+    });
+
+    $("#map").unbind("mousewheel")
+    $("#map").unbind("DOMMouseScroll")
+  })
+
+  function onClickShape(e) {
+    var shape = e.shape;
+    if (e.shape.dataItem === undefined) {
+      return
+    }
+
+    dashboard.showMapDetails(e.shape.dataItem)
   }
-]
-dashboard.mapsdata2 = [{
-    _id: 21,
-    location: [13.7245601, 100.4930264],
-    name: "Bangkok, Thailand",
-    entities: "MEGLOBAL INTERNATIONAL FZE"
-  },
-  {
-    _id: 22,
-    location: [25.0171608, 121.3662942],
-    name: "Taipei, Taiwan",
-    entities: "MEGLOBAL INTERNATIONAL FZE"
+
+  function onShapeMouseEnter(e) {
+    e.shape.options.fill.set("opacity", highlightedMapAlpha);
+    activeShape = e.shape;
+    activeShape.options.set("stroke", { width: 1, color: "#fff" });
+
+    if (e.shape.dataItem === undefined) {
+      return
+    }
+
+    $("#map").css("cursor", "pointer");
+
+    var data = e.shape.dataItem
+
+    var oe = e.originalEvent;
+    var x = oe.pageX || oe.clientX;
+    var y = oe.pageY || oe.clientY;
+
+    popup.element.html(template(data));
+    popup.open(x, y);
   }
-]
-dashboard.mapsdata3 = [{
-    _id: 31,
-    location: [35.006095, 135.7259306],
-    name: "Kyoto, Japan",
-    entities: "MEGLOBAL INTERNATIONAL FZE"
-  },
-  {
-    _id: 32,
-    location: [37.5650172, 126.8494673],
-    name: "Seol, South Korea",
-    entities: "MEGLOBAL INTERNATIONAL FZE"
+
+  function onShapeMouseLeave(e) {
+    e.shape.options.set("fill.opacity", circledMapAlpha);
+    e.shape.options.set("stroke", { width: 0, color: "#fff" });
+
+    $("#map").css("cursor", "inherit");
+
+    if (!$(e.originalEvent.relatedTarget).is(".k-popup, .k-animation-container")) {
+      popup.close();
+      popup.element.kendoStop(true, true);
+    }
   }
-]
+}
+
+dashboard.btnTrade = function () {
+  $("#groupbuttondetail").hide()
+  $("#tradetabs").show()
+}
+
+dashboard.showMapDetails = function (e) {
+  dashboard.activeEntities(e)
+  $("#mapDetailModal").modal("show")
+}
 
 var widget = {}
 
@@ -265,66 +352,6 @@ widget.loadData = function () {
   viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", {}, function (data) {
     widget.OutFlowYearChange(data)
   })
-}
-
-dashboard.generateMap = function () {
-  var template = mapTemplate
-
-  $("#map").kendoMap({
-    controls: {
-      navigator: false
-    },
-    center: [18.062312304546726, 108.28125],
-    zoom: 3,
-    layers: [{
-      type: "shape",
-      dataSource: {
-        data: template.features,
-      },
-      style: {
-        fill: {
-          opacity: 0.5
-        }
-      }
-    }, {
-      type: "marker",
-      dataSource: dashboard.mapsdata1,
-      shape: "pinRed",
-      locationField: "location",
-      titleField: "name"
-    }, {
-      type: "marker",
-      dataSource: dashboard.mapsdata2,
-      shape: "pinBlue",
-      locationField: "location",
-      titleField: "name"
-    }, {
-      type: "marker",
-      dataSource: dashboard.mapsdata3,
-      shape: "pinGreen",
-      locationField: "location",
-      titleField: "name"
-    }],
-    markerClick: onClickMarker
-  });
-
-  $("#map").unbind("mousewheel")
-  $("#map").unbind("DOMMouseScroll")
-
-  function onClickMarker(e) {
-    dashboard.showMapDetails()
-    dashboard.activeEntity(e.marker.dataItem.entities)
-    $("#mapDetailModal").modal("show")
-  }
-}
-
-dashboard.btnTrade = function () {
-  $("#groupbuttondetail").hide()
-  $("#tradetabs").show()
-}
-
-dashboard.showMapDetails = function () {
-
 }
 
 $(window).load(function () {

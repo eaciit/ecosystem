@@ -24,6 +24,27 @@ func (c *DashboardController) Index(k *knot.WebContext) interface{} {
 	return c.SetViewData(nil)
 }
 
+func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	sql := "SELECT country, customer AS entity FROM eaciit_test.eco_test;"
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(results)
+}
+
 func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
