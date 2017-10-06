@@ -1,12 +1,14 @@
 var dashboard = {}
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
-dashboard.noteHeaderModal = ko.observable()
-dashboard.dataProductMix = ko.observableArray([])
-dashboard.dataInFlow = ko.observableArray([])
-dashboard.dataOutFlow = ko.observableArray([])
-dashboard.sumInFlow = ko.observable()
-dashboard.sumOutFlow = ko.observable()
+dashboard.activeEntityDetail = {
+  noteHeaderModal : ko.observable(),
+  dataProductMix : ko.observableArray([]),
+  dataInFlow : ko.observableArray([]),
+  dataOutFlow : ko.observableArray([]),
+  sumInFlow : ko.observable(),
+  sumOutFlow : ko.observable(),
+}
 
 dashboard.region = [{
   "value": "ASA",
@@ -196,16 +198,16 @@ dashboard.getEntityDetail = function(entityName) {
 }
 
 dashboard.btnCash = function() {
-  dashboard.noteHeaderModal(" > Cash")
-  dashboard.dataProductMix([])
-  dashboard.dataInFlow([])
-  dashboard.dataOutFlow([])
-  dashboard.sumInFlow(0)
-  dashboard.sumOutFlow(0)
+  dashboard.activeEntityDetail.noteHeaderModal(" > Cash")
+  dashboard.activeEntityDetail.dataProductMix([])
+  dashboard.activeEntityDetail.dataInFlow([])
+  dashboard.activeEntityDetail.dataOutFlow([])
+  dashboard.activeEntityDetail.sumInFlow(0)
+  dashboard.activeEntityDetail.sumOutFlow(0)
   // for trade  
   var data = dashboard.activeEntity().product.cash
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
-  dashboard.dataProductMix(maxthree)
+  dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
   var datainflow = dashboard.activeEntity().bank[0].buyer
   var dataoutflow = dashboard.activeEntity().bank[0].payee
@@ -230,7 +232,7 @@ dashboard.btnCash = function() {
       color: colorval[3]
     });
   }
-  dashboard.dataInFlow(tempdatain)
+  dashboard.activeEntityDetail.dataInFlow(tempdatain)
 
   var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
   var summaxthreeout = _.sumBy(maxthreeout, 'value')
@@ -250,26 +252,26 @@ dashboard.btnCash = function() {
     color: colorval[3]
     });
   }
-  dashboard.dataOutFlow(tempdataout)
+  dashboard.activeEntityDetail.dataOutFlow(tempdataout)
 
-  dashboard.sumInFlow(currencynum(suminflow))
-  dashboard.sumOutFlow(currencynum(sumoutflow))
+  dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
+  dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
 
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
 }
 
 dashboard.btnTrade = function() {
-  dashboard.noteHeaderModal(" > Trade")
-  dashboard.dataProductMix([])
-  dashboard.dataInFlow([])
-  dashboard.dataOutFlow([])
-  dashboard.sumInFlow(0)
-  dashboard.sumOutFlow(0)
+  dashboard.activeEntityDetail.noteHeaderModal(" > Trade")
+  dashboard.activeEntityDetail.dataProductMix([])
+  dashboard.activeEntityDetail.dataInFlow([])
+  dashboard.activeEntityDetail.dataOutFlow([])
+  dashboard.activeEntityDetail.sumInFlow(0)
+  dashboard.activeEntityDetail.sumOutFlow(0)
   // for trade  
   var data = dashboard.activeEntity().product.trade
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
-  dashboard.dataProductMix(maxthree)
+  dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
   var datainflow = dashboard.activeEntity().bank[1].buyer
   var dataoutflow = dashboard.activeEntity().bank[1].payee
@@ -294,7 +296,7 @@ dashboard.btnTrade = function() {
       color: colorval[3]
     });
   }
-  dashboard.dataInFlow(tempdatain)
+  dashboard.activeEntityDetail.dataInFlow(tempdatain)
 
   var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
   var summaxthreeout = _.sumBy(maxthreeout, 'value')
@@ -314,9 +316,9 @@ dashboard.btnTrade = function() {
     color: colorval[3]
     });
   }
-  dashboard.dataOutFlow(tempdataout)
-  dashboard.sumInFlow(currencynum(suminflow))
-  dashboard.sumOutFlow(currencynum(sumoutflow))
+  dashboard.activeEntityDetail.dataOutFlow(tempdataout)
+  dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
+  dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
 }

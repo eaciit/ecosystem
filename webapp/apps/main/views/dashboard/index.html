@@ -248,27 +248,31 @@
                   <!--panel list-->
                   <div role="tabpanel" class="tab-pane active" id="Flows">
                      <div class="row align-center top-padding">
-                        IN $ <span data-bind="text:dashboard.sumInFlow"></span>
+                        IN $ <span data-bind="text:dashboard.activeEntityDetail.sumInFlow"></span>
                      </div>
                      <div id="flows-in" class="row align-center">
                         <i class="fa fa-play fa-out fa-hide" aria-hidden="true"></i>
-                        <table id="table-flows-in" width="80%" style="margin-left: auto;margin-right: auto;display:inline;">
-                           <tr data-bind="foreach:dashboard.dataInFlow">
+                        <div style="display: inline-block;width: 400px;">
+                        <table id="table-flows-in" width="100%" style="margin-left: auto;margin-right: auto;">
+                           <tr data-bind="foreach:dashboard.activeEntityDetail.dataInFlow">
                               <td data-bind="style: { width: value + '%',background:color}"><span data-bind="text:text"></span></td>
                            </tr>
                         </table>
+                        </div>
                         <i class="fa fa-play fa-in" aria-hidden="true"></i>            
                      </div>
                      <div class="row align-center top-padding">
-                        OUT $ <span data-bind="text:dashboard.sumOutFlow"></span>
+                        OUT $ <span data-bind="text:dashboard.activeEntityDetail.sumOutFlow"></span>
                      </div>
                      <div id="flows-out" class="row align-center">
-                        <i class="fa fa-play fa-out" aria-hidden="true"></i>               
-                        <table id="table-flows-out" width="80%" style="margin-left: auto;margin-right: auto;display:inline">
-                           <tr data-bind="foreach:dashboard.dataOutFlow">
+                        <i class="fa fa-play fa-out" aria-hidden="true"></i> 
+                        <div style="display: inline-block;width: 400px;">              
+                        <table id="table-flows-out" width="100%" style="margin-left: auto;margin-right: auto;">
+                           <tr data-bind="foreach:dashboard.activeEntityDetail.dataOutFlow">
                               <td data-bind="style: { width: value + '%',background:color}"><span data-bind="text:text"></span></td>
                            </tr>
                         </table>
+                        </div>
                         <i class="fa fa-play fa-in fa-hide" aria-hidden="true"></i>
                      </div>
                   </div>
@@ -276,7 +280,7 @@
                      <div class="row align-center">
                         <label class="texthead">Product Mix</label>
                      </div>
-                     <div data-bind="template:{name:'tableProductMix', foreach:dashboard.dataProductMix}">              
+                     <div data-bind="template:{name:'tableProductMix', foreach:dashboard.activeEntityDetail.dataProductMix}">              
                      </div>
                   </div>
                </div>
