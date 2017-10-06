@@ -44,3 +44,13 @@ _.mixin({
     return s / x.length;
   }
 });
+
+function currencynum(angka) {
+    if (angka >= 0) {
+        var TotString = kendo.toString(angka, "n");
+        return TotString;
+    } else {
+        var TotminString = kendo.toString(Math.abs(angka), "n");
+        return "(" + TotminString + ")";
+    }
+}
