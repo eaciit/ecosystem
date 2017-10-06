@@ -1,5 +1,7 @@
 var dashboard = {}
 dashboard.activeEntities = ko.observable({})
+dashboard.activeEntity = ko.observable({})
+
 dashboard.region = [{
   "value": "ASA",
   "text": "ASA"
@@ -165,7 +167,22 @@ dashboard.generateMap = function () {
 dashboard.getEntityDetail = function (entityName) {
   viewModel.ajaxPostCallback("/main/dashboard/getentitydetail", {
     entityName: entityName
-  }, function(data) {
+  }, function (data) {
+    var bank = _(data.bank)
+      .groupBy("product_type")
+      .map(function (items) {
+        return _.groupBy(items, "flow")
+      }).value()
+
+    var product = _(data.product)
+      .groupBy("product_type")
+      .value()
+
+    dashboard.activeEntity({
+      bank: bank,
+      product: product
+    })
+    
     $("#mapDetailModal").modal("show")
   })
 }

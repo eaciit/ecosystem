@@ -31,7 +31,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	sql := "SELECT country, customer AS entity FROM eaciit_test.eco_test;"
+	sql := "SELECT country, customer AS entity FROM eco_test;"
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -58,19 +58,36 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := "SELECT country, customer AS entity FROM eaciit_test.eco_test;"
+	sql := "SELECT bank, product_type, flow, SUM(amount) AS value FROM eco_test WHERE customer = '" + payload.EntityName + "' GROUP BY product_type, flow, bank"
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
 
-	results := []tk.M{}
-	err = qr.Fetch(&results, 0)
+	results1 := []tk.M{}
+	err = qr.Fetch(&results1, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	return c.SetResultOK(results)
+	sql = "SELECT product_type, product, SUM(amount) AS value FROM eco_test WHERE customer = '" + payload.EntityName + "' GROUP BY product_type, product;"
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results2 := []tk.M{}
+	err = qr.Fetch(&results2, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	returnData := tk.M{
+		"bank":    results1,
+		"product": results2,
+	}
+
+	return c.SetResultOK(returnData)
 }
 
 func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
