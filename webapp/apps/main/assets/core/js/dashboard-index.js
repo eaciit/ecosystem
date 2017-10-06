@@ -1,6 +1,12 @@
 var dashboard = {}
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
+dashboard.noteHeaderModal = ko.observable()
+dashboard.dataProductMix = ko.observableArray([])
+dashboard.dataInFlow = ko.observableArray([])
+dashboard.dataOutFlow = ko.observableArray([])
+dashboard.sumInFlow = ko.observable()
+dashboard.sumOutFlow = ko.observable()
 
 dashboard.region = [{
   "value": "ASA",
@@ -43,12 +49,12 @@ dashboard.payment = [{
   "text": "Installment"
 }]
 
-dashboard.getMapData = function (callback) {
-  viewModel.ajaxPostCallback("/main/dashboard/getmapdata", {}, function (data) {
-    $.getJSON("/main/static/core/js/countries.json", function (countries) {
+dashboard.getMapData = function(callback) {
+  viewModel.ajaxPostCallback("/main/dashboard/getmapdata", {}, function(data) {
+    $.getJSON("/main/static/core/js/countries.json", function(countries) {
       var result = _(data)
         .groupBy('country')
-        .map(function (items, e) {
+        .map(function(items, e) {
           var c = _.find(countries, {
             "country_code": e
           })
@@ -69,7 +75,7 @@ dashboard.getMapData = function (callback) {
   })
 }
 
-dashboard.generateMap = function () {
+dashboard.generateMap = function() {
   var activeShape
   var highlightedMapAlpha = 0.8
   var circledMapAlpha = 0.5
@@ -79,7 +85,7 @@ dashboard.generateMap = function () {
     .kendoPopup()
     .data("kendoPopup")
 
-  dashboard.getMapData(function (data) {
+  dashboard.getMapData(function(data) {
     $("#map").kendoMap({
       controls: {
         navigator: false
@@ -118,6 +124,8 @@ dashboard.generateMap = function () {
   })
 
   function onShapeMouseEnter(e) {
+    $("#groupbuttondetail").show()
+    $("#tradetabs").hide()
     e.shape.options.fill.set("opacity", highlightedMapAlpha)
     activeShape = e.shape
     activeShape.options.set("stroke", {
@@ -156,7 +164,7 @@ dashboard.generateMap = function () {
     }
   }
 
-  dashboard.showMapDetails = function (i) {
+  dashboard.showMapDetails = function(i) {
     dashboard.getEntityDetail(dashboard.activeEntities().entities[i])
 
     popup.close()
@@ -164,13 +172,13 @@ dashboard.generateMap = function () {
   }
 }
 
-dashboard.getEntityDetail = function (entityName) {
+dashboard.getEntityDetail = function(entityName) {
   viewModel.ajaxPostCallback("/main/dashboard/getentitydetail", {
     entityName: entityName
-  }, function (data) {
+  }, function(data) {
     var bank = _(data.bank)
       .groupBy("product_type")
-      .map(function (items) {
+      .map(function(items) {
         return _.groupBy(items, "flow")
       }).value()
 
@@ -182,12 +190,133 @@ dashboard.getEntityDetail = function (entityName) {
       bank: bank,
       product: product
     })
-    
+
     $("#mapDetailModal").modal("show")
   })
 }
 
-dashboard.btnTrade = function () {
+dashboard.btnCash = function() {
+  dashboard.noteHeaderModal(" > Cash")
+  dashboard.dataProductMix([])
+  dashboard.dataInFlow([])
+  dashboard.dataOutFlow([])
+  dashboard.sumInFlow(0)
+  dashboard.sumOutFlow(0)
+  // for trade  
+  var data = dashboard.activeEntity().product.cash
+  var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
+  dashboard.dataProductMix(maxthree)
+  // for flow
+  var datainflow = dashboard.activeEntity().bank[0].buyer
+  var dataoutflow = dashboard.activeEntity().bank[0].payee
+  var suminflow = _.sumBy(datainflow, 'value')
+  var sumoutflow = _.sumBy(dataoutflow, 'value')
+  var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
+  var summaxthreein = _.sumBy(maxthreein, 'value')
+  tempdatain = [];
+  var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+  _.each(maxthreein, function(v, i) {
+    tempdatain.push({
+      text: v.bank,
+      value: Math.round((v.value / suminflow) * 100),
+      color: colorval[i]
+    });
+  });
+  var sumtin = _.sumBy(tempdatain, 'value')
+  if(datainflow.length > 3) {
+      tempdatain.push({
+      text: "Other",
+      value: (100 - sumtin),
+      color: colorval[3]
+    });
+  }
+  dashboard.dataInFlow(tempdatain)
+
+  var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
+  var summaxthreeout = _.sumBy(maxthreeout, 'value')
+  tempdataout = [];
+  _.each(maxthreeout, function(v, i) {
+    tempdataout.push({
+      text: v.bank,
+      value: Math.round((v.value / sumoutflow) * 100),
+      color: colorval[i]
+    });
+  });
+  var sumtout = _.sumBy(tempdataout, 'value')
+  if(dataoutflow.length > 3){
+    tempdataout.push({
+    text: "Other",
+    value: (100 - sumtout),
+    color: colorval[3]
+    });
+  }
+  dashboard.dataOutFlow(tempdataout)
+
+  dashboard.sumInFlow(currencynum(suminflow))
+  dashboard.sumOutFlow(currencynum(sumoutflow))
+
+  $("#groupbuttondetail").hide()
+  $("#tradetabs").show()
+}
+
+dashboard.btnTrade = function() {
+  dashboard.noteHeaderModal(" > Trade")
+  dashboard.dataProductMix([])
+  dashboard.dataInFlow([])
+  dashboard.dataOutFlow([])
+  dashboard.sumInFlow(0)
+  dashboard.sumOutFlow(0)
+  // for trade  
+  var data = dashboard.activeEntity().product.trade
+  var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
+  dashboard.dataProductMix(maxthree)
+  // for flow
+  var datainflow = dashboard.activeEntity().bank[1].buyer
+  var dataoutflow = dashboard.activeEntity().bank[1].payee
+  var suminflow = _.sumBy(datainflow, 'value')
+  var sumoutflow = _.sumBy(dataoutflow, 'value')
+  var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
+  var summaxthreein = _.sumBy(maxthreein, 'value')
+  tempdatain = [];
+  var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+  _.each(maxthreein, function(v, i) {
+    tempdatain.push({
+      text: v.bank,
+      value: Math.round((v.value / suminflow) * 100),
+      color: colorval[i]
+    });
+  });
+  var sumtin = _.sumBy(tempdatain, 'value')
+  if(datainflow.length > 3) {
+      tempdatain.push({
+      text: "Other",
+      value: (100 - sumtin),
+      color: colorval[3]
+    });
+  }
+  dashboard.dataInFlow(tempdatain)
+
+  var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
+  var summaxthreeout = _.sumBy(maxthreeout, 'value')
+  tempdataout = [];
+  _.each(maxthreeout, function(v, i) {
+    tempdataout.push({
+      text: v.bank,
+      value: Math.round((v.value / sumoutflow) * 100),
+      color: colorval[i]
+    });
+  });
+  var sumtout = _.sumBy(tempdataout, 'value')
+  if(dataoutflow.length > 3){
+    tempdataout.push({
+    text: "Other",
+    value: (100 - sumtout),
+    color: colorval[3]
+    });
+  }
+  dashboard.dataOutFlow(tempdataout)
+  dashboard.sumInFlow(currencynum(suminflow))
+  dashboard.sumOutFlow(currencynum(sumoutflow))
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
 }
@@ -208,7 +337,7 @@ widget.inFlowYearChange = ko.observable(0)
 widget.outFlowYearChange = ko.observable(0)
 widget.pipelineYearChange = ko.observable(1.54)
 
-widget.buildChart = function (id, data, unit) {
+widget.buildChart = function(id, data, unit) {
   var chartParam = {
     dataSource: {
       data: data
@@ -257,43 +386,43 @@ widget.buildChart = function (id, data, unit) {
   $(id).kendoChart(chartParam)
 }
 
-widget.generateChart1 = function () {
+widget.generateChart1 = function() {
   var param = {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartetb", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartetb", param, function(data) {
     widget.buildChart("#widgetChart1", data)
   })
 }
 
-widget.generateChart2 = function () {
+widget.generateChart2 = function() {
   var param = {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartbuyer", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartbuyer", param, function(data) {
     widget.buildChart("#widgetChart2", data)
   })
 }
 
-widget.generateChart3 = function () {
+widget.generateChart3 = function() {
   var param = {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartseller", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartseller", param, function(data) {
     widget.buildChart("#widgetChart3", data)
   })
 }
 
-widget.generateChart4 = function () {
+widget.generateChart4 = function() {
   var param = {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartinflow", param, function (data) {
-    data = _.map(data, function (e) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartinflow", param, function(data) {
+    data = _.map(data, function(e) {
       e.value = e.value / 1000000000
 
       return e
@@ -303,13 +432,13 @@ widget.generateChart4 = function () {
   })
 }
 
-widget.generateChart5 = function () {
+widget.generateChart5 = function() {
   var param = {
     fromYearMonth: 201509,
     toYearMonth: 201609
   }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartoutflow", param, function (data) {
-    data = _.map(data, function (e) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartoutflow", param, function(data) {
+    data = _.map(data, function(e) {
       e.value = e.value / 1000000000
 
       return e
@@ -319,12 +448,12 @@ widget.generateChart5 = function () {
   })
 }
 
-widget.generateChart6 = function () {
+widget.generateChart6 = function() {
   var data = [6, 1, 10, 1, 10]
   widget.buildChart("#widgetChart6", data)
 }
 
-widget.generateCharts = function () {
+widget.generateCharts = function() {
   widget.generateChart1()
   widget.generateChart2()
   widget.generateChart3()
@@ -333,51 +462,51 @@ widget.generateCharts = function () {
   widget.generateChart6()
 }
 
-widget.loadData = function () {
+widget.loadData = function() {
   // Loading current data
-  viewModel.ajaxPostCallback("/main/dashboard/getetb", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getetb", {}, function(data) {
     widget.etb(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getbuyer", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getbuyer", {}, function(data) {
     widget.buyer(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getseller", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getseller", {}, function(data) {
     widget.seller(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getinflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getinflow", {}, function(data) {
     widget.inFlow(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getoutflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getoutflow", {}, function(data) {
     widget.outFlow(data)
   })
 
   // Loading annualy change data
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeetb", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeetb", {}, function(data) {
     widget.etbYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangebuyer", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangebuyer", {}, function(data) {
     widget.buyerYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeseller", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeseller", {}, function(data) {
     widget.sellerYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeinflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeinflow", {}, function(data) {
     widget.inFlowYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", {}, function(data) {
     widget.outFlowYearChange(data)
   })
 }
 
-$(window).load(function () {
+$(window).load(function() {
   widget.loadData()
   widget.generateCharts()
   dashboard.generateMap()
