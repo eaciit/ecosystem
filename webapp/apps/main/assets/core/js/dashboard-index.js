@@ -182,7 +182,7 @@ dashboard.getEntityDetail = function (entityName) {
       bank: bank,
       product: product
     })
-    
+
     $("#mapDetailModal").modal("show")
   })
 }
