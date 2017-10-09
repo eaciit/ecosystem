@@ -2,12 +2,12 @@ var dashboard = {}
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
 dashboard.activeEntityDetail = {
-  noteHeaderModal : ko.observable(),
-  dataProductMix : ko.observableArray([]),
-  dataInFlow : ko.observableArray([]),
-  dataOutFlow : ko.observableArray([]),
-  sumInFlow : ko.observable(),
-  sumOutFlow : ko.observable(),
+  noteHeaderModal: ko.observable(),
+  dataProductMix: ko.observableArray([]),
+  dataInFlow: ko.observableArray([]),
+  dataOutFlow: ko.observableArray([]),
+  sumInFlow: ko.observable(),
+  sumOutFlow: ko.observable(),
 }
 
 dashboard.region = [{
@@ -213,50 +213,54 @@ dashboard.btnCash = function() {
   var dataoutflow = dashboard.activeEntity().bank[0].payee
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
-  var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
-  var summaxthreein = _.sumBy(maxthreein, 'value')
-  tempdatain = [];
   var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
-  _.each(maxthreein, function(v, i) {
-    tempdatain.push({
-      text: v.bank,
-      value: Math.round((v.value / suminflow) * 100),
-      color: colorval[i]
-    });
-  });
-  var sumtin = _.sumBy(tempdatain, 'value')
-  if(datainflow.length > 3) {
+
+  if (datainflow != undefined) {
+    var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
+    var summaxthreein = _.sumBy(maxthreein, 'value')
+    tempdatain = [];
+
+    _.each(maxthreein, function(v, i) {
       tempdatain.push({
-      text: "Other",
-      value: (100 - sumtin),
-      color: colorval[3]
+        text: v.bank,
+        value: Math.round((v.value / suminflow) * 100),
+        color: colorval[i]
+      });
     });
+    var sumtin = _.sumBy(tempdatain, 'value')
+    if (datainflow.length > 3) {
+      tempdatain.push({
+        text: "Other",
+        value: (100 - sumtin),
+        color: colorval[3]
+      });
+    }
+    dashboard.activeEntityDetail.dataInFlow(tempdatain)
+    dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
   }
-  dashboard.activeEntityDetail.dataInFlow(tempdatain)
 
-  var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
-  var summaxthreeout = _.sumBy(maxthreeout, 'value')
-  tempdataout = [];
-  _.each(maxthreeout, function(v, i) {
-    tempdataout.push({
-      text: v.bank,
-      value: Math.round((v.value / sumoutflow) * 100),
-      color: colorval[i]
+  if (dataoutflow != undefined) {
+    var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
+    var summaxthreeout = _.sumBy(maxthreeout, 'value')
+    tempdataout = [];
+    _.each(maxthreeout, function(v, i) {
+      tempdataout.push({
+        text: v.bank,
+        value: Math.round((v.value / sumoutflow) * 100),
+        color: colorval[i]
+      });
     });
-  });
-  var sumtout = _.sumBy(tempdataout, 'value')
-  if(dataoutflow.length > 3){
-    tempdataout.push({
-    text: "Other",
-    value: (100 - sumtout),
-    color: colorval[3]
-    });
+    var sumtout = _.sumBy(tempdataout, 'value')
+    if (dataoutflow.length > 3) {
+      tempdataout.push({
+        text: "Other",
+        value: (100 - sumtout),
+        color: colorval[3]
+      });
+    }
+    dashboard.activeEntityDetail.dataOutFlow(tempdataout)
+    dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
   }
-  dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-
-  dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
-  dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
-
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
 }
@@ -277,48 +281,52 @@ dashboard.btnTrade = function() {
   var dataoutflow = dashboard.activeEntity().bank[1].payee
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
-  var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
-  var summaxthreein = _.sumBy(maxthreein, 'value')
-  tempdatain = [];
-  var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
-  _.each(maxthreein, function(v, i) {
-    tempdatain.push({
-      text: v.bank,
-      value: Math.round((v.value / suminflow) * 100),
-      color: colorval[i]
-    });
-  });
-  var sumtin = _.sumBy(tempdatain, 'value')
-  if(datainflow.length > 3) {
+  if (datainflow != undefined) {
+    var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
+    var summaxthreein = _.sumBy(maxthreein, 'value')
+    tempdatain = [];
+    var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+    _.each(maxthreein, function(v, i) {
       tempdatain.push({
-      text: "Other",
-      value: (100 - sumtin),
-      color: colorval[3]
+        text: v.bank,
+        value: Math.round((v.value / suminflow) * 100),
+        color: colorval[i]
+      });
     });
+    var sumtin = _.sumBy(tempdatain, 'value')
+    if (datainflow.length > 3) {
+      tempdatain.push({
+        text: "Other",
+        value: (100 - sumtin),
+        color: colorval[3]
+      });
+    }
+    dashboard.activeEntityDetail.dataInFlow(tempdatain)
+    dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
   }
-  dashboard.activeEntityDetail.dataInFlow(tempdatain)
 
-  var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
-  var summaxthreeout = _.sumBy(maxthreeout, 'value')
-  tempdataout = [];
-  _.each(maxthreeout, function(v, i) {
-    tempdataout.push({
-      text: v.bank,
-      value: Math.round((v.value / sumoutflow) * 100),
-      color: colorval[i]
+  if (dataoutflow != undefined) {
+    var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
+    var summaxthreeout = _.sumBy(maxthreeout, 'value')
+    tempdataout = [];
+    _.each(maxthreeout, function(v, i) {
+      tempdataout.push({
+        text: v.bank,
+        value: Math.round((v.value / sumoutflow) * 100),
+        color: colorval[i]
+      });
     });
-  });
-  var sumtout = _.sumBy(tempdataout, 'value')
-  if(dataoutflow.length > 3){
-    tempdataout.push({
-    text: "Other",
-    value: (100 - sumtout),
-    color: colorval[3]
-    });
+    var sumtout = _.sumBy(tempdataout, 'value')
+    if (dataoutflow.length > 3) {
+      tempdataout.push({
+        text: "Other",
+        value: (100 - sumtout),
+        color: colorval[3]
+      });
+    }
+    dashboard.activeEntityDetail.dataOutFlow(tempdataout)
+    dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
   }
-  dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-  dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
-  dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
 }
