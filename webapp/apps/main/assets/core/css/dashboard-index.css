@@ -326,3 +326,8 @@ html {
   border-top-right-radius: 0px;
 }
 
+#titleName:hover {
+  cursor: pointer;
+  text-decoration: underline;
+} 
+
