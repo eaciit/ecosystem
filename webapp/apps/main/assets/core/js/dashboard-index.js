@@ -199,7 +199,7 @@ dashboard.getEntityDetail = function (entityName) {
 }
 
 dashboard.btnCash = function () {
-  dashboard.activeEntityDetail.noteHeaderModal(" > Cash")
+  dashboard.activeEntityDetail.noteHeaderModal(" Cash")
   dashboard.activeEntityDetail.dataProductMix([])
   dashboard.activeEntityDetail.dataInFlow([])
   dashboard.activeEntityDetail.dataOutFlow([])
@@ -267,7 +267,7 @@ dashboard.btnCash = function () {
 }
 
 dashboard.btnTrade = function () {
-  dashboard.activeEntityDetail.noteHeaderModal(" > Trade")
+  dashboard.activeEntityDetail.noteHeaderModal(" Trade")
   dashboard.activeEntityDetail.dataProductMix([])
   dashboard.activeEntityDetail.dataInFlow([])
   dashboard.activeEntityDetail.dataOutFlow([])
@@ -330,6 +330,11 @@ dashboard.btnTrade = function () {
   }
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
+}
+
+dashboard.btnBack = function(){
+  $("#groupbuttondetail").show()
+  $("#tradetabs").hide()
 }
 
 var widget = {}
