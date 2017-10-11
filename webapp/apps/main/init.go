@@ -42,6 +42,7 @@ func init() {
 	app.Register(&(controllers.DashboardController{BaseController: baseCtrl}))
 	app.Register(&(controllers.CounterPartyController{BaseController: baseCtrl}))
 	app.Register(&(controllers.CounterPartyMainController{BaseController: baseCtrl}))
+	app.Register(&(controllers.MissedFlowController{BaseController: baseCtrl}))
 	app.Static("static", filepath.Join(appFolderPath, "assets"))
 
 	knot.RegisterApp(app)
