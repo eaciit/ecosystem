@@ -79,135 +79,89 @@ counterpary.generateGraph = function() {
   }]
 }
 
-console.log(data);
-  
-var links = [{
-    source: "Apple",
-    target: "Microsoft",
-    type: "opportunity",
-    text: "opportunity"
-  },
-  {
-    source: "Microsoft",
-    target: "Apple",
-    type: "opportunity",
-    text: ""
-  },
-  {
-    source: "Samsung",
-    target: "Apple",
-    type: "opportunity",
-    text: ""
-  },
-  {
-    source: "Apple",
-    target: "Samsung",
-    type: "opportunity",
-    text: "opportunity"
-  },
-  {
-    source: "Microsoft",
-    target: "Apple",
-    type: "flow",
-    text: ""
-  },
-  {
-    source: "Samsung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-   {
-    source: "Micrsssosoft",
-    target: "Apple",
-    type: "flow",
-    text: ""
-  },
-   {
-    source: "Misscrosoft",
-    target: "Apple",
-    type: "flow",
-    text: ""
-  },
-   {
-    source: "Micrssosoft",
-    target: "Apple",
-    type: "flow",
-    text: ""
-  },
-  {
-    source: "Samreresung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-  {
-    source: "Saeregmsung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-  {
-    source: "Samsrgrtrtung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-  {
-    source: "Srtrtrtamsung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-  {
-    source: "Samsrtrtrtung",
-    target: "Apple",
-    type: "flow",
-    text: ""
-  },
-  {
-    source: "Samsdwqddferrung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-  {
-    source: "Samssdsdsfrgrgung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-   {
-    source: "Samsdfdfsfrgrgung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-   {
-    source: "Samsffefdgrgrgrgung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-   {
-    source: "Samsfrgghhyugrgung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-   {
-    source: "Samsfrguytuit7krgung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-   {
-    source: "Samsfrgkutkrgung",
-    target: "Apple",
-    type: "missed",
-    text: "missed flow"
-  },
-];
+var nodetitle = data["DOW CHEMICAL INTERNATIONAL PRIVATE LIMITED"];
+var nt = {
+    cpty_long_name: "DOW CHEMICAL INTERNATIONAL PRIVATE LIMITED",
+    target: "DOW CHEMICAL INTERNATIONAL PRIVATE LIMITED",
+    cpty_bank: "",
+    cpty_coi: "",
+    cust_bank: "",
+    cust_role: "",
+    text: "",
+    total: "80000000" 
+};
+///add item
+nodetitle.forEach(function (o) {
+  { o.target = "DOW CHEMICAL INTERNATIONAL PRIVATE LIMITED";
+   o.text = "";
+   o.type = "opportunity";
+   o.target2 = o.target;
+   o.source2 = o.cpty_long_name; }
+
+  });
+
+for (var i=0; i<nodetitle.length; i++) { 
+           if( nodetitle[i]["cust_bank"] = "SCBL" ){
+            nodetitle[i]["text"] = "opportunity"
+           }
+     }
+
+nodetitle.push(nt);
+
+nodetitle.forEach(function (o) {
+    Object.keys(o).forEach(function (k) {
+        if (k == 'cpty_long_name') {
+            o.source = o[k];
+            delete o[k];
+        }
+    });
+});
+
+var zip = new Array();
+var clone2 = nodetitle.slice();
+var clone = _.map(nodetitle, _.clone);
+var clone_opportunity = _.map(nodetitle, _.clone);
+var clone_payee = _.map(nodetitle, _.clone);
+
+for (var i=0; i<clone2.length; i++) {
+                  if( clone2[i]["cust_role"] == "BUYER" ){
+                       zip.push(clone2[i])
+                   }          
+     }
+
+
+
+  for (var i=0; i<clone.length; i++) {
+                  if( clone[i]["cust_role"] == "BUYER" ){
+                        clone[i]["type"] = "flow"   
+                        clone[i]["target"] = clone[i]["source2"] 
+                        clone[i]["source"] = clone[i]["target2"]  
+                        clone[i]["text"] = clone[i]["total"]     
+                   }
+     }
+
+     for (var i=0; i<clone_payee.length; i++) {
+                  if( clone_payee[i]["cust_role"] == "PAYEE" ){
+                        clone_payee[i]["type"] = "flow"   
+                        clone_payee[i]["text"] = clone_payee[i]["total"]   
+                   }
+     }
+
+     for (var i=0; i<clone_opportunity.length; i++) {
+                  if( clone_opportunity[i]["type"] == "opportunity" ){  
+                        clone_opportunity[i]["target"] = clone_opportunity[i]["source2"] 
+                        clone_opportunity[i]["source"] = clone_opportunity[i]["target2"] 
+                         clone_opportunity[i]["text"] = clone_opportunity[i]["cpty_coi"]+" - "+clone_opportunity[i]["cust_bank"] 
+                   }
+     }
+
+var min = zip.concat(clone);
+var min2 = min.concat(clone_opportunity);
+var min3 = min2.concat(clone_payee);
+var links = min3;
+console.log(min);
+console.log(clone2);
+
 //sort links by source, then target
 links.sort(function (a, b) {
   if (a.source > b.source) {
@@ -246,7 +200,8 @@ var force = d3.layout.force()
   .links(links)
   .size([w, h])
   .linkDistance(200)
-  .charge(-500)
+  .charge(-900)
+  .gravity(.05)
   .on("tick", tick)
   .start();
 
@@ -381,247 +336,8 @@ function collapse(d) {
            
        // alert(slc);
       }///end event
-}
-    // $('#month').data('kendoDatePicker').enable(false);
-
-    // $('#radioBtn a').on('click', function() {
-    //     var sel = $(this).data('title');
-    //     var tog = $(this).data('toggle');
-    //     $('#' + tog).prop('value', sel);
-    //     if (sel == "M") {
-    //         $('#year').data('kendoDatePicker').enable(false);
-    //         $('#month').data('kendoDatePicker').enable(true);
-    //     } else if (sel == "Y") {
-    //         $('#year').data('kendoDatePicker').enable(true);
-    //         $('#month').data('kendoDatePicker').enable(false);
-    //     }
-
-    //     $('a[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
-    //     $('a[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
-    // })
-
-    // var dgraph = [{
-    //         "id": 1,
-    //         "bottom": 170,
-    //         "left": 40,
-    //         "transform": -40,
-    //         "bbottom": 76,
-    //         "bleft": 20,
-    //         "linklabel": "UTI Bank $107M",
-    //         "nodelabel": "Relliance Ind",
-    //         "nodelabel2": "IN",
-    //         listdetail: [{
-    //             "bank": "FIBB",
-    //             "product": "TRADE",
-    //             "flow": 8.44,
-    //             "not": 2
-    //         }, {
-    //             "bank": "HBKS",
-    //             "product": "TRADE",
-    //             "flow": 3.40,
-    //             "not": 1
-    //         }, {
-    //             "bank": "HCEB",
-    //             "product": "TRADE",
-    //             "flow": 8.95,
-    //             "not": 2
-    //         }]
-    //     },
-    //     {
-    //         "id": 2,
-    //         "bottom": 300,
-    //         "left": 20,
-    //         "transform": 21,
-    //         "bbottom": 331,
-    //         "bleft": -7,
-    //         "linklabel": "Various Banks $121M SCB",
-    //         "nodelabel": "Ibrahim Fibres",
-    //         "nodelabel2": "Pak",
-    //         listdetail: [{
-    //             "bank": "FIBB",
-    //             "product": "TRADE",
-    //             "flow": 8.44,
-    //             "not": 2
-    //         }, {
-    //             "bank": "HBKS",
-    //             "product": "TRADE",
-    //             "flow": 3.40,
-    //             "not": 1
-    //         }, {
-    //             "bank": "HCEB",
-    //             "product": "TRADE",
-    //             "flow": 8.95,
-    //             "not": 2
-    //         }, {
-    //             "bank": "MCBK",
-    //             "product": "TRADE",
-    //             "flow": 9.27,
-    //             "not": 2
-    //         }, {
-    //             "bank": "MEEB",
-    //             "product": "TRADE",
-    //             "flow": 3.98,
-    //             "not": 2
-    //         }, {
-    //             "bank": "SCBL",
-    //             "product": "TRADE",
-    //             "flow": 2.0,
-    //             "not": 1
-    //         }, {
-    //             "bank": "UNIL",
-    //             "product": "TRADE",
-    //             "flow": 13.18,
-    //             "not": 2
-    //         }]
-    //     },
-    //     {
-    //         "id": 3,
-    //         "bottom": 380,
-    //         "left": 160,
-    //         "transform": -90,
-    //         "bbottom": 490,
-    //         "bleft": 240,
-    //         "linklabel": "$154M SBI",
-    //         "nodelabel": "Bhilosha Ind",
-    //         "nodelabel2": "Ind",
-    //         listdetail: [{
-    //             "bank": "FIBB",
-    //             "product": "TRADE",
-    //             "flow": 8.44,
-    //             "not": 2
-    //         }, {
-    //             "bank": "HBKS",
-    //             "product": "TRADE",
-    //             "flow": 3.40,
-    //             "not": 1
-    //         }, {
-    //             "bank": "HCEB",
-    //             "product": "TRADE",
-    //             "flow": 8.95,
-    //             "not": 2
-    //         }]
-    //     },
-    //     {
-    //         "id": 4,
-    //         "bottom": 360,
-    //         "left": 290,
-    //         "transform": -50,
-    //         "bbottom": 450,
-    //         "bleft": 450,
-    //         "linklabel": "$94M UBL",
-    //         "nodelabel": "ICI Pakistan",
-    //         "nodelabel2": "Pak",
-    //         listdetail: [{
-    //             "bank": "FIBB",
-    //             "product": "TRADE",
-    //             "flow": 8.44,
-    //             "not": 2
-    //         }, {
-    //             "bank": "HBKS",
-    //             "product": "TRADE",
-    //             "flow": 3.40,
-    //             "not": 1
-    //         }]
-    //     },
-    //     {
-    //         "id": 5,
-    //         "bottom": 200,
-    //         "left": 310,
-    //         "transform": 16,
-    //         "bbottom": 160,
-    //         "bleft": 510,
-    //         "linklabel": "$5M",
-    //         "nodelabel": "PWC",
-    //         "nodelabel2": "UK",
-    //         listdetail: [{
-    //             "bank": "FIBB",
-    //             "product": "TRADE",
-    //             "flow": 8.44,
-    //             "not": 2
-    //         }, {
-    //             "bank": "HBKS",
-    //             "product": "TRADE",
-    //             "flow": 3.40,
-    //             "not": 1
-    //         }, {
-    //             "bank": "HCEB",
-    //             "product": "TRADE",
-    //             "flow": 8.95,
-    //             "not": 2
-    //         }]
-    //     }
-    // ]
-
-    // for (var key in dgraph) {
-    //     if (key > 1 && dgraph[key].nodelabel != "PWC") {
-    //         var aleft = '<i class="fa fa-caret-left arrowleft" aria-hidden="true"></i>'
-    //     } else {
-    //         var aleft = '<i class="fa fa-caret-right arrowright" aria-hidden="true"></i>'
-    //     }
-    //     var mynode = '<div align="center" id="jo' + key + '"class="titletext">' +
-    //         '<div style="position: relative" ><span id="linklabel' + key + '"></span>' +
-    //         '<div class="titletextafter"></div>' +
-    //         '<div class="linkdashed" style=""></div>' +
-    //         '</div>' +
-    //         '' + aleft + '' +
-    //         '</div>' +
-    //         '<div class="newtitle" id="bubble' + key + '" >' +
-    //         '<div class="afternewtitle" ><span rel=' + dgraph[key].id + ' id="nodelabel' + key + '"></span></div>' +
-    //         '</div>'
-
-    //     $("#showing").append(mynode);
-    //     $("#jo" + key + "").css({
-
-    //         'bottom': dgraph[key].bottom + 'px',
-    //         'left': dgraph[key].left + 'px',
-    //         'transform': 'rotate(' + dgraph[key].transform + 'deg)',
-
-    //     });
-    //     $("#bubble" + key + "").css({
-    //         'bottom': dgraph[key].bbottom + 'px',
-    //         'left': dgraph[key].bleft + 'px',
-    //     });
-    //     if (dgraph[key].nodelabel == "PWC") {
-
-    //         $("#bubble" + key + "").css({
-    //             "background-color": "#00bcd4"
-    //         });
-    //         $("#jo" + key + "").find(".linkdashed").css({
-    //             "border": "0px"
-    //         });
-
-    //         $("#jo" + key + "").css({
-    //             "border": "0px",
-    //             "background-color": "#fff"
-    //         })
-    //     }
-    //     $("#linklabel" + key + "").text(dgraph[key].linklabel);
-    //     $("#nodelabel" + key + "").html(dgraph[key].nodelabel + "<br>" + dgraph[key].nodelabel2);
-    // }
-
-
-    // $(".afternewtitle").click(function() {
-
-    //     var bubbletitle = $(this).find("span").attr("rel")
-
-    //     var data = _.find(dgraph, function(d) {
-    //         return d.id == bubbletitle
-    //     })
-
-
-    //     console.log(data["nodelabel"])
-    //     counterpary.datadetailgraph(data.listdetail)
-
-    //     var arr = bubbletitle.split('<br>')
-    //     var arr1 = arr[0]
-    //     var arr2 = arr[1]
-    //     $(".modal-title").html(data["nodelabel"])
-    //     $('#Modal').modal('show')
-
-
-
-    // });
-
+  }
+   
 
 
 }

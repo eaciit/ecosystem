@@ -69,7 +69,7 @@ text {
     width: 130px
 }
 /* append graph*/
-.main-node-two {
+/*.main-node-two {
     color: #fff;
 }
 .titletext {
@@ -124,7 +124,7 @@ text {
     height: 100px;
     font-size: 17px;
     color: red;
-    /*#72eaf0*/
+    /*#72eaf0
     
     bottom: 178px;
     left: 251px;
@@ -185,7 +185,7 @@ text {
 .arrowleft {
     position: absolute;
     color: red;
-    /*#72eaf0*/ 
+    /*#72eaf0
     z-index: 2;
     top: 36px;
     left: 70px;
@@ -193,11 +193,58 @@ text {
 .arrowright {
     position: absolute;
     color: red;
-    /*#72eaf0*/
+    /*#72eaf0
     z-index: 2;
     top: 38px;
     left: 170px;
+}*/
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
 }
+
+path.link.flow {
+  stroke: #19B5FE;
+}
+
+marker#flow {
+  fill: #19B5FE;
+}
+
+path.link.opportunity {
+  fill: #EAEAEA;
+  opacity: 0.5;
+  stroke-dasharray: 3;
+  stroke: #666;
+}
+
+path.link.missed {
+  stroke-dasharray: 1, 1 2;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+
+
+
+
+
 #exporttoexcel {
     margin-bottom: 7px;
     width: 130px;
