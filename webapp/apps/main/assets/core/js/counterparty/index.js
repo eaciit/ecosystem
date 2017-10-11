@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var counterpartymain = {}
 counterpartymain.headtext = ko.observable()
 counterpartymain.dataDetailItemsNTB = ko.observableArray([])
@@ -700,5 +699,3 @@ $(window).load(function () {
   })
 
 })
-=======
->>>>>>> 5a73ed2b1067ac0827039c961771e0867babea8f
