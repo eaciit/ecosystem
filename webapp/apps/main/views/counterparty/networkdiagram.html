@@ -1,0 +1,61 @@
+<script>
+   viewModel.title('Counter Party View')
+</script>
+<!-- Content -->
+<script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v3.min.js" }}"></script>
+<script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-jetpack.js" }}"></script>
+
+<style>
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path.link.flow {
+  stroke: #1F3A93;
+}
+
+marker#flow {
+  fill: #1F3A93;
+}
+
+path.link.opportunity {
+  fill: #EAEAEA;
+  opacity: 0.5;
+  stroke-dasharray: 3;
+  stroke: #666;
+}
+
+path.link.missed {
+  stroke-dasharray: 1, 1 2;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+
+text.opportunity {
+  fill: #666;
+}
+
+</style>
+
+<div id="graph" style="width: 100%; height: 500px;">
+</div>
+
+<script src="{{ NoCacheUrl "/main/static/core/js/counterparty/networkdiagram.js" }}"></script>
