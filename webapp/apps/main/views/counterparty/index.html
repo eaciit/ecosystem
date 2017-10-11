@@ -1,8 +1,9 @@
 <script>
-   // viewModel.title('Counter Party View')
+    viewModel.title('Counter Party View')
 </script>
 <!-- Content -->
-<script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v4.min.js" }}"></script>
+<!-- <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v4.min.js" }}"></script> -->
+<script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v3.min.js" }}"></script>
 <script src="http://d3js.org/d3-selection-multi.v1.js"></script>
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty/index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/index.css" }}" />
@@ -42,23 +43,12 @@
       <img width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf">
    </div>
 </div>
-<!-- <div id="graph" class="graph">
-   </div> --> 
-<div align="center">
-   <div class="pre-scrollable" style="min-height:600px; overflow-y: hidden; ">
-      <div style="position:relative; display: table-cell; vertical-align: middle;">
-         <!--table -->
-         <div border="1px" class="main-node" align="center">
-            <div align="center" class="main-node-one" >
-               <div class="main-node-two">MEGLOBAL INTERNATION FZE</div>
-            </div>
-         </div>
-         <!-- end table-->
-         <div id="showing" >
-         </div>
-      </div>
-   </div>
+
+
+<div align="center" id="graph" style="width: 100%; height: 500px;">
 </div>
+
+
 <div align="right" >
    <div style="
       display: table; text-align: center;
@@ -97,6 +87,7 @@
       </div>
    </div>
 </div>
+
 <div id="Modal" class="modal fade"  role="dialog">
    <div class="modal-dialog">
       <!-- Modal content-->
