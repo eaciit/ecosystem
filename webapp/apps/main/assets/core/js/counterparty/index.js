@@ -44,7 +44,7 @@ var div = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
-counterpartymain.generateGraph = function() {
+counterpartymain.generateGraph = function () {
   var nodes = [{
     id: "Ibrahim Fibres",
     group: 2,
@@ -122,6 +122,7 @@ counterpartymain.generateGraph = function() {
   ]
 
   $("#graph").html("")
+
   function createSvgEl(name) {
     return document.createElementNS('http://www.w3.org/2000/svg', name);
   }
@@ -154,12 +155,12 @@ counterpartymain.generateGraph = function() {
     .style('stroke', 'none')
 
   var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) {
+    .force("link", d3.forceLink().id(function (d) {
       return d.id
     }).distance(300).strength(1))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(function(d) {
+    .force("collision", d3.forceCollide().radius(function (d) {
       return 50 + 10;
     }))
 
@@ -170,7 +171,7 @@ counterpartymain.generateGraph = function() {
       .data(links)
       .enter()
       .append("line")
-      .attr("class", function(d) {
+      .attr("class", function (d) {
         if (d.type == "NTB") {
           return "link"
         }
@@ -178,7 +179,7 @@ counterpartymain.generateGraph = function() {
       })
 
     link.append("title")
-      .text(function(d) {
+      .text(function (d) {
         return d.type
       })
 
@@ -190,7 +191,7 @@ counterpartymain.generateGraph = function() {
         'class': 'edgepath',
         'fill-opacity': 0,
         'stroke-opacity': 0,
-        'id': function(d, i) {
+        'id': function (d, i) {
           return 'edgepath' + i
         }
       })
@@ -203,7 +204,7 @@ counterpartymain.generateGraph = function() {
       .style("pointer-events", "none")
       .attrs({
         'class': 'edgelabel',
-        'id': function(d, i) {
+        'id': function (d, i) {
           return 'edgelabel' + i
         },
         'font-size': 10,
@@ -211,13 +212,14 @@ counterpartymain.generateGraph = function() {
       })
 
     edgelabels.append('textPath')
-      .attr('xlink:href', function(d, i) {
+      .attr('xlink:href', function (d, i) {
         return '#edgepath' + i
       })
       .style("text-anchor", "middle")
       .style("pointer-events", "none")
+      .attr("dy", -3)
       .attr("startOffset", "50%")
-      .text(function(d) {
+      .text(function (d) {
         return d.type
       })
 
@@ -226,13 +228,12 @@ counterpartymain.generateGraph = function() {
       .enter()
       .append("g")
       .attr("class", "node")
-            .call(d3.drag()
+      .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended)
       )
-      .on("click", function(d) {
-        console.log(d, d3)
+      .on("click", function (d) {
         if (d.type != "CENTER") {
           counterpartymain.headtext(d.type)
           div.transition()
@@ -241,19 +242,19 @@ counterpartymain.generateGraph = function() {
           if (d.type == "NTB") {
             counterpartymain.dataDetailItemsNTB(d.listdetail[0])
             div.html($("#counterpartyModalNTB").html())
-            .style("left", (d3.select(this).attr("cx"))+50+ "px")     
-            .style("top", (d3.select(this).attr("cy")) +50+ "px")
-            .style("margin-top", "50px")
-            .style("margin-left", "120px")
+              .style("left", (d3.select(this).attr("cx")) + 50 + "px")
+              .style("top", (d3.select(this).attr("cy")) + 50 + "px")
+              .style("margin-top", "50px")
+              .style("margin-left", "120px")
 
 
             d3.selectAll("circle").transition().duration(500)
-              .style("opacity", function(o) {
+              .style("opacity", function (o) {
                 return o === d ? 1 : .1;
               });
 
             d3.selectAll("text").transition().duration(500)
-              .style("opacity", function(o) {
+              .style("opacity", function (o) {
                 return o === d ? 1 : .1;
               });
 
@@ -267,19 +268,19 @@ counterpartymain.generateGraph = function() {
           }
           counterpartymain.dataDetailItemsETB(d.listdetail[0])
           div.html($("#counterpartyModalETB").html())
-            .style("left", (d3.select(this).attr("cx"))+50+ "px")     
-            .style("top", (d3.select(this).attr("cy")) +50+ "px")
+            .style("left", (d3.select(this).attr("cx")) + 50 + "px")
+            .style("top", (d3.select(this).attr("cy")) + 50 + "px")
             .style("margin-top", "50px")
             .style("margin-left", "120px")
 
 
           d3.selectAll("circle").transition().duration(500)
-            .style("opacity", function(o) {
+            .style("opacity", function (o) {
               return o === d ? 1 : .1;
             });
 
           d3.selectAll("text").transition().duration(500)
-            .style("opacity", function(o) {
+            .style("opacity", function (o) {
               return o === d ? 1 : .1;
             });
 
@@ -292,16 +293,16 @@ counterpartymain.generateGraph = function() {
       })
 
     node.append("circle")
-      .attr("r", function(d) {
+      .attr("r", function (d) {
         if (d.type == "CENTER") {
           return 70
         }
         return 50
       })
-      .attr("id", function(d) {
+      .attr("id", function (d) {
         return d.id
       })
-      .style("fill", function(d) {
+      .style("fill", function (d) {
         if (d.type == "ETB") {
           return "#68c4fc"
         }
@@ -309,7 +310,7 @@ counterpartymain.generateGraph = function() {
       })
 
     node.append("title")
-      .text(function(d) {
+      .text(function (d) {
         return d.id
       })
 
@@ -317,7 +318,7 @@ counterpartymain.generateGraph = function() {
       .attr("x", 0)
       .attr("dy", ".25em")
       .attr("text-anchor", "middle")
-      .text(function(d) {
+      .text(function (d) {
         return d.id
       })
 
@@ -325,7 +326,7 @@ counterpartymain.generateGraph = function() {
       .attr("x", 0)
       .attr("dy", "1.35em")
       .attr("text-anchor", "middle")
-      .text(function(d) {
+      .text(function (d) {
         if (d.type != "CENTER") {
           return "$" + d.limited + "M"
         }
@@ -335,35 +336,35 @@ counterpartymain.generateGraph = function() {
 
   function ticked() {
     link
-      .attr("x1", function(d) {
+      .attr("x1", function (d) {
         return d.source.x
       })
-      .attr("y1", function(d) {
+      .attr("y1", function (d) {
         return d.source.y
       })
-      .attr("x2", function(d) {
+      .attr("x2", function (d) {
         return d.target.x
       })
-      .attr("y2", function(d) {
+      .attr("y2", function (d) {
         return d.target.y
       })
 
     node
-      .attr("cx", function(d) {
+      .attr("cx", function (d) {
         return d.x;
       })
-      .attr("cy", function(d) {
+      .attr("cy", function (d) {
         return d.y;
       })
-      .attr("transform", function(d) {
+      .attr("transform", function (d) {
         return "translate(" + d.x + ", " + d.y + ")"
       })
 
-    edgepaths.attr('d', function(d) {
+    edgepaths.attr('d', function (d) {
       return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
     })
 
-    edgelabels.attr('transform', function(d) {
+    edgelabels.attr('transform', function (d) {
       if (d.target.x < d.source.x) {
         var bbox = this.getBBox()
         rx = bbox.x + bbox.width / 2
@@ -400,7 +401,7 @@ counterpartymain.generateGraph = function() {
   }
 }
 
-counterpartymain.generateGraphBubble = function() {
+counterpartymain.generateGraphBubble = function () {
   var nodes = [{
     id: "Ibrahim Fibres",
     group: 2,
@@ -494,7 +495,7 @@ counterpartymain.generateGraphBubble = function() {
     var max = _.maxBy(nod, "limited").limited;
     var min = _.minBy(nod, "limited").limited;
 
-    m = _.map(nod, function(it) {
+    m = _.map(nod, function (it) {
       it.r = (it.limited - min) / (max - min) + 0.50;
       it.r = it.r * 70;
       if (it.type == "ETB") {
@@ -518,7 +519,7 @@ counterpartymain.generateGraphBubble = function() {
   function bubbleChart() {
     // var width = 960,
     //   height = 960,
-      maxRadius = 6,
+    maxRadius = 6,
       columnForColors = "category",
       columnForRadius = "views";
 
@@ -539,19 +540,19 @@ counterpartymain.generateGraphBubble = function() {
         .force("charge", d3.forceManyBody().strength([-50]))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("collision", d3.forceCollide().radius(function(d) {
+        .force("collision", d3.forceCollide().radius(function (d) {
           return d.r + 10;
         }))
         .on("tick", ticked);
 
       function ticked(e) {
-        node.attr("cx", function(d) {
+        node.attr("cx", function (d) {
             return d.x;
           })
-          .attr("cy", function(d) {
+          .attr("cy", function (d) {
             return d.y;
           })
-          .attr('transform', function(d) {
+          .attr('transform', function (d) {
             return 'translate(' + [width / 2 + d.x, height / 2 + d.y] + ')';
           })
       }
@@ -560,39 +561,39 @@ counterpartymain.generateGraphBubble = function() {
         .data(data)
         .enter()
         .append("g")
-        .attr('r', function(d) {
+        .attr('r', function (d) {
           return d.r;
         })
-        .on("click", function(d, ev, eb, mn) {
+        .on("click", function (d, ev, eb, mn) {
           counterpartymain.dataDetailItemsGraphBubble([])
           var masterdata = counterpartymain.dataMasterBubble()
-          var data = _.find(masterdata, function(d) {
+          var data = _.find(masterdata, function (d) {
             return d.id == d.id
           })
           counterpartymain.dataDetailItemsGraphBubble(data.listdetail)
           tooltip.html($("#datadetailgraph").html());
           tooltip.style("margin-top", "70px")
           tooltip.style("margin-left", "60px")
-            tooltip.style("left", d.x + width / 2 + d.r + 5 +  "px")     
+          tooltip.style("left", d.x + width / 2 + d.r + 5 + "px")
           tooltip.style("top", d.y + height / 2 + "px")
           tooltip.style("visibility", "visible");
 
           d3.selectAll("circle").transition().duration(500)
-            .style("opacity", function(o) {
+            .style("opacity", function (o) {
               return o === d ? 1 : .1;
             });
           d3.selectAll("text").transition().duration(500)
-            .style("opacity", function(o) {
+            .style("opacity", function (o) {
               return o === d ? 1 : .1;
             });
           return
         })
 
       node.append("circle")
-        .attr('r', function(d) {
+        .attr('r', function (d) {
           return d.r;
         })
-        .style("fill", function(d) {
+        .style("fill", function (d) {
           return d.fill;
         })
 
@@ -600,7 +601,7 @@ counterpartymain.generateGraphBubble = function() {
         .attr("x", 0)
         .attr("dy", ".35em")
         .attr("text-anchor", "middle")
-        .text(function(d) {
+        .text(function (d) {
           if (d.type != "CENTER") {
             return "$" + d.limited + "M"
           }
@@ -608,7 +609,7 @@ counterpartymain.generateGraphBubble = function() {
         })
     }
 
-    chart.width = function(value) {
+    chart.width = function (value) {
       if (!arguments.length) {
         return width;
       }
@@ -616,7 +617,7 @@ counterpartymain.generateGraphBubble = function() {
       return chart;
     };
 
-    chart.height = function(value) {
+    chart.height = function (value) {
       if (!arguments.length) {
         return height;
       }
@@ -624,7 +625,7 @@ counterpartymain.generateGraphBubble = function() {
       return chart;
     };
 
-    chart.columnForColors = function(value) {
+    chart.columnForColors = function (value) {
       if (!arguments.columnForColors) {
         return columnForColors;
       }
@@ -632,7 +633,7 @@ counterpartymain.generateGraphBubble = function() {
       return chart;
     };
 
-    chart.columnForRadius = function(value) {
+    chart.columnForRadius = function (value) {
       if (!arguments.columnForRadius) {
         return columnForRadius;
       }
@@ -643,7 +644,7 @@ counterpartymain.generateGraphBubble = function() {
   }
 }
 
-counterpartymain.close = function() {
+counterpartymain.close = function () {
   div.transition()
     .duration(500)
     .style("opacity", 0);
@@ -657,7 +658,7 @@ counterpartymain.close = function() {
     .style("opacity", 1);
 }
 
-counterpartymain.closeBubbleChart = function() {
+counterpartymain.closeBubbleChart = function () {
   $(".tooltipbubble").attr("style", "visibility:hidden;top:-10px;left:10px;position: absolute;");
   d3.selectAll("circle").transition().duration(500)
     .style("opacity", 1);
@@ -665,7 +666,7 @@ counterpartymain.closeBubbleChart = function() {
     .style("opacity", 1);
 }
 
-counterpartymain.onChangeBuyerSupplier = function(e) {
+counterpartymain.onChangeBuyerSupplier = function (e) {
   if (e != "") {
     $("#graph").hide()
     $("#bubble").show()
@@ -679,10 +680,10 @@ counterpartymain.onChangeBuyerSupplier = function(e) {
   counterpartymain.generateGraph()
 }
 
-$(window).load(function() {
+$(window).load(function () {
   counterpartymain.generateGraph()
   $('#month').data('kendoDatePicker').enable(false);
-  $('#radioBtn a').on('click', function() {
+  $('#radioBtn a').on('click', function () {
     var sel = $(this).data('title');
     var tog = $(this).data('toggle');
     $('#' + tog).prop('value', sel);

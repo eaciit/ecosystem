@@ -125,7 +125,7 @@
                <span>
                Q
                <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
-               <span data-bind="text: widget.inFlowYearChange"></span>
+               <span data-bind="text: kendo.toString(widget.inFlowYearChange() / 1000000000, 'n2')"></span>
                </span>
             </div>
             <div class="widget-right">
@@ -236,7 +236,7 @@
                   <button type="button" class="btn btn-flat" data-bind="click:dashboard.btnTrade">Trade <i class="fa fa-play-circle-o" aria-hidden="true"></i></button>
                </div>
                <div class="col-sm-12 align-center top-margin">
-                  <a href="{{ NoCacheUrl "/main/counterparty/index" }}" class="btn btn-flat">Network Diagram <i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
+                  <a href="{{ NoCacheUrl "/main/counterparty/networkdiagram" }}" class="btn btn-flat">Network Diagram <i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
                </div>
             </div>
             <div class="row" id="tradetabs" style="display:none" >

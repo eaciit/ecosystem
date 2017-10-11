@@ -179,13 +179,13 @@ dashboard.getEntityDetail = function (entityName) {
     entityName: entityName
   }, function (data) {
     var bank = _(data.bank)
-      .groupBy("product_type")
+      .groupBy("product_category")
       .mapValues(function (items) {
         return _.groupBy(items, "flow")
       }).value()
 
     var product = _(data.product)
-      .groupBy("product_type")
+      .groupBy("product_category")
       .value()
 
     dashboard.activeEntity({
@@ -206,12 +206,12 @@ dashboard.btnCash = function () {
   dashboard.activeEntityDetail.sumInFlow(0)
   dashboard.activeEntityDetail.sumOutFlow(0)
   // for trade  
-  var data = dashboard.activeEntity().product.cash
+  var data = dashboard.activeEntity().product.Cash
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
-  var datainflow = dashboard.activeEntity().bank.cash.payee
-  var dataoutflow = dashboard.activeEntity().bank.cash.buyer
+  var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
+  var dataoutflow = dashboard.activeEntity().bank.Cash.BUYER
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
   var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
@@ -274,12 +274,12 @@ dashboard.btnTrade = function () {
   dashboard.activeEntityDetail.sumInFlow(0)
   dashboard.activeEntityDetail.sumOutFlow(0)
   // for trade  
-  var data = dashboard.activeEntity().product.trade
+  var data = dashboard.activeEntity().product.Trade
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
-  var datainflow = dashboard.activeEntity().bank.trade.payee
-  var dataoutflow = dashboard.activeEntity().bank.trade.buyer
+  var datainflow = dashboard.activeEntity().bank.Trade.PAYEE
+  var dataoutflow = dashboard.activeEntity().bank.Trade.BUYER
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
   if (datainflow != undefined) {
