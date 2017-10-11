@@ -1,8 +1,45 @@
+.box {
+    width: 60px;
+    height: 40px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px;
+    border: 1px solid #FFFFFF;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 15px;
+    margin-bottom: 5px;
+    position: initial;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: normal;
+}
+.box.lightblue {
+    background-color: #68c4fc;
+    float: left;
+}
+.box.darkblue {
+    background-color: #587b9e;
+    float: left;
+}
+.groupbox {
+    position: relative;
+    bottom: 18px;
+    left: 23px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
 .graph {
     height: 600px;
 }
 .link {
-    stroke: #999;
+    stroke: #587b9e;
+    stroke-opacity: .6;
+    stroke-width: 1px;
+    stroke-dasharray: 2;
+}
+.linkdash {
+    stroke: #68c4fc;
     stroke-opacity: .6;
     stroke-width: 1px;
 }
@@ -10,13 +47,7 @@
     stroke: #fff;
     stroke-width: 1.5px;
 }
-text {
-    font: 10px sans-serif;
-    pointer-events: none;
-    font-weight: bold;
-    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-}
-.menu_counterparty {
+.menu_counterpartymain {
     display: inline-block;
     font-size: 11px;
     padding-right: 15px;
@@ -51,154 +82,35 @@ text {
     min-width: 50px;
     min-height: 25px;
 }
-.main-node {
-    width: 600px;
-    height: 600px;
-    display: table;
+.top-padding {
+    padding-top: 20px;
 }
-.main-node-one {
-    display: table-cell;
-    vertical-align: middle;
+div.tooltip {
+    position: absolute;
+    width: 230px;
+    height: 200px;
+    margin-top: 2px;
+    font: 12px sans-serif;
+    border: 0px;
+    pointer-events: auto;
 }
-.main-node-two {
-    padding: 20px;
-    z-index: 1;
+div.tooltip .header {
+    background: #1e88e5;
+    color: #ffffff;
+    border-bottom: #1e88e5;
+    text-align: center;
+    padding-right: 5px;
+}
+div.tooltip .body {
+    background: #fff;
+    color: #000;
     position: relative;
-    border-radius: 10px;
-    background-color: #00bcd4;
-    width: 130px
+    padding: 0px 5px 15px 5px;
+    border: 1px solid #1e88e5;
 }
-/* append graph*/
-.main-node-two {
-    color: #fff;
+#bubble circle {
+    margin: 20px;
 }
-.titletext {
-    width: 250px;
-    height: 50px;
-    line-height: 50px;
-    text-align: center;
-    border: 2px dashed #b5b0ac;
-    border-radius: 50%;
-    height: 80px;
-    background-color: #f8f8f8;
-    position: absolute;
-    bottom: 170px;
-    left: 40px;
-    transform: rotate(-40deg);
-}
-.titletextafter {
-    width: 190px;
-    border-bottom: 3px solid #72eaf0;
-    left: 30px;
-    position: absolute;
-    height: 3px;
-    bottom: 5px;
-}
-.linkdashed {
-    width: 190px;
-    border-bottom: 5px dashed #54787a;
-    left: 30px;
-    position: absolute;
-    height: 5px;
-    bottom: -3px;
-}
-.newtitle {
-    height: 100px;
-    color: #fff;
-    bottom: 76px;
-    left: 20px;
-    display: table;
-    text-align: center;
-    z-index: 1;
-    position: absolute;
-    border-radius: 50%;
-    background-color: #4b7082;
-    width: 100px;
-}
-.afternewtitle {
-    padding: 12px 12px 3px 12px;
-    display: table-cell;
-    vertical-align: middle;
-}
-.iconright {
-    height: 100px;
-    font-size: 17px;
-    color: red;
-    /*#72eaf0*/
-    
-    bottom: 178px;
-    left: 251px;
-    transform: rotate(-40deg);
-    z-index: 1200;
-    position: absolute;
-}
-.titletext {
-    width: 250px;
-    height: 50px;
-    line-height: 50px;
-    text-align: center;
-    border: 2px dashed #b5b0ac;
-    border-radius: 50%;
-    height: 80px;
-    background-color: #f8f8f8;
-    position: absolute;
-    bottom: 170px;
-    left: 40px;
-    transform: rotate(-40deg);
-    font-size: 11px;
-}
-.titletextafter {
-    width: 190px;
-    border-bottom: 3px solid #72eaf0;
-    left: 30px;
-    position: absolute;
-    height: 3px;
-    bottom: 5px;
-}
-.linkdashed {
-    width: 190px;
-    border-bottom: 5px dashed #54787a;
-    left: 30px;
-    position: absolute;
-    height: 5px;
-    bottom: -3px;
-}
-.newtitle {
-    height: 100px;
-    color: #fff;
-    bottom: 76px;
-    left: 20px;
-    display: table;
-    text-align: center;
-    z-index: 1;
-    position: absolute;
-    border-radius: 50%;
-    background-color: #4b7082;
-    width: 100px;
-}
-.afternewtitle {
-    padding: 12px 12px 3px 12px;
-    display: table-cell;
-    vertical-align: middle;
-    cursor: pointer;
-}
-.arrowleft {
-    position: absolute;
-    color: red;
-    /*#72eaf0*/ 
-    z-index: 2;
-    top: 36px;
-    left: 70px;
-}
-.arrowright {
-    position: absolute;
-    color: red;
-    /*#72eaf0*/
-    z-index: 2;
-    top: 38px;
-    left: 170px;
-}
-#exporttoexcel {
-    margin-bottom: 7px;
-    width: 130px;
+.bottom-margin {
+    margin-bottom: 5px;
 }
