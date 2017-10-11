@@ -1,12 +1,71 @@
 var counterparty = {}
 counterparty.detail = ko.observableArray([])
 
+counterparty.meglobal = [{
+  "value": "ASA",
+  "text": "ASA"
+}, {
+  "value": "AME",
+  "text": "AME"
+}]
+counterparty.buyer = [{
+  "value": 1,
+  "text": "Ibrahim Fibres"
+}, {
+  "value": 2,
+  "text": "Reliance Ind"
+}]
+counterparty.group = [{
+  "value": "ETB",
+  "text": "ETB"
+}, {
+  "value": "NTB",
+  "text": "NTB"
+}]
+counterparty.top = [{
+  "value": 5,
+  "text": "Top 5"
+}, {
+  "value": 3,
+  "text": "Top 3"
+}]
+counterparty.flows = [{
+  "value": 31,
+  "text": "Flows>$30M"
+}, {
+  "value": 100,
+  "text": "Flows>$100M"
+}]
+
+counterparty.eventclick = function() {
+$('#month').data('kendoDatePicker').enable(false);
+
+  $('#radioBtn a').on('click', function(){
+    var sel = $(this).data('title');
+    var tog = $(this).data('toggle');
+    $('#'+tog).prop('value', sel);
+    if (sel=="M"){
+         $('#year').data('kendoDatePicker').enable(false);
+         $('#month').data('kendoDatePicker').enable(true);
+      }
+    else if(sel== "Y")
+      {
+        $('#year').data('kendoDatePicker').enable(true);
+        $('#month').data('kendoDatePicker').enable(false);
+      }
+    
+    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
+    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
+})
+}
+
 counterparty.loadNetwork = function() {
   viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", {
     entityName: "Lowndesville",
     limit: 5
   }, function (data) {
     counterparty.generateNetwork(data)
+    
   })
 }
 
@@ -16,10 +75,12 @@ counterparty.loadDetail = function() {
     counterpartyName: "Enon"
   }, function(data){
     counterparty.detail(data)
+    //console.log(data)
   }) 
 }
 
 counterparty.generateNetwork = function (data) {
+ // console.log(data)
   var links = []
   parent = _.keys(data)[0]
   _.each(data[parent], function (e) {
@@ -78,7 +139,6 @@ counterparty.generateNetwork = function (data) {
       }
     }
   });
-
   var nodes = {};
 
   // Compute the distinct nodes from the links.
@@ -153,6 +213,7 @@ counterparty.generateNetwork = function (data) {
   var circle = svg.append("svg:g").selectAll("circle")
     .data(force.nodes())
     .enter().append("svg:circle")
+    .on("click", detail)
     .attr("r", 10)
     .call(force.drag);
 
@@ -201,8 +262,24 @@ counterparty.generateNetwork = function (data) {
       return "translate(" + d.x + "," + d.y + ")";
     });
   }
+
+
+function detail(d) {
+  if (!d3.event.defaultPrevented) {
+   if(d.name != "Lowndesville"){
+      counterparty.detail()
+       $(".modal-title").html(d.name)
+       $('#Modal').modal('show')
+        }
+      }
+   }
+
 }
+
+
 
 $(window).load(function(){
   counterparty.loadNetwork()
+  counterparty.loadDetail()
+  counterparty.eventclick()
 })
