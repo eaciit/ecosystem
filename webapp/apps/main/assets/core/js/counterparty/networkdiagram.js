@@ -277,6 +277,7 @@ function detail(d) {
 }
 
 
+
 $(window).load(function(){
   counterparty.loadNetwork()
   counterparty.loadDetail()
