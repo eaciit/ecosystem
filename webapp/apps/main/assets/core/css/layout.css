@@ -259,7 +259,7 @@ body.page-login .layout-container {
 }
 
 body:not(.page-login) .layout-container .layout-content {
-  padding: 15px;
+  padding: 10px;
 }
 
 .layout-header .nav.navbar-nav.ticker-information {

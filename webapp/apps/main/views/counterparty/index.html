@@ -19,38 +19,38 @@
   <li><span data-bind="text:recieved"></span></li>
 </script>
 <div class="row" id="filter">
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.meglobal, dataValueField: 'value', dataTextField: 'text',optionLabel:'Meglobal',filter: 'contains'}"></select>
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.buyer, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}}"></select> 
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains'}"></select>
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.top, dataValueField: 'value', dataTextField: 'text',optionLabel:'Top 10',filter: 'contains'}"></select>
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.flows, dataValueField: 'value', dataTextField: 'text',optionLabel:'Flows >$50M',filter: 'contains'}"></select>
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <div id="radioBtn" class="btn-group">
       <a class="btn btn-primary btn-xs active" data-toggle="happy" data-title="Y">Y</a>
       <a class="btn btn-primary btn-xs notActive" data-toggle="happy" data-title="M">M</a>
     </div>
     <input type="hidden" name="happy" id="happy">
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy',depth:'decade', start: 'decade'}" class="filter-space">
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM',depth:'year', start: 'year'}" class="filter-space">
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
   </div>
-  <div class="menu_counterpartymain">
+  <div class="menu-counterpartymain">
     <img width="20px"src="/main/static/3rdparty/img/pdf.png" alt="pdf">
   </div>
 </div>
