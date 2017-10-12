@@ -1,6 +1,56 @@
-.menu-counterparty{
+
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path.link.flow {
+  stroke: #1F3A93;
+}
+
+marker#flow {
+  fill: #1F3A93;
+}
+
+path.link.opportunity {
+  fill: #EAEAEA;
+  opacity: 0.5;
+  stroke-dasharray: 3;
+  stroke: #666;
+}
+
+path.link.missed {
+  stroke-dasharray: 1, 1 2;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+
+text.opportunity {
+  fill: #666;
+}
+
+
+.menu_counterparty{
   display: inline-block;
   font-size: 11px;
+  padding-right: 15px; 
   margin-bottom: 6px;
 }
 
@@ -196,20 +246,45 @@
     left:170px;
   }
 
-  #exporttoexcel{
-    cursor: pointer; 
-    color: #fff; 
-    padding: 3px; 
-    margin-bottom: 7px; 
+  #legendgraph {
+    position: fixed;
+    z-index: -1;
+    right: 2px;
+    display: table;
+    text-align: center;
+    color: #fff;
+    border-radius: 2px;
+    background-color: #436780;
+    bottom: 70px;
+    width: 410px;
+    height: 73px;
+    margin-right: 22px;
+}
+#exporttoexcel {
+    cursor: pointer;
+    color: #fff;
+    padding: 3px;
+    margin-bottom: 7px;
     background-color: #828282;
-    width: 130px;
-  }
-
-  #exporttoexcel:hover{
+    max-width: 40px;
+}
+#exporttoexcel:hover {
     background-color: #3ba73f;
-  }
- 
-  #exporttoexcel:active {
+}
+#exporttoexcel:active {
     background-color: #1791a5;
     color: #000;
-  }
+}
+#initialform {
+    padding-left: 6px;
+    font-size: 20px;
+    color: #fff;
+}
+.buttonclose {
+    background-color: #373949;
+    color: #fff;
+    border-radius: 0px;
+    border: 0px;
+    padding-bottom: 5px;
+    padding-top: 10px;
+}

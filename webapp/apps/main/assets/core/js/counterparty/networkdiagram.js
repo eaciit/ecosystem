@@ -266,15 +266,16 @@ counterparty.generateNetwork = function (data) {
 
 function detail(d) {
   if (!d3.event.defaultPrevented) {
-   if(d.name != "Lowndesville"){
+   if(d.name != parent){
       counterparty.detail()
-       $(".modal-title").html(d.name)
+       $("#initialform").html(d.name)
        $('#Modal').modal('show')
         }
       }
    }
 
 }
+
 
 
 $(window).load(function(){
