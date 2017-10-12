@@ -78,11 +78,7 @@
    </div>
 </div>
 
-
-
-
-
- <div id="Modal" class="modal fade"  role="dialog">
+ <div id="modalDetail" class="modal fade"  role="dialog">
    <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content" style="border-radius: 0px; border:0px">
@@ -93,7 +89,7 @@
             <form class="form-horizontal"   style="">
                <div align="right" style="font-weight:   bold; font-size:  15px">
                   <div class="row">
-                     <div  id="initialform" align="left" class="col-lg-6 col-md-6">title</div>
+                     <div align="left" class="col-lg-6 col-md-6" data-bind="text: counterparty.activeEntityName"></div>
                      <div align="right"  class="col-lg-6 col-md-6">
                         <div align="center" id="exporttoexcel">
                            <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel">

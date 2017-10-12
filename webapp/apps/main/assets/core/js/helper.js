@@ -1,3 +1,4 @@
+// Math and Statistics
 function std(array) {
   var avg = _.sum(array) / array.length;
   return Math.sqrt(_.sum(_.map(array, (i) => Math.pow((i - avg), 2))) / array.length);
@@ -44,6 +45,16 @@ _.mixin({
     return s / x.length;
   }
 });
+
+// Others
+$.urlParam = function (name) {
+  var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+  if (results !== null) {
+    return decodeURI(results[1]);
+  } else {
+    return null;
+  }
+}
 
 function currencynum(angka) {
     if (angka >= 0) {

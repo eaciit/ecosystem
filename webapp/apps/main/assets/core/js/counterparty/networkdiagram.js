@@ -1,5 +1,7 @@
 var counterparty = {}
 counterparty.detail = ko.observableArray([])
+counterparty.activeEnityName = ko.observable()
+counterparty.activeName = ko.observable()
 
 counterparty.meglobal = [{
   "value": "ASA",
@@ -37,52 +39,49 @@ counterparty.flows = [{
   "text": "Flows>$100M"
 }]
 
-counterparty.eventclick = function() {
-$('#month').data('kendoDatePicker').enable(false);
+counterparty.eventclick = function () {
+  $('#month').data('kendoDatePicker').enable(false);
 
-  $('#radioBtn a').on('click', function(){
+  $('#radioBtn a').on('click', function () {
     var sel = $(this).data('title');
     var tog = $(this).data('toggle');
-    $('#'+tog).prop('value', sel);
-    if (sel=="M"){
-         $('#year').data('kendoDatePicker').enable(false);
-         $('#month').data('kendoDatePicker').enable(true);
-      }
-    else if(sel== "Y")
-      {
-        $('#year').data('kendoDatePicker').enable(true);
-        $('#month').data('kendoDatePicker').enable(false);
-      }
-    
-    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
-    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-})
-}
+    $('#' + tog).prop('value', sel);
+    if (sel == "M") {
+      $('#year').data('kendoDatePicker').enable(false);
+      $('#month').data('kendoDatePicker').enable(true);
+    } else if (sel == "Y") {
+      $('#year').data('kendoDatePicker').enable(true);
+      $('#month').data('kendoDatePicker').enable(false);
+    }
 
-counterparty.loadNetwork = function() {
-  viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", {
-    entityName: "Lowndesville",
-    limit: 5
-  }, function (data) {
-    counterparty.generateNetwork(data)
-    
+    $('a[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
+    $('a[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
   })
 }
 
-counterparty.loadDetail = function() {
-  viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata",{
-    entityName: "Lowndesville",
-    counterpartyName: "Enon"
-  }, function(data){
+counterparty.loadNetwork = function () {
+  viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", {
+    entityName: counterparty.activeEnityName(),
+    limit: 5
+  }, function (data) {
+    counterparty.generateNetwork(data)
+  })
+}
+
+counterparty.loadDetail = function (name) {
+  viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", {
+    entityName: counterparty.activeEnityName(),
+    counterpartyName: name
+  }, function (data) {
+    counterparty.activeName(name)
     counterparty.detail(data)
-    //console.log(data)
-  }) 
+    $('#modalDetail').modal('show')
+  })
 }
 
 counterparty.generateNetwork = function (data) {
- // console.log(data)
   var links = []
-  parent = _.keys(data)[0]
+  var parent = _.keys(data)[0]
   _.each(data[parent], function (e) {
     if (e.cpty_bank != "SCBL") {
       links.push({
@@ -264,22 +263,18 @@ counterparty.generateNetwork = function (data) {
   }
 
 
-function detail(d) {
-  if (!d3.event.defaultPrevented) {
-   if(d.name != parent){
-      counterparty.detail()
-       $("#initialform").html(d.name)
-       $('#Modal').modal('show')
-        }
-      }
-   }
+  function detail(d) {
+    if (!d3.event.defaultPrevented) {
+      counterparty.loadDetail(d.name)
+    }
+  }
 
 }
 
 
 
-$(window).load(function(){
+$(window).load(function () {
+  counterparty.activeEnityName($.urlParam("entityName"))
   counterparty.loadNetwork()
-  counterparty.loadDetail()
   counterparty.eventclick()
 })
