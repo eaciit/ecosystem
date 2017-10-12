@@ -80,7 +80,6 @@ counterparty.loadDetail = function() {
 }
 
 counterparty.generateNetwork = function (data) {
- // console.log(data)
   var links = []
   parent = _.keys(data)[0]
   _.each(data[parent], function (e) {
@@ -266,9 +265,9 @@ counterparty.generateNetwork = function (data) {
 
 function detail(d) {
   if (!d3.event.defaultPrevented) {
-   if(d.name != "Lowndesville"){
+   if(d.name != parent){
       counterparty.detail()
-       $(".modal-title").html(d.name)
+       $("#initialform").html(d.name)
        $('#Modal').modal('show')
         }
       }
