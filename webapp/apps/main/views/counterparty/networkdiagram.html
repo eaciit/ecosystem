@@ -5,6 +5,75 @@
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v3.min.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-jetpack.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/networkdiagram.css" }}" />
+
+<style>
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path.link.flow {
+  stroke: #1F3A93;
+}
+
+marker#flow {
+  fill: #1F3A93;
+}
+
+path.link.opportunity {
+  fill: #EAEAEA;
+  opacity: 0.5;
+  stroke-dasharray: 3;
+  stroke: #666;
+}
+
+path.link.missed {
+  stroke-dasharray: 1, 1 2;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+
+text.opportunity {
+  fill: #666;
+}
+
+ #exporttoexcel{
+    cursor: pointer; 
+    color: #fff; 
+    padding: 3px; 
+    margin-bottom: 7px; 
+    background-color: #828282;
+    width: 130px;
+  }
+
+  #exporttoexcel:hover{
+    background-color: #3ba73f;
+  }
+ 
+  #exporttoexcel:active {
+    background-color: #1791a5;
+    color: #000;
+  }
+
+</style>
+
 <div class="row" id="filter">
    <div class="menu_counterparty">
       <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterparty.meglobal, dataValueField: 'value', dataTextField: 'text',optionLabel:'Meglobal',filter: 'contains'}"></select>
@@ -41,75 +110,99 @@
       <img width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf">
    </div>
 </div>
-<div id="graph" style="width: 100%; height: 500px;"></div>
-<div id="legendgraph">
-   <div class="row">
-      <div class="col-lg-12" style="padding-top: 5px; font-weight: bold;">Legend</div>
-   </div>
-   <div class="row" style="padding-top: 8px; font-size: 10px;">
-      <div class="col-lg-3 col-xs-3">
-         <div>Counterparties</div>
-         <div style="position: relative;margin:10px 15px 2px 15px;border-bottom:2px solid #36bae1;">
-            <div style="position: absolute; bottom: -8px; left: 64px; color: #36bae1"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
-         </div>
-      </div>
-      <div class="col-lg-3  col-xs-3">
-         <div>Intragroup</div>
-         <div style="position: relative; margin:10px 15px 2px 15px;border-bottom:2px solid #f8f8f8;">
-            <div style="position: absolute; right:0; bottom: -8px; left: 64px; color:"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
-         </div>
-      </div>
-      <div class="col-lg-3  col-xs-3">
-         <div>Missed Flows</div>
-         <div style="margin:10px 15px 2px 15px;border-bottom:3px dashed #f8f8f8;"></div>
-      </div>
-      <div class="col-lg-3  col-xs-3" >
-         <div style="margin-right:7px; 
-            border-radius:50%;
-            height:30px;border: 0px solid red;background-color: #f8f8f8; color: #151b3a">Opportunity</div>
-      </div>
-   </div>
+
+
+
+<div id="graph" style="width: 100%; height: 500px;">
 </div>
-<div id="Modal" class="modal fade"  role="dialog">
-   <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content" style="border-radius: 0px; border:0px">
-         <div class="modal-header buttonclose">
-            <button type="button" style="color: #fff" class="close" data-dismiss="modal">&times;</button>
-         </div>
-         <div class="modal-body" style="background-color: #373949; padding-top: 0px">
-            <form class="form-horizontal"   style="">
-               <div align="right" style="font-weight:   bold; font-size:  15px">
-                  <div class="row">
-                     <div  id="initialform" align="left" class="col-lg-6 col-md-6">title</div>
-                     <div align="right"  class="col-lg-6 col-md-6">
-                        <div align="center" id="exporttoexcel">
-                           <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel">
-                        </div>
-                     </div>
-                  </div>
-                  <table class="table" style="color:  #fff; background-color:  #828282">
-                     <thead>
-                        <tr>
-                           <th>Bank</th>
-                           <th>Product</th>
-                           <th>Flow</th>
-                           <th>No. of Transactions</th>
-                        </tr>
-                     </thead>
-                     <tbody data-bind="foreach: counterparty.detail">
-                        <tr>
-                           <td data-bind="text: cpty_bank"></td>
-                           <td data-bind="text: product_category"></td>
-                           <td data-bind='text: kendo.toString(total / 1000000, "n2") + "M"' align="right"></td>
-                           <td data-bind="text: number_transaction" align="center"></td>
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
-            </form>
-         </div>
-      </div>
-   </div>
+
+
+<div align="right" >
+  <div style="
+  display: table; text-align: center;
+  color: #fff;
+  border-radius: 10px; 
+  background-color: #436780;
+  bottom: 90px;
+  width: 410px;
+  height: 73px;
+  margin-right: 9px;">
+ 
+<div class="row">
+<div class="col-lg-12" style="padding-top: 5px; font-weight: bold;">Legend</div>
 </div>
+<div class="row" style="padding-top: 8px; font-size: 10px;">
+  <div class="col-lg-3 col-xs-3">
+  <div>Counterparties</div>
+   <div style="position: relative;margin:10px 15px 2px 15px;border-bottom:2px solid #36bae1;">
+     <div style="position: absolute; bottom: -8px; left: 64px; color: #36bae1"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
+   </div>
+  </div> 
+   <div class="col-lg-3  col-xs-3">
+   <div>Intragroup</div>
+    <div style="position: relative; margin:10px 15px 2px 15px;border-bottom:2px solid #f8f8f8;">
+      <div style="position: absolute; right:0; bottom: -8px; left: 64px; color:"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
+    </div>
+   </div> 
+    <div class="col-lg-3  col-xs-3">
+    <div>Missed Flows</div>
+    <div style="margin:10px 15px 2px 15px;border-bottom:3px dashed #f8f8f8;"></div>
+    </div> 
+     <div class="col-lg-3  col-xs-3" ><div style="margin-right:7px; 
+     border-radius:50%;
+     height:30px;border: 0px solid red;background-color: #f8f8f8; color: #151b3a">Opportunity</div></div> 
+</div>
+  </div>
+  </div>
+
+
+
+
+
+ <div id="Modal" class="modal fade"  role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" style="border-radius: 0px; border:0px">
+      <div class="modal-header" style="background-color:  #373949; color: #fff; border-radius: 0px; border: 0px; padding-bottom: 2px">
+        <button type="button" style="color: #fff" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Form</h4>
+      </div>
+      <div class="modal-body" style="background-color: #373949; padding-top: 0px">
+        
+<form class="form-horizontal"   style="">
+   <div align="right" style="font-weight:   bold; font-size:  15px">
+      <div align="center" id="exporttoexcel" ><i class="fa fa-download" aria-hidden="true"></i> Export Excel</div>
+     <table class="table" style="color:  #fff; background-color:  #828282">
+    <thead>
+      <tr>
+        <th>Bank</th>
+        <th>Product</th>
+        <th>Flow</th>
+        <th>No. of Transactions</th>
+      </tr>
+    </thead>
+    <tbody data-bind="foreach: counterparty.detail">
+     <tr>
+        <td data-bind="text: cpty_bank"></td>
+        <td data-bind="text: product_category"></td>
+        <td data-bind='text: kendo.toString(total / 1000000, "n2") + "M"' align="right"></td>
+        <td data-bind="text: number_transaction" align="center"></td>
+      </tr>
+    </tbody>
+  </table>
+   </div>
+  </form>
+
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-bind="click : del_action">Delete</button>
+      </div> -->
+    </div>
+
+  </div>
+</div>
+
+
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty/networkdiagram.js" }}"></script>
