@@ -34,5 +34,13 @@ func (c *MasterController) GetEntities(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	return c.SetResultOK(results)
+	returnDatas := []tk.M{}
+	for _, v := range results {
+		returnDatas = append(returnDatas, tk.M{
+			"value": v.GetString("cust_long_name"),
+			"text":  v.GetString("cust_long_name"),
+		})
+	}
+
+	return c.SetResultOK(returnDatas)
 }
