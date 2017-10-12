@@ -249,13 +249,13 @@ text.opportunity {
   #legendgraph {
     position: fixed;
     z-index: -1;
-    right: 2px;
+    right: -10px;
     display: table;
     text-align: center;
     color: #fff;
     border-radius: 2px;
     background-color: #436780;
-    bottom: 70px;
+    bottom: 10px;
     width: 410px;
     height: 73px;
     margin-right: 22px;

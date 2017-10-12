@@ -39,6 +39,7 @@ func init() {
 
 	// register routes
 	app.Register(&(controllers.AuthController{BaseController: baseCtrl}))
+	app.Register(&(controllers.MasterController{BaseController: baseCtrl}))
 	app.Register(&(controllers.DashboardController{BaseController: baseCtrl}))
 	app.Register(&(controllers.CounterPartyController{BaseController: baseCtrl}))
 	app.Register(&(controllers.MissedFlowController{BaseController: baseCtrl}))
