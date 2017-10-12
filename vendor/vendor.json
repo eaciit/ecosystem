@@ -1,6 +1,13 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"package": [],
+	"package": [
+		{
+			"checksumSHA1": "shj9k0UNMhlNF4NyF7XyaEfkz1A=",
+			"path": "github.com/eaciit/sqlh",
+			"revision": "5f4419ffc75c882b69c8981e3f1a38bfe16ebf5f",
+			"revisionTime": "2017-10-03T23:07:55Z"
+		}
+	],
 	"rootPath": "eaciit/scb-eco"
 }
