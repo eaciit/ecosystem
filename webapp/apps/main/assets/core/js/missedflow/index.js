@@ -17,7 +17,7 @@ missedflow.generateGraph = function() {
       return formatNumber(d) + " " + units;
     },
     color = d3.scaleOrdinal()
-    .range(["#1e88e5","#1e88e5","#8893a6","#8893a6","#44546a","#44546a"]);
+    .range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"]);
 
   // append the svg canvas to the page
   var svg = d3.select("#missedflowchart").append("svg")
@@ -67,15 +67,15 @@ missedflow.generateGraph = function() {
       }))
     .style("fill", "none")
     // .style("stroke", function(d) { return d.source.color; })
-    .style("stroke",  function(d){
+    .style("stroke", function(d) {
       console.log(d)
-      if(d.source.node == 0){
+      if (d.source.node == 0) {
         return "#1e88e5"
-      } else if (d.source.node == 2){
-         return "#8893a6"
-       } else {
+      } else if (d.source.node == 2) {
+        return "#8893a6"
+      } else {
         return "#44546a"
-       }
+      }
     })
     .style("stroke-opacity", "1")
     .on("mouseover", function() {
@@ -96,6 +96,8 @@ missedflow.generateGraph = function() {
     .text(function(d) {
       return d.source.name + " → " + d.target.name + "\n" + format(d.value);
     });
+
+  
 
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
@@ -153,32 +155,32 @@ missedflow.generateGraph = function() {
     return {
       "nodes": [{
           "node": 0,
-          "country":"UAE",
+          "country": "UAE",
           "name": "MEGLOBAL"
         },
         {
           "node": 1,
-          "country":"CHINA",
+          "country": "CHINA",
           "name": "Shanghai East"
         },
         {
           "node": 2,
-          "country":"UAE",
+          "country": "UAE",
           "name": "INDIA Dow"
         },
         {
           "node": 3,
-         "country":"UAE",
+          "country": "UAE",
           "name": "Arabian Chem"
         },
         {
           "node": 4,
-          "country":"INDIA",
+          "country": "INDIA",
           "name": "ROHM & HAAS"
         },
         {
           "node": 5,
-          "country":"IND",
+          "country": "IND",
           "name": "Dow Argo"
         }
       ],
