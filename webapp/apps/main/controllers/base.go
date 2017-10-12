@@ -26,6 +26,30 @@ const (
 	SESSION_USERNAME string = "username"
 )
 
+func (c *BaseController) tableName() string {
+	return "vw_sc_model_for_tblau_20170830"
+}
+
+func (c *BaseController) commonWhereClause() string {
+	return `NOT ISNULL(product_category)
+  AND source_system <> "HOGAN-IDS"`
+}
+
+func (c *BaseController) isNTBClause() string {
+	return `(CASE WHEN LEFT(counterparty_bank, 4) = "SCBL" THEN "N" 
+	WHEN source_system = "DTP" && ISNULL(counterparty_bank) THEN "N" 
+	WHEN source_system = "DTP" THEN "Y"
+	WHEN source_system = "OTP" && LENGTH(counterparty_bank) > 0 THEN "Y"
+	WHEN source_system = "OTP" THEN "NA"
+	ELSE "Y" END)`
+}
+
+func (c *BaseController) customerRoleClause() string {
+	return `(CASE customer_role WHEN "DRAWEE" THEN "BUYER" 
+	WHEN "SUPPLIER" THEN "PAYEE" 
+	ELSE customer_role END)`
+}
+
 func (b *BaseController) IsLoggedIn(k *knot.WebContext) bool {
 	return k.Session(SESSION_KEY, "") != ""
 }

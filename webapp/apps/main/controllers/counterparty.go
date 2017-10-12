@@ -48,14 +48,17 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT cpty_long_name, LEFT(counterparty_bank, 4) AS cpty_bank, cpty_coi, 
+	sql := `SELECT cpty_long_name, cpty_coi,
+  LEFT(counterparty_bank, 4) AS cpty_bank, 
   LEFT(customer_bank, 4) AS cust_bank, 
-  (CASE customer_role WHEN "DRAWEE" THEN "BUYER" WHEN "SUPPLIER" THEN "PAYEE" ELSE customer_role END) AS cust_role, 
+  ` + c.customerRoleClause() + `AS cust_role, 
   SUM(amount) AS total 
-  FROM vw_sc_model_for_tblau_20170830 
-  WHERE cust_long_name="` + payload.EntityName + `" AND transaction_year = 2016   
+  FROM ` + c.tableName() + `
+  WHERE cust_long_name="` + payload.EntityName + `" AND transaction_year = 2016  
+  AND ` + c.commonWhereClause() + ` 
   GROUP BY cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank 
   ORDER BY total DESC LIMIT ` + strconv.Itoa(payload.Limit)
+
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -84,8 +87,9 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT cpty_long_name, LEFT(counterparty_bank, 4) AS cpty_bank, product_category, SUM(amount) AS total, COUNT(1) AS number_transaction
-  FROM vw_sc_model_for_tblau_20170830 
+	sql := `SELECT cpty_long_name, LEFT(counterparty_bank, 4) AS cpty_bank, 
+  product_category, SUM(amount) AS total, COUNT(1) AS number_transaction
+  FROM ` + c.tableName() + ` 
   WHERE cust_long_name='` + payload.EntityName + `' AND cpty_long_name='` + payload.CounterpartyName + `' AND transaction_year=2016 
   GROUP BY cpty_long_name, cpty_bank, product_category`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
