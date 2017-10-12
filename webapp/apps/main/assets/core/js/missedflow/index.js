@@ -41,11 +41,14 @@ missedflow.generateGraph = function() {
     .layout(32);
 
   // add in the links
-  var link = svg.append("g").selectAll(".link")
+  var link = svg.append("g")
+    .selectAll(".link")
     .data(graph.links)
     .enter().append("path")
+    .attr("id", function(d, i) {
+      return "linkId_" + i;
+    })
     .attr("class", "link")
-    // .attr("d", sankey.links())
     .attr("d", d3.linkHorizontal()
       .x(function(d) {
         return d.x;
@@ -66,9 +69,11 @@ missedflow.generateGraph = function() {
         };
       }))
     .style("fill", "none")
-    // .style("stroke", function(d) { return d.source.color; })
     .style("stroke", function(d) {
-      console.log(d)
+      return d.source.color;
+    })
+    .style("stroke", function(d) {
+      // console.log(d)
       if (d.source.node == 0) {
         return "#1e88e5"
       } else if (d.source.node == 2) {
@@ -91,13 +96,57 @@ missedflow.generateGraph = function() {
       return b.dy - a.dy;
     });
 
-  // add the link titles
-  link.append("title")
-    .text(function(d) {
-      return d.source.name + " → " + d.target.name + "\n" + format(d.value);
+  var pathText = svg.selectAll(".pathText")
+    .data(graph.links)
+    .enter().append("svg:text")
+    .attr("dx", width-200)
+    .attr("dy", 2)
+    .attr("style", "fill:#fff")
+    .style("font-size", function(d) {
+      return Math.sqrt(d.dy * 2)
+    })
+    .append("textPath")
+    .attr("xlink:href", function(d, i) {
+      return "#linkId_" + i;
+    })
+    .text(function(d, i) {
+      return d.target.bank
     });
 
-  
+var pathText2 = svg.selectAll(".pathText2")
+    .data(graph.links)
+    .enter().append("svg:text")
+    .attr("dx", 60)
+    .attr("dy", -15)
+    .attr("style", "fill:#000")
+    .style("font-size", function(d) {
+      return Math.sqrt(d.dy * 2)
+    })
+    .append("textPath")
+    .attr("xlink:href", function(d, i) {
+      return "#linkId_" + i;
+    })
+    .html(function(d, i) {
+      return "$ 20 M"
+    });
+
+var pathText3 = svg.selectAll(".pathText3")
+    .data(graph.links)
+    .enter().append("svg:text")
+    .attr("dx", width-120)
+    .attr("dy", -15)
+    .attr("style", "fill:#000")
+    .style("font-size", function(d) {
+      return Math.sqrt(d.dy * 2)
+    })
+    .append("textPath")
+    .attr("xlink:href", function(d, i) {
+      return "#linkId_" + i;
+    })
+    .html(function(d, i) {
+      return "$ 10 M"
+    });
+    
 
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
@@ -127,7 +176,7 @@ missedflow.generateGraph = function() {
   // add in the title for the nodes
   node.append("text")
     .attr("x", 8)
-    .attr("dy", "3em")
+    .attr("dy", 35)
     .attr("text-anchor", "middle")
     .text(function(d) {
       return d.country
@@ -135,7 +184,7 @@ missedflow.generateGraph = function() {
 
   node.append("text")
     .attr("x", 8)
-    .attr("dy", "4em")
+    .attr("dy", 50)
     .attr("text-anchor", "middle")
     .text(function(d) {
       return d.name
@@ -156,31 +205,37 @@ missedflow.generateGraph = function() {
       "nodes": [{
           "node": 0,
           "country": "UAE",
+          "bank":"Bank Of UAE",
           "name": "MEGLOBAL"
         },
         {
           "node": 1,
           "country": "CHINA",
+           "bank":"Bank Of CHINA",  
           "name": "Shanghai East"
         },
         {
           "node": 2,
           "country": "UAE",
+          "bank":"Bank Of UAE",
           "name": "INDIA Dow"
         },
         {
           "node": 3,
           "country": "UAE",
+           "bank":"Bank Of UAE",
           "name": "Arabian Chem"
         },
         {
           "node": 4,
           "country": "INDIA",
+           "bank":"Bank Of INDIA",
           "name": "ROHM & HAAS"
         },
         {
           "node": 5,
           "country": "IND",
+           "bank":"Bank Of IND",
           "name": "Dow Argo"
         }
       ],
