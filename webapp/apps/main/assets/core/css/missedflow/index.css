@@ -1,0 +1,46 @@
+#incoming {
+	height:50px;
+	background:#404b5f;
+	margin-bottom:5px;
+	text-align:center;
+	vertical-align: middle;
+	font-size:20px;
+	color:#fff;
+	padding-top:10px
+}
+
+#detailincoming {
+	height:500px;
+	background:#4f5f79
+}
+
+.node rect {
+  cursor: move;
+  fill-opacity: .9;
+  /*shape-rendering: crispEdges;*/
+}
+
+.node text {
+  pointer-events: none;  
+  fill: #fff;
+  font-size: 12px;
+}
+
+.node circle {
+/*    stroke: #fff;
+    stroke-width: 1.5px;*/
+}
+
+.link {
+  fill: none;
+  /*stroke: #000;*/
+  stroke-opacity: .2;
+}
+
+.link:hover {
+  stroke-opacity: .5;
+}
+
+#missedflowchart {
+	height: 600px;
+}
