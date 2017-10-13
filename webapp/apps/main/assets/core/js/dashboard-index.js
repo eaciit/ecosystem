@@ -142,7 +142,17 @@ dashboard.generateMap = function () {
 
     dashboard.activeEntities(e.shape.dataItem)
     var data = e.shape.dataItem
-
+    var arr = data.entities
+    var namel = data.name
+    var lentity = arr.reduce(function (a, b) { return a.length > b.length ? a : b; });
+    var nlength = namel.length*10
+    var elength = lentity.length*10
+    if(nlength > elength){ 
+      $(".bubble-tooltip").css("width", nlength)
+    }
+    else{
+      $(".bubble-tooltip").css("width", elength)
+    }
     var oe = e.originalEvent
     var x = oe.pageX || oe.clientX
     var y = oe.pageY || oe.clientY
