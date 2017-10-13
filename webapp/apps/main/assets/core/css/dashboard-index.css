@@ -11,6 +11,7 @@ html {
 }
 
 .layout-content {
+  margin-top: 9px;
   background-color: #ECF0F1 !important;
 }
 
@@ -63,7 +64,7 @@ html {
   background-color: #428bca;
   color: white;
   border-radius: 5px;
-  border: 1px solid white;
+  border: 0px solid white;
 }
 
 .bubble-tooltip > div {
@@ -73,7 +74,7 @@ html {
 }
 
 .bubble-tooltip .head {
-  font-weight: bold;
+  /*font-weight: bold;*/
   background-color: #1F3A93;
 }
 
