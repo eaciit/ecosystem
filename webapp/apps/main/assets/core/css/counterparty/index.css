@@ -47,6 +47,9 @@
     stroke: #fff;
     stroke-width: 1.5px;
 }
+.node text {
+    fill: #fff;
+}
 .menu-counterpartymain {
     display: inline-block;
     font-size: 11px;

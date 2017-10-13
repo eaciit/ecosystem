@@ -4,20 +4,38 @@ counterpartymain.dataDetailItemsNTB = ko.observableArray([])
 counterpartymain.dataDetailItemsETB = ko.observableArray([])
 counterpartymain.dataMasterBubble = ko.observableArray([])
 counterpartymain.dataDetailItemsGraphBubble = ko.observableArray([])
-counterpartymain.meglobal = [{
-  "value": "ASA",
-  "text": "ASA"
-}, {
-  "value": "AME",
-  "text": "AME"
-}]
-counterpartymain.buyer = [{
-  "value": "Supplier",
+counterpartymain.dataMasterGraphDetail = ko.observableArray([])
+counterpartymain.dataMasterGraph = {
+  nodes:ko.observableArray([]),
+  links:ko.observableArray([])
+}
+counterpartymain.filterDataArray = {
+  entityGroup :ko.observableArray([]),
+  buyerSupplierGroup :ko.observableArray([]),
+  limitGroup :ko.observable(),
+}
+counterpartymain.filterRecord = {
+  entityName :ko.observable(),
+  buyerSupplier :ko.observable(),
+  limit:ko.observable(5),
+  role:ko.observable(),
+  counterpartyName : ko.observable(),
+}
+counterpartymain.filterDataArray.buyerSupplierGroup = [{
+  "value": "PAYEE",
   "text": "Supplier"
 }, {
-  "value": "Buyer",
+  "value": "BUYER",
   "text": "Buyer"
 }]
+counterpartymain.filterDataArray.limitGroup = [{
+  "value": 5,
+  "text": "Top 5"
+}, {
+  "value": 10,
+  "text": "Top 10"
+}]
+
 counterpartymain.group = [{
   "value": "ETB",
   "text": "ETB"
@@ -25,13 +43,7 @@ counterpartymain.group = [{
   "value": "NTB",
   "text": "NTB"
 }]
-counterpartymain.top = [{
-  "value": 5,
-  "text": "Top 5"
-}, {
-  "value": 3,
-  "text": "Top 3"
-}]
+
 counterpartymain.flows = [{
   "value": 31,
   "text": "Flows>$30M"
@@ -40,86 +52,85 @@ counterpartymain.flows = [{
   "text": "Flows>$100M"
 }]
 
+counterpartymain.loadEntity = function () {
+  viewModel.ajaxPostCallback("/main/master/getentities", {
+    limit: counterpartymain.filterRecord.limit()
+  }, function (data) {
+    counterpartymain.filterDataArray.entityGroup(data)
+    if(data != undefined && data.length > 0){
+       counterpartymain.filterRecord.entityName(data[0].cust_long_name)
+     }
+  })
+}
+
+counterpartymain.loadGraphData = function () {
+  var entity = "Zanesfield"
+  if(counterpartymain.filterRecord.entityName() != undefined){
+  var entity = counterpartymain.filterRecord.entityName()
+  }  
+  viewModel.ajaxPostCallback("/main/counterparty/getnetworkbuyersupplier", {
+    role:counterpartymain.filterRecord.role(),
+    entityName: entity,
+    limit: counterpartymain.filterRecord.limit()
+  }, function (data) {
+    var datas = data[_.keys(data)[0]]
+    tempnodes= [];
+    templinks = []
+    _.each(datas, function (v, i) {
+      var t =""
+      if (v.is_ntb == "Y"){
+        t = "NTB"
+      } else {
+        t = "ETB"
+      }
+      tempnodes.push({
+        id:i,
+        name: v.cpty_long_name,
+        group: 2,
+        type: t,
+        limited:v.total,
+        country:v.cpty_coi,
+      });
+
+       templinks.push({        
+        source: i,
+        name: v.cpty_long_name,
+        target: entity,
+        type: t,
+      });
+    }); 
+    tempnodes.push({
+        id: entity,
+        name: entity,
+        group: 1,
+        type: "CENTER",
+        country:"",
+      }); 
+    counterpartymain.dataMasterGraph.nodes(tempnodes)
+    counterpartymain.dataMasterGraph.links(templinks)
+    counterpartymain.generateGraph()
+
+    if(counterpartymain.filterRecord.role() != ""){
+      counterpartymain.dataMasterBubble(datas)
+    }
+  })
+}
+
+counterpartymain.loadGraphBubbleData = function (e) {
+  viewModel.ajaxPostCallback("/main/master/getentities", {
+    limit: counterpartymain.filterRecord.limit()
+  }, function (data) {
+    counterpartymain.dataMasterBubble(data)
+  })
+}
+
 var div = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
 counterpartymain.generateGraph = function () {
-  var nodes = [{
-    id: "Ibrahim Fibres",
-    group: 2,
-    type: "ETB",
-    limited: 40,
-    listdetail: [{
-      "notrx": "ETB/002/2017/0001",
-      "monthly": 50,
-      "yearly": 500,
-      "recieved": "Receivable Service (RS)"
-    }]
-  }, {
-    id: "Bhilosha Ind",
-    group: 2,
-    type: "ETB",
-    limited: 200,
-    listdetail: [{
-      "notrx": "ETB/002/2017/0002",
-      "monthly": 10,
-      "yearly": 230,
-      "recieved": "Receivable Service (RS)"
-    }]
-  }, {
-    id: "ICI Pakistan",
-    group: 2,
-    type: "NTB",
-    limited: 60,
-    listdetail: [{
-      "accopening": "Account Opening",
-      "general": "General Banking",
-      "fx": "FX",
-      "s2b": "S2B",
-      "credit": "Credits"
-    }]
-  }, {
-    id: "Reliance Ind",
-    group: 2,
-    type: "NTB",
-    limited: 135,
-    listdetail: [{
-      "accopening": "Account Opening",
-      "general": "General Banking",
-      "fx": "FX",
-      "s2b": "S2B",
-      "credit": "Credits"
-    }]
-  }, {
-    id: "MEGLOBAL",
-    group: 1,
-    type: "CENTER",
-    limited: "INTERNATIONAL FZE"
-  }]
-
-  var links = [{
-      source: "Ibrahim Fibres",
-      target: "MEGLOBAL",
-      type: "ETB",
-
-    },
-    {
-      source: "Bhilosha Ind",
-      target: "MEGLOBAL",
-      type: "ETB"
-    },
-    {
-      source: "ICI Pakistan",
-      target: "MEGLOBAL",
-      type: "NTB"
-    },
-    {
-      source: "Reliance Ind",
-      target: "MEGLOBAL",
-      type: "NTB"
-    }
-  ]
+  var nodes = counterpartymain.dataMasterGraph.nodes()
+  var links = counterpartymain.dataMasterGraph.links()
 
   $("#graph").html("")
 
@@ -234,36 +245,48 @@ counterpartymain.generateGraph = function () {
         .on("end", dragended)
       )
       .on("click", function (d) {
+        // console.log(d)
         if (d.type != "CENTER") {
           counterpartymain.headtext(d.type)
           div.transition()
             .duration(200)
             .style("opacity", 1);
           if (d.type == "NTB") {
-            counterpartymain.dataDetailItemsNTB(d.listdetail[0])
-            div.html($("#counterpartyModalNTB").html())
-              .style("left", (d3.select(this).attr("cx")) + 50 + "px")
-              .style("top", (d3.select(this).attr("cy")) + 50 + "px")
+
+            var ThisTemp = this
+
+            counterpartymain.filterRecord.counterpartyName(d.name)
+            viewModel.ajaxPostCallback("/main/counterparty/getnetworkbuyersupplierproducts", {
+              entityName: counterpartymain.filterRecord.entityName(),
+              counterpartyName: d.name,
+
+            }, function (data) {
+              counterpartymain.dataMasterGraphDetail(data)
+              counterpartymain.dataDetailItemsNTB(data)
+
+              div.html($("#counterpartyModalNTB").html())
+              .style("left", (d3.select(ThisTemp).attr("cx")) + 50 + "px")
+              .style("top", (d3.select(ThisTemp).attr("cy")) + 50 + "px")
               .style("margin-top", "50px")
               .style("margin-left", "120px")
 
 
-            d3.selectAll("circle").transition().duration(500)
-              .style("opacity", function (o) {
-                return o === d ? 1 : .1;
-              });
+              d3.selectAll("circle").transition().duration(500)
+                .style("opacity", function (o) {
+                  return o === d ? 1 : .1;
+                });
 
-            d3.selectAll("text").transition().duration(500)
-              .style("opacity", function (o) {
-                return o === d ? 1 : .1;
-              });
+              d3.selectAll("text").transition().duration(500)
+                .style("opacity", function (o) {
+                  return o === d ? 1 : .1;
+                });
 
-            d3.selectAll(".link").transition().duration(500)
-              .style("opacity", .1);
+              d3.selectAll(".link").transition().duration(500)
+                .style("opacity", .1);
 
-            d3.selectAll(".linkdash").transition().duration(500)
-              .style("opacity", .1);
-
+              d3.selectAll(".linkdash").transition().duration(500)
+                .style("opacity", .1);
+            }) 
             return
           }
           counterpartymain.dataDetailItemsETB(d.listdetail[0])
@@ -303,6 +326,9 @@ counterpartymain.generateGraph = function () {
         return d.id
       })
       .style("fill", function (d) {
+        if(d.type == "CENTER"){
+          return "#1e88e5"
+        }
         if (d.type == "ETB") {
           return "#68c4fc"
         }
@@ -311,26 +337,39 @@ counterpartymain.generateGraph = function () {
 
     node.append("title")
       .text(function (d) {
-        return d.id
+        return d.name
       })
 
     node.append("text")
       .attr("x", 0)
-      .attr("dy", ".25em")
+      .attr("dy", ".15em")
       .attr("text-anchor", "middle")
       .text(function (d) {
-        return d.id
+        return d.name
       })
 
     node.append("text")
       .attr("x", 0)
       .attr("dy", "1.35em")
       .attr("text-anchor", "middle")
+      .style("font-size","10px")
       .text(function (d) {
         if (d.type != "CENTER") {
-          return "$" + d.limited + "M"
+          return "$" + currencynum(d.limited) + ""
         }
         return d.limited
+      })
+
+    node.append("text")
+      .attr("x", 0)
+      .attr("dy", "3.45em")
+      .attr("text-anchor", "middle")
+      .style("font-size","10px")
+      .text(function (d) {
+        if (d.type == "CENTER") {
+          return ""
+        }
+        return d.country
       })
   }
 
@@ -400,6 +439,19 @@ counterpartymain.generateGraph = function () {
     d.fy = undefined
   }
 }
+
+// counterpartymain.loadGraphDataDetail = function(n){
+//   console.log(n)
+//   counterpartymain.filterRecord.counterpartyName(n)
+//   viewModel.ajaxPostCallback("/main/counterparty/getnetworkbuyersupplierproducts", {
+//     entityName: counterpartymain.filterRecord.entityName(),
+//     counterpartyName: n,
+
+//   }, function (data) {
+//     counterpartymain.dataMasterGraphDetail(data)
+//     counterpartymain.dataDetailItemsNTB(data)
+//   })
+// }
 
 counterpartymain.generateGraphBubble = function () {
   var nodes = [{
@@ -667,12 +719,15 @@ counterpartymain.closeBubbleChart = function () {
 }
 
 counterpartymain.onChangeBuyerSupplier = function (e) {
+  console.log(e)
   if (e != "") {
-    $("#graph").hide()
-    $("#bubble").show()
-    counterpartymain.close()
-    counterpartymain.generateGraphBubble()
-    return
+      $("#graph").hide()
+      $("#bubble").show()
+      counterpartymain.close()
+      counterpartymain.filterRecord.role()
+      counterpartymain.loadGraphData()
+      counterpartymain.generateGraphBubble()
+      return
   }
   $("#graph").show()
   $("#bubble").hide()
@@ -680,8 +735,20 @@ counterpartymain.onChangeBuyerSupplier = function (e) {
   counterpartymain.generateGraph()
 }
 
+counterpartymain.onChangeEntity = function(e){
+  console.log(e)
+  counterpartymain.filterRecord.entityName(e)
+  counterpartymain.loadGraphData() 
+}
+
+counterpartymain.init = function(){
+   counterpartymain.loadEntity()
+   counterpartymain.loadGraphData()   
+}
+
+
 $(window).load(function () {
-  counterpartymain.generateGraph()
+  counterpartymain.init()
   $('#month').data('kendoDatePicker').enable(false);
   $('#radioBtn a').on('click', function () {
     var sel = $(this).data('title');

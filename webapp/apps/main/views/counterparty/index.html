@@ -7,29 +7,25 @@
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty/index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/index.css" }}" />
 <script id="listdetailntb" type="text/html">
-  <li><span data-bind="text:accopening"></span></li>
-  <li><span data-bind="text:general"></span></li>
-  <li><span data-bind="text:fx"></span></li>
-  <li><span data-bind="text:s2b"></span></li>
-  <li><span data-bind="text:credit"></span></li>
+  <li><span data-bind="text:product_desc"></span></li>
 </script>
 <script id="listdetailetb" type="text/html">
   <li><span data-bind="text: notrx"></span></li>
   <li>Average Transaction Value :<br/> Monthly : $<span data-bind="text:monthly"></span>M<br/>Yearly : $<span data-bind="text:yearly"></span>M</li>
   <li><span data-bind="text:recieved"></span></li>
 </script>
-<div class="row" id="filter">
+<div class="row" id="filter" data-bind="with:counterpartymain.filterRecord">
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.meglobal, dataValueField: 'value', dataTextField: 'text',optionLabel:'Meglobal',filter: 'contains'}"></select>
+    <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.entityGroup, dataValueField: 'cust_long_name', dataTextField: 'cust_long_name',filter: 'contains',value:entityName,change: function(e){ counterpartymain.onChangeEntity(e.sender._old)}}"></select>
   </div>
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.buyer, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}}"></select> 
+    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.buyerSupplierGroup, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}},value:role"></select> 
   </div>
   <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains'}"></select>
   </div>
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.top, dataValueField: 'value', dataTextField: 'text',optionLabel:'Top 10',filter: 'contains'}"></select>
+    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.limitGroup, dataValueField: 'value', dataTextField: 'text', index: 0,filter: 'contains',value:limit}"></select>
   </div>
   <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.flows, dataValueField: 'value', dataTextField: 'text',optionLabel:'Flows >$50M',filter: 'contains'}"></select>
@@ -87,8 +83,9 @@
     <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
     <h4 data-bind="text:counterpartymain.headtext"></h4>
   </div>
-  <div class="row body">
-    <ul class="top-padding" data-bind="template:{name:'listdetailetb', foreach:counterpartymain.dataDetailItemsETB}" >
+  <div class="row body" data-bind="with:counterpartymain">
+    <ul class="top-padding" data-bind="foreach:dataDetailItemsETB" >
+    <li><span data-bind="text:product_desc"></span></li>
     </ul>
   </div>
 </div>
