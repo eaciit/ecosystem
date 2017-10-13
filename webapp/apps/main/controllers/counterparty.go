@@ -227,24 +227,62 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierProducts(k *knot.WebCont
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT DISTINCT product_desc
+	sql := `SELECT product_desc, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + `
-  WHERE cust_long_name="` + payload.CounterpartyName + `" AND transaction_year = 2016  
+  WHERE cust_long_name="` + payload.EntityName + `" 
+  AND cpty_long_name="` + payload.CounterpartyName + `" AND transaction_year = 2016  
   AND ` + c.isNTBClause() + ` <> "NA"
-  AND ` + c.commonWhereClause()
+  AND ` + c.commonWhereClause() + `
+  GROUP BY product_desc`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
 
-	results := []tk.M{}
-	err = qr.Fetch(&results, 0)
+	resultsProduct := []tk.M{}
+	err = qr.Fetch(&resultsProduct, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	return c.SetResultOK(results)
+	sql = `SELECT transaction_month, SUM(amount) AS total
+  FROM ` + c.tableName() + `
+  WHERE cust_long_name="` + payload.EntityName + `" 
+  AND cpty_long_name="` + payload.CounterpartyName + `" AND transaction_year = 2016  
+  AND ` + c.isNTBClause() + ` <> "NA"
+  AND ` + c.commonWhereClause() + `
+  GROUP BY transaction_month`
+
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	resultsTotal := []tk.M{}
+	err = qr.Fetch(&resultsTotal, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	products := []string{}
+	numberTransaction := 0
+	for _, v := range resultsProduct {
+		products = append(products, v.GetString("product_desc"))
+		numberTransaction += v.GetInt("number_transaction")
+	}
+
+	total := 0.0
+	for _, v := range resultsTotal {
+		total += v.GetFloat64("total")
+	}
+
+	return c.SetResultOK(tk.M{
+		"numberTransaction": numberTransaction,
+		"avgMonthly":        total / float64(len(resultsTotal)),
+		"avgYearly":         total / float64(len(resultsTotal)/12+1),
+		"products":          products,
+	})
 }
 
 func (c *CounterPartyController) GetNetworkBuyerSupplierDetail(k *knot.WebContext) interface{} {
