@@ -16,10 +16,10 @@
 </script>
 <div class="row" id="filter" data-bind="with:counterpartymain.filterRecord">
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.entityGroup, dataValueField: 'cust_long_name', dataTextField: 'cust_long_name',filter: 'contains',value:entityName,change: function(e){ counterpartymain.onChangeEntity(e.sender._old)}}"></select>
+    <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.entityGroup, dataValueField: 'value', dataTextField: 'text',filter: 'contains',value:entityName,change: function(e){ counterpartymain.onChangeEntity(e.sender._old)}}"></select>
   </div>
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.buyerSupplierGroup, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}},value:role"></select> 
+    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.buyerSupplierGroup, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers &amp; Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}},value:role"></select> 
   </div>
   <div class="menu-counterpartymain">
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains'}"></select>
@@ -95,13 +95,14 @@
     <div class="modal-content" style="border-radius: 0px; border:0px">
       <div class="modal-header" style="background-color:  #373949; color: #fff; border-radius: 0px; border: 0px; padding-bottom: 5px">
         <button type="button" style="color: #fff" class="close" data-dismiss="modal" onclick="counterpartymain.closeBubbleChart()">&times;</button>
-        <h4 class="modal-title">Form</h4>
+        <h4 class="modal-title"><span data-bind="text:counterpartymain.titleCountryPartyBuble"></span></h4>
       </div>
       <div class="modal-body" style="background-color: #373949; padding-top: 0px">
         <form class="form-horizontal"   style="">
-          <div align="right" style="font-weight:   bold; font-size:  15px">
+          <div align="right" style="font-weight:   bold; font-size:  15px;">
             <!-- <div align="center" id="exporttoexcel" ><i class="fa fa-download" aria-hidden="true"></i> Export Excel</div> -->
             <button type="button" class="btn btn-success bottom-margin"><i class="fa fa-download" aria-hidden="true"></i> Export Excel</button>
+            <div style="overflow: scroll; height:300px">
             <table class="table" style="color:  #fff; background-color:  #828282">
               <thead>
                 <tr>
@@ -112,14 +113,17 @@
                 </tr>
               </thead>
               <tbody data-bind="foreach: counterpartymain.dataDetailItemsGraphBubble">
+
                 <tr>
-                  <td data-bind="text: bank"></td>
-                  <td data-bind="text: product"></td>
-                  <td data-bind="text: flow" align="right"></td>
-                  <td data-bind="text: not" align="center"></td>
+                  <td data-bind="text: cpty_bank"></td>
+                  <td data-bind="text: product_category"></td>
+                  <td>flow</td>
+                  <!-- <td data-bind="text: flow" align="right"></td> -->
+                  <td data-bind="text: number_transaction" align="center"></td>
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
         </form>
       </div>

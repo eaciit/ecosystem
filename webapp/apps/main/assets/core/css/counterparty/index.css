@@ -117,3 +117,7 @@ div.tooltip .body {
 .bottom-margin {
     margin-bottom: 5px;
 }
+
+#bubble text{
+    fill: #fff;
+}
