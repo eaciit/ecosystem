@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/sqlh"
@@ -17,6 +18,10 @@ type CounterPartyPayload struct {
 	CounterpartyName string
 	Role             string
 	Limit            int
+	Group            string
+	FlowAbove        int
+	DateType         string // Either MONTH or YEAR
+	YearMonth        int
 }
 
 func (c *CounterPartyController) Index(k *knot.WebContext) interface{} {
@@ -55,10 +60,42 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
   ` + c.customerRoleClause() + `AS cust_role, 
   SUM(amount) AS total 
   FROM ` + c.tableName() + `
-  WHERE cust_long_name="` + payload.EntityName + `" AND transaction_year = 2016  
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank 
-  ORDER BY total DESC LIMIT ` + strconv.Itoa(payload.Limit)
+  WHERE cust_long_name=  "` + payload.EntityName + `"
+  AND ` + c.commonWhereClause()
+
+	// Filters for YearMonth
+	if payload.YearMonth > 0 {
+		if strings.ToUpper(payload.DateType) == "MONTH" {
+			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+		} else {
+			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+		}
+	} else {
+		sql += " AND transaction_year = 2016 "
+	}
+
+	// Filters for Role
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
+	} else if strings.ToUpper(payload.Role) == "PAYEE" {
+		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
+	}
+
+	// Filters for NTB/ETB
+	if strings.ToUpper(payload.Group) == "NTB" {
+		sql += " AND " + c.isNTBClause() + " = 'Y'"
+	} else if strings.ToUpper(payload.Group) == "ETB" {
+		sql += " AND " + c.isNTBClause() + " = 'N'"
+	}
+
+	sql += " GROUP BY cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank "
+
+	// Filters for Flows
+	if payload.FlowAbove > 0 {
+		sql += " HAVING total > " + strconv.Itoa(payload.FlowAbove)
+	}
+
+	sql += " ORDER BY total DESC LIMIT " + strconv.Itoa(payload.Limit)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -121,7 +158,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
 
 	role := `"BUYER","PAYEE"`
 	if payload.Role != "" {
-		role = payload.Role
+		role = "'" + payload.Role + "'"
 	}
 
 	sql := `SELECT cpty_long_name, cpty_coi,
@@ -129,12 +166,38 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
   ` + c.customerRoleClause() + `AS cust_role, 
   SUM(amount) AS total 
   FROM ` + c.tableName() + `
-  WHERE cust_long_name="` + payload.EntityName + `" AND transaction_year = 2016  
-  AND ` + c.isNTBClause() + ` <> "NA" 
+  WHERE cust_long_name="` + payload.EntityName + `"  
   AND ` + c.customerRoleClause() + ` IN (` + role + `) 
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY cpty_coi, cpty_long_name, cust_role, is_ntb 
-  ORDER BY total DESC LIMIT ` + strconv.Itoa(payload.Limit)
+  AND ` + c.commonWhereClause()
+
+	// Filters for YearMonth
+	if payload.YearMonth > 0 {
+		if strings.ToUpper(payload.DateType) == "MONTH" {
+			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+		} else {
+			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+		}
+	} else {
+		sql += " AND transaction_year = 2016 "
+	}
+
+	// Filters for NTB/ETB
+	if strings.ToUpper(payload.Group) == "NTB" {
+		sql += " AND " + c.isNTBClause() + " = 'Y'"
+	} else if strings.ToUpper(payload.Group) == "ETB" {
+		sql += " AND " + c.isNTBClause() + " = 'N'"
+	} else {
+		sql += " AND " + c.isNTBClause() + " <> 'NA' "
+	}
+
+	sql += " GROUP BY cpty_coi, cpty_long_name, cust_role, is_ntb "
+
+	// Filters for Flows
+	if payload.FlowAbove > 0 {
+		sql += " HAVING total > " + strconv.Itoa(payload.FlowAbove)
+	}
+
+	sql += " ORDER BY total DESC LIMIT " + strconv.Itoa(payload.Limit)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
