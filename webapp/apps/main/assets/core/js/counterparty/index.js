@@ -4,20 +4,39 @@ counterpartymain.dataDetailItemsNTB = ko.observableArray([])
 counterpartymain.dataDetailItemsETB = ko.observableArray([])
 counterpartymain.dataMasterBubble = ko.observableArray([])
 counterpartymain.dataDetailItemsGraphBubble = ko.observableArray([])
-counterpartymain.meglobal = [{
-  "value": "ASA",
-  "text": "ASA"
-}, {
-  "value": "AME",
-  "text": "AME"
-}]
-counterpartymain.buyer = [{
-  "value": "Supplier",
+counterpartymain.dataMasterGraphDetail = ko.observableArray([])
+counterpartymain.titleCountryPartyBuble = ko.observable()
+counterpartymain.dataMasterGraph = {
+  nodes: ko.observableArray([]),
+  links: ko.observableArray([])
+}
+counterpartymain.filterDataArray = {
+  entityGroup: ko.observableArray([]),
+  buyerSupplierGroup: ko.observableArray([]),
+  limitGroup: ko.observable(),
+}
+counterpartymain.filterRecord = {
+  entityName: ko.observable(),
+  buyerSupplier: ko.observable(),
+  limit: ko.observable(5),
+  role: ko.observable(),
+  counterpartyName: ko.observable(),
+}
+counterpartymain.filterDataArray.buyerSupplierGroup = [{
+  "value": "PAYEE",
   "text": "Supplier"
 }, {
-  "value": "Buyer",
+  "value": "BUYER",
   "text": "Buyer"
 }]
+counterpartymain.filterDataArray.limitGroup = [{
+  "value": 5,
+  "text": "Top 5"
+}, {
+  "value": 10,
+  "text": "Top 10"
+}]
+
 counterpartymain.group = [{
   "value": "ETB",
   "text": "ETB"
@@ -25,13 +44,7 @@ counterpartymain.group = [{
   "value": "NTB",
   "text": "NTB"
 }]
-counterpartymain.top = [{
-  "value": 5,
-  "text": "Top 5"
-}, {
-  "value": 3,
-  "text": "Top 3"
-}]
+
 counterpartymain.flows = [{
   "value": 31,
   "text": "Flows>$30M"
@@ -40,86 +53,97 @@ counterpartymain.flows = [{
   "text": "Flows>$100M"
 }]
 
+counterpartymain.loadEntity = function() {
+  viewModel.ajaxPostCallback("/main/master/getentities", {
+    limit: counterpartymain.filterRecord.limit()
+  }, function(data) {
+    counterpartymain.filterDataArray.entityGroup(data)
+    if (data != undefined && data.length > 0) {
+      counterpartymain.filterRecord.entityName(data[0].cust_long_name)
+    }
+  })
+}
+
+counterpartymain.loadGraphData = function() {
+  var entity = "Zanesfield"
+  if (counterpartymain.filterRecord.entityName() != undefined) {
+    var entity = counterpartymain.filterRecord.entityName()
+  }
+  viewModel.ajaxPostCallback("/main/counterparty/getnetworkbuyersupplier", {
+    role: counterpartymain.filterRecord.role(),
+    entityName: entity,
+    limit: counterpartymain.filterRecord.limit()
+  }, function(data) {
+    var datas = data[_.keys(data)[0]]
+    tempnodes = [];
+    templinks = []
+    _.each(datas, function(v, i) {
+      var t = ""
+      if (v.is_ntb == "Y") {
+        t = "NTB"
+      } else {
+        t = "ETB"
+      }
+      tempnodes.push({
+        id: i,
+        name: v.cpty_long_name,
+        group: 2,
+        type: t,
+        limited: v.total,
+        country: v.cpty_coi,
+      });
+
+      templinks.push({
+        source: i,
+        name: v.cpty_long_name,
+        target: entity,
+        type: t,
+      });
+    });
+    tempnodes.push({
+      id: entity,
+      name: entity,
+      group: 1,
+      type: "CENTER",
+      country: "",
+    });
+    counterpartymain.filterRecord.entityName(entity)
+    counterpartymain.dataMasterGraph.nodes(tempnodes)
+    counterpartymain.dataMasterGraph.links(templinks)
+    counterpartymain.generateGraph()
+
+    if (counterpartymain.filterRecord.role() != "") {
+      counterpartymain.dataMasterBubble(datas)
+      tempnodesbubble = []
+      _.each(datas, function(v, i) {
+        var t = ""
+        if (v.is_ntb == "Y") {
+          t = "NTB"
+        } else {
+          t = "ETB"
+        }
+        tempnodesbubble.push({
+          id: i,
+          name: v.cpty_long_name,
+          group: 2,
+          type: t,
+          limited: v.total,
+          country: v.cpty_coi,
+        });
+      });
+      counterpartymain.dataMasterBubble(tempnodesbubble)
+      counterpartymain.generateGraphBubble()
+    }
+  })
+}
+
 var div = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
-counterpartymain.generateGraph = function () {
-  var nodes = [{
-    id: "Ibrahim Fibres",
-    group: 2,
-    type: "ETB",
-    limited: 40,
-    listdetail: [{
-      "notrx": "ETB/002/2017/0001",
-      "monthly": 50,
-      "yearly": 500,
-      "recieved": "Receivable Service (RS)"
-    }]
-  }, {
-    id: "Bhilosha Ind",
-    group: 2,
-    type: "ETB",
-    limited: 200,
-    listdetail: [{
-      "notrx": "ETB/002/2017/0002",
-      "monthly": 10,
-      "yearly": 230,
-      "recieved": "Receivable Service (RS)"
-    }]
-  }, {
-    id: "ICI Pakistan",
-    group: 2,
-    type: "NTB",
-    limited: 60,
-    listdetail: [{
-      "accopening": "Account Opening",
-      "general": "General Banking",
-      "fx": "FX",
-      "s2b": "S2B",
-      "credit": "Credits"
-    }]
-  }, {
-    id: "Reliance Ind",
-    group: 2,
-    type: "NTB",
-    limited: 135,
-    listdetail: [{
-      "accopening": "Account Opening",
-      "general": "General Banking",
-      "fx": "FX",
-      "s2b": "S2B",
-      "credit": "Credits"
-    }]
-  }, {
-    id: "MEGLOBAL",
-    group: 1,
-    type: "CENTER",
-    limited: "INTERNATIONAL FZE"
-  }]
-
-  var links = [{
-      source: "Ibrahim Fibres",
-      target: "MEGLOBAL",
-      type: "ETB",
-
-    },
-    {
-      source: "Bhilosha Ind",
-      target: "MEGLOBAL",
-      type: "ETB"
-    },
-    {
-      source: "ICI Pakistan",
-      target: "MEGLOBAL",
-      type: "NTB"
-    },
-    {
-      source: "Reliance Ind",
-      target: "MEGLOBAL",
-      type: "NTB"
-    }
-  ]
+counterpartymain.generateGraph = function() {
+  var nodes = counterpartymain.dataMasterGraph.nodes()
+  var links = counterpartymain.dataMasterGraph.links()
 
   $("#graph").html("")
 
@@ -155,12 +179,12 @@ counterpartymain.generateGraph = function () {
     .style('stroke', 'none')
 
   var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function (d) {
+    .force("link", d3.forceLink().id(function(d) {
       return d.id
     }).distance(300).strength(1))
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(function (d) {
+    .force("collision", d3.forceCollide().radius(function(d) {
       return 50 + 10;
     }))
 
@@ -171,7 +195,7 @@ counterpartymain.generateGraph = function () {
       .data(links)
       .enter()
       .append("line")
-      .attr("class", function (d) {
+      .attr("class", function(d) {
         if (d.type == "NTB") {
           return "link"
         }
@@ -179,7 +203,7 @@ counterpartymain.generateGraph = function () {
       })
 
     link.append("title")
-      .text(function (d) {
+      .text(function(d) {
         return d.type
       })
 
@@ -191,7 +215,7 @@ counterpartymain.generateGraph = function () {
         'class': 'edgepath',
         'fill-opacity': 0,
         'stroke-opacity': 0,
-        'id': function (d, i) {
+        'id': function(d, i) {
           return 'edgepath' + i
         }
       })
@@ -204,7 +228,7 @@ counterpartymain.generateGraph = function () {
       .style("pointer-events", "none")
       .attrs({
         'class': 'edgelabel',
-        'id': function (d, i) {
+        'id': function(d, i) {
           return 'edgelabel' + i
         },
         'font-size': 10,
@@ -212,14 +236,14 @@ counterpartymain.generateGraph = function () {
       })
 
     edgelabels.append('textPath')
-      .attr('xlink:href', function (d, i) {
+      .attr('xlink:href', function(d, i) {
         return '#edgepath' + i
       })
       .style("text-anchor", "middle")
       .style("pointer-events", "none")
       .attr("dy", -3)
       .attr("startOffset", "50%")
-      .text(function (d) {
+      .text(function(d) {
         return d.type
       })
 
@@ -233,37 +257,49 @@ counterpartymain.generateGraph = function () {
         .on("drag", dragged)
         .on("end", dragended)
       )
-      .on("click", function (d) {
+      .on("click", function(d) {
+        // console.log(d)
         if (d.type != "CENTER") {
           counterpartymain.headtext(d.type)
           div.transition()
             .duration(200)
             .style("opacity", 1);
           if (d.type == "NTB") {
-            counterpartymain.dataDetailItemsNTB(d.listdetail[0])
-            div.html($("#counterpartyModalNTB").html())
-              .style("left", (d3.select(this).attr("cx")) + 50 + "px")
-              .style("top", (d3.select(this).attr("cy")) + 50 + "px")
-              .style("margin-top", "50px")
-              .style("margin-left", "120px")
+
+            var ThisTemp = this
+
+            counterpartymain.filterRecord.counterpartyName(d.name)
+            viewModel.ajaxPostCallback("/main/counterparty/getnetworkbuyersupplierproducts", {
+              entityName: counterpartymain.filterRecord.entityName(),
+              counterpartyName: d.name,
+
+            }, function(data) {
+              counterpartymain.dataMasterGraphDetail(data)
+              counterpartymain.dataDetailItemsNTB(data)
+
+              div.html($("#counterpartyModalNTB").html())
+                .style("left", (d3.select(ThisTemp).attr("cx")) + 50 + "px")
+                .style("top", (d3.select(ThisTemp).attr("cy")) + 50 + "px")
+                .style("margin-top", "50px")
+                .style("margin-left", "120px")
 
 
-            d3.selectAll("circle").transition().duration(500)
-              .style("opacity", function (o) {
-                return o === d ? 1 : .1;
-              });
+              d3.selectAll("circle").transition().duration(500)
+                .style("opacity", function(o) {
+                  return o === d ? 1 : .1;
+                });
 
-            d3.selectAll("text").transition().duration(500)
-              .style("opacity", function (o) {
-                return o === d ? 1 : .1;
-              });
+              d3.selectAll("text").transition().duration(500)
+                .style("opacity", function(o) {
+                  return o === d ? 1 : .1;
+                });
 
-            d3.selectAll(".link").transition().duration(500)
-              .style("opacity", .1);
+              d3.selectAll(".link").transition().duration(500)
+                .style("opacity", .1);
 
-            d3.selectAll(".linkdash").transition().duration(500)
-              .style("opacity", .1);
-
+              d3.selectAll(".linkdash").transition().duration(500)
+                .style("opacity", .1);
+            })
             return
           }
           counterpartymain.dataDetailItemsETB(d.listdetail[0])
@@ -275,12 +311,12 @@ counterpartymain.generateGraph = function () {
 
 
           d3.selectAll("circle").transition().duration(500)
-            .style("opacity", function (o) {
+            .style("opacity", function(o) {
               return o === d ? 1 : .1;
             });
 
           d3.selectAll("text").transition().duration(500)
-            .style("opacity", function (o) {
+            .style("opacity", function(o) {
               return o === d ? 1 : .1;
             });
 
@@ -293,16 +329,19 @@ counterpartymain.generateGraph = function () {
       })
 
     node.append("circle")
-      .attr("r", function (d) {
+      .attr("r", function(d) {
         if (d.type == "CENTER") {
           return 70
         }
         return 50
       })
-      .attr("id", function (d) {
+      .attr("id", function(d) {
         return d.id
       })
-      .style("fill", function (d) {
+      .style("fill", function(d) {
+        if (d.type == "CENTER") {
+          return "#1e88e5"
+        }
         if (d.type == "ETB") {
           return "#68c4fc"
         }
@@ -310,61 +349,74 @@ counterpartymain.generateGraph = function () {
       })
 
     node.append("title")
-      .text(function (d) {
-        return d.id
+      .text(function(d) {
+        return d.name
       })
 
     node.append("text")
       .attr("x", 0)
-      .attr("dy", ".25em")
+      .attr("dy", ".15em")
       .attr("text-anchor", "middle")
-      .text(function (d) {
-        return d.id
+      .text(function(d) {
+        return d.name
       })
 
     node.append("text")
       .attr("x", 0)
       .attr("dy", "1.35em")
       .attr("text-anchor", "middle")
-      .text(function (d) {
+      .style("font-size", "10px")
+      .text(function(d) {
         if (d.type != "CENTER") {
-          return "$" + d.limited + "M"
+          return "$" + currencynum(d.limited) + ""
         }
         return d.limited
+      })
+
+    node.append("text")
+      .attr("x", 0)
+      .attr("dy", "3.45em")
+      .attr("text-anchor", "middle")
+      .style("font-size", "10px")
+      .text(function(d) {
+        if (d.type == "CENTER") {
+          return ""
+        }
+        return d.country
       })
   }
 
   function ticked() {
     link
-      .attr("x1", function (d) {
+      .attr("x1", function(d) {
         return d.source.x
       })
-      .attr("y1", function (d) {
+      .attr("y1", function(d) {
         return d.source.y
       })
-      .attr("x2", function (d) {
+      .attr("x2", function(d) {
         return d.target.x
       })
-      .attr("y2", function (d) {
+      .attr("y2", function(d) {
         return d.target.y
       })
 
     node
-      .attr("cx", function (d) {
+      .attr("cx", function(d) {
         return d.x;
       })
-      .attr("cy", function (d) {
+      .attr("cy", function(d) {
         return d.y;
       })
-      .attr("transform", function (d) {
+      .attr("transform", function(d) {
         return "translate(" + d.x + ", " + d.y + ")"
       })
 
-    edgepaths.attr('d', function (d) {
+    edgepaths.attr('d', function(d) {
       return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
     })
 
-    edgelabels.attr('transform', function (d) {
+    edgelabels.attr('transform', function(d) {
       if (d.target.x < d.source.x) {
         var bbox = this.getBBox()
         rx = bbox.x + bbox.width / 2
@@ -401,101 +453,21 @@ counterpartymain.generateGraph = function () {
   }
 }
 
-counterpartymain.generateGraphBubble = function () {
-  var nodes = [{
-    id: "Ibrahim Fibres",
-    group: 2,
-    type: "ETB",
-    limited: 40,
-    listdetail: [{
-      "bank": "FIBB",
-      "product": "TRADE",
-      "flow": 8.44,
-      "not": 2
-    }, {
-      "bank": "HBKS",
-      "product": "TRADE",
-      "flow": 3.40,
-      "not": 1
-    }, {
-      "bank": "HCEB",
-      "product": "TRADE",
-      "flow": 8.95,
-      "not": 2
-    }]
-  }, {
-    id: "Bhilosha Ind",
-    group: 2,
-    type: "ETB",
-    limited: 200,
-    listdetail: [{
-      "bank": "FIBB",
-      "product": "TRADE",
-      "flow": 8.44,
-      "not": 2
-    }, {
-      "bank": "HBKS",
-      "product": "TRADE",
-      "flow": 3.40,
-      "not": 1
-    }, {
-      "bank": "HCEB",
-      "product": "TRADE",
-      "flow": 8.95,
-      "not": 2
-    }]
-  }, {
-    id: "ICI Pakistan",
-    group: 2,
-    type: "NTB",
-    limited: 60,
-    listdetail: [{
-      "bank": "FIBB",
-      "product": "TRADE",
-      "flow": 8.44,
-      "not": 2
-    }, {
-      "bank": "HBKS",
-      "product": "TRADE",
-      "flow": 3.40,
-      "not": 1
-    }, {
-      "bank": "HCEB",
-      "product": "TRADE",
-      "flow": 8.95,
-      "not": 2
-    }]
-  }, {
-    id: "Reliance Ind",
-    group: 2,
-    type: "NTB",
-    limited: 135,
-    listdetail: [{
-      "bank": "FIBB",
-      "product": "TRADE",
-      "flow": 8.44,
-      "not": 2
-    }, {
-      "bank": "HBKS",
-      "product": "TRADE",
-      "flow": 3.40,
-      "not": 1
-    }, {
-      "bank": "HCEB",
-      "product": "TRADE",
-      "flow": 8.95,
-      "not": 2
-    }]
-  }]
-
-  counterpartymain.dataMasterBubble(nodes)
-
+counterpartymain.generateGraphBubble = function() {
+  // var nodes = [{
+  //   id: "Ibrahim Fibres",
+  //   group: 2,
+  //   type: "ETB",
+  //   limited: 40,
+  $("#bubble").html("<svg></svg>")
+  var nodes = counterpartymain.dataMasterBubble()
+  console.log(nodes)
   // normalize circle
   function preprocess(nod) {
     var max = _.maxBy(nod, "limited").limited;
     var min = _.minBy(nod, "limited").limited;
 
-    m = _.map(nod, function (it) {
+    m = _.map(nod, function(it) {
       it.r = (it.limited - min) / (max - min) + 0.50;
       it.r = it.r * 70;
       if (it.type == "ETB") {
@@ -540,19 +512,19 @@ counterpartymain.generateGraphBubble = function () {
         .force("charge", d3.forceManyBody().strength([-50]))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("collision", d3.forceCollide().radius(function (d) {
+        .force("collision", d3.forceCollide().radius(function(d) {
           return d.r + 10;
         }))
         .on("tick", ticked);
 
       function ticked(e) {
-        node.attr("cx", function (d) {
+        node.attr("cx", function(d) {
             return d.x;
           })
-          .attr("cy", function (d) {
+          .attr("cy", function(d) {
             return d.y;
           })
-          .attr('transform', function (d) {
+          .attr('transform', function(d) {
             return 'translate(' + [width / 2 + d.x, height / 2 + d.y] + ')';
           })
       }
@@ -561,55 +533,77 @@ counterpartymain.generateGraphBubble = function () {
         .data(data)
         .enter()
         .append("g")
-        .attr('r', function (d) {
+        .attr('r', function(d) {
           return d.r;
         })
-        .on("click", function (d, ev, eb, mn) {
-          counterpartymain.dataDetailItemsGraphBubble([])
-          var masterdata = counterpartymain.dataMasterBubble()
-          var data = _.find(masterdata, function (d) {
-            return d.id == d.id
-          })
-          counterpartymain.dataDetailItemsGraphBubble(data.listdetail)
-          tooltip.html($("#datadetailgraph").html());
-          tooltip.style("margin-top", "70px")
-          tooltip.style("margin-left", "60px")
-          tooltip.style("left", d.x + width / 2 + d.r + 5 + "px")
-          tooltip.style("top", d.y + height / 2 + "px")
-          tooltip.style("visibility", "visible");
+        .on("click", function(d, ev, eb, mn) {
+          counterpartymain.titleCountryPartyBuble(d.name)
+          viewModel.ajaxPostCallback("/main/counterparty/getnetworkbuyersupplierdetail", {
+            entityName: counterpartymain.filterRecord.entityName(),
+            counterpartyName: d.name,
+          }, function(data) {
+            counterpartymain.dataDetailItemsGraphBubble(data)
+            tooltip.html($("#datadetailgraph").html());
+            tooltip.style("margin-top", "70px")
+            tooltip.style("margin-left", "60px")
+            tooltip.style("left", d.x + width / 2 + d.r + 5 + "px")
+            tooltip.style("top", d.y + height / 2 + "px")
+            tooltip.style("visibility", "visible");
 
-          d3.selectAll("circle").transition().duration(500)
-            .style("opacity", function (o) {
-              return o === d ? 1 : .1;
-            });
-          d3.selectAll("text").transition().duration(500)
-            .style("opacity", function (o) {
-              return o === d ? 1 : .1;
-            });
-          return
+            d3.selectAll("circle").transition().duration(500)
+              .style("opacity", function(o) {
+                return o === d ? 1 : .1;
+              });
+            d3.selectAll("text").transition().duration(500)
+              .style("opacity", function(o) {
+                return o === d ? 1 : .1;
+              });
+            return
+          })
         })
 
       node.append("circle")
-        .attr('r', function (d) {
+        .attr('r', function(d) {
           return d.r;
         })
-        .style("fill", function (d) {
+        .style("fill", function(d) {
           return d.fill;
         })
 
       node.append("text")
         .attr("x", 0)
-        .attr("dy", ".35em")
+        .attr("dy", ".15em")
         .attr("text-anchor", "middle")
-        .text(function (d) {
+        .text(function(d) {
+          return d.name
+        })
+
+      node.append("text")
+        .attr("x", 0)
+        .attr("dy", "1.35em")
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(function(d) {
           if (d.type != "CENTER") {
-            return "$" + d.limited + "M"
+            return "$" + currencynum(d.limited) + ""
           }
           return d.limited
         })
+
+      node.append("text")
+        .attr("x", 0)
+        .attr("dy", "3.45em")
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(function(d) {
+          if (d.type == "CENTER") {
+            return ""
+          }
+          return d.country
+        })
     }
 
-    chart.width = function (value) {
+    chart.width = function(value) {
       if (!arguments.length) {
         return width;
       }
@@ -617,7 +611,7 @@ counterpartymain.generateGraphBubble = function () {
       return chart;
     };
 
-    chart.height = function (value) {
+    chart.height = function(value) {
       if (!arguments.length) {
         return height;
       }
@@ -625,7 +619,7 @@ counterpartymain.generateGraphBubble = function () {
       return chart;
     };
 
-    chart.columnForColors = function (value) {
+    chart.columnForColors = function(value) {
       if (!arguments.columnForColors) {
         return columnForColors;
       }
@@ -633,7 +627,7 @@ counterpartymain.generateGraphBubble = function () {
       return chart;
     };
 
-    chart.columnForRadius = function (value) {
+    chart.columnForRadius = function(value) {
       if (!arguments.columnForRadius) {
         return columnForRadius;
       }
@@ -644,7 +638,7 @@ counterpartymain.generateGraphBubble = function () {
   }
 }
 
-counterpartymain.close = function () {
+counterpartymain.close = function() {
   div.transition()
     .duration(500)
     .style("opacity", 0);
@@ -658,7 +652,7 @@ counterpartymain.close = function () {
     .style("opacity", 1);
 }
 
-counterpartymain.closeBubbleChart = function () {
+counterpartymain.closeBubbleChart = function() {
   $(".tooltipbubble").attr("style", "visibility:hidden;top:-10px;left:10px;position: absolute;");
   d3.selectAll("circle").transition().duration(500)
     .style("opacity", 1);
@@ -666,12 +660,15 @@ counterpartymain.closeBubbleChart = function () {
     .style("opacity", 1);
 }
 
-counterpartymain.onChangeBuyerSupplier = function (e) {
+counterpartymain.onChangeBuyerSupplier = function(e) {
+  console.log(e)
   if (e != "") {
     $("#graph").hide()
     $("#bubble").show()
     counterpartymain.close()
-    counterpartymain.generateGraphBubble()
+    counterpartymain.filterRecord.role()
+    counterpartymain.loadGraphData()
+    // counterpartymain.generateGraphBubble()
     return
   }
   $("#graph").show()
@@ -680,10 +677,21 @@ counterpartymain.onChangeBuyerSupplier = function (e) {
   counterpartymain.generateGraph()
 }
 
-$(window).load(function () {
-  counterpartymain.generateGraph()
+counterpartymain.onChangeEntity = function(e) {
+  console.log(e)
+  counterpartymain.filterRecord.entityName(e)
+  counterpartymain.loadGraphData()
+}
+
+counterpartymain.init = function() {
+  counterpartymain.loadEntity()
+  counterpartymain.loadGraphData()
+}
+
+$(window).load(function() {
+  counterpartymain.init()
   $('#month').data('kendoDatePicker').enable(false);
-  $('#radioBtn a').on('click', function () {
+  $('#radioBtn a').on('click', function() {
     var sel = $(this).data('title');
     var tog = $(this).data('toggle');
     $('#' + tog).prop('value', sel);

@@ -297,11 +297,11 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierDetail(k *knot.WebContex
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT cpty_long_name, cpty_coi, product_category
+	sql := `SELECT cpty_long_name, cpty_coi, product_category,
   LEFT(counterparty_bank, 4) AS cpty_bank, 
   SUM(amount) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + `
-  WHERE cust_long_name="` + payload.CounterpartyName + `" AND transaction_year = 2016  
+  WHERE cpty_long_name="` + payload.CounterpartyName + `" AND transaction_year = 2016  
   AND ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.commonWhereClause() + ` 
   GROUP BY cpty_coi, cpty_long_name, cpty_bank, product_category
