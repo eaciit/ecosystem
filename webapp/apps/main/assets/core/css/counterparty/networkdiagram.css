@@ -5,50 +5,46 @@ path.link {
 }
 
 path.link.flow {
-  stroke: #6ba8d0;
+  stroke: #4289bd;
 }
 
 marker#flow {
-  fill: #6ba8d0;
+  fill: #4289bd;
 }
 
 path.link.missed {
-  stroke-dasharray: 1, 1 2;
+  stroke: #666;
+  stroke-dasharray: 5, 5;
+}
+
+marker#missed {
+  fill: #666;
 }
 
 circle:hover {
   cursor: pointer;
 }
 
-circle {
-  fill: #dbe8f3;
-  stroke: #0075b0;
+circle.ntb {
+  fill: #7cb7eb;
+  stroke: #7cb7eb;
   stroke-width: 1px;
 }
 
-.pulse {
-  fill: white;
-  fill-opacity: 0;
-  animation-duration: 2s;
-  animation-name: pulse;
-  animation-iteration-count: infinite;
+circle.etb {
+  fill: #bfbfbf;
+  stroke: #bfbfbf;
+  stroke-width: 1px;
+}
+
+circle.center {
+  fill: #6b7f9b;
+  stroke: #6b7f9b;
+  stroke-width: 1px;
 }
 
 .hide {
   display: none;
-}
-
-@keyframes pulse {
-  from {
-    stroke-width: 10px;
-    stroke-opacity: 1;
-    transform: scale(0.3);
-  }
-  to {
-    stroke-width: 0;
-    stroke-opacity: 0;
-    transform: scale(1.5);
-  }
 }
 
 text {

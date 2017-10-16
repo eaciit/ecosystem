@@ -3,45 +3,6 @@ counterparty.detail = ko.observableArray([])
 counterparty.activeEnityName = ko.observable()
 counterparty.activeName = ko.observable()
 
-filter.entities = [{
-  "value": "ASA",
-  "text": "ASA"
-}, {
-  "value": "AME",
-  "text": "AME"
-}]
-filter.role = [{
-  "value": "",
-  "text": "Buyer & Supplier"
-}, {
-  "value": "BUYER",
-  "text": "Buyer"
-}, {
-  "value": "PAYEE",
-  "text": "Supplier"
-}]
-filter.group = [{
-  "value": "ETB",
-  "text": "ETB"
-}, {
-  "value": "NTB",
-  "text": "NTB"
-}]
-filter.limit = [{
-  "value": 5,
-  "text": "Top 5"
-}, {
-  "value": 10,
-  "text": "Top 10"
-}]
-filter.flows = [{
-  "value": 30000000,
-  "text": "Flows > $30M"
-}, {
-  "value": 100000000,
-  "text": "Flows > $100M"
-}]
-
 counterparty.eventclick = function () {
   $('#month').data('kendoDatePicker').enable(false)
 
@@ -62,16 +23,107 @@ counterparty.eventclick = function () {
   })
 }
 
-network = {}
+var filter = {}
+filter.entities = ko.observableArray([])
+filter.selectedEntity = ko.observable("")
+
+filter.role = [{
+  "value": "",
+  "text": "Buyer & Supplier"
+}, {
+  "value": "BUYER",
+  "text": "Buyer"
+}, {
+  "value": "PAYEE",
+  "text": "Supplier"
+}]
+filter.selectedRole = ko.observable("")
+
+filter.group = [{
+  "value": "",
+  "text": "Both"
+}, {
+  "value": "ETB",
+  "text": "ETB"
+}, {
+  "value": "NTB",
+  "text": "NTB"
+}]
+filter.selectedGroup = ko.observable("")
+
+filter.limit = [{
+  "value": 5,
+  "text": "Top 5"
+}, {
+  "value": 10,
+  "text": "Top 10"
+}]
+filter.selectedLimit = ko.observable(5)
+
+filter.flow = [{
+  "value": 0,
+  "text": "All"
+},{
+  "value": 30000000,
+  "text": "Flows > $30M"
+}, {
+  "value": 100000000,
+  "text": "Flows > $100M"
+}]
+filter.selectedFlow = ko.observable(0)
+
+filter.selectedYear = ko.observable("")
+filter.selectedMonth = ko.observable("")
+
+filter.selectedFilters = ko.computed(function () {
+  return {
+    entityName: counterparty.activeEnityName(),
+    role: filter.selectedRole(),
+    group: filter.selectedGroup(),
+    limit: parseInt(filter.selectedLimit()),
+    flowAbove: parseInt(filter.selectedFlow())
+  }
+})
+
+filter.loadEntities = function () {
+  viewModel.ajaxPostCallback("/main/master/getentities", {}, function (data) {
+    filter.entities(_.map(data, "value"))
+    filter.selectedEntity.valueHasMutated()
+  })
+}
+
+filter.loadAll = function () {
+  filter.selectedEntity.subscribe(function(nv){
+    counterparty.activeEnityName(nv)
+  })
+
+  filter.selectedEntity($.urlParam("entityName"))
+  filter.loadEntities()
+
+  filter.selectedFilters.subscribe(function () {
+    if (!network.isExpanding) {
+      network.clean()
+    }
+
+    network.isExpanding = false
+    network.loadData()
+  })
+}
+
+var network = {}
 network.data = []
 network.links = []
 network.nodes = {}
+network.isExpanding = false
+
+network.clean = function () {
+  network.data = []
+  network.links = []
+  network.nodes = {}
+}
 
 network.loadData = function () {
-  viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", {
-    entityName: counterparty.activeEnityName(),
-    limit: 5
-  }, function (data) {
+  viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", filter.selectedFilters(), function (data) {
     network.processData(data)
   })
 }
@@ -93,7 +145,7 @@ network.processData = function (data) {
   _.each(data[parent], function (e) {
     var link = {
       total: e.total,
-      type: "flow",
+      type: e.cpty_bank != "SCBL" && e.cust_bank != "SCBL" ? "missed" : "flow",
       text: kendo.toString(e.total / 1000000, "n2") + "M",
     }
 
@@ -140,13 +192,15 @@ network.processData = function (data) {
       return {
         name: e.cpty_long_name,
         coi: e.cpty_coi,
-        opportunity: e.cpty_bank != "SCBL" ? true : false
+        opportunity: e.cpty_bank != "SCBL" ? true : false,
+        class: e.is_ntb == "Y" ? "ntb" : "etb"
       }
     })
     .concat({
       name: parent,
       coi: "",
-      opportunity: false
+      opportunity: false,
+      class: "center"
     })
     .uniqBy("name")
     .keyBy("name")
@@ -181,6 +235,31 @@ network.generate = function () {
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
     .attr("height", h)
+
+  // Filter
+  var defs = svg.append("defs");
+  var filter = defs.append("filter")
+    .attr("id", "dropshadow")
+  filter.append("feGaussianBlur")
+    .attr("in", "SourceAlpha")
+    .attr("stdDeviation", 2)
+    .attr("result", "blur");
+  filter.append("feFlood")
+    .attr("in", "offsetBlur")
+    .attr("flood-opacity", "0.5")
+    .attr("result", "offsetColor");
+  filter.append("feOffset")
+    .attr("in", "blur")
+    .attr("dx", 0)
+    .attr("dy", 0)
+    .attr("result", "offsetBlur");
+
+  var feMerge = filter.append("feMerge");
+  feMerge.append("feMergeNode")
+    .attr("in", "offsetBlur")
+  feMerge.append("feMergeNode")
+    .attr("in", "SourceGraphic");
+  // End of filter
 
   var force = d3.layout.force()
     .nodes(d3.values(nodes))
@@ -240,14 +319,14 @@ network.generate = function () {
     .call(force.drag)
 
   circle.append("svg:circle")
-    .attr("r", 17)
-    .attr("class", function (d) {
-      return d.opportunity ? "pulse" : "hide"
-    })
-
-  circle.append("svg:circle")
     .on("click", expand)
     .attr("r", 15)
+    .attr("class", function (d) {
+      return d.class
+    })
+    .attr("filter", function (d) {
+      return d.opportunity ? "url(#dropshadow)" : ""
+    })
 
   var text = svg.append("svg:g").selectAll("g")
     .data(force.nodes())
@@ -351,6 +430,7 @@ network.generate = function () {
 
   function expand(d) {
     if (!d3.event.defaultPrevented) {
+      network.isExpanding = true
       counterparty.activeEnityName(d.name)
       network.loadData()
     }
@@ -359,8 +439,8 @@ network.generate = function () {
 }
 
 $(window).load(function () {
-  counterparty.activeEnityName($.urlParam("entityName"))
-  counterparty.eventclick()
-
+  filter.loadAll()
   network.loadData()
+
+  counterparty.eventclick()
 })

@@ -9,33 +9,32 @@
 <div class="row" id="filter">
   <div class="col-lg-12">
     <div class="menu-counterparty">
-      <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: filter.entities, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: filter.entities, value: filter.selectedEntity, filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.buyer, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.group, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.top, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.flows, dataValueField: 'value', dataTextField: 'text',optionLabel:'Flows >$50M',filter: 'contains'}"></select>
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.flow, value: filter.selectedFlow, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
       <div id="radioBtn" class="btn-group">
-        <a class="btn btn-primary btn-xs active" data-toggle="happy" data-title="Y">Y</a>
-        <a class="btn btn-primary btn-xs notActive" data-toggle="happy" data-title="M">M</a>
+        <a class="btn btn-primary btn-xs active" data-toggle="dateType" data-title="Y">Y</a>
+        <a class="btn btn-primary btn-xs notActive" data-toggle="dateType" data-title="M">M</a>
       </div>
-      <input type="hidden" name="happy" id="happy">
     </div>
     <div class="menu-counterparty">
-      <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade', depth: 'decade'}"
+      <input type="text" id="year" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedYear }"
         class="filter-space">
     </div>
     <div class="menu-counterparty">
-      <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM', start: 'year', depth: 'year'}" class="filter-space">
+      <input type="text" id="month" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy MMM', start: 'year', depth: 'year', value: filter.selectedMonth }" class="filter-space">
     </div>
     <div class="menu-counterparty">
       <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
