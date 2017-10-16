@@ -1,5 +1,5 @@
 <script>
-   viewModel.title('Counter Party View')
+  viewModel.title('Counter Party View')
 </script>
 <!-- Content -->
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v3.min.js" }}"></script>
@@ -7,115 +7,122 @@
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/networkdiagram.css" }}" />
 
 <div class="row" id="filter">
-   <div class="menu_counterparty">
-      <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterparty.meglobal, dataValueField: 'value', dataTextField: 'text',optionLabel:'Meglobal',filter: 'contains'}"></select>
-   </div>
-   <div class="menu_counterparty">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.buyer, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers & Suppliers',filter: 'contains'}"></select> 
-   </div>
-   <div class="menu_counterparty">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains'}"></select>
-   </div>
-   <div class="menu_counterparty">
-      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.top, dataValueField: 'value', dataTextField: 'text',optionLabel:'Top 10',filter: 'contains'}"></select>
-   </div>
-   <div class="menu_counterparty">
+  <div class="col-lg-12">
+    <div class="menu-counterparty">
+      <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: filter.entities, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+    </div>
+    <div class="menu-counterparty">
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.buyer, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+    </div>
+    <div class="menu-counterparty">
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.group, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+    </div>
+    <div class="menu-counterparty">
+      <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.top, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+    </div>
+    <div class="menu-counterparty">
       <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterparty.flows, dataValueField: 'value', dataTextField: 'text',optionLabel:'Flows >$50M',filter: 'contains'}"></select>
-   </div>
-   <div class="menu_counterparty">
+    </div>
+    <div class="menu-counterparty">
       <div id="radioBtn" class="btn-group">
-         <a class="btn btn-primary btn-xs active" data-toggle="happy" data-title="Y">Y</a>
-         <a class="btn btn-primary btn-xs notActive" data-toggle="happy" data-title="M">M</a>
+        <a class="btn btn-primary btn-xs active" data-toggle="happy" data-title="Y">Y</a>
+        <a class="btn btn-primary btn-xs notActive" data-toggle="happy" data-title="M">M</a>
       </div>
       <input type="hidden" name="happy" id="happy">
-   </div>
-   <div class="menu_counterparty">
-      <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade', depth: 'decade'}" class="filter-space">
-   </div>
-   <div class="menu_counterparty">
+    </div>
+    <div class="menu-counterparty">
+      <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade', depth: 'decade'}"
+        class="filter-space">
+    </div>
+    <div class="menu-counterparty">
       <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM', start: 'year', depth: 'year'}" class="filter-space">
-   </div>
-   <div class="menu_counterparty">
+    </div>
+    <div class="menu-counterparty">
       <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
-   </div>
-   <div class="menu_counterparty">
+    </div>
+    <div class="menu-counterparty">
       <img width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf">
-   </div>
+    </div>
+  </div>
 </div>
 
 <div id="graph" style="width: 100%; height: 500px;">
 </div>
 
 <div id="legendgraph">
-   <div class="row">
-      <div class="col-lg-12" style="padding-top: 5px; font-weight: bold;">Legend</div>
-   </div>
-   <div class="row" style="padding-top: 8px; font-size: 10px;">
-      <div class="col-lg-3 col-xs-3">
-         <div>Counterparties</div>
-         <div style="position: relative;margin:10px 15px 2px 15px;border-bottom:2px solid #36bae1;">
-            <div style="position: absolute; bottom: -8px; left: 64px; color: #36bae1"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
-         </div>
+  <div class="row">
+    <div class="col-lg-12" style="padding-top: 5px; font-weight: bold;">Legend</div>
+  </div>
+  <div class="row" style="padding-top: 8px; font-size: 10px;">
+    <div class="col-lg-3 col-xs-3">
+      <div>Counterparties</div>
+      <div style="position: relative;margin:10px 15px 2px 15px;border-bottom:2px solid #36bae1;">
+        <div style="position: absolute; bottom: -8px; left: 64px; color: #36bae1">
+          <i class="fa fa-caret-right" aria-hidden="true"></i>
+        </div>
       </div>
-      <div class="col-lg-3  col-xs-3">
-         <div>Intragroup</div>
-         <div style="position: relative; margin:10px 15px 2px 15px;border-bottom:2px solid #f8f8f8;">
-            <div style="position: absolute; right:0; bottom: -8px; left: 64px; color:"><i class="fa fa-caret-right" aria-hidden="true"></i></div>
-         </div>
+    </div>
+    <div class="col-lg-3  col-xs-3">
+      <div>Intragroup</div>
+      <div style="position: relative; margin:10px 15px 2px 15px;border-bottom:2px solid #f8f8f8;">
+        <div style="position: absolute; right:0; bottom: -8px; left: 64px; color:">
+          <i class="fa fa-caret-right" aria-hidden="true"></i>
+        </div>
       </div>
-      <div class="col-lg-3  col-xs-3">
-         <div>Missed Flows</div>
-         <div style="margin:10px 15px 2px 15px;border-bottom:3px dashed #f8f8f8;"></div>
-      </div>
-      <div class="col-lg-3  col-xs-3" >
-         <div style="margin-right:7px; 
+    </div>
+    <div class="col-lg-3  col-xs-3">
+      <div>Missed Flows</div>
+      <div style="margin:10px 15px 2px 15px;border-bottom:3px dashed #f8f8f8;"></div>
+    </div>
+    <div class="col-lg-3  col-xs-3">
+      <div style="margin-right:7px; 
             border-radius:50%;
             height:30px;border: 0px solid red;background-color: #f8f8f8; color: #151b3a">Opportunity</div>
-      </div>
-   </div>
+    </div>
+  </div>
 </div>
 
- <div id="modalDetail" class="modal fade"  role="dialog">
-   <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content" style="border-radius: 0px; border:0px">
-         <div class="modal-header buttonclose">
-            <button type="button" style="color: #fff" class="close" data-dismiss="modal">&times;</button>
-         </div>
-         <div class="modal-body" style="background-color: #373949; padding-top: 0px">
-            <form class="form-horizontal"   style="">
-               <div align="right" style="font-weight:   bold; font-size:  15px">
-                  <div class="row">
-                     <div align="left" class="col-lg-6 col-md-6" data-bind="text: counterparty.activeEntityName"></div>
-                     <div align="right"  class="col-lg-6 col-md-6">
-                        <div align="center" id="exporttoexcel">
-                           <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel">
-                        </div>
-                     </div>
-                  </div>
-                  <table class="table" style="color:  #fff; background-color:  #828282">
-                     <thead>
-                        <tr>
-                           <th>Bank</th>
-                           <th>Product</th>
-                           <th>Flow</th>
-                           <th>No. of Transactions</th>
-                        </tr>
-                     </thead>
-                     <tbody data-bind="foreach: counterparty.detail">
-                        <tr>
-                           <td data-bind="text: cpty_bank"></td>
-                           <td data-bind="text: product_category"></td>
-                           <td data-bind='text: kendo.toString(total / 1000000, "n2") + "M"' align="right"></td>
-                           <td data-bind="text: number_transaction" align="center"></td>
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
-            </form>
-         </div>
+<div id="modalDetail" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content" style="border-radius: 0px; border:0px">
+      <div class="modal-header buttonclose">
+        <button type="button" style="color: #fff" class="close" data-dismiss="modal">&times;</button>
       </div>
-   </div>
+      <div class="modal-body" style="background-color: #373949; padding-top: 0px">
+        <form class="form-horizontal" style="">
+          <div align="right" style="font-weight:   bold; font-size:  15px">
+            <div class="row">
+              <div align="left" class="col-lg-6 col-md-6 detail-title" data-bind="text: counterparty.activeName"></div>
+              <div align="right" class="col-lg-6 col-md-6">
+                <div align="center" id="exporttoexcel">
+                  <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel">
+                </div>
+              </div>
+            </div>
+            <table class="table" style="color:  #fff; background-color:  #828282">
+              <thead>
+                <tr>
+                  <th>Bank</th>
+                  <th>Product</th>
+                  <th>Flow</th>
+                  <th>No. of Transactions</th>
+                </tr>
+              </thead>
+              <tbody data-bind="foreach: counterparty.detail">
+                <tr>
+                  <td data-bind="text: cpty_bank"></td>
+                  <td data-bind="text: product_category"></td>
+                  <td data-bind='text: kendo.toString(total / 1000000, "n2") + "M"' align="right"></td>
+                  <td data-bind="text: number_transaction" align="center"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 
