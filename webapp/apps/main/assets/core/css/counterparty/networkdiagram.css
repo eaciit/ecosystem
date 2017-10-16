@@ -5,19 +5,23 @@ path.link {
 }
 
 path.link.flow {
-  stroke: #ccc;
+  stroke: #6ba8d0;
 }
 
 marker#flow {
-  fill: #ccc;
+  fill: #6ba8d0;
 }
 
 path.link.missed {
   stroke-dasharray: 1, 1 2;
 }
 
+circle:hover {
+  cursor: pointer;
+}
+
 circle {
-  fill: #6ba8d0;
+  fill: #dbe8f3;
   stroke: #0075b0;
   stroke-width: 1px;
 }
@@ -28,6 +32,10 @@ circle {
   animation-duration: 2s;
   animation-name: pulse;
   animation-iteration-count: infinite;
+}
+
+.hide {
+  display: none;
 }
 
 @keyframes pulse {
@@ -45,17 +53,25 @@ circle {
 
 text {
   font: 10px sans-serif;
-  pointer-events: none;
 }
 
 text.shadow {
   stroke: #fff;
-  stroke-width: 3px;
+  stroke-width: 4px;
   stroke-opacity: .8;
 }
 
-text.opportunity {
-  fill: #666;
+text.coi {
+  fill: #6d6e71;
+}
+
+text.detail-button {
+  fill: #000f46;
+}
+
+text.detail-button:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .menu-counterparty {

@@ -2,7 +2,6 @@ var counterparty = {}
 counterparty.detail = ko.observableArray([])
 counterparty.activeEnityName = ko.observable()
 counterparty.activeName = ko.observable()
-counterparty.networkData = ko.observableArray([])
 
 filter.entities = [{
   "value": "ASA",
@@ -63,16 +62,21 @@ counterparty.eventclick = function () {
   })
 }
 
-counterparty.loadNetwork = function () {
+network = {}
+network.data = []
+network.links = []
+network.nodes = {}
+
+network.loadData = function () {
   viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", {
     entityName: counterparty.activeEnityName(),
     limit: 5
   }, function (data) {
-    counterparty.generateNetwork(data)
+    network.processData(data)
   })
 }
 
-counterparty.loadDetail = function (name) {
+network.loadDetail = function (name) {
   viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", {
     entityName: counterparty.activeEnityName(),
     counterpartyName: name
@@ -83,40 +87,33 @@ counterparty.loadDetail = function (name) {
   })
 }
 
-counterparty.generateNetwork = function (data) {
+network.processData = function (data) {
   var rawLinks = []
   var parent = _.keys(data)[0]
-  for (var i = 0; i < data[parent].length; i++) {
-    var e = data[parent][i];
-    if (e.cust_role == "PAYEE") {
-      rawLinks.push({
-        source: e.cpty_long_name,
-        source_bank: e.cpty_bank,
-        target: parent,
-        target_bank: e.cust_bank,
-        total: e.total,
-        type: "flow",
-        text: kendo.toString(e.total / 1000000, "n2") + "M",
-        extra: e.cpty_bank != "SCBL" ? "opportunity" : ""
-      })
-    } else {
-      rawLinks.push({
-        target: e.cpty_long_name,
-        target_bank: e.cpty_bank,
-        source: parent,
-        source_bank: e.cust_bank,
-        total: e.total,
-        type: "flow",
-        text: kendo.toString(e.total / 1000000, "n2") + "M",
-        extra: e.cpty_bank != "SCBL" ? "opportunity" : ""
-      })
+  _.each(data[parent], function (e) {
+    var link = {
+      total: e.total,
+      type: "flow",
+      text: kendo.toString(e.total / 1000000, "n2") + "M",
     }
 
-    console.log(rawLinks)
-  }
+    if (e.cust_role == "PAYEE") {
+      link.source = e.cpty_long_name
+      link.source_bank = e.cpty_bank
+      link.target = parent
+      link.target_bank = e.cust_bank
+    } else {
+      link.target = e.cpty_long_name
+      link.target_bank = e.cpty_bank
+      link.source = parent
+      link.source_bank = e.cust_bank
+    }
 
-  rawLinks = rawLinks.concat(counterparty.networkData())
-  counterparty.networkData(rawLinks)
+    rawLinks.push(link)
+  })
+
+  rawLinks = rawLinks.concat(network.data)
+  network.data = rawLinks
 
   var links = JSON.parse(JSON.stringify(rawLinks))
 
@@ -138,16 +135,43 @@ counterparty.generateNetwork = function (data) {
     }
   })
 
-  var nodes = {}
-  // Compute the distinct nodes from the links.
+  var nodes = _(data[parent])
+    .map(function (e) {
+      return {
+        name: e.cpty_long_name,
+        coi: e.cpty_coi,
+        opportunity: e.cpty_bank != "SCBL" ? true : false
+      }
+    })
+    .concat({
+      name: parent,
+      coi: "",
+      opportunity: false
+    })
+    .uniqBy("name")
+    .keyBy("name")
+    .value()
+
+  nodes = _.merge(nodes, network.nodes)
+
   links.forEach(function (link) {
-    link.source = nodes[link.source] || (nodes[link.source] = {
-      name: link.source
-    })
-    link.target = nodes[link.target] || (nodes[link.target] = {
-      name: link.target
-    })
+    link.source = nodes[link.source]
+    link.target = nodes[link.target]
   })
+
+  network.nodes = nodes
+  network.links = links
+
+  network.generate()
+}
+
+network.update = function () {
+
+}
+
+network.generate = function () {
+  var links = network.links
+  var nodes = network.nodes
 
   var w = $("#graph").width(),
     h = 600
@@ -199,14 +223,14 @@ counterparty.generateNetwork = function (data) {
     .enter().append("svg:text")
     .attr("dx", 85)
     .attr("dy", -3)
-    .attr("class", function (d, i) {
+    .attr("class", function (d) {
       return d.type
     })
     .append("textPath")
     .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
-    .text(function (d, i) {
+    .text(function (d) {
       return d.text
     })
 
@@ -217,7 +241,9 @@ counterparty.generateNetwork = function (data) {
 
   circle.append("svg:circle")
     .attr("r", 17)
-    .attr("class", "pulse")
+    .attr("class", function (d) {
+      return d.opportunity ? "pulse" : "hide"
+    })
 
   circle.append("svg:circle")
     .on("click", expand)
@@ -229,19 +255,75 @@ counterparty.generateNetwork = function (data) {
 
   // A copy of the text with a thick white stroke for legibility.
   text.append("svg:text")
-    .text(function (d) {
-      return d.name
+    .attr("class", "shadow")
+    .tspans(function (d) {
+      var comp = d.name.split(" ")
+      var top = comp.splice(0, comp.length / 2)
+      var bottom = comp.splice(comp.length / 2, comp.length)
+
+      return [top.join(" "), bottom.join(" ")]
+    })
+    .each(function (d, i) {
+      if (i == 1) {
+        d3.select(this).attr("dy", 10)
+      }
     })
     .attr("x", 20)
     .attr("y", -5)
+
+  text.append("svg:text")
+    .tspans(function (d) {
+      var comp = d.name.split(" ")
+      var top = comp.splice(0, comp.length / 2)
+      var bottom = comp.splice(comp.length / 2, comp.length)
+
+      return [top.join(" "), bottom.join(" ")]
+    })
+    .each(function (d, i) {
+      if (i == 1) {
+        d3.select(this).attr("dy", 10)
+      }
+    })
+    .attr("x", 20)
+    .attr("y", -5)
+
+  text.append("svg:text")
+    .text(function (d) {
+      return d.coi
+    })
+    .attr("x", 20)
+    .attr("y", 17)
     .attr("class", "shadow")
 
   text.append("svg:text")
     .text(function (d) {
-      return d.name
+      return d.coi
     })
     .attr("x", 20)
-    .attr("y", -5)
+    .attr("y", 17)
+    .attr("class", "coi")
+
+  text.append("svg:text")
+    .text(function (d) {
+      return "detail"
+    })
+    .on("click", detail)
+    .attr("x", 20)
+    .attr("y", 28)
+    .attr("class", function (d) {
+      return d.opportunity ? "shadow" : "hide"
+    })
+
+  text.append("svg:text")
+    .text(function (d) {
+      return "detail"
+    })
+    .on("click", detail)
+    .attr("x", 20)
+    .attr("y", 28)
+    .attr("class", function (d) {
+      return d.opportunity ? "detail-button" : "hide"
+    })
 
   // Use elliptical arc path segments to doubly-encode directionality.
   function tick() {
@@ -261,17 +343,16 @@ counterparty.generateNetwork = function (data) {
     })
   }
 
-
   function detail(d) {
     if (!d3.event.defaultPrevented) {
-      counterparty.loadDetail(d.name)
+      network.loadDetail(d.name)
     }
   }
 
   function expand(d) {
     if (!d3.event.defaultPrevented) {
       counterparty.activeEnityName(d.name)
-      counterparty.loadNetwork()
+      network.loadData()
     }
   }
 
@@ -279,6 +360,7 @@ counterparty.generateNetwork = function (data) {
 
 $(window).load(function () {
   counterparty.activeEnityName($.urlParam("entityName"))
-  counterparty.loadNetwork()
   counterparty.eventclick()
+
+  network.loadData()
 })
