@@ -3,26 +3,6 @@ counterparty.detail = ko.observableArray([])
 counterparty.activeEnityName = ko.observable()
 counterparty.activeName = ko.observable()
 
-counterparty.eventclick = function () {
-  $('#month').data('kendoDatePicker').enable(false)
-
-  $('#radioBtn a').on('click', function () {
-    var sel = $(this).data('title')
-    var tog = $(this).data('toggle')
-    $('#' + tog).prop('value', sel)
-    if (sel == "M") {
-      $('#year').data('kendoDatePicker').enable(false)
-      $('#month').data('kendoDatePicker').enable(true)
-    } else if (sel == "Y") {
-      $('#year').data('kendoDatePicker').enable(true)
-      $('#month').data('kendoDatePicker').enable(false)
-    }
-
-    $('a[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive')
-    $('a[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active')
-  })
-}
-
 var filter = {}
 filter.entities = ko.observableArray([])
 filter.selectedEntity = ko.observable("")
@@ -63,7 +43,7 @@ filter.selectedLimit = ko.observable(5)
 filter.flow = [{
   "value": 0,
   "text": "All"
-},{
+}, {
   "value": 30000000,
   "text": "Flows > $30M"
 }, {
@@ -72,18 +52,44 @@ filter.flow = [{
 }]
 filter.selectedFlow = ko.observable(0)
 
+filter.selectedDateType = "Y"
 filter.selectedYear = ko.observable("")
 filter.selectedMonth = ko.observable("")
 
 filter.selectedFilters = ko.computed(function () {
+  var yearMonth = 0
+  var dateType = ""
+  var y = moment(filter.selectedYear())
+  var m = moment(filter.selectedMonth())
+
+  if (filter.selectedDateType == "Y") {
+    dateType = "YEAR"
+    yearMonth = y.isValid() ? parseInt(y.format("YYYY")) : 0
+  } else {
+    dateType = "MONTH"
+    yearMonth = m.isValid() ? parseInt(m.format("YYYYMM")) : 0
+  }
+
   return {
     entityName: counterparty.activeEnityName(),
     role: filter.selectedRole(),
     group: filter.selectedGroup(),
     limit: parseInt(filter.selectedLimit()),
-    flowAbove: parseInt(filter.selectedFlow())
+    flowAbove: parseInt(filter.selectedFlow()),
+    datetype: dateType,
+    yearMonth: yearMonth
   }
 })
+
+filter.switchDateType = function (data, event) {
+  $(event.target).siblings().removeClass("active")
+  $(event.target).addClass("active")
+
+  $($(event.target).siblings().data("target")).data('kendoDatePicker').enable(false)
+  $($(event.target).data("target")).data('kendoDatePicker').enable(true)
+
+  filter.selectedDateType = $(event.target).text()
+}
 
 filter.loadEntities = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {}, function (data) {
@@ -93,7 +99,9 @@ filter.loadEntities = function () {
 }
 
 filter.loadAll = function () {
-  filter.selectedEntity.subscribe(function(nv){
+  $("#month").data('kendoDatePicker').enable(false)
+
+  filter.selectedEntity.subscribe(function (nv) {
     counterparty.activeEnityName(nv)
   })
 
@@ -217,10 +225,6 @@ network.processData = function (data) {
   network.links = links
 
   network.generate()
-}
-
-network.update = function () {
-
 }
 
 network.generate = function () {
@@ -441,6 +445,4 @@ network.generate = function () {
 $(window).load(function () {
   filter.loadAll()
   network.loadData()
-
-  counterparty.eventclick()
 })

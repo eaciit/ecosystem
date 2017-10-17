@@ -76,9 +76,10 @@ text.detail-button:hover {
   margin-bottom: 6px;
 }
 
-#radioBtn .notActive {
+.switch {
   color: #3276b1;
   background-color: #fff;
+  height: 27px;
 }
 
 #filter .k-dropdown .k-state-default {
@@ -100,16 +101,6 @@ text.detail-button:hover {
 
 #filter .k-picker-wrap.k-state-default>.k-select {
   border-color: #22313F;
-}
-
-.active {
-  min-width: 50px;
-  min-height: 25px;
-}
-
-.notActive {
-  min-width: 50px;
-  min-height: 25px;
 }
 
 .main-node {

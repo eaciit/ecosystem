@@ -24,14 +24,13 @@
       <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.flow, value: filter.selectedFlow, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
-      <div id="radioBtn" class="btn-group">
-        <a class="btn btn-primary btn-xs active" data-toggle="dateType" data-title="Y">Y</a>
-        <a class="btn btn-primary btn-xs notActive" data-toggle="dateType" data-title="M">M</a>
+      <div class="btn-group">
+        <button class="btn btn-primary btn-sm switch active" data-target="#year" data-bind="click: filter.switchDateType">Y</button>
+        <button class="btn btn-primary btn-sm switch" data-target="#month" data-bind="click: filter.switchDateType">M</button>
       </div>
     </div>
     <div class="menu-counterparty">
-      <input type="text" id="year" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedYear }"
-        class="filter-space">
+      <input type="text" id="year" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedYear }" class="filter-space">
     </div>
     <div class="menu-counterparty">
       <input type="text" id="month" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy MMM', start: 'year', depth: 'year', value: filter.selectedMonth }" class="filter-space">
