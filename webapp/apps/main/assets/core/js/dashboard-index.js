@@ -145,8 +145,8 @@ dashboard.generateMap = function () {
     var arr = data.entities
     var namel = data.name
     var lentity = arr.reduce(function (a, b) { return a.length > b.length ? a : b; });
-    var nlength = namel.length*10
-    var elength = lentity.length*10
+    var nlength = namel.length*12
+    var elength = lentity.length*12
     if(nlength > elength){ 
       $(".bubble-tooltip").css("width", nlength)
     }

@@ -336,3 +336,11 @@ circle:hover {
   filter: url(#shadow);
 }   
 
+.btn.btn-flat {
+  font-size: 14px !important;
+}
+
+.head{
+  font-size: 16px !important;
+}
+
