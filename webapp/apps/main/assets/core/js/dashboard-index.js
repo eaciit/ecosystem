@@ -130,10 +130,6 @@ dashboard.generateMap = function () {
     $("#tradetabs").hide()
     e.shape.options.fill.set("opacity", highlightedMapAlpha)
     activeShape = e.shape
-    activeShape.options.set("stroke", {
-    //    width: 3,
-    //    color: "#fff",
-    })
     $("#map").css("cursor", "pointer")
 
     if (e.shape.dataItem === undefined) {
@@ -157,23 +153,17 @@ dashboard.generateMap = function () {
     var x = oe.pageX || oe.clientX
     var y = oe.pageY || oe.clientY
 
+    popup.close()
+    popup.element.kendoStop(true, true)
+    
     popup.element.html(template(data))
     popup.open(x, y)
   }
 
   function onShapeMouseLeave(e) {
     e.shape.options.set("fill.opacity", circledMapAlpha)
-    e.shape.options.set("stroke", {
-      // width: 3,
-      // color: "#fff",
-    })
 
     $("#map").css("cursor", "inherit")
-  
-    if (!$(e.originalEvent.relatedTarget).is(".k-popup, .k-animation-container")) {
-      popup.close()
-      popup.element.kendoStop(true, true)
-    }
   }
 
   dashboard.showMapDetails = function (i) {
