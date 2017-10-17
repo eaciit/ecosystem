@@ -16,11 +16,11 @@
 }
 .box.lightblue {
     background-color: #68c4fc;
-    float: left;
+   /* float: left;*/
 }
 .box.darkblue {
     background-color: #587b9e;
-    float: left;
+    /*float: left;*/
 }
 .groupbox {
     position: relative;
