@@ -33,16 +33,10 @@
 <div style="position:absolute; z-index: 0">
 <svg>
    <filter id="shadow" x="-5" y="-5" width="1000" height="1000">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="white" flood-opacity="0.8" />
     </filter>
 </svg>
 </div>
-
-<style>
-circle:hover {
-   filter: url(#shadow);
-}   
-</style>
 
 <div class="row">
    <div class="col-sm-2">

@@ -332,3 +332,7 @@ html {
   text-decoration: underline;
 } 
 
+circle:hover {
+  filter: url(#shadow);
+}   
+
