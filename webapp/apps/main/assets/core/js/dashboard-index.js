@@ -131,8 +131,8 @@ dashboard.generateMap = function () {
     e.shape.options.fill.set("opacity", highlightedMapAlpha)
     activeShape = e.shape
     activeShape.options.set("stroke", {
-       width: 3,
-       color: "#fff",
+    //    width: 3,
+    //    color: "#fff",
     })
     $("#map").css("cursor", "pointer")
 
@@ -473,24 +473,6 @@ widget.generateChart5 = function () {
     widget.buildChart("#widgetChart5", data, "B")
   })
 }
-
-
-widget.tes2 = function () {
-var ns = 'http://www.w3.org/2000/svg';
-var svg = document.querySelector( 'svg' );
-
-var foreignObject = document.createElementNS( ns, 'defs');
-foreignObject.setAttribute('height', 300);
-foreignObject.setAttribute('width', 300);
-
-var div = document.createElement('div');
-div.innerHTML = 'Hello World';
-alert(90)
-
-foreignObject.appendChild( div ); 
-svg.appendChild(foreignObject); //svg is an already created svg element containing a d3 char
-}
-
 
 
 widget.generateChart6 = function () {
