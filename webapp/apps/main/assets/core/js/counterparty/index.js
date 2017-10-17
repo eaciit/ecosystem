@@ -21,6 +21,9 @@ counterpartymain.filterRecord = {
   limit: ko.observable(5),
   role: ko.observable(),
   counterpartyName: ko.observable(),
+  group: ko.observable(),
+  flowabove: ko.observable(50000000),
+  yearmonth: ko.observable()
 }
 counterpartymain.filterDataArray.buyerSupplierGroup = [{
   "value": "PAYEE",
@@ -46,7 +49,7 @@ counterpartymain.group = [{
 }]
 
 counterpartymain.flows = [{
-  "value": 31,
+  "value": 30000000,
   "text": "Flows>$30M"
 }, {
   "value": 100,
@@ -72,8 +75,12 @@ counterpartymain.loadGraphData = function() {
   viewModel.ajaxPostCallback("/main/counterparty/getnetworkbuyersupplier", {
     role: counterpartymain.filterRecord.role(),
     entityName: entity,
-    limit: counterpartymain.filterRecord.limit()
+    limit: parseInt(counterpartymain.filterRecord.limit()),
+    group: counterpartymain.filterRecord.group(),
+    flowabove: parseInt(counterpartymain.filterRecord.flowabove()),
+    yearmonth: parseInt(counterpartymain.filterRecord.yearmonth())
   }, function(data) {
+    console.log(data)
     var datas = data[_.keys(data)[0]]
     tempnodes = [];
     templinks = []
@@ -660,8 +667,15 @@ counterpartymain.closeBubbleChart = function() {
     .style("opacity", 1);
 }
 
-counterpartymain.onChangeBuyerSupplier = function(e) {
+counterpartymain.onChangeEntity = function(e) {
   console.log(e)
+  counterpartymain.filterRecord.entityName(e)
+  counterpartymain.loadGraphData()
+}
+
+
+counterpartymain.onChangeBuyerSupplier = function(e) {
+ // console.log(e)
   if (e != "") {
     $("#graph").hide()
     $("#bubble").show()
@@ -677,11 +691,33 @@ counterpartymain.onChangeBuyerSupplier = function(e) {
   counterpartymain.generateGraph()
 }
 
-counterpartymain.onChangeEntity = function(e) {
-  console.log(e)
-  counterpartymain.filterRecord.entityName(e)
+counterpartymain.onChangeAllGroups = function(e) {
+  //console.log(e)
+  counterpartymain.close()
+  counterpartymain.filterRecord.group()
   counterpartymain.loadGraphData()
-}
+  }
+
+counterpartymain.onChangeLimit = function(e) {
+  console.log(e)
+  counterpartymain.close()
+  counterpartymain.filterRecord.limit()
+  counterpartymain.loadGraphData()
+  }  
+
+counterpartymain.onChangeFlowabove = function(e) {
+  console.log(e)
+  counterpartymain.close()
+  counterpartymain.filterRecord.flowabove()
+  counterpartymain.loadGraphData()
+  }
+
+counterpartymain.onChangeYearmonth = function(e) {
+  console.log(e)
+  counterpartymain.close()
+  counterpartymain.filterRecord.yearmonth(2017)
+  counterpartymain.loadGraphData()
+  }      
 
 counterpartymain.init = function() {
   counterpartymain.loadEntity()

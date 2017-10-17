@@ -131,15 +131,15 @@ dashboard.generateMap = function () {
     e.shape.options.fill.set("opacity", highlightedMapAlpha)
     activeShape = e.shape
     activeShape.options.set("stroke", {
-      width: 1,
-      color: "#fff"
+       width: 3,
+       color: "#fff",
     })
     $("#map").css("cursor", "pointer")
 
     if (e.shape.dataItem === undefined) {
       return
     }
-
+  
     dashboard.activeEntities(e.shape.dataItem)
     var data = e.shape.dataItem
     var arr = data.entities
@@ -164,12 +164,12 @@ dashboard.generateMap = function () {
   function onShapeMouseLeave(e) {
     e.shape.options.set("fill.opacity", circledMapAlpha)
     e.shape.options.set("stroke", {
-      width: 0,
-      color: "#fff"
+      // width: 3,
+      // color: "#fff",
     })
 
     $("#map").css("cursor", "inherit")
-
+  
     if (!$(e.originalEvent.relatedTarget).is(".k-popup, .k-animation-container")) {
       popup.close()
       popup.element.kendoStop(true, true)
@@ -474,18 +474,39 @@ widget.generateChart5 = function () {
   })
 }
 
+
+widget.tes2 = function () {
+var ns = 'http://www.w3.org/2000/svg';
+var svg = document.querySelector( 'svg' );
+
+var foreignObject = document.createElementNS( ns, 'defs');
+foreignObject.setAttribute('height', 300);
+foreignObject.setAttribute('width', 300);
+
+var div = document.createElement('div');
+div.innerHTML = 'Hello World';
+alert(90)
+
+foreignObject.appendChild( div ); 
+svg.appendChild(foreignObject); //svg is an already created svg element containing a d3 char
+}
+
+
+
 widget.generateChart6 = function () {
   var data = [6, 1, 10, 1, 10]
   widget.buildChart("#widgetChart6", data)
 }
 
 widget.generateCharts = function () {
+  // $("#hiden").hide()
   widget.generateChart1()
   widget.generateChart2()
   widget.generateChart3()
   widget.generateChart4()
   widget.generateChart5()
   widget.generateChart6()
+  
 }
 
 widget.loadData = function () {

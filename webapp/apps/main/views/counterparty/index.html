@@ -22,13 +22,13 @@
     <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.buyerSupplierGroup, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers &amp; Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}},value:role"></select> 
   </div>
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains'}"></select>
+    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains',change: function(e){ counterpartymain.onChangeAllGroups(e.sender._old)}},value:group"></select>
   </div>
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.limitGroup, dataValueField: 'value', dataTextField: 'text', index: 0,filter: 'contains',value:limit}"></select>
+    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.limitGroup, dataValueField: 'value', dataTextField: 'text', index: 0,filter: 'contains',change: function(e){ counterpartymain.onChangeLimit(e.sender._old)}},value:limit"></select>
   </div>
   <div class="menu-counterpartymain">
-    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.flows, dataValueField: 'value', dataTextField: 'text',optionLabel:'Flows >$50M',filter: 'contains'}"></select>
+    <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.flows, dataValueField: 'value', dataTextField: 'text',optionLabel:'Flows >$50M',filter: 'contains', change: function(e){ counterpartymain.onChangeFlowabove(e.sender._old)}},value:flowabove"></select>
   </div>
   <div class="menu-counterpartymain">
     <div id="radioBtn" class="btn-group">
@@ -38,7 +38,7 @@
     <input type="hidden" name="happy" id="happy">
   </div>
   <div class="menu-counterpartymain">
-    <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy',depth:'decade', start: 'decade'}" class="filter-space">
+    <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy',depth:'decade', start: 'decade',change: function(e){ counterpartymain.onChangeYearmonth(e.sender._old)}},value:yearmonth" class="filter-space">
   </div>
   <div class="menu-counterpartymain">
     <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM',depth:'year', start: 'year'}" class="filter-space">
