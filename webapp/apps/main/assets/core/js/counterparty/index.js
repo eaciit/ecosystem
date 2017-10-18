@@ -232,7 +232,7 @@ counterpartymain.generateGraph = function() {
                 }
             })
             .style("pointer-events", "none")
-
+        
         edgelabels = svg.selectAll(".edgelabel")
             .data(links)
             .enter()
@@ -244,7 +244,9 @@ counterpartymain.generateGraph = function() {
                     return 'edgelabel' + i
                 },
                 'font-size': 10,
-                'fill': '#aaa'
+                'fill': '#aaa',
+                'dx': -4,
+                'dy': -4
             })
 
         edgelabels.append('textPath')
@@ -345,7 +347,7 @@ counterpartymain.generateGraph = function() {
                 if (d.type == "CENTER") {
                     return 70
                 }
-                return 50
+                return 20
             })
             .attr("id", function(d) {
                 return d.id
@@ -366,17 +368,33 @@ counterpartymain.generateGraph = function() {
             })
 
         node.append("text")
-            .attr("x", 0)
+            .attr("x",function(d) {
+                if (d.type == "CENTER") {
+                    return 0
+                }
+                return 22
+            })
+            .style("fill",function(d) {
+                if (d.type == "CENTER") {
+                    return "white"
+                }
+                return "black"
+            })
             .attr("dy", ".15em")
-            .attr("text-anchor", "middle")
+            .attr("text-anchor", function(d) {
+                if (d.type == "CENTER") {
+                    return "middle"
+                }
+            })
             .text(function(d) {
                 return d.name
             })
 
         node.append("text")
-            .attr("x", 0)
+            .attr("x", 22)
             .attr("dy", "1.35em")
-            .attr("text-anchor", "middle")
+            .style("fill", "black")
+            .attr("text-anchor", "left")
             .style("font-size", "10px")
             .text(function(d) {
                 if (d.type != "CENTER") {
@@ -386,9 +404,10 @@ counterpartymain.generateGraph = function() {
             })
 
         node.append("text")
-            .attr("x", 0)
-            .attr("dy", "3.45em")
-            .attr("text-anchor", "middle")
+            .attr("x", 22)
+            .style("fill", "black")
+            .attr("dy", "2.65em")
+            .attr("text-anchor", "left")
             .style("font-size", "10px")
             .text(function(d) {
                 if (d.type == "CENTER") {
