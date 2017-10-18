@@ -153,6 +153,21 @@ var div = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
+counterpartymain.bm = function(databm){
+      if(databm < 1000000000){
+          var databmr = databm / 1000000
+              databmr = currencynum(databmr)
+              databmr = databmr+" M"
+          return databmr
+        }
+        else if(databm >= 1000000000){
+          var databmr = databm / 1000000000
+              databmr = currencynum(databmr)
+              databmr = databmr+" B"
+          return databmr
+      }
+    }    
+
 counterpartymain.generateGraph = function() {
     var nodes = counterpartymain.dataMasterGraph.nodes()
     var links = counterpartymain.dataMasterGraph.links()
@@ -232,7 +247,7 @@ counterpartymain.generateGraph = function() {
                 }
             })
             .style("pointer-events", "none")
-
+        
         edgelabels = svg.selectAll(".edgelabel")
             .data(links)
             .enter()
@@ -244,7 +259,9 @@ counterpartymain.generateGraph = function() {
                     return 'edgelabel' + i
                 },
                 'font-size': 10,
-                'fill': '#aaa'
+                'fill': '#aaa',
+                'dx': -4,
+                'dy': -4
             })
 
         edgelabels.append('textPath')
@@ -345,7 +362,7 @@ counterpartymain.generateGraph = function() {
                 if (d.type == "CENTER") {
                     return 70
                 }
-                return 50
+                return 20
             })
             .attr("id", function(d) {
                 return d.id
@@ -366,29 +383,105 @@ counterpartymain.generateGraph = function() {
             })
 
         node.append("text")
-            .attr("x", 0)
+            .attr("x",function(d) {
+                if (d.type == "CENTER") {
+                    return 0
+                }
+                return 22
+            })
+            .attr("class",function(d) {
+                if (d.type == "CENTER") {
+                    return ""
+                }
+                return "shadow"
+            })
+            .style("fill",function(d) {
+                if (d.type == "CENTER") {
+                    return "white"
+                }
+                return "black"
+            })
+            .attr("y", function(d){
+             if (d.type != "CENTER") {
+                    return "-5"
+                }   
+            })
             .attr("dy", ".15em")
-            .attr("text-anchor", "middle")
+            .attr("text-anchor", function(d) {
+                if (d.type == "CENTER") {
+                    return "middle"
+                }
+            })
             .text(function(d) {
                 return d.name
             })
 
         node.append("text")
-            .attr("x", 0)
+            .attr("x",function(d) {
+                if (d.type == "CENTER") {
+                    return 0
+                }
+                return 22
+            })
+            .style("fill",function(d) {
+                if (d.type == "CENTER") {
+                    return "white"
+                }
+                return "black"
+            })
+            .attr("y", function(d){
+             if (d.type != "CENTER") {
+                    return "-5"
+                }   
+            })
+            .attr("dy", ".15em")
+            .attr("text-anchor", function(d) {
+                if (d.type == "CENTER") {
+                    return "middle"
+                }
+            })
+            .text(function(d) {
+                return d.name
+            })    
+
+        node.append("text")
+            .attr("x", 22)
+            .attr("class", "shadow")
+            .attr("y", -4)
             .attr("dy", "1.35em")
-            .attr("text-anchor", "middle")
+            .style("fill", "black")
+            .attr("text-anchor", "left")
             .style("font-size", "10px")
             .text(function(d) {
                 if (d.type != "CENTER") {
-                    return "$" + currencynum(d.limited) + ""
+                    var sumlimited = counterpartymain.bm(d.limited)
+                    return "$" + sumlimited + ""
+                }
+                return d.limited
+            })    
+      
+        node.append("text")
+            .attr("x", 22)
+            .attr("y", -4)
+            .attr("dy", "1.35em")
+            .style("fill", "black")
+            .attr("text-anchor", "left")
+            .style("font-size", "10px")
+            .text(function(d) {
+                if (d.type != "CENTER") {
+                    var sumlimited = counterpartymain.bm(d.limited)
+                    return "$" + sumlimited + ""
                 }
                 return d.limited
             })
 
         node.append("text")
-            .attr("x", 0)
-            .attr("dy", "3.45em")
-            .attr("text-anchor", "middle")
+            .attr("class", "shadow")
+            .attr("x", 22)
+            .attr("y", -4)
+            .style("fill", "black")
+            .attr("dy", "2.65em")
+            .attr("text-anchor", "left")
             .style("font-size", "10px")
             .text(function(d) {
                 if (d.type == "CENTER") {
@@ -396,6 +489,21 @@ counterpartymain.generateGraph = function() {
                 }
                 return d.country
             })
+
+         node.append("text")
+            .attr("x", 22)
+            .attr("y", -4)
+            .style("fill", "black")
+            .attr("dy", "2.65em")
+            .attr("text-anchor", "left")
+            .style("font-size", "10px")
+            .text(function(d) {
+                if (d.type == "CENTER") {
+                    return ""
+                }
+                return d.country
+            })    
+
     }
 
     function ticked() {

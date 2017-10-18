@@ -120,3 +120,9 @@ div.tooltip .body {
 #bubble text{
     fill: #fff;
 }
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 4px;
+  stroke-opacity: .8;
+}
