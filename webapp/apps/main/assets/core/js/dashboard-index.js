@@ -147,18 +147,14 @@ dashboard.generateMap = function () {
     }
   
     dashboard.activeEntities(e.shape.dataItem)
+
     var data = e.shape.dataItem
     var arr = data.entities
     var namel = data.name
     var lentity = arr.reduce(function (a, b) { return a.length > b.length ? a : b; });
-    var nlength = namel.length*12
-    var elength = lentity.length*12
-    if(nlength > elength){ 
-      $(".bubble-tooltip").css("width", nlength)
-    }
-    else{
-      $(".bubble-tooltip").css("width", elength)
-    }
+    var nlength = (namel.length+6)*12
+    $(".bubble-tooltip").css("min-width", nlength)
+    
     var oe = e.originalEvent
     var x = oe.pageX || oe.clientX
     var y = oe.pageY || oe.clientY
@@ -214,6 +210,31 @@ dashboard.getEntityDetail = function (entityName) {
   })
 }
 
+dashboard.bm = function(databm, sts){
+      if(databm == 0 && sts == "inflow"){
+                     $(".inflow").hide()
+                  } else if(databm != 0 && sts == "inflow"){
+                     $(".inflow").show()
+              }
+              if(databm == 0 && sts == "outflow"){
+                     $(".outflow").hide() 
+                  } else if(databm != 0 && sts == "outflow"){
+                     $(".outflow").show()
+              }
+      if(databm < 1000000000){
+          var databmr = databm / 1000000
+              databmr = currencynum(databmr)
+              databmr = databmr+" M"
+          return databmr
+        }
+        else if(databm >= 1000000000){
+          var databmr = databm / 1000000000
+              databmr = currencynum(databmr)
+              databmr = databmr+" B"
+          return databmr
+        }
+    }
+
 dashboard.btnCash = function () {
   dashboard.activeEntityDetail.noteHeaderModal(" Cash")
   dashboard.activeEntityDetail.dataProductMix([])
@@ -253,7 +274,8 @@ dashboard.btnCash = function () {
       });
     }
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
-    dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
+    var suminflowr = dashboard.bm(suminflow,"inflow")
+    dashboard.activeEntityDetail.sumInFlow(suminflowr)
   }
 
   if (dataoutflow != undefined) {
@@ -276,7 +298,8 @@ dashboard.btnCash = function () {
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-    dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
+    var sumoutflowr = dashboard.bm(sumoutflow,"outflow")
+    dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
   }
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
@@ -319,7 +342,8 @@ dashboard.btnTrade = function () {
       });
     }
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
-    dashboard.activeEntityDetail.sumInFlow(currencynum(suminflow))
+    var suminflowr = dashboard.bm(suminflow,"inflow")
+    dashboard.activeEntityDetail.sumInFlow(suminflowr)
   }
 
   if (dataoutflow != undefined) {
@@ -342,7 +366,8 @@ dashboard.btnTrade = function () {
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-    dashboard.activeEntityDetail.sumOutFlow(currencynum(sumoutflow))
+    var sumoutflowr = dashboard.bm(sumoutflow,"outflow")
+    dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
   }
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
