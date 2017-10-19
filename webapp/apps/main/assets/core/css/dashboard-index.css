@@ -340,7 +340,7 @@ circle:hover {
 
 div.cssnowrap{
     text-overflow:ellipsis;
-    width: 200px;
+    width: 150px;
     white-space: nowrap;
     overflow: hidden;
 }
