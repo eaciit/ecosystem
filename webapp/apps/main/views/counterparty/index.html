@@ -85,7 +85,8 @@
     <h4 data-bind="text:counterpartymain.headtext"></h4>
   </div>
   <div class="row body">
-    <ul class="top-padding" data-bind="template:{name:'listdetailntb', foreach:counterpartymain.dataDetailItemsNTB}">
+    <ul class="top-padding" data-bind="foreach:counterpartymain.dataDetailItemsNTB">
+       <li data-bind="text:$data"></li>
     </ul>
   </div>
 </div>
