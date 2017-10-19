@@ -304,7 +304,7 @@ counterpartymain.generateGraph = function() {
 
                         }, function(data) {
                             counterpartymain.dataMasterGraphDetail(data)
-                            counterpartymain.dataDetailItemsNTB(data)
+                            counterpartymain.dataDetailItemsNTB(data.products)
 
                             div.html($("#counterpartyModalNTB").html())
                                 .style("left", (d3.select(ThisTemp).attr("cx")) + 50 + "px")
@@ -356,6 +356,7 @@ counterpartymain.generateGraph = function() {
                         .style("opacity", .1);
                 }
             })
+            // .on("click", detailntb)
 
         node.append("circle")
             .attr("r", function(d) {
@@ -412,6 +413,7 @@ counterpartymain.generateGraph = function() {
                     return "middle"
                 }
             })
+            .style("font-size", "10px")
             .text(function(d) {
                 return d.name
             })
@@ -440,6 +442,7 @@ counterpartymain.generateGraph = function() {
                     return "middle"
                 }
             })
+            .style("font-size", "10px")
             .text(function(d) {
                 return d.name
             })    
