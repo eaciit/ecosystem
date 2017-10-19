@@ -192,8 +192,8 @@ html {
 
 .groupbox {
   position: absolute;
-  bottom: 18px;
-  left: 23px;
+  top: 18px;
+  right: 23px;
   margin-right: 0px;
   margin-left: 0px;
 }
