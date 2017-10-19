@@ -74,13 +74,7 @@ html {
 }
 
 .bubble-tooltip .head {
-  /*font-weight: bold;*/
   background-color: #1F3A93;
-}
-
-.bubble-tooltip table tr td:hover {
-  cursor: pointer;
-  text-decoration: underline;
 }
 
 .table.ez thead {
@@ -344,3 +338,18 @@ circle:hover {
   font-size: 16px !important;
 }
 
+div.cssnowrap{
+    text-overflow:ellipsis;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+div.cssnowrap:hover{
+    text-overflow:clip;
+    width:auto;
+    white-space: normal;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: bold;
+}

@@ -256,10 +256,10 @@
                <div class="tab-content">
                   <!--panel list-->
                   <div role="tabpanel" class="tab-pane active" id="Flows">
-                     <div class="row align-center top-padding">
+                     <div class="row align-center top-padding inflow">
                         IN $ <span data-bind="text:dashboard.activeEntityDetail.sumInFlow"></span>
                      </div>
-                     <div id="flows-in" class="row align-center">
+                     <div id="flows-in" class="row align-center inflow">
                         <i class="fa fa-play fa-out fa-hide" aria-hidden="true"></i>
                         <div style="display: inline-block;width: 400px;">
                         <table id="table-flows-in" width="100%" style="margin-left: auto;margin-right: auto;">
@@ -270,10 +270,10 @@
                         </div>
                         <i class="fa fa-play fa-in" aria-hidden="true"></i>            
                      </div>
-                     <div class="row align-center top-padding">
+                     <div class="row align-center top-padding outflow">
                         OUT $ <span data-bind="text:dashboard.activeEntityDetail.sumOutFlow"></span>
                      </div>
-                     <div id="flows-out" class="row align-center">
+                     <div id="flows-out" class="row align-center outflow">
                         <i class="fa fa-play fa-out" aria-hidden="true"></i> 
                         <div style="display: inline-block;width: 400px;">              
                         <table id="table-flows-out" width="100%" style="margin-left: auto;margin-right: auto;">
@@ -298,6 +298,7 @@
       </div>
    </div>
 </div>
+
 <script id="tooltip-template" type="text/x-kendo-template">
    <div class="head">
      <p>
@@ -306,12 +307,12 @@
      </p>
    </div>
    <div>
-     <table>
+     <div>
        # entities.forEach(function(e, i) { #
-         <tr>
-           <td onclick="dashboard.showMapDetails(#= i #)">#= e #</td>
-         </tr>
+       
+           <div class="cssnowrap" onclick="dashboard.showMapDetails(#= i #)">#= e # Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam rem quisquam vel nulla maxime adipisci exercitationem eaque facilis quasi aliquam</div>
+        
        # }) #
-     </table>
+     </div>
    </div>
 </script>
