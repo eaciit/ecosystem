@@ -77,8 +77,9 @@ dashboard.getMapData = function (callback) {
   })
 }
 
+var activeShape
+
 dashboard.generateMap = function () {
-  var activeShape
   var highlightedMapAlpha = 0.8
   var circledMapAlpha = 0.5
   var template = kendo.template($("#tooltip-template").html())
@@ -129,7 +130,16 @@ dashboard.generateMap = function () {
     $("#groupbuttondetail").show()
     $("#tradetabs").hide()
     e.shape.options.fill.set("opacity", highlightedMapAlpha)
+
+    if (activeShape) {
+      activeShape.geometry().radius *= 1/1.2
+      activeShape.geometryChange()
+    }
+    
     activeShape = e.shape
+    activeShape.geometry().radius *= 1.2
+    activeShape.geometryChange()
+
     $("#map").css("cursor", "pointer")
 
     if (e.shape.dataItem === undefined) {
@@ -164,6 +174,12 @@ dashboard.generateMap = function () {
     e.shape.options.set("fill.opacity", circledMapAlpha)
 
     $("#map").css("cursor", "inherit")
+
+    if (activeShape) {
+      activeShape.geometry().radius *= 1/1.2
+      activeShape.geometryChange()
+      activeShape = undefined
+    }
   }
 
   dashboard.showMapDetails = function (i) {
