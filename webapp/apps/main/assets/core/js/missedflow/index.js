@@ -1,6 +1,7 @@
 var missedflow = {}
+missedflow.data = ko.observableArray([])
 
-missedflow.generateGraph = function() {
+missedflow.generateGraph = function () {
   var units = "Widgets";
 
   var margin = {
@@ -13,7 +14,7 @@ missedflow.generateGraph = function() {
     height = $("#missedflowchart").height() - margin.top - margin.bottom;
 
   var formatNumber = d3.format(",.0f"), // zero decimal places
-    format = function(d) {
+    format = function (d) {
       return formatNumber(d) + " " + units;
     },
     color = d3.scaleOrdinal()
@@ -45,34 +46,34 @@ missedflow.generateGraph = function() {
     .selectAll(".link")
     .data(graph.links)
     .enter().append("path")
-    .attr("id", function(d, i) {
+    .attr("id", function (d, i) {
       return "linkId_" + i;
     })
     .attr("class", "link")
     .attr("d", d3.linkHorizontal()
-      .x(function(d) {
+      .x(function (d) {
         return d.x;
       })
-      .y(function(d) {
+      .y(function (d) {
         return d.y;
       })
-      .source(function(d) {
+      .source(function (d) {
         return {
           x: d.source.x,
           y: d.source.y + 50
         };
       })
-      .target(function(d) {
+      .target(function (d) {
         return {
           "x": d.target.x,
           "y": d.target.y + 50
         };
       }))
     .style("fill", "none")
-    .style("stroke", function(d) {
+    .style("stroke", function (d) {
       return d.source.color;
     })
-    .style("stroke", function(d) {
+    .style("stroke", function (d) {
       // console.log(d)
       if (d.source.node == 0) {
         return "#1e88e5"
@@ -83,77 +84,77 @@ missedflow.generateGraph = function() {
       }
     })
     .style("stroke-opacity", "1")
-    .on("mouseover", function() {
+    .on("mouseover", function () {
       d3.select(this).style("stroke-opacity", ".5")
     })
-    .on("mouseout", function() {
+    .on("mouseout", function () {
       d3.select(this).style("stroke-opacity", "1")
     })
-    .style("stroke-width", function(d) {
+    .style("stroke-width", function (d) {
       return Math.sqrt(d.dy * 4)
     })
-    .sort(function(a, b) {
+    .sort(function (a, b) {
       return b.dy - a.dy;
     });
 
   var pathText = svg.selectAll(".pathText")
     .data(graph.links)
     .enter().append("svg:text")
-    .attr("dx", width-200)
+    .attr("dx", width - 200)
     .attr("dy", 2)
     .attr("style", "fill:#fff")
-    .style("font-size", function(d) {
+    .style("font-size", function (d) {
       return Math.sqrt(d.dy * 2)
     })
     .append("textPath")
-    .attr("xlink:href", function(d, i) {
+    .attr("xlink:href", function (d, i) {
       return "#linkId_" + i;
     })
-    .text(function(d, i) {
+    .text(function (d, i) {
       return d.target.bank
     });
 
-var pathText2 = svg.selectAll(".pathText2")
+  var pathText2 = svg.selectAll(".pathText2")
     .data(graph.links)
     .enter().append("svg:text")
     .attr("dx", 60)
     .attr("dy", -15)
     .attr("style", "fill:#000")
-    .style("font-size", function(d) {
+    .style("font-size", function (d) {
       return Math.sqrt(d.dy * 2)
     })
     .append("textPath")
-    .attr("xlink:href", function(d, i) {
+    .attr("xlink:href", function (d, i) {
       return "#linkId_" + i;
     })
-    .html(function(d, i) {
+    .html(function (d, i) {
       return "$ 20 M"
     });
 
-var pathText3 = svg.selectAll(".pathText3")
+  var pathText3 = svg.selectAll(".pathText3")
     .data(graph.links)
     .enter().append("svg:text")
-    .attr("dx", width-120)
+    .attr("dx", width - 120)
     .attr("dy", -15)
     .attr("style", "fill:#000")
-    .style("font-size", function(d) {
+    .style("font-size", function (d) {
       return Math.sqrt(d.dy * 2)
     })
     .append("textPath")
-    .attr("xlink:href", function(d, i) {
+    .attr("xlink:href", function (d, i) {
       return "#linkId_" + i;
     })
-    .html(function(d, i) {
+    .html(function (d, i) {
       return "$ 10 M"
     });
-    
+
 
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .attr("transform", function(d) {
+    .attr("transform", function (d) {
       // console.log(d)
       return "translate(" + d.x + "," + d.y + ")";
     })
@@ -161,15 +162,15 @@ var pathText3 = svg.selectAll(".pathText3")
   // add the circles for the nodes
   node.append("circle")
     .attr("cx", sankey.nodeWidth() / 2)
-    .attr("cy", function(d) {
+    .attr("cy", function (d) {
       return 48.181;
     })
     .attr("r", 50)
-    .style("fill", function(d) {
+    .style("fill", function (d) {
       return d.color = color(d.name.replace(/ .*/, ""));
     })
     .append("title")
-    .text(function(d) {
+    .text(function (d) {
       return d.name + "\n" + format(d.value);
     });
 
@@ -178,7 +179,7 @@ var pathText3 = svg.selectAll(".pathText3")
     .attr("x", 8)
     .attr("dy", 35)
     .attr("text-anchor", "middle")
-    .text(function(d) {
+    .text(function (d) {
       return d.country
     })
 
@@ -186,7 +187,7 @@ var pathText3 = svg.selectAll(".pathText3")
     .attr("x", 8)
     .attr("dy", 50)
     .attr("text-anchor", "middle")
-    .text(function(d) {
+    .text(function (d) {
       return d.name
     })
 
@@ -205,37 +206,37 @@ var pathText3 = svg.selectAll(".pathText3")
       "nodes": [{
           "node": 0,
           "country": "UAE",
-          "bank":"Bank Of UAE",
+          "bank": "Bank Of UAE",
           "name": "MEGLOBAL"
         },
         {
           "node": 1,
           "country": "CHINA",
-           "bank":"Bank Of CHINA",  
+          "bank": "Bank Of CHINA",
           "name": "Shanghai East"
         },
         {
           "node": 2,
           "country": "UAE",
-          "bank":"Bank Of UAE",
+          "bank": "Bank Of UAE",
           "name": "INDIA Dow"
         },
         {
           "node": 3,
           "country": "UAE",
-           "bank":"Bank Of UAE",
+          "bank": "Bank Of UAE",
           "name": "Arabian Chem"
         },
         {
           "node": 4,
           "country": "INDIA",
-           "bank":"Bank Of INDIA",
+          "bank": "Bank Of INDIA",
           "name": "ROHM & HAAS"
         },
         {
           "node": 5,
           "country": "IND",
-           "bank":"Bank Of IND",
+          "bank": "Bank Of IND",
           "name": "Dow Argo"
         }
       ],
@@ -284,6 +285,12 @@ var pathText3 = svg.selectAll(".pathText3")
   }
 }
 
-$(window).load(function() {
+$(window).load(function () {
   missedflow.generateGraph()
+
+  viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", {
+    limit: 5
+  }, function (data) {
+    console.log(data)
+  })
 })

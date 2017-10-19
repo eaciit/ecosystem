@@ -8,16 +8,16 @@ path.link.flow {
   stroke: #4289bd;
 }
 
-marker#flow {
-  fill: #4289bd;
-}
-
 path.link.missed {
   stroke: #666;
   stroke-dasharray: 5, 5;
 }
 
-marker#missed {
+marker#flow, marker#flow-big {
+  fill: #4289bd;
+}
+
+marker#missed, marker#missed-big {
   fill: #666;
 }
 

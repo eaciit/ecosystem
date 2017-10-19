@@ -288,6 +288,19 @@ network.generate = function () {
     .append("svg:path")
     .attr("d", "M0,-5L10,0L0,5")
 
+  svg.append("svg:defs").selectAll("marker")
+    .data(["flow-big", "missed-big"])
+    .enter().append("svg:marker")
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 32)
+    .attr("refY", -0)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5")
+
   var path = svg.append("svg:g").selectAll("path")
     .data(force.links())
     .enter().append("svg:path")
@@ -298,7 +311,9 @@ network.generate = function () {
       return "link " + d.type
     })
     .attr("marker-end", function (d) {
-      return "url(#" + d.type + ")"
+      var type = d.type
+      type += d.target.class == "center" ? "-big" : ""
+      return "url(#" + type + ")"
     })
 
   var pathText = svg.selectAll(".pathText")
@@ -324,7 +339,9 @@ network.generate = function () {
 
   circle.append("svg:circle")
     .on("click", expand)
-    .attr("r", 15)
+    .attr("r", function(d) {
+      return d.class == "center" ? 20 : 15;
+    })
     .attr("class", function (d) {
       return d.class
     })
@@ -351,7 +368,7 @@ network.generate = function () {
         d3.select(this).attr("dy", 10)
       }
     })
-    .attr("x", 20)
+    .attr("x", 25)
     .attr("y", -5)
 
   text.append("svg:text")
@@ -367,14 +384,14 @@ network.generate = function () {
         d3.select(this).attr("dy", 10)
       }
     })
-    .attr("x", 20)
+    .attr("x", 25)
     .attr("y", -5)
 
   text.append("svg:text")
     .text(function (d) {
       return d.coi
     })
-    .attr("x", 20)
+    .attr("x", 25)
     .attr("y", 17)
     .attr("class", "shadow")
 
@@ -382,7 +399,7 @@ network.generate = function () {
     .text(function (d) {
       return d.coi
     })
-    .attr("x", 20)
+    .attr("x", 25)
     .attr("y", 17)
     .attr("class", "coi")
 
@@ -391,7 +408,7 @@ network.generate = function () {
       return "detail"
     })
     .on("click", detail)
-    .attr("x", 20)
+    .attr("x", 25)
     .attr("y", 28)
     .attr("class", function (d) {
       return d.opportunity ? "shadow" : "hide"
@@ -402,7 +419,7 @@ network.generate = function () {
       return "detail"
     })
     .on("click", detail)
-    .attr("x", 20)
+    .attr("x", 25)
     .attr("y", 28)
     .attr("class", function (d) {
       return d.opportunity ? "detail-button" : "hide"
