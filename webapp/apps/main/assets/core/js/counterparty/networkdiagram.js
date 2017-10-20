@@ -195,20 +195,36 @@ network.processData = function (data) {
     }
   })
 
+  if (network.nodes[parent]) {
+    delete network.nodes[parent]
+  }
+
+  _.keys(network.nodes).forEach(function (key) {
+    if (network.nodes[key].class != "center") {
+      network.nodes[key].isFade = true
+    }
+  });
+
   var nodes = _(data[parent])
     .map(function (e) {
+      if (network.nodes[e.cpty_long_name]) {
+        delete network.nodes[e.cpty_long_name]
+      }
+
       return {
         name: e.cpty_long_name,
         coi: e.cpty_coi,
         opportunity: e.cpty_bank != "SCBL" ? true : false,
-        class: e.is_ntb == "Y" ? "ntb" : "etb"
+        class: e.is_ntb == "Y" ? "ntb" : "etb",
+        isFade: false
       }
     })
     .concat({
       name: parent,
       coi: "",
       opportunity: false,
-      class: "center"
+      class: "center",
+      isFade: false
     })
     .uniqBy("name")
     .keyBy("name")
@@ -308,7 +324,9 @@ network.generate = function () {
       return "linkId_" + i
     })
     .attr("class", function (d) {
-      return "link " + d.type
+      var c = "link " + d.type
+      c += (d.target.isFade || d.source.isFade) ? " fade" : ""
+      return c
     })
     .attr("marker-end", function (d) {
       var type = d.type
@@ -321,8 +339,8 @@ network.generate = function () {
     .enter().append("svg:text")
     .attr("dx", 85)
     .attr("dy", -3)
-    .attr("class", function (d) {
-      return d.type
+    .attr("class", function(d){
+      return (d.target.isFade || d.source.isFade) ? " fade" : ""
     })
     .append("textPath")
     .attr("xlink:href", function (d, i) {
@@ -339,19 +357,24 @@ network.generate = function () {
 
   circle.append("svg:circle")
     .on("click", expand)
-    .attr("r", function(d) {
+    .attr("r", function (d) {
       return d.class == "center" ? 20 : 15;
     })
     .attr("class", function (d) {
-      return d.class
+      var c = d.class
+      c += d.isFade ? " fade" : ""
+      return c
     })
     .attr("filter", function (d) {
-      return d.opportunity ? "url(#dropshadow)" : ""
+      return d.opportunity && !d.isFade ? "url(#dropshadow)" : ""
     })
 
   var text = svg.append("svg:g").selectAll("g")
     .data(force.nodes())
     .enter().append("svg:g")
+    .attr("class", function(d){
+      return d.isFade ? "fade" : ""
+    })
 
   // A copy of the text with a thick white stroke for legibility.
   text.append("svg:text")
@@ -451,9 +474,10 @@ network.generate = function () {
 
   function expand(d) {
     if (!d3.event.defaultPrevented) {
-      network.isExpanding = true
-      counterparty.activeEnityName(d.name)
-      network.loadData()
+      if (d.class != "center") {
+        network.isExpanding = true
+        counterparty.activeEnityName(d.name)
+      }
     }
   }
 
