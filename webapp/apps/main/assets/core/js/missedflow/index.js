@@ -9,6 +9,7 @@ missedflow.loadGraphData = function () {
     var nodes = []
 
     _.each(data, function (e) {
+      var total = parseInt(Math.random() * 15) + 2
       var source = _.find(nodes, {
         name: e.cust_long_name,
         as: "source"
@@ -23,7 +24,8 @@ missedflow.loadGraphData = function () {
           node: nodes.length,
           name: e.cust_long_name,
           country: e.cust_coi,
-          bank: e.cust_bank
+          bank: e.cust_bank,
+          amount: total
         })
 
         sourceIndex = nodes.length - 1
@@ -43,7 +45,8 @@ missedflow.loadGraphData = function () {
           node: nodes.length,
           name: e.cpty_long_name,
           country: e.cpty_coi,
-          bank: e.cpty_bank
+          bank: e.cpty_bank,
+          amount: total
         })
 
         targetIndex = nodes.length - 1
@@ -52,7 +55,7 @@ missedflow.loadGraphData = function () {
       links.push({
         source: sourceIndex,
         target: targetIndex,
-        value: parseInt(Math.random() * 15) + 2
+        value: total
       })
     })
 
@@ -64,15 +67,13 @@ missedflow.loadGraphData = function () {
 }
 
 missedflow.generateGraph = function (data) {
-  var units = "Widgets"
-
   var margin = {
       top: 20,
       right: 20,
       bottom: 20,
       left: 20
     },
-    width = $("#missedflowchart").width() * 0.5 - margin.left - margin.right,
+    width = $("#missedflowchart").width() - margin.left - margin.right,
     height = $("#missedflowchart").height() - margin.top - margin.bottom
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
@@ -82,8 +83,7 @@ missedflow.generateGraph = function (data) {
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform",
-      "translate(" + margin.left + "," + margin.top + ")")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
   // Set the sankey diagram properties
   var sankey = d3sankey()
@@ -138,15 +138,7 @@ missedflow.generateGraph = function (data) {
     .attr("class", "node")
     .attr("transform", function (d) {
       return "translate(" + d.x + "," + d.y + ")"
-    }).call(d3.drag()
-      .subject(function (d) {
-        return d
-      })
-      .on("start", function () {
-        this.parentNode.appendChild(this)
-      })
-      .on("drag", dragmove)
-    )
+    })
 
   node.append("rect")
     .attr("height", function (d) {
@@ -156,9 +148,10 @@ missedflow.generateGraph = function (data) {
     .style("fill", function (d) {
       return d.color = color(d.name.replace(/ .*/, ""))
     })
-    .style("stroke", function (d) {
-      return d3.rgb(d.color).darker(2)
+    .on("mouseover", function (d) {
+      highlightLink(d.node)
     })
+    .on("mouseout", unhighlightLink)
 
   node.append("text")
     .attr("x", -6)
@@ -177,15 +170,19 @@ missedflow.generateGraph = function (data) {
     .attr("x", 6 + sankey.nodeWidth())
     .attr("text-anchor", "start")
 
+  function highlightLink(n) {
+    d3.selectAll(".link").each(function () {
+      link = d3.select(this)
+      if (link.data()[0].source.node == n || link.data()[0].target.node == n) {
+        link.attr("class", "link selected")
+      }
+    })
+  }
 
-  // the function for moving the nodes
-  function dragmove(d) {
-    d3.select(this).attr("transform",
-      "translate(" + (
-        d.x = Math.max(0, Math.min(width - d.dx, d3.event.x))) + "," + (
-        d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")")
-    sankey.relayout()
-    link.attr("d", path)
+  function unhighlightLink() {
+    d3.selectAll(".link.selected").each(function(){
+      d3.select(this).attr("class", "link")
+    })
   }
 }
 

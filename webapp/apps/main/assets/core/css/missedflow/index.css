@@ -17,7 +17,6 @@
 .node rect {
   cursor: move;
   fill-opacity: .9;
-  /*shape-rendering: crispEdges;*/
 }
 
 .node text {
@@ -32,8 +31,9 @@
   stroke-opacity: .2;
 }
 
-.link:hover {
+.link:hover, .link.selected {
   stroke-opacity: .5;
+  cursor: pointer;
 }
 
 #missedflowchart {
