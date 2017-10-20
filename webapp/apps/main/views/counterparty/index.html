@@ -74,9 +74,6 @@
         </div>
         </div>
       </div>
- 
-  <!--   </div>
-  </div> -->
 </div>
 
 <div id="counterpartyModalNTB" data-toggle="tooltip" data-placement="left" style="opacity:0">
@@ -87,7 +84,7 @@
   <div class="row body">
     <ul class="top-padding" data-bind="foreach:counterpartymain.dataDetailItemsNTB">
        <li data-bind="text:$data"></li>
-    </ul>
+  </ul>
   </div>
 </div>
 <div id="counterpartyModalETB" data-toggle="tooltip" data-placement="left" style="opacity:0">
@@ -95,9 +92,21 @@
     <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
     <h4 data-bind="text:counterpartymain.headtext"></h4>
   </div>
-  <div class="row body" data-bind="with:counterpartymain">
-    <ul class="top-padding" data-bind="foreach:dataDetailItemsETB" >
-    <li><span data-bind="text:product_desc"></span></li>
+  <div class="row body">
+  <ul class="top-padding" data-bind="foreach:counterpartymain.dataMasterGraphDetail">
+    <li >No. of Transactions : <span data-bind="text:numberTransaction"></span></li>
+        <li >Average Transaction Value
+             <table style="margin-left:20px">
+             <tr>
+             <td>Monthly </td><td >: $<span data-bind="text:counterpartymain.avgMonthly1"></span></td></tr>
+             <tr>
+             <td>Yearly </td><td>: $<span  data-bind="text:counterpartymain.avgYearly1"></span></td>
+             </tr>
+             </table>
+        </li>
+    <span  data-bind="foreach:counterpartymain.dataDetailItemsETB" >
+    <li><span data-bind="text:$data"></span></li>
+    </span>
     </ul>
   </div>
 </div>
