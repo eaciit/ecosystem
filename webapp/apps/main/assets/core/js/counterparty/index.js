@@ -6,6 +6,8 @@ counterpartymain.dataMasterBubble = ko.observableArray([])
 counterpartymain.dataDetailItemsGraphBubble = ko.observableArray([])
 counterpartymain.dataMasterGraphDetail = ko.observableArray([])
 counterpartymain.titleCountryPartyBuble = ko.observable()
+counterpartymain.avgMonthly1 = ko.observable()
+counterpartymain.avgYearly1 = ko.observable()
 counterpartymain.dataMasterGraph = {
     nodes: ko.observableArray([]),
     links: ko.observableArray([])
@@ -293,7 +295,7 @@ counterpartymain.generateGraph = function() {
                     div.transition()
                         .duration(200)
                         .style("opacity", 1);
-                    if (d.type == "NTB") {
+                  
 
                         var ThisTemp = this
 
@@ -304,7 +306,13 @@ counterpartymain.generateGraph = function() {
 
                         }, function(data) {
                             counterpartymain.dataMasterGraphDetail(data)
+                            counterpartymain.dataDetailItemsETB(data.products)
                             counterpartymain.dataDetailItemsNTB(data.products)
+
+                            counterpartymain.avgMonthly1(counterpartymain.bm(data.avgMonthly))
+                            counterpartymain.avgYearly1(counterpartymain.bm(data.avgYearly))
+                        
+                          if (d.type == "NTB") {
 
                             div.html($("#counterpartyModalNTB").html())
                                 .style("left", (d3.select(ThisTemp).attr("cx")) + 50 + "px")
@@ -328,32 +336,38 @@ counterpartymain.generateGraph = function() {
 
                             d3.selectAll(".linkdash").transition().duration(500)
                                 .style("opacity", .1);
+
+                            } else {
+
+                            console.log(data.avgMonthly)
+                            
+                            div.html($("#counterpartyModalETB").html())
+                                .style("left", (d3.select(ThisTemp).attr("cx")) + 50 + "px")
+                                .style("top", (d3.select(ThisTemp).attr("cy")) + 50 + "px")
+                                .style("margin-top", "50px")
+                                .style("margin-left", "120px")
+
+
+                            d3.selectAll("circle").transition().duration(500)
+                                .style("opacity", function(o) {
+                                    return o === d ? 1 : .1;
+                                });
+
+                            d3.selectAll("text").transition().duration(500)
+                                .style("opacity", function(o) {
+                                    return o === d ? 1 : .1;
+                                });
+
+                            d3.selectAll(".link").transition().duration(500)
+                                .style("opacity", .1);
+
+                            d3.selectAll(".linkdash").transition().duration(500)
+                                .style("opacity", .1);
+
+                            }
                         })
-                        return
-                    }
-                    counterpartymain.dataDetailItemsETB(d.listdetail[0])
-                    div.html($("#counterpartyModalETB").html())
-                        .style("left", (d3.select(this).attr("cx")) + 50 + "px")
-                        .style("top", (d3.select(this).attr("cy")) + 50 + "px")
-                        .style("margin-top", "50px")
-                        .style("margin-left", "120px")
-
-
-                    d3.selectAll("circle").transition().duration(500)
-                        .style("opacity", function(o) {
-                            return o === d ? 1 : .1;
-                        });
-
-                    d3.selectAll("text").transition().duration(500)
-                        .style("opacity", function(o) {
-                            return o === d ? 1 : .1;
-                        });
-
-                    d3.selectAll(".link").transition().duration(500)
-                        .style("opacity", .1);
-
-                    d3.selectAll(".linkdash").transition().duration(500)
-                        .style("opacity", .1);
+                    
+            
                 }
             })
             // .on("click", detailntb)
