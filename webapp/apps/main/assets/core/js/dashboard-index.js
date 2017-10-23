@@ -1,6 +1,8 @@
 var dashboard = {}
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
+dashboard.inflow = ko.observable(true)
+dashboard.outflow = ko.observable(true)
 dashboard.activeEntityDetail = {
   noteHeaderModal: ko.observable(),
   dataProductMix: ko.observableArray([]),
@@ -179,6 +181,7 @@ dashboard.generateMap = function () {
   }
 
   dashboard.showMapDetails = function (i) {
+    dashboard.activeEntityDetail.noteHeaderModal("")
     dashboard.getEntityDetail(dashboard.activeEntities().entities[i])
 
     popup.close()
@@ -211,16 +214,6 @@ dashboard.getEntityDetail = function (entityName) {
 }
 
 dashboard.bm = function(databm, sts){
-      if(databm == 0 && sts == "inflow"){
-                     $(".inflow").hide()
-                  } else if(databm != 0 && sts == "inflow"){
-                     $(".inflow").show()
-              }
-              if(databm == 0 && sts == "outflow"){
-                     $(".outflow").hide() 
-                  } else if(databm != 0 && sts == "outflow"){
-                     $(".outflow").show()
-              }
       if(databm < 1000000000){
           var databmr = databm / 1000000
               databmr = currencynum(databmr)
@@ -247,11 +240,24 @@ dashboard.btnCash = function () {
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
+  console.log(dashboard.activeEntity().bank.Cash)
+  if(dashboard.activeEntity().bank.Cash != undefined){
   var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
   var dataoutflow = dashboard.activeEntity().bank.Cash.BUYER
+  }
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
   var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+  if(suminflow == 0){
+    dashboard.inflow(false)
+  }else{
+    dashboard.inflow(true)
+  }
+  if(sumoutflow == 0){
+    dashboard.outflow(false)
+  }else{
+    dashboard.outflow(true)
+  }
 
   if (datainflow != undefined) {
     var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
@@ -317,15 +323,30 @@ dashboard.btnTrade = function () {
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
+  if(dashboard.activeEntity().bank.Trade != undefined){
   var datainflow = dashboard.activeEntity().bank.Trade.PAYEE
   var dataoutflow = dashboard.activeEntity().bank.Trade.BUYER
+  }
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
+  var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+  if(suminflow == 0){
+    dashboard.inflow(false)
+  }else{
+    dashboard.inflow(true)
+  }
+  if(sumoutflow == 0){
+    dashboard.outflow(false)
+  }else{
+    dashboard.outflow(true)
+  }
+
+
+
   if (datainflow != undefined) {
     var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
     var summaxthreein = _.sumBy(maxthreein, 'value')
     tempdatain = [];
-    var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
     _.each(maxthreein, function (v, i) {
       tempdatain.push({
         text: v.bank,
@@ -374,6 +395,7 @@ dashboard.btnTrade = function () {
 }
 
 dashboard.btnBack = function(){
+  dashboard.activeEntityDetail.noteHeaderModal("")
   $("#groupbuttondetail").show()
   $("#tradetabs").hide()
 }
