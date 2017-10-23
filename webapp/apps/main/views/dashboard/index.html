@@ -256,10 +256,11 @@
                <div class="tab-content">
                   <!--panel list-->
                   <div role="tabpanel" class="tab-pane active" id="Flows">
-                     <div class="row align-center top-padding inflow">
+                     <div class="row align-center top-padding inflow" 
+                     data-bind="visible : dashboard.inflow" >
                         IN $ <span data-bind="text:dashboard.activeEntityDetail.sumInFlow"></span>
                      </div>
-                     <div id="flows-in" class="row align-center inflow">
+                     <div align="center" data-bind="visible : dashboard.inflow">
                         <i class="fa fa-play fa-out fa-hide" aria-hidden="true"></i>
                         <div style="display: inline-block;width: 400px;">
                         <table id="table-flows-in" width="100%" style="margin-left: auto;margin-right: auto;">
@@ -270,10 +271,10 @@
                         </div>
                         <i class="fa fa-play fa-in" aria-hidden="true"></i>            
                      </div>
-                     <div class="row align-center top-padding outflow">
+                     <div data-bind="visible : dashboard.outflow" class="row align-center top-padding outflow">
                         OUT $ <span data-bind="text:dashboard.activeEntityDetail.sumOutFlow"></span>
                      </div>
-                     <div id="flows-out" class="row align-center outflow">
+                     <div data-bind="visible : dashboard.outflow" id="flows-out" class="row align-center outflow">
                         <i class="fa fa-play fa-out" aria-hidden="true"></i> 
                         <div style="display: inline-block;width: 400px;">              
                         <table id="table-flows-out" width="100%" style="margin-left: auto;margin-right: auto;">
@@ -293,6 +294,7 @@
                      </div>
                   </div>
                </div>
+
             </div>
          </div>
       </div>
