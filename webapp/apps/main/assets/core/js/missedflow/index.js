@@ -9,7 +9,7 @@ missedflow.loadGraphData = function () {
     var nodes = []
 
     _.each(data, function (e) {
-      var total = parseInt(Math.random() * 15) + 2
+      var total = e.total
       var source = _.find(nodes, {
         name: e.cust_long_name,
         as: "source"
