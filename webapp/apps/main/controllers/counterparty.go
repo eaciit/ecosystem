@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/csv"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -129,7 +132,8 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	sql := `SELECT cpty_long_name, LEFT(counterparty_bank, 4) AS cpty_bank, 
   product_category, SUM(amount) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + ` 
-  WHERE cust_long_name='` + payload.EntityName + `' AND cpty_long_name='` + payload.CounterpartyName + `' AND transaction_year=2016 
+	WHERE cust_long_name='` + payload.EntityName + `' AND cpty_long_name='` + payload.CounterpartyName + `' AND transaction_year=2016 
+	AND ` + c.commonWhereClause() + `
   GROUP BY cpty_long_name, cpty_bank, product_category`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -143,6 +147,63 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	}
 
 	return c.SetResultOK(results)
+}
+
+func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputNone
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	payload := CounterPartyPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	sql := `SELECT * 
+  FROM ` + c.tableName() + ` 
+	WHERE cust_long_name='` + payload.EntityName + `' AND cpty_long_name='` + payload.CounterpartyName + `' AND transaction_year=2016 
+	AND ` + c.commonWhereClause()
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err = qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := csv.NewWriter(buffer)
+
+	if len(results) > 0 {
+		keys := []string{}
+		for k, _ := range results[0] {
+			keys = append(keys, fmt.Sprintf("%v", k))
+		}
+
+		writer.Write(keys)
+
+		for _, v := range results {
+			values := []string{}
+			for _, v := range v {
+				values = append(values, fmt.Sprintf("%v", v))
+			}
+
+			writer.Write(values)
+		}
+	}
+
+	writer.Flush()
+
+	k.Writer.Header().Set("Content-Type", "text/csv")
+	k.Writer.Header().Set("Content-Disposition", "attachment;filename=Download.csv")
+	k.Writer.Write(buffer.Bytes())
+
+	return nil
 }
 
 func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) interface{} {
