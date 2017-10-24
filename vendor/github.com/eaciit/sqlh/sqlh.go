@@ -80,8 +80,13 @@ func (q *QueryResult) Fetch(objs interface{}, n int) error {
 			m := toolkit.M{}
 			for i, name := range q.columnnames {
 				var v interface{}
-				bs := q.buffers[i].([]byte)
-				v = string(bs)
+
+				if q.buffers[i] != nil {
+					bs := q.buffers[i].([]byte)
+					v = string(bs)
+				} else {
+					v = nil
+				}
 
 				if isStruct {
 					for fieldname, datatype := range dataTypeList {
@@ -112,29 +117,29 @@ func (q *QueryResult) Fetch(objs interface{}, n int) error {
 						}
 					}
 				} else {
-					intVal, e := strconv.Atoi(toolkit.ToString(v))
-					if e != nil {
-						e = nil
-						floatVal, e := strconv.ParseFloat(toolkit.ToString(v), 64)
+					if v != nil {
+						intVal, e := strconv.Atoi(toolkit.ToString(v))
 						if e != nil {
 							e = nil
-							boolVal, e := strconv.ParseBool(toolkit.ToString(v))
+							floatVal, e := strconv.ParseFloat(toolkit.ToString(v), 64)
 							if e != nil {
 								e = nil
-								dateval, e := time.Parse(q.DateFormat, v.(string))
+								boolVal, e := strconv.ParseBool(toolkit.ToString(v))
 								if e != nil {
-									v = v
-								} else { /*if string is date*/
-									v = dateval
+									e = nil
+									dateval, e := time.Parse(q.DateFormat, v.(string))
+									if e == nil {
+										v = dateval /*if string is date*/
+									}
+								} else { /*if string is bool*/
+									v = boolVal
 								}
-							} else { /*if string is bool*/
-								v = boolVal
+							} else { /*if string is float*/
+								v = floatVal
 							}
-						} else { /*if string is float*/
-							v = floatVal
+						} else { /*if string is int*/
+							v = intVal
 						}
-					} else { /*if string is int*/
-						v = intVal
 					}
 				}
 				m.Set(name, v)
