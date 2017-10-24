@@ -87,6 +87,8 @@ counterpartymain.loadGraphData = function() {
         datetype: counterpartymain.filterRecord.datetype(),
         yearmonth: parseInt(counterpartymain.filterRecord.yearmonth())
     }, function(data) {
+        console.log("=== Data ===")
+        // console.log(data)
         console.log(counterpartymain.filterRecord.limit())
         var datas = data[_.keys(data)[0]]
         tempnodes = [];
@@ -98,14 +100,28 @@ counterpartymain.loadGraphData = function() {
             } else {
                 t = "ETB"
             }
-            tempnodes.push({
+
+            if (v.cust_role == "PAYEE") {
+                tempnodes.push({
                 id: i,
                 name: v.cpty_long_name,
                 group: 2,
                 type: t,
                 limited: v.total,
                 country: v.cpty_coi,
+                role:v.cust_role,
+            }); 
+            } else {
+                tempnodes.push({
+                id: i,
+                name: v.cpty_long_name,
+                group: 3,
+                type: t,
+                limited: v.total,
+                country: v.cpty_coi,
+                role:v.cust_role,
             });
+            }
 
             templinks.push({
                 source: i,
@@ -120,6 +136,7 @@ counterpartymain.loadGraphData = function() {
             group: 1,
             type: "CENTER",
             country: "",
+            role:"CENTER",
         });
         counterpartymain.filterRecord.entityName(entity)
         counterpartymain.dataMasterGraph.nodes(tempnodes)
@@ -143,6 +160,7 @@ counterpartymain.loadGraphData = function() {
                     type: t,
                     limited: v.total,
                     country: v.cpty_coi,
+                    role:v.cust_role,
                 });
             });
             counterpartymain.dataMasterBubble(tempnodesbubble)
@@ -212,6 +230,18 @@ counterpartymain.generateGraph = function() {
             return d.id
         }).distance(300).strength(1))
         .force("charge", d3.forceManyBody())
+        .force("x", d3.forceX(function(d){
+            console.log("d")
+            console.log(d)
+            if(d.group === 3){
+                return width/3
+            } else if (d.group === 2){
+                return 2*width/3
+            } else {
+                return width/2 
+            }
+        }))
+        .force("y", d3.forceY(height/2))
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("collision", d3.forceCollide().radius(function(d) {
             return 50 + 10;
@@ -523,7 +553,7 @@ counterpartymain.generateGraph = function() {
 
     }
 
-    function ticked() {
+    function ticked(e) {
         link
             .attr("x1", function(d) {
                 return d.source.x
