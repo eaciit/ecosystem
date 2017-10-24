@@ -134,10 +134,10 @@ dashboard.generateMap = function () {
     e.shape.options.fill.set("opacity", highlightedMapAlpha)
 
     if (activeShape) {
-      activeShape.geometry().radius *= 1/1.2
+      activeShape.geometry().radius *= 1 / 1.2
       activeShape.geometryChange()
     }
-    
+
     activeShape = e.shape
     activeShape.geometry().radius *= 1.2
     activeShape.geometryChange()
@@ -147,23 +147,25 @@ dashboard.generateMap = function () {
     if (e.shape.dataItem === undefined) {
       return
     }
-  
+
     dashboard.activeEntities(e.shape.dataItem)
 
     var data = e.shape.dataItem
     var arr = data.entities
     var namel = data.name
-    var lentity = arr.reduce(function (a, b) { return a.length > b.length ? a : b; });
-    var nlength = (namel.length+6)*12
+    var lentity = arr.reduce(function (a, b) {
+      return a.length > b.length ? a : b;
+    });
+    var nlength = (namel.length + 6) * 12
     $(".bubble-tooltip").css("min-width", nlength)
-    
+
     var oe = e.originalEvent
     var x = oe.pageX || oe.clientX
     var y = oe.pageY || oe.clientY
 
     popup.close()
     popup.element.kendoStop(true, true)
-    
+
     popup.element.html(template(data))
     popup.open(x, y)
   }
@@ -174,7 +176,7 @@ dashboard.generateMap = function () {
     $("#map").css("cursor", "inherit")
 
     if (activeShape) {
-      activeShape.geometry().radius *= 1/1.2
+      activeShape.geometry().radius *= 1 / 1.2
       activeShape.geometryChange()
       activeShape = undefined
     }
@@ -213,20 +215,19 @@ dashboard.getEntityDetail = function (entityName) {
   })
 }
 
-dashboard.bm = function(databm, sts){
-      if(databm < 1000000000){
-          var databmr = databm / 1000000
-              databmr = currencynum(databmr)
-              databmr = databmr+" M"
-          return databmr
-        }
-        else if(databm >= 1000000000){
-          var databmr = databm / 1000000000
-              databmr = currencynum(databmr)
-              databmr = databmr+" B"
-          return databmr
-        }
-    }
+dashboard.bm = function (databm, sts) {
+  if (databm < 1000000000) {
+    var databmr = databm / 1000000
+    databmr = currencynum(databmr)
+    databmr = databmr + " M"
+    return databmr
+  } else if (databm >= 1000000000) {
+    var databmr = databm / 1000000000
+    databmr = currencynum(databmr)
+    databmr = databmr + " B"
+    return databmr
+  }
+}
 
 dashboard.btnCash = function () {
   dashboard.activeEntityDetail.noteHeaderModal(" Cash")
@@ -240,22 +241,21 @@ dashboard.btnCash = function () {
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
-  console.log(dashboard.activeEntity().bank.Cash)
-  if(dashboard.activeEntity().bank.Cash != undefined){
-  var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
-  var dataoutflow = dashboard.activeEntity().bank.Cash.BUYER
+  if (dashboard.activeEntity().bank.Cash != undefined) {
+    var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
+    var dataoutflow = dashboard.activeEntity().bank.Cash.BUYER
   }
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
   var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
-  if(suminflow == 0){
+  if (suminflow == 0) {
     dashboard.inflow(false)
-  }else{
+  } else {
     dashboard.inflow(true)
   }
-  if(sumoutflow == 0){
+  if (sumoutflow == 0) {
     dashboard.outflow(false)
-  }else{
+  } else {
     dashboard.outflow(true)
   }
 
@@ -280,7 +280,7 @@ dashboard.btnCash = function () {
       });
     }
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
-    var suminflowr = dashboard.bm(suminflow,"inflow")
+    var suminflowr = dashboard.bm(suminflow, "inflow")
     dashboard.activeEntityDetail.sumInFlow(suminflowr)
   }
 
@@ -304,7 +304,7 @@ dashboard.btnCash = function () {
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-    var sumoutflowr = dashboard.bm(sumoutflow,"outflow")
+    var sumoutflowr = dashboard.bm(sumoutflow, "outflow")
     dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
   }
   $("#groupbuttondetail").hide()
@@ -323,21 +323,21 @@ dashboard.btnTrade = function () {
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)
   // for flow
-  if(dashboard.activeEntity().bank.Trade != undefined){
-  var datainflow = dashboard.activeEntity().bank.Trade.PAYEE
-  var dataoutflow = dashboard.activeEntity().bank.Trade.BUYER
+  if (dashboard.activeEntity().bank.Trade != undefined) {
+    var datainflow = dashboard.activeEntity().bank.Trade.PAYEE
+    var dataoutflow = dashboard.activeEntity().bank.Trade.BUYER
   }
   var suminflow = _.sumBy(datainflow, 'value')
   var sumoutflow = _.sumBy(dataoutflow, 'value')
   var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
-  if(suminflow == 0){
+  if (suminflow == 0) {
     dashboard.inflow(false)
-  }else{
+  } else {
     dashboard.inflow(true)
   }
-  if(sumoutflow == 0){
+  if (sumoutflow == 0) {
     dashboard.outflow(false)
-  }else{
+  } else {
     dashboard.outflow(true)
   }
 
@@ -363,7 +363,7 @@ dashboard.btnTrade = function () {
       });
     }
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
-    var suminflowr = dashboard.bm(suminflow,"inflow")
+    var suminflowr = dashboard.bm(suminflow, "inflow")
     dashboard.activeEntityDetail.sumInFlow(suminflowr)
   }
 
@@ -387,14 +387,14 @@ dashboard.btnTrade = function () {
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-    var sumoutflowr = dashboard.bm(sumoutflow,"outflow")
+    var sumoutflowr = dashboard.bm(sumoutflow, "outflow")
     dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
   }
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
 }
 
-dashboard.btnBack = function(){
+dashboard.btnBack = function () {
   dashboard.activeEntityDetail.noteHeaderModal("")
   $("#groupbuttondetail").show()
   $("#tradetabs").hide()
@@ -541,7 +541,7 @@ widget.generateCharts = function () {
   widget.generateChart4()
   widget.generateChart5()
   widget.generateChart6()
-  
+
 }
 
 widget.loadData = function () {
