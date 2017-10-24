@@ -2,6 +2,8 @@
   viewModel.title('Counter Party View')
 </script>
 <!-- Content -->
+<script src="{{ NoCacheUrl "/main/static/3rdparty/filesaver/Blob.js" }}"></script>
+<script src="{{ NoCacheUrl "/main/static/3rdparty/filesaver/FileSaver.min.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v3.min.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-jetpack.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/networkdiagram.css" }}" />
@@ -94,7 +96,7 @@
               <div align="left" class="col-lg-6 col-md-6 detail-title" data-bind="text: counterparty.activeName"></div>
               <div align="right" class="col-lg-6 col-md-6">
                 <div align="center" id="exporttoexcel">
-                  <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel">
+                  <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel" data-bind="click: network.loadDetailCSV">
                 </div>
               </div>
             </div>

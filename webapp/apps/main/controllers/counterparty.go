@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -185,12 +186,13 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 			keys = append(keys, fmt.Sprintf("%v", k))
 		}
 
+		sort.Strings(keys)
 		writer.Write(keys)
 
 		for _, v := range results {
 			values := []string{}
-			for _, v := range v {
-				values = append(values, fmt.Sprintf("%v", v))
+			for _, k := range keys {
+				values = append(values, fmt.Sprintf("%v", v.Get(k)))
 			}
 
 			writer.Write(values)

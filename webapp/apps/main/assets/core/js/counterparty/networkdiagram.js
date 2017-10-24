@@ -147,6 +147,30 @@ network.loadDetail = function (name) {
   })
 }
 
+network.loadDetailCSV = function () {
+  console.log("warsawa")
+  // Manual XHR based on stackoverflow jquery does not support responseType params
+  var data = {
+    entityName: counterparty.activeEnityName(),
+    counterpartyName: counterparty.activeName()
+  }
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/main/counterparty/getdetailnetworkdiagramcsv", true);
+  xhr.setRequestHeader("Content-type", "application/json");
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      var blob = new Blob([xhr.response], {
+        type: "octet/stream"
+      });
+      var fileName = "download.csv";
+      saveAs(blob, fileName);
+    }
+  }
+  xhr.responseType = "arraybuffer";
+  xhr.send(JSON.stringify(data));
+
+}
+
 network.processData = function (data) {
   var rawLinks = []
   var parent = _.keys(data)[0]
@@ -339,7 +363,7 @@ network.generate = function () {
     .enter().append("svg:text")
     .attr("dx", 85)
     .attr("dy", -3)
-    .attr("class", function(d){
+    .attr("class", function (d) {
       return (d.target.isFade || d.source.isFade) ? " fade" : ""
     })
     .append("textPath")
@@ -372,7 +396,7 @@ network.generate = function () {
   var text = svg.append("svg:g").selectAll("g")
     .data(force.nodes())
     .enter().append("svg:g")
-    .attr("class", function(d){
+    .attr("class", function (d) {
       return d.isFade ? "fade" : ""
     })
 
