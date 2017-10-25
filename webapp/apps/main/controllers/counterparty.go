@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -162,7 +161,11 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT * 
+	keys := []string{"cust_long_name", "cpty_long_name", "cust_role", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount"}
+	selectKeys := []string{"cust_long_name", "cpty_long_name", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount"}
+
+	sql := `SELECT ` + strings.Join(selectKeys, ", ") + `,
+	` + c.customerRoleClause() + ` AS cust_role
   FROM ` + c.tableName() + ` 
 	WHERE cust_long_name='` + payload.EntityName + `' AND cpty_long_name='` + payload.CounterpartyName + `' AND transaction_year=2016 
 	AND ` + c.commonWhereClause()
@@ -181,12 +184,6 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	writer := csv.NewWriter(buffer)
 
 	if len(results) > 0 {
-		keys := []string{}
-		for k, _ := range results[0] {
-			keys = append(keys, fmt.Sprintf("%v", k))
-		}
-
-		sort.Strings(keys)
 		writer.Write(keys)
 
 		for _, v := range results {
