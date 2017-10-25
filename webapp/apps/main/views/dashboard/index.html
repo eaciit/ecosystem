@@ -265,7 +265,7 @@
                         <div style="display: inline-block;width: 400px;">
                         <table id="table-flows-in" width="100%" style="margin-left: auto;margin-right: auto;">
                            <tr style="cursor: pointer;" data-bind="foreach:dashboard.activeEntityDetail.dataInFlow">
-                              <td class="some" data-placement="right" data-toggle="tooltip" data-bind="attr: {title: text+' $ '+tooltip }, style: { width: value + '%',background:color}" align="center" ><span data-bind="text:text"></span></td>
+                              <td class="some" data-placement="right" data-toggle="tooltip" data-bind="attr: {title: 'Bank : '+text+'<br>Flow Amount : $ '+tooltip }, style: { width: value + '%',background:color}" align="center" ><span data-bind="text:text"></span></td>
                            </tr>
                         </table>
                         </div>
@@ -279,7 +279,7 @@
                         <div style="display: inline-block;width: 400px;">              
                         <table id="table-flows-out" width="100%" style="margin-left: auto;margin-right: auto;">
                            <tr style="cursor: pointer;" data-bind="foreach:dashboard.activeEntityDetail.dataOutFlow">
-                              <td class="some" data-bind="attr: {'data-toggle' : 'tooltip', title: text+' $ '+tooltip }, style: { width: value + '%',background:color}"><span data-bind="text:text"></span></td>
+                              <td class="some" data-bind="attr: {'data-toggle' : 'tooltip', title: 'Bank : '+text+'<br>Flow Amount : $ '+tooltip }, style: { width: value + '%',background:color}"><span data-bind="text:text"></span></td>
                            </tr>
                         </table>
                         </div>

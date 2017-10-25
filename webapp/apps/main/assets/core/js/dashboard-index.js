@@ -318,7 +318,8 @@ dashboard.btnCash = function () {
   $("#tradetabs").show()
   $(".some").kendoTooltip({
         animation: false,
-        width: 180
+        width: 180,
+        position: "top"
       })
 }
 
@@ -409,7 +410,8 @@ dashboard.btnTrade = function () {
   $("#tradetabs").show()
   $(".some").kendoTooltip({
         animation: false,
-        width: 180
+        width: 180,
+        position: "top"
       });
 }
 
