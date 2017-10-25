@@ -1,5 +1,9 @@
 .fade {
-  opacity: 0.4;
+  opacity: 0.2;
+}
+
+.hide {
+  display: none;
 }
 
 path.link {
@@ -31,44 +35,29 @@ circle:hover {
   cursor: pointer;
 }
 
-circle.ntb {
-  fill: #7cb7eb;
-  stroke: #7cb7eb;
-  stroke-width: 1px;
+circle.buyer {
+  fill: none;
+  stroke-width: 3;
+  stroke: #000f46;
 }
 
-circle.ntb.fade {
-  fill: #e7f1fa;
-  stroke: #e7f1fa;
-  opacity: 1;
+circle.supplier {
+  fill: #000f46;
+}
+
+circle.ntb {
+  fill: #009fda;
+  stroke-width: 1px;
 }
 
 circle.etb {
-  fill: #bfbfbf;
-  stroke: #bfbfbf;
+  fill: #69be28;
   stroke-width: 1px;
-}
-
-circle.etb.fade {
-  fill: #f2f2f2;
-  stroke: #f2f2f2;
-  opacity: 1;
 }
 
 circle.center {
-  fill: #6b7f9b;
-  stroke: #6b7f9b;
+  fill: #6d6e71;
   stroke-width: 1px;
-}
-
-circle.center.fade {
-  fill: #e2e5eb;
-  stroke: #e2e5eb;
-  opacity: 1;
-}
-
-.hide {
-  display: none;
 }
 
 text {
@@ -127,192 +116,7 @@ text.detail-button:hover {
   border-color: #22313F;
 }
 
-.main-node {
-  width: 600px;
-  height: 600px;
-  display: table;
-}
-
-.main-node-one {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.main-node-two {
-  padding: 20px;
-  z-index: 1;
-  position: relative;
-  border-radius: 10px;
-  background-color: #00bcd4;
-  width: 130px
-}
-
-.main-node-two {
-  color: #fff;
-}
-
-.titletext {
-  width: 250px;
-  height: 50px;
-  line-height: 50px;
-  text-align: center;
-  border: 2px dashed #b5b0ac;
-  border-radius: 50%;
-  height: 80px;
-  background-color: #f8f8f8;
+.legend {
   position: absolute;
-  bottom: 170px;
-  left: 40px;
-  transform: rotate(-40deg);
-}
-
-.titletextafter {
-  width: 190px;
-  border-bottom: 3px solid #72eaf0;
-  left: 30px;
-  position: absolute;
-  height: 3px;
-  bottom: 5px;
-}
-
-.linkdashed {
-  width: 190px;
-  border-bottom: 5px dashed #54787a;
-  left: 30px;
-  position: absolute;
-  height: 5px;
-  bottom: -3px;
-}
-
-.newtitle {
-  height: 100px;
-  color: #fff;
-  bottom: 76px;
-  left: 20px;
-  display: table;
-  text-align: center;
-  z-index: 1;
-  position: absolute;
-  border-radius: 50%;
-  background-color: #4b7082;
-  width: 100px;
-}
-
-.afternewtitle {
-  padding: 12px 12px 3px 12px;
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.iconright {
-  height: 100px;
-  font-size: 17px;
-  color: red;
-  /*#72eaf0*/
-  bottom: 178px;
-  left: 251px;
-  transform: rotate(-40deg);
-  z-index: 1200;
-  position: absolute;
-}
-
-.titletext {
-  width: 250px;
-  height: 50px;
-  line-height: 50px;
-  text-align: center;
-  border: 2px dashed #b5b0ac;
-  border-radius: 50%;
-  height: 80px;
-  background-color: #f8f8f8;
-  position: absolute;
-  bottom: 170px;
-  left: 40px;
-  transform: rotate(-40deg);
-}
-
-.titletextafter {
-  width: 190px;
-  border-bottom: 3px solid #72eaf0;
-  left: 30px;
-  position: absolute;
-  height: 3px;
-  bottom: 5px;
-}
-
-.linkdashed {
-  width: 190px;
-  border-bottom: 5px dashed #54787a;
-  left: 30px;
-  position: absolute;
-  height: 5px;
-  bottom: -3px;
-}
-
-.newtitle {
-  height: 100px;
-  color: #fff;
-  bottom: 76px;
-  left: 20px;
-  display: table;
-  text-align: center;
-  z-index: 1;
-  position: absolute;
-  border-radius: 50%;
-  background-color: #4b7082;
-  width: 100px;
-}
-
-.afternewtitle {
-  padding: 12px 12px 3px 12px;
-  display: table-cell;
-  vertical-align: middle;
-}
-
-#legendgraph {
-  position: fixed;
-  z-index: -1;
-  right: -10px;
-  display: table;
-  text-align: center;
-  color: #fff;
-  border-radius: 2px;
-  background-color: #436780;
-  bottom: 10px;
-  width: 410px;
-  height: 73px;
-  margin-right: 22px;
-}
-
-#exporttoexcel {
-  cursor: pointer;
-  color: #fff;
-  padding: 3px;
-  margin-bottom: 7px;
-  background-color: #828282;
-  max-width: 40px;
-}
-
-#exporttoexcel:hover {
-  background-color: #3ba73f;
-}
-
-#exporttoexcel:active {
-  background-color: #1791a5;
-  color: #000;
-}
-
-.detail-title {
-  padding-left: 6px;
-  font-size: 20px;
-  color: #fff;
-}
-
-.buttonclose {
-  background-color: #373949;
-  color: #fff;
-  border-radius: 0px;
-  border: 0px;
-  padding-bottom: 5px;
-  padding-top: 10px;
+  top: 100px;
 }

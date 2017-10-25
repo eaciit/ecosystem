@@ -50,6 +50,10 @@ func (c *BaseController) customerRoleClause() string {
 	ELSE customer_role END)`
 }
 
+func (c *BaseController) eitherBuyerSupplierClause() string {
+	return c.customerRoleClause() + ` IN ("BUYER","PAYEE")`
+}
+
 func (b *BaseController) IsLoggedIn(k *knot.WebContext) bool {
 	return k.Session(SESSION_KEY, "") != ""
 }
