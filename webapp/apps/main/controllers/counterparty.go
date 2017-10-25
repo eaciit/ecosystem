@@ -130,12 +130,12 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT cpty_long_name, LEFT(counterparty_bank, 4) AS cpty_bank, 
+	sql := `SELECT cpty_long_name, LEFT(customer_bank, 4) AS cust_bank, LEFT(counterparty_bank, 4) AS cpty_bank, 
   product_category, SUM(amount) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + ` 
 	WHERE cust_long_name='` + payload.EntityName + `' AND cpty_long_name='` + payload.CounterpartyName + `' AND transaction_year=2016 
 	AND ` + c.commonWhereClause() + `
-  GROUP BY cpty_long_name, cpty_bank, product_category`
+  GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)

@@ -103,7 +103,8 @@
             <table class="table" style="color:  #fff; background-color:  #828282">
               <thead>
                 <tr>
-                  <th>Bank</th>
+                  <th>Customer Bank</th>
+                  <th>Counterparty Bank</th>
                   <th>Product</th>
                   <th>Flow</th>
                   <th>No. of Transactions</th>
@@ -111,6 +112,7 @@
               </thead>
               <tbody data-bind="foreach: counterparty.detail">
                 <tr>
+                  <td data-bind="text: cust_bank"></td>
                   <td data-bind="text: cpty_bank"></td>
                   <td data-bind="text: product_category"></td>
                   <td data-bind='text: kendo.toString(total / 1000000, "n2") + "M"' align="right"></td>
