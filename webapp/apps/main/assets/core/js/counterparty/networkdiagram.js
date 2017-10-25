@@ -31,15 +31,17 @@ filter.group = [{
 }]
 filter.selectedGroup = ko.observable("")
 
-filter.trade = [{
-  "value": "Trade",
-  "text": "Trade"
+filter.productCategories = [{
+  "value": "",
+  "text": "All"
 }, {
   "value": "Cash",
   "text": "Cash"
+}, {
+  "value": "Trade",
+  "text": "Trade"
 }]
-filter.selectedTrade = ko.observable("Trade")
-
+filter.selectedProductCategory = ko.observable("")
 
 filter.limit = [{
   "value": 5,
@@ -84,7 +86,7 @@ filter.selectedFilters = ko.computed(function () {
     entityName: counterparty.activeEnityName(),
     role: filter.selectedRole(),
     group: filter.selectedGroup(),
-    productCategory: filter.selectedTrade(),  
+    productCategory: filter.selectedProductCategory(),
     limit: parseInt(filter.selectedLimit()),
     flowAbove: parseInt(filter.selectedFlow()),
     datetype: dateType,
@@ -251,6 +253,7 @@ network.processData = function (data) {
         coi: e.cpty_coi,
         opportunity: e.cpty_bank != "SCBL" ? true : false,
         class: e.is_ntb == "Y" ? "ntb" : "etb",
+        role: e.cust_role,
         isFade: false
       }
     })
@@ -385,15 +388,29 @@ network.generate = function () {
       return d.text
     })
 
+  var rb = 20,
+    r = 15
+
   var circle = svg.append("svg:g").selectAll("g")
     .data(force.nodes())
-    .enter().append("svg:g")
+    .enter()
+    .append("svg:g")
+    .attr("class", function (d) {
+      var c = "wrapper " + d.class
+      if (d.role == "BUYER") {
+        c += " buyer"
+      } else if (d.role == "PAYEE") {
+        c += " supplier"
+      }
+      
+      return c
+    })
     .call(force.drag)
 
   circle.append("svg:circle")
     .on("click", expand)
     .attr("r", function (d) {
-      return d.class == "center" ? 20 : 15;
+      return d.class == "center" ? rb : r;
     })
     .attr("class", function (d) {
       var c = d.class
@@ -402,6 +419,28 @@ network.generate = function () {
     })
     .attr("filter", function (d) {
       return d.opportunity && !d.isFade ? "url(#dropshadow)" : ""
+    })
+
+  circle.append("svg:circle")
+    .on("click", expand)
+    .attr("r", function (d) {
+      return d.class == "center" ? rb - 1 : r - 1;
+    })
+    .attr("class", function (d) {
+      var c = d.role == "BUYER" ? "buyer" : "hide"
+      c += d.isFade ? " fade" : ""
+      return c
+    })
+
+  circle.append("svg:circle")
+    .on("click", expand)
+    .attr("r", function (d) {
+      return d.class == "center" ? rb - 12 : r - 12;
+    })
+    .attr("class", function (d) {
+      var c = d.role == "PAYEE" ? "supplier" : "hide"
+      c += d.isFade ? " fade" : ""
+      return c
     })
 
   var text = svg.append("svg:g").selectAll("g")
@@ -516,6 +555,15 @@ network.generate = function () {
     }
   }
 
+}
+
+network.highlight = function (c) {
+  d3.select("#graph").selectAll(".wrapper").classed("fade", true)
+  d3.select("#graph").selectAll("g." + c).classed("fade", false)
+}
+
+network.unhighlight = function () {
+  d3.select("#graph").selectAll(".wrapper").classed("fade", false)
 }
 
 $(window).load(function () {

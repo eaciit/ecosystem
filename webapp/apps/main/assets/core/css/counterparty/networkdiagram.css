@@ -1,5 +1,9 @@
 .fade {
-  opacity: 0.4;
+  opacity: 0.2;
+}
+
+.hide {
+  display: none;
 }
 
 path.link {
@@ -31,44 +35,29 @@ circle:hover {
   cursor: pointer;
 }
 
-circle.ntb {
-  fill: #7cb7eb;
-  stroke: #7cb7eb;
-  stroke-width: 1px;
+circle.buyer {
+  fill: none;
+  stroke-width: 3;
+  stroke: #000f46;
 }
 
-circle.ntb.fade {
-  fill: #e7f1fa;
-  stroke: #e7f1fa;
-  opacity: 1;
+circle.supplier {
+  fill: #000f46;
+}
+
+circle.ntb {
+  fill: #009fda;
+  stroke-width: 1px;
 }
 
 circle.etb {
-  fill: #bfbfbf;
-  stroke: #bfbfbf;
+  fill: #69be28;
   stroke-width: 1px;
-}
-
-circle.etb.fade {
-  fill: #f2f2f2;
-  stroke: #f2f2f2;
-  opacity: 1;
 }
 
 circle.center {
-  fill: #6b7f9b;
-  stroke: #6b7f9b;
+  fill: #6d6e71;
   stroke-width: 1px;
-}
-
-circle.center.fade {
-  fill: #e2e5eb;
-  stroke: #e2e5eb;
-  opacity: 1;
-}
-
-.hide {
-  display: none;
 }
 
 text {
@@ -125,6 +114,11 @@ text.detail-button:hover {
 
 #filter .k-picker-wrap.k-state-default>.k-select {
   border-color: #22313F;
+}
+
+.legend {
+  position: absolute;
+  top: 100px;
 }
 
 .main-node {

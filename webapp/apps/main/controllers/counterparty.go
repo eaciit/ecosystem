@@ -20,6 +20,7 @@ type CounterPartyPayload struct {
 	EntityName       string
 	CounterpartyName string
 	Role             string
+	ProductCategory  string
 	Limit            int
 	Group            string
 	FlowAbove        int
@@ -65,7 +66,8 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
   ` + c.isNTBClause() + ` AS is_ntb
   FROM ` + c.tableName() + `
   WHERE cust_long_name=  "` + payload.EntityName + `"
-  AND ` + c.commonWhereClause()
+	AND ` + c.commonWhereClause() + `
+	AND ` + c.eitherBuyerSupplierClause()
 
 	// Filters for YearMonth
 	if payload.YearMonth > 0 {
@@ -90,6 +92,13 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		sql += " AND " + c.isNTBClause() + " = 'Y'"
 	} else if strings.ToUpper(payload.Group) == "ETB" {
 		sql += " AND " + c.isNTBClause() + " = 'N'"
+	}
+
+	// Filters for Cast/Trade
+	if strings.ToUpper(payload.ProductCategory) == "CASH" {
+		sql += " AND product_category = 'Cash'"
+	} else if strings.ToUpper(payload.ProductCategory) == "TRADE" {
+		sql += " AND product_category = 'Trade'"
 	}
 
 	sql += " GROUP BY cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank, is_ntb "
@@ -249,6 +258,13 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
 		sql += " AND " + c.isNTBClause() + " = 'N'"
 	} else {
 		sql += " AND " + c.isNTBClause() + " <> 'NA' "
+	}
+
+	// Filters for Cast/Trade
+	if strings.ToUpper(payload.ProductCategory) == "CASH" {
+		sql += " AND product_category = 'Cash'"
+	} else if strings.ToUpper(payload.ProductCategory) == "TRADE" {
+		sql += " AND product_category = 'Trade'"
 	}
 
 	sql += " GROUP BY cpty_coi, cpty_long_name, cust_role, is_ntb "
