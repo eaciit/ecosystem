@@ -204,11 +204,12 @@ dashboard.getEntityDetail = function (entityName) {
     var product = _(data.product)
       .groupBy("product_category")
       .value()
-
+    console.log(dashboard.activeEntities().name)
     dashboard.activeEntity({
       name: entityName,
       bank: bank,
-      product: product
+      product: product,
+      country: dashboard.activeEntities().name
     })
 
     $("#mapDetailModal").modal("show")
@@ -268,7 +269,8 @@ dashboard.btnCash = function () {
       tempdatain.push({
         text: v.bank,
         value: Math.round((v.value / suminflow) * 100),
-        color: colorval[i]
+        color: colorval[i],
+        tooltip: dashboard.bm(v.value, "")
       });
     });
     var sumtin = _.sumBy(tempdatain, 'value')
@@ -276,9 +278,12 @@ dashboard.btnCash = function () {
       tempdatain.push({
         text: "Other",
         value: (100 - sumtin),
-        color: colorval[3]
+        color: colorval[3],
+        tooltip: dashboard.bm(suminflow-summaxthreein, "")
       });
     }
+     console.log(tempdatain)
+     console.log(summaxthreein)
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
     var suminflowr = dashboard.bm(suminflow, "inflow")
     dashboard.activeEntityDetail.sumInFlow(suminflowr)
@@ -292,7 +297,8 @@ dashboard.btnCash = function () {
       tempdataout.push({
         text: v.bank,
         value: Math.round((v.value / sumoutflow) * 100),
-        color: colorval[i]
+        color: colorval[i],
+        tooltip: dashboard.bm(v.value, "")
       });
     });
     var sumtout = _.sumBy(tempdataout, 'value')
@@ -300,7 +306,8 @@ dashboard.btnCash = function () {
       tempdataout.push({
         text: "Other",
         value: (100 - sumtout),
-        color: colorval[3]
+        color: colorval[3],
+        tooltip: dashboard.bm(sumoutflow-summaxthreeout, "")
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
@@ -309,6 +316,10 @@ dashboard.btnCash = function () {
   }
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
+  $(".some").kendoTooltip({
+        animation: false,
+        width: 180
+      })
 }
 
 dashboard.btnTrade = function () {
@@ -351,7 +362,8 @@ dashboard.btnTrade = function () {
       tempdatain.push({
         text: v.bank,
         value: Math.round((v.value / suminflow) * 100),
-        color: colorval[i]
+        color: colorval[i],
+        tooltip: dashboard.bm(v.value, "")
       });
     });
     var sumtin = _.sumBy(tempdatain, 'value')
@@ -359,7 +371,8 @@ dashboard.btnTrade = function () {
       tempdatain.push({
         text: "Other",
         value: (100 - sumtin),
-        color: colorval[3]
+        color: colorval[3],
+        tooltip: dashboard.bm(suminflow-summaxthreein, "")
       });
     }
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
@@ -375,7 +388,8 @@ dashboard.btnTrade = function () {
       tempdataout.push({
         text: v.bank,
         value: Math.round((v.value / sumoutflow) * 100),
-        color: colorval[i]
+        color: colorval[i],
+        tooltip: dashboard.bm(v.value, "")
       });
     });
     var sumtout = _.sumBy(tempdataout, 'value')
@@ -383,7 +397,8 @@ dashboard.btnTrade = function () {
       tempdataout.push({
         text: "Other",
         value: (100 - sumtout),
-        color: colorval[3]
+        color: colorval[3],
+        tooltip: dashboard.bm(sumoutflow-summaxthreeout, "")
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
@@ -392,6 +407,10 @@ dashboard.btnTrade = function () {
   }
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
+  $(".some").kendoTooltip({
+        animation: false,
+        width: 180
+      });
 }
 
 dashboard.btnBack = function () {
