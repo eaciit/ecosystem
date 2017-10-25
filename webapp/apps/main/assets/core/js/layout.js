@@ -189,19 +189,15 @@ viewModel.getNavigationMenu = function () {
   },{
     Icon: "sitemap",
     Title: "Counter Party View",
-    Url: "/main/counterparty/index"
+    Url: ""
   },{
     Icon: "random",
     Title: "Missed Flow Analysis",
-    Url: "/main/missedflow/index"
+    Url: ""
   },{
     Icon: "cog",
     Title: "Recommend Engine",
-    Url: "/main/recommendengine/index"
-  },{
-    Icon: "database",
-    Title: "Master Data",
-    Url: "/main/access/master"
+    Url: ""
   }])
 }
 
