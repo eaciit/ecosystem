@@ -118,31 +118,7 @@ text.detail-button:hover {
 
 .legend {
   position: absolute;
-  top: 100px;
-}
-
-.main-node {
-  width: 600px;
-  height: 600px;
-  display: table;
-}
-
-.main-node-one {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.main-node-two {
-  padding: 20px;
-  z-index: 1;
-  position: relative;
-  border-radius: 10px;
-  background-color: #00bcd4;
-  width: 130px
-}
-
-.main-node-two {
-  color: #fff;
+  top: 120px;
 }
 
 .titletext {
@@ -263,21 +239,6 @@ text.detail-button:hover {
   vertical-align: middle;
 }
 
-#legendgraph {
-  position: fixed;
-  z-index: -1;
-  right: -10px;
-  display: table;
-  text-align: center;
-  color: #fff;
-  border-radius: 2px;
-  background-color: #436780;
-  bottom: 10px;
-  width: 410px;
-  height: 73px;
-  margin-right: 22px;
-}
-
 #exporttoexcel {
   cursor: pointer;
   color: #fff;
@@ -309,4 +270,10 @@ text.detail-button:hover {
   border: 0px;
   padding-bottom: 5px;
   padding-top: 10px;
+}
+
+.breadcrumb-container {
+  font-size: 12px; 
+  padding-left: 8px; 
+  padding-bottom: 8px;
 }
