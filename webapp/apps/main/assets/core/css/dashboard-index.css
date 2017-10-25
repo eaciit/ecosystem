@@ -204,6 +204,7 @@ html {
 
 #mapDetailModal .btn.btn-flat .fa {
   float: right;
+  display: inline-block;
   padding-top: 5px;
 }
 
@@ -253,14 +254,22 @@ html {
   vertical-align: middle;
   padding-top: 8px;
   margin-bottom: 5px;
-  position: initial;
   color: #ffffff;
   background: #4f5f79;
 }
 
+.box-product label {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.modal-title{
+  font-size: 17px;
+}
+
 .texthead {
   padding-top: 15px;
-  font-size: 22px;
+  font-size: 17px;
 }
 
 .fa-in {
