@@ -1,14 +1,14 @@
 var missedflow = {}
 missedflow.data = ko.observableArray([])
 
-missedflow.loadGraphData = function () {
+missedflow.loadGraphData = function() {
   viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", {
     limit: 20
-  }, function (data) {
+  }, function(data) {
     var links = []
     var nodes = []
 
-    _.each(data, function (e) {
+    _.each(data, function(e) {
       var total = e.total
       var source = _.find(nodes, {
         name: e.cust_long_name,
@@ -66,7 +66,7 @@ missedflow.loadGraphData = function () {
   })
 }
 
-missedflow.generateGraph = function (data) {
+missedflow.generateGraph = function(data) {
   var margin = {
       top: 20,
       right: 20,
@@ -107,23 +107,21 @@ missedflow.generateGraph = function (data) {
     .enter().append("path")
     .attr("class", "link")
     .attr("d", path)
-    .style("stroke-width", function (d) {
+    .style("stroke-width", function(d) {
       return Math.max(1, d.dy)
     })
-    .sort(function (a, b) {
+    .sort(function(a, b) {
       return b.dy - a.dy
     })
 
-    link.append("title")
-    .text(function (d) {
-      console.log(d)
-        var titleText = "Customer Name : " + d.source.name + "\n" +
-        "Customer Bank : "+ d.source.bank + "\n" +
+  link.append("title")
+    .text(function(d) {
+      var titleText = "Customer Name : " + d.source.name + "\n" +
+        "Customer Bank : " + d.source.bank + "\n" +
         "Counterparty Name : " + d.target.name + "\n" +
-        "Counterparty Bank : " + d.target.bank+ "\n" +
-        "Total Flow : $ " + currencynum(d.value)+ "\n" 
-        // return d.source.name + " → " + d.target.name + "\n" + format(d.value);
-        return titleText
+        "Counterparty Bank : " + d.target.bank + "\n" +
+        "Total Flow : $ " + currencynum(d.value) + "\n"
+      return titleText
     });
 
   var pathText = svg.selectAll(".pathText")
@@ -132,14 +130,14 @@ missedflow.generateGraph = function (data) {
     .attr("dx", width - 200)
     .attr("dy", 2)
     .attr("style", "fill:#fff")
-    .style("font-size", function (d) {
+    .style("font-size", function(d) {
       return Math.sqrt(d.dy * 2)
     })
     .append("textPath")
-    .attr("xlink:href", function (d, i) {
+    .attr("xlink:href", function(d, i) {
       return "#linkId_" + i
     })
-    .text(function (d, i) {
+    .text(function(d, i) {
       return d.target.bank
     })
 
@@ -149,19 +147,19 @@ missedflow.generateGraph = function (data) {
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .attr("transform", function (d) {
+    .attr("transform", function(d) {
       return "translate(" + d.x + "," + d.y + ")"
     })
 
   node.append("rect")
-    .attr("height", function (d) {
+    .attr("height", function(d) {
       return d.dy
     })
     .attr("width", sankey.nodeWidth())
-    .style("fill", function (d) {
+    .style("fill", function(d) {
       return d.color = color(d.name.replace(/ .*/, ""))
     })
-    .on("mouseover", function (d) {
+    .on("mouseover", function(d) {
       highlightLink(d.node)
     })
     .on("mouseout", unhighlightLink)
@@ -169,23 +167,23 @@ missedflow.generateGraph = function (data) {
 
   node.append("text")
     .attr("x", -6)
-    .attr("y", function (d) {
+    .attr("y", function(d) {
       return d.dy / 2
     })
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    .text(function (d) {
+    .text(function(d) {
       return d.name
     })
-    .filter(function (d) {
+    .filter(function(d) {
       return d.x < width / 2
     })
     .attr("x", 6 + sankey.nodeWidth())
     .attr("text-anchor", "start")
 
   function highlightLink(n) {
-    d3.selectAll(".link").each(function () {
+    d3.selectAll(".link").each(function() {
       link = d3.select(this)
       if (link.data()[0].source.node == n || link.data()[0].target.node == n) {
         link.attr("class", "link selected")
@@ -194,12 +192,12 @@ missedflow.generateGraph = function (data) {
   }
 
   function unhighlightLink() {
-    d3.selectAll(".link.selected").each(function(){
+    d3.selectAll(".link.selected").each(function() {
       d3.select(this).attr("class", "link")
     })
   }
 }
 
-$(window).load(function () {
+$(window).load(function() {
   missedflow.loadGraphData()
 })
