@@ -353,3 +353,13 @@ div.cssnowrap:hover{
     text-decoration: underline;
     font-weight: bold;
 }
+
+.close {
+    color: #fff; 
+    opacity: 0.8;
+}
+
+.close:hover {
+    color: #fff; 
+     opacity: 2;
+}
