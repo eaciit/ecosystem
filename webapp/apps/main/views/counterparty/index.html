@@ -4,6 +4,7 @@
 <!-- Content -->
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v4.min.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-selection-multi.v1.js" }}"></script>
+<script src="{{ NoCacheUrl "/main/static/3rdparty/jspdf/jspdf.min.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty/index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/index.css" }}" />
 <script id="listdetailntb" type="text/html">
@@ -14,6 +15,7 @@
   <li>Average Transaction Value :<br/> Monthly : $<span data-bind="text:monthly"></span>M<br/>Yearly : $<span data-bind="text:yearly"></span>M</li>
   <li><span data-bind="text:recieved"></span></li>
 </script>
+<div id="global">
 <div class="row" id="filter" data-bind="with:counterpartymain.filterRecord">
   <div class="col-lg-12">
     <div class="menu-counterpartymain">
@@ -48,20 +50,14 @@
       <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
     </div>
     <div class="menu-counterpartymain">
-      <img width="20px"src="/main/static/3rdparty/img/pdf.png" alt="pdf">
+      <img id="pdfButton" width="20px" src="/main/static/3rdparty/img/pdf.png" onclick="counterpartymain.getPDF('#global')" alt="pdf">
     </div>
   </div>
 </div>
-
-<div id="maps" class="row">
+<div class="row" id="maps" >
   <!-- <div class="panel ez no-padding hardcore">
     <div class="panel-body no-padding"> -->
-      <div id="graph" class="graph"></div>
-      <div id="bubble" class="graph" style="display:none">
-        <svg></svg>
-      </div>
-
- 
+      <!-- <canvas id="canvasY"></canvas> -->
       <div class="row" style="width: 130px">
       <div class="col-lg-6 col-md-6 col-sm-6">
         <div class="box lightblue">
@@ -74,9 +70,13 @@
         </div>
         </div>
       </div>
-</div>
+      <div id="graph" class="graph"></div>
+      <div id="bubble" class="graph" style="display:none">
+        <svg></svg>
+      </div>
 
-<div id="counterpartyModalNTB" data-toggle="tooltip" data-placement="left" style="opacity:0">
+ 
+<div id="counterpartyModalNTB" data-toggle="tooltip" data-placement="left" style="opacity:0;display:none">
   <div class="row header align-center">
     <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
     <h4 data-bind="text:counterpartymain.headtext"></h4>
@@ -87,7 +87,7 @@
   </ul>
   </div>
 </div>
-<div id="counterpartyModalETB" data-toggle="tooltip" data-placement="left" style="opacity:0">
+<div id="counterpartyModalETB" data-toggle="tooltip" data-placement="left" style="opacity:0;display:none">
   <div class="row header align-center">
     <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
     <h4 data-bind="text:counterpartymain.headtext"></h4>
@@ -110,6 +110,9 @@
     </ul>
   </div>
 </div>
+</div>
+</div>
+
 <div id="datadetailgraph" class="modal fade"  role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
