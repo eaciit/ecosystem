@@ -32,13 +32,16 @@ filter.group = [{
 filter.selectedGroup = ko.observable("")
 
 filter.trade = [{
+  "value": "",
+  "text": "All"
+},{
   "value": "Trade",
   "text": "Trade"
 }, {
   "value": "Cash",
   "text": "Cash"
 }]
-filter.selectedTrade = ko.observable("Trade")
+filter.selectedTrade = ko.observable("")
 
 
 filter.limit = [{
