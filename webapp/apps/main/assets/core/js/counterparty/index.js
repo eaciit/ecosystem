@@ -166,7 +166,7 @@ counterpartymain.loadGraphData = function() {
   })
 }
 
-var div = d3.select("body").append("div")
+var div = d3.select(".layout-content").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
