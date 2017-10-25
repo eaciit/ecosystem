@@ -77,6 +77,10 @@ missedflow.generateGraph = function(data) {
     height = $("#missedflowchart").height() - margin.top - margin.bottom
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
+  /* Initialize tooltip */
+  var tipLinks = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10,0]);
 
   // append the svg canvas to the page
   var svg = d3.select("#missedflowchart").append("svg")
@@ -84,6 +88,7 @@ missedflow.generateGraph = function(data) {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .call(tipLinks)
 
   // Set the sankey diagram properties
   var sankey = d3sankey()
@@ -113,16 +118,19 @@ missedflow.generateGraph = function(data) {
     .sort(function(a, b) {
       return b.dy - a.dy
     })
+    .on('mouseover', tipLinks.show)
+    .on('mouseout', tipLinks.hide)
 
-  link.append("title")
-    .text(function(d) {
-      var titleText = "Customer Name : " + d.source.name + "\n" +
-        "Customer Bank : " + d.source.bank + "\n" +
-        "Counterparty Name : " + d.target.name + "\n" +
-        "Counterparty Bank : " + d.target.bank + "\n" +
-        "Total Flow : $ " + currencynum(d.value) + "\n"
-      return titleText
-    });
+  // link.append("title")
+  //   .attr("style", "fill:#fff")
+  //   .text(function(d) {
+  //     var titleText = "Customer Name : " + d.source.name + "\n" +
+  //       "Customer Bank : " + d.source.bank + "\n" +
+  //       "Counterparty Name : " + d.target.name + "\n" +
+  //       "Counterparty Bank : " + d.target.bank + "\n" +
+  //       "Total Flow : $ " + currencynum(d.value) + "\n"
+  //     return titleText
+  //   });
 
   var pathText = svg.selectAll(".pathText")
     .data(graph.links)
@@ -196,7 +204,41 @@ missedflow.generateGraph = function(data) {
       d3.select(this).attr("class", "link")
     })
   }
+     // "➡" 
+
+   tipLinks.html(function(d) {
+      var title, candidate;
+        candidate = d.source.name;
+        title = d.target.name;
+        var html =  '<div class="table-wrapper">'+
+            '<table>'+
+                '<tr>'+
+                    '<td class="col-left">Customer Name</td>'+
+                    '<td class="col-left">: '+candidate+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Customer Bank</td>'+
+                    '<td class="col-left">: '+d.source.bank+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Counterparty Name</td>'+
+                    '<td class="col-left">: '+title+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Counterparty Bank</td>'+
+                    '<td class="col-left">: '+d.target.bank+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Total Flow</td>'+
+                    '<td class="col-left">: '+currencynum(d.value)+'</td>'+
+                '</tr>'+
+            '</table>'+
+            '</div>';
+      return html;
+    });
 }
+
+ 
 
 $(window).load(function() {
   missedflow.loadGraphData()
