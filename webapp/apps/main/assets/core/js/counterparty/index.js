@@ -887,26 +887,23 @@ counterpartymain.beforePDFPrinting = function() {
 
     var rect = svg.getBoundingClientRect();
     var img = document.createElement("img");
-    // console.log(svg.outerHTML)
-    // img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1386" height="600"><defs><marker id="arrowhead" viewBox="-0 -5 10 10" refX="43" refY="0" orient="auto" markerWidth="15" markerHeight="15" xoverflow="visible"><path d="M 0,-5 L 10 ,0 L 0,5" fill="#999" style="stroke: none;"></path></marker></defs><line class="link" x1="479.94623750884267" y1="198.47304694761556" x2="741.5752772777871" y2="363.71154282239667"><title>NTB</title></line><line class="link" x1="1028.3068600472202" y1="333.9450784886633" x2="741.5752772777871" y2="363.71154282239667"><title>NTB</title></line><line class="link" x1="957.0088114227174" y1="176.79819160772388" x2="741.5752772777871" y2="363.71154282239667"><title>NTB</title></line><line class="link" x1="440.89593629868176" y1="412.4812300951362" x2="741.5752772777871" y2="363.71154282239667"><title>NTB</title></line><line class="link" x1="510.27508898054595" y1="314.5703871148858" x2="741.5752772777871" y2="363.71154282239667"><title>NTB</title></line><path class="edgepath" fill-opacity="0" stroke-opacity="0" id="edgepath0" d="M 479.94623750884267 198.47304694761556 L 741.5752772777871 363.71154282239667" style="pointer-events: none;"></path><path class="edgepath" fill-opacity="0" stroke-opacity="0" id="edgepath1" d="M 1028.3068600472202 333.9450784886633 L 741.5752772777871 363.71154282239667" style="pointer-events: none;"></path><path class="edgepath" fill-opacity="0" stroke-opacity="0" id="edgepath2" d="M 957.0088114227174 176.79819160772388 L 741.5752772777871 363.71154282239667" style="pointer-events: none;"></path><path class="edgepath" fill-opacity="0" stroke-opacity="0" id="edgepath3" d="M 440.89593629868176 412.4812300951362 L 741.5752772777871 363.71154282239667" style="pointer-events: none;"></path><path class="edgepath" fill-opacity="0" stroke-opacity="0" id="edgepath4" d="M 510.27508898054595 314.5703871148858 L 741.5752772777871 363.71154282239667" style="pointer-events: none;"></path><text class="edgelabel" id="edgelabel0" font-size="10" fill="#aaa" dx="-4" dy="-4" transform="rotate(0)" style="pointer-events: none;"><textPath xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#edgepath0" dy="-3" startOffset="50%" style="text-anchor: middle; pointer-events: none;">NTB</textPath></text><text class="edgelabel" id="edgelabel1" font-size="10" fill="#aaa" dx="-4" dy="-4" transform="rotate(180 889.7421875 356.4453125)" style="pointer-events: none;"><textPath xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#edgepath1" dy="-3" startOffset="50%" style="text-anchor: middle; pointer-events: none;">NTB</textPath></text><text class="edgelabel" id="edgelabel2" font-size="10" fill="#aaa" dx="-4" dy="-4" transform="rotate(180 857.6015625 273.7265625)" style="pointer-events: none;"><textPath xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#edgepath2" dy="-3" startOffset="50%" style="text-anchor: middle; pointer-events: none;">NTB</textPath></text><text class="edgelabel" id="edgelabel3" font-size="10" fill="#aaa" dx="-4" dy="-4" transform="rotate(0)" style="pointer-events: none;"><textPath xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#edgepath3" dy="-3" startOffset="50%" style="text-anchor: middle; pointer-events: none;">NTB</textPath></text><text class="edgelabel" id="edgelabel4" font-size="10" fill="#aaa" dx="-4" dy="-4" transform="rotate(0)" style="pointer-events: none;"><textPath xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#edgepath4" dy="-3" startOffset="50%" style="text-anchor: middle; pointer-events: none;">NTB</textPath></text><g class="node" cx="479.94623750884267" cy="198.47304694761556" transform="translate(479.94623750884267, 198.47304694761556)"><circle r="20" id="0" style="fill: rgb(88, 123, 158);"></circle><title>Harmans</title><text x="22" class="shadow" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Harmans</text><text x="22" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Harmans</text><text x="22" class="shadow" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$3.20 M</text><text x="22" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$3.20 M</text><text class="shadow" x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">AR</text><text x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">AR</text></g><g class="node" cx="1028.3068600472202" cy="333.9450784886633" transform="translate(1028.3068600472202, 333.9450784886633)"><circle r="20" id="1" style="fill: rgb(88, 123, 158);"></circle><title>Harmans</title><text x="22" class="shadow" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Harmans</text><text x="22" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Harmans</text><text x="22" class="shadow" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$2.83 M</text><text x="22" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$2.83 M</text><text class="shadow" x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">CO</text><text x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">CO</text></g><g class="node" cx="957.0088114227174" cy="176.79819160772388" transform="translate(957.0088114227174, 176.79819160772388)"><circle r="20" id="2" style="fill: rgb(88, 123, 158);"></circle><title>Marmaduke</title><text x="22" class="shadow" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Marmaduke</text><text x="22" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Marmaduke</text><text x="22" class="shadow" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$2.40 M</text><text x="22" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$2.40 M</text><text class="shadow" x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">MX</text><text x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">MX</text></g><g class="node" cx="440.89593629868176" cy="412.4812300951362" transform="translate(440.89593629868176, 412.4812300951362)"><circle r="20" id="3" style="fill: rgb(88, 123, 158);"></circle><title>Maplewood</title><text x="22" class="shadow" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Maplewood</text><text x="22" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Maplewood</text><text x="22" class="shadow" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$2.00 M</text><text x="22" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$2.00 M</text><text class="shadow" x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">IT</text><text x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">IT</text></g><g class="node" cx="510.27508898054595" cy="314.5703871148858" transform="translate(510.27508898054595, 314.5703871148858)"><circle r="20" id="4" style="fill: rgb(88, 123, 158);"></circle><title>Quartzsite</title><text x="22" class="shadow" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Quartzsite</text><text x="22" y="-5" dy=".15em" style="fill: black; font-size: 10px;">Quartzsite</text><text x="22" class="shadow" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$1.96 M</text><text x="22" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;">$1.96 M</text><text class="shadow" x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">TV</text><text x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;">TV</text></g><g class="node" cx="741.5752772777871" cy="363.71154282239667" transform="translate(741.5752772777871, 363.71154282239667)"><circle r="70" id="Zanesfield" style="fill: rgb(30, 136, 229);"></circle><title>Zanesfield</title><text x="0" class="" dy=".15em" text-anchor="middle" style="fill: white; font-size: 10px;">Zanesfield</text><text x="0" dy=".15em" text-anchor="middle" style="fill: white; font-size: 10px;">Zanesfield</text><text x="22" class="shadow" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;"></text><text x="22" y="-4" dy="1.35em" text-anchor="left" style="fill: black; font-size: 10px;"></text><text class="shadow" x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;"></text><text x="22" y="-4" dy="2.65em" text-anchor="left" style="fill: black; font-size: 10px;"></text></g></svg>')));
     var canvas = document.createElement('canvas');
-    canvas.width = 1386*2;
-    canvas.height = 600*2;
+    canvas.width = 1386 * 2;
+    canvas.height = 600 * 2;
     var ctx = canvas.getContext('2d');
-    
+
     var imgCanvas = new Image(),
-        serializer = new XMLSerializer(),
-        svgStr = serializer.serializeToString(svg);
+      serializer = new XMLSerializer(),
+      svgStr = serializer.serializeToString(svg);
 
     // You could also use the actual string without base64 encoding it:
-    //img.src = "data:image/svg+xml;utf8," + svgStr;
     imgCanvas.onload = function() {
       ctx.webkitImageSmoothingEnabled = false;
       ctx.mozImageSmoothingEnabled = false;
       ctx.imageSmoothingEnabled = false;
       ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, 1386*2, 600*2);
-      ctx.drawImage(imgCanvas,0,0, 1386*2, 600*2);
+      ctx.fillRect(0, 0, 1386 * 2, 600 * 2);
+      ctx.drawImage(imgCanvas, 0, 0, 1386 * 2, 600 * 2);
 
       var base64Image = canvas.toDataURL("image/jpeg", 0.75);
 
@@ -920,7 +917,7 @@ counterpartymain.beforePDFPrinting = function() {
       def.resolve(true)
     }
 
-    imgCanvas.src = 'data:image/svg+xml;base64,'+btoa(svgStr);
+    imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(svgStr);
   }
 
   return def
@@ -933,7 +930,7 @@ counterpartymain.afterPDFPrinting = function() {
 counterpartymain.getPDF = function(selector) {
   $.when(
     counterpartymain.beforePDFPrinting()
-  ).done(function () {
+  ).done(function() {
     kendo.drawing.drawDOM($(selector))
       .then(function(group) {
         // Render the result as a PDF file
@@ -954,15 +951,11 @@ counterpartymain.getPDF = function(selector) {
           fileName: "Export.pdf"
         });
       })
-      .done(function () {
+      .done(function() {
         counterpartymain.afterPDFPrinting();
       })
-    })
+  })
 }
-
-// counterpartymain.getPDF = function(){
-    
-// }
 
 counterpartymain.init = function() {
   counterpartymain.loadEntity()
