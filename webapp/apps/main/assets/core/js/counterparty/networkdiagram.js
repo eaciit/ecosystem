@@ -31,6 +31,16 @@ filter.group = [{
 }]
 filter.selectedGroup = ko.observable("")
 
+filter.trade = [{
+  "value": "Trade",
+  "text": "Trade"
+}, {
+  "value": "Cash",
+  "text": "Cash"
+}]
+filter.selectedTrade = ko.observable("Trade")
+
+
 filter.limit = [{
   "value": 5,
   "text": "Top 5"
@@ -74,6 +84,7 @@ filter.selectedFilters = ko.computed(function () {
     entityName: counterparty.activeEnityName(),
     role: filter.selectedRole(),
     group: filter.selectedGroup(),
+    productCategory: filter.selectedTrade(),  
     limit: parseInt(filter.selectedLimit()),
     flowAbove: parseInt(filter.selectedFlow()),
     datetype: dateType,
