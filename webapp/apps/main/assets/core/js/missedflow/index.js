@@ -114,6 +114,18 @@ missedflow.generateGraph = function (data) {
       return b.dy - a.dy
     })
 
+    link.append("title")
+    .text(function (d) {
+      console.log(d)
+        var titleText = "Customer Name : " + d.source.name + "\n" +
+        "Customer Bank : "+ d.source.bank + "\n" +
+        "Counterparty Name : " + d.target.name + "\n" +
+        "Counterparty Bank : " + d.target.bank+ "\n" +
+        "Total Flow : $ " + currencynum(d.value)+ "\n" 
+        // return d.source.name + " → " + d.target.name + "\n" + format(d.value);
+        return titleText
+    });
+
   var pathText = svg.selectAll(".pathText")
     .data(graph.links)
     .enter().append("svg:text")
@@ -130,6 +142,7 @@ missedflow.generateGraph = function (data) {
     .text(function (d, i) {
       return d.target.bank
     })
+
 
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
@@ -152,6 +165,7 @@ missedflow.generateGraph = function (data) {
       highlightLink(d.node)
     })
     .on("mouseout", unhighlightLink)
+
 
   node.append("text")
     .attr("x", -6)
