@@ -1,14 +1,14 @@
 var missedflow = {}
 missedflow.data = ko.observableArray([])
 
-missedflow.loadGraphData = function () {
+missedflow.loadGraphData = function() {
   viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", {
     limit: 20
-  }, function (data) {
+  }, function(data) {
     var links = []
     var nodes = []
 
-    _.each(data, function (e) {
+    _.each(data, function(e) {
       var total = e.total
       var source = _.find(nodes, {
         name: e.cust_long_name,
@@ -66,7 +66,7 @@ missedflow.loadGraphData = function () {
   })
 }
 
-missedflow.generateGraph = function (data) {
+missedflow.generateGraph = function(data) {
   var margin = {
       top: 20,
       right: 20,
@@ -79,8 +79,8 @@ missedflow.generateGraph = function (data) {
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
   /* Initialize tooltip */
   var tipLinks = d3.tip()
-    .attr('class', 'd3-tip')
-    .offset([-10, 0]);
+      .attr('class', 'd3-tip')
+      .offset([-10,0]);
 
   // append the svg canvas to the page
   var svg = d3.select("#missedflowchart").append("svg")
@@ -112,10 +112,10 @@ missedflow.generateGraph = function (data) {
     .enter().append("path")
     .attr("class", "link")
     .attr("d", path)
-    .style("stroke-width", function (d) {
+    .style("stroke-width", function(d) {
       return Math.max(1, d.dy)
     })
-    .sort(function (a, b) {
+    .sort(function(a, b) {
       return b.dy - a.dy
     })
     .on('mouseover', tipLinks.show)
@@ -127,35 +127,36 @@ missedflow.generateGraph = function (data) {
     .attr("dx", width - 200)
     .attr("dy", 2)
     .attr("style", "fill:#fff")
-    .style("font-size", function (d) {
+    .style("font-size", function(d) {
       return Math.sqrt(d.dy * 2)
     })
     .append("textPath")
-    .attr("xlink:href", function (d, i) {
+    .attr("xlink:href", function(d, i) {
       return "#linkId_" + i
     })
-    .text(function (d, i) {
+    .text(function(d, i) {
       return d.target.bank
     })
+
 
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .attr("transform", function (d) {
+    .attr("transform", function(d) {
       return "translate(" + d.x + "," + d.y + ")"
     })
 
   node.append("rect")
-    .attr("height", function (d) {
+    .attr("height", function(d) {
       return d.dy
     })
     .attr("width", sankey.nodeWidth())
-    .style("fill", function (d) {
+    .style("fill", function(d) {
       return d.color = color(d.name.replace(/ .*/, ""))
     })
-    .on("mouseover", function (d) {
+    .on("mouseover", function(d) {
       highlightLink(d.node)
     })
     .on("mouseout", unhighlightLink)
@@ -163,23 +164,23 @@ missedflow.generateGraph = function (data) {
 
   node.append("text")
     .attr("x", -6)
-    .attr("y", function (d) {
+    .attr("y", function(d) {
       return d.dy / 2
     })
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    .text(function (d) {
+    .text(function(d) {
       return d.name
     })
-    .filter(function (d) {
+    .filter(function(d) {
       return d.x < width / 2
     })
     .attr("x", 6 + sankey.nodeWidth())
     .attr("text-anchor", "start")
 
   function highlightLink(n) {
-    d3.selectAll(".link").each(function () {
+    d3.selectAll(".link").each(function() {
       link = d3.select(this)
       if (link.data()[0].source.node == n || link.data()[0].target.node == n) {
         link.attr("class", "link selected")
@@ -188,46 +189,44 @@ missedflow.generateGraph = function (data) {
   }
 
   function unhighlightLink() {
-    d3.selectAll(".link.selected").each(function () {
+    d3.selectAll(".link.selected").each(function() {
       d3.select(this).attr("class", "link")
     })
   }
-  // "➡" 
+     // "➡" 
 
-  tipLinks.html(function (d) {
-    var title, candidate;
-    candidate = d.source.name;
-    title = d.target.name;
-    var html = '<div class="table-wrapper">' +
-      '<table>' +
-      '<tr>' +
-      '<td class="col-left">Customer Name</td>' +
-      '<td class="col-left">: ' + candidate + '</td>' +
-      '</tr>' +
-      '<tr>' +
-      '<td class="col-left">Customer Bank</td>' +
-      '<td class="col-left">: ' + d.source.bank + '</td>' +
-      '</tr>' +
-      '<tr>' +
-      '<td class="col-left">Counterparty Name</td>' +
-      '<td class="col-left">: ' + title + '</td>' +
-      '</tr>' +
-      '<tr>' +
-      '<td class="col-left">Counterparty Bank</td>' +
-      '<td class="col-left">: ' + d.target.bank + '</td>' +
-      '</tr>' +
-      '<tr>' +
-      '<td class="col-left">Total Flow</td>' +
-      '<td class="col-left">: ' + currencynum(d.value) + '</td>' +
-      '</tr>' +
-      '</table>' +
-      '</div>';
-    return html;
-  });
+   tipLinks.html(function(d) {
+      var title, candidate;
+        candidate = d.source.name;
+        title = d.target.name;
+        var html =  '<div class="table-wrapper">'+
+            '<table>'+
+                '<tr>'+
+                    '<td class="col-left">Customer Name</td>'+
+                    '<td class="col-left">: '+candidate+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Customer Bank</td>'+
+                    '<td class="col-left">: '+d.source.bank+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Counterparty Name</td>'+
+                    '<td class="col-left">: '+title+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Counterparty Bank</td>'+
+                    '<td class="col-left">: '+d.target.bank+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="col-left">Total Flow</td>'+
+                    '<td class="col-left">: '+currencynum(d.value)+'</td>'+
+                '</tr>'+
+            '</table>'+
+            '</div>';
+      return html;
+    });
 }
 
-
-
-$(window).load(function () {
+$(window).load(function() {
   missedflow.loadGraphData()
 })

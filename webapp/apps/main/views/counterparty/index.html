@@ -1,5 +1,5 @@
 <script>
-  viewModel.title('Counter Party View')
+   viewModel.title('Counter Party View')
 </script>
 <!-- Content -->
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v4.min.js" }}"></script>
@@ -7,149 +7,147 @@
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty/index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/index.css" }}" />
 <script id="listdetailntb" type="text/html">
-  <li><span data-bind="text:product_desc"></span></li>
+   <li><span data-bind="text:product_desc"></span></li>
 </script>
 <script id="listdetailetb" type="text/html">
-  <li><span data-bind="text: notrx"></span></li>
-  <li>Average Transaction Value :<br/> Monthly : $<span data-bind="text:monthly"></span>M<br/>Yearly : $<span data-bind="text:yearly"></span>M</li>
-  <li><span data-bind="text:recieved"></span></li>
+   <li><span data-bind="text: notrx"></span></li>
+   <li>Average Transaction Value :<br/> Monthly : $<span data-bind="text:monthly"></span>M<br/>Yearly : $<span data-bind="text:yearly"></span>M</li>
+   <li><span data-bind="text:recieved"></span></li>
 </script>
-<div class="row" id="filter" data-bind="with:counterpartymain.filterRecord">
-  <div class="col-lg-12">
-    <div class="menu-counterpartymain">
-      <select name="Site" style="width:200px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.entityGroup, dataValueField: 'value', dataTextField: 'text',filter: 'contains',value:entityName,change: function(e){ counterpartymain.onChangeEntity(e.sender._old)}}"></select>
-    </div>
-    <div class="menu-counterpartymain">
-      <select name="Site" style="width:120px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.buyerSupplierGroup, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers &amp; Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}},value:role"></select> 
-    </div>
-    <div class="menu-counterpartymain">
-      <select name="Site" style="width:80px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.productCategories, value:productCategory , dataValueField: 'value', dataTextField: 'text', filter: 'contains', change: function(e){ counterpartymain.onChangeProductCategories(e.sender._old)}},value:productCategory"></select>
-    </div>
-    <div class="menu-counterpartymain">
-      <select name="Site" style="width:100px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains',change: function(e){ counterpartymain.onChangeAllGroups(e.sender._old)}},value:group"></select>
-    </div>
-    <div class="menu-counterpartymain">
-      <select name="Site" style="width:70px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.limitGroup, dataValueField: 'value', dataTextField: 'text', index: 0,filter: 'contains',change: function(e){ counterpartymain.onChangeLimit(e.sender._old)}},value:limit"></select>
-    </div>
-    <div class="menu-counterpartymain">
-      <select name="Site" style="width:100px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.flows, dataValueField: 'value', dataTextField: 'text',filter: 'contains', change: function(e){ counterpartymain.onChangeFlowabove(e.sender._old)}},value:flowabove"></select>
-    </div>
-    <div class="menu-counterpartymain">
-      <div id="radioBtn" class="btn-group">
-        <a class="btn btn-primary btn-xs active" data-toggle="happy" data-title="Y">Y</a>
-        <a class="btn btn-primary btn-xs notActive" data-toggle="happy" data-title="M">M</a>
+<div id="global">
+   <div class="row" id="filter" data-bind="with:counterpartymain.filterRecord">
+      <div class="col-lg-12">
+         <div class="menu-counterpartymain">
+            <select name="Site" style="width:150px" class="filter" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.entityGroup, dataValueField: 'value', dataTextField: 'text',filter: 'contains',value:entityName,change: function(e){ counterpartymain.onChangeEntity(e.sender._old)}}"></select>
+         </div>
+         <div class="menu-counterpartymain">
+            <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.buyerSupplierGroup, dataValueField: 'value', dataTextField: 'text',optionLabel:'Buyers &amp; Suppliers',filter: 'contains',change: function(e){ counterpartymain.onChangeBuyerSupplier(e.sender._old)}},value:role"></select> 
+         </div>
+         <div class="menu-counterpartymain">
+            <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.group, dataValueField: 'value', dataTextField: 'text',optionLabel:'All Groups',filter: 'contains',change: function(e){ counterpartymain.onChangeAllGroups(e.sender._old)}},value:group"></select>
+         </div>
+         <div class="menu-counterpartymain">
+            <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.filterDataArray.limitGroup, dataValueField: 'value', dataTextField: 'text', index: 0,filter: 'contains',change: function(e){ counterpartymain.onChangeLimit(e.sender._old)}},value:limit"></select>
+         </div>
+         <div class="menu-counterpartymain">
+            <select name="Site" style="width:150px" class="full-width filter-space" data-bind="kendoDropDownList: { data: counterpartymain.flows, dataValueField: 'value', dataTextField: 'text',filter: 'contains', change: function(e){ counterpartymain.onChangeFlowabove(e.sender._old)}},value:flowabove"></select>
+         </div>
+         <div class="menu-counterpartymain">
+            <div id="radioBtn" class="btn-group">
+               <a class="btn btn-primary btn-xs active" data-toggle="happy" data-title="Y">Y</a>
+               <a class="btn btn-primary btn-xs notActive" data-toggle="happy" data-title="M">M</a>
+            </div>
+            <input type="hidden" name="happy" id="happy">
+         </div>
+         <div class="menu-counterpartymain">
+            <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy',depth:'decade', start: 'decade',change: function(e){ counterpartymain.onChangeYearmonth(e.sender._old)}}" class="filter-space">
+         </div>
+         <div class="menu-counterpartymain">
+            <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM',depth:'year', start: 'year',change: function(e){ counterpartymain.onChangeMonth(e.sender._old)}}" class="filter-space">
+         </div>
+         <div class="menu-counterpartymain">
+            <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
+         </div>
+         <div class="menu-counterpartymain">
+            <img id="pdfButton" width="20px" src="/main/static/3rdparty/img/pdf.png" onclick="counterpartymain.getPDF('#global')" alt="pdf">
+         </div>
       </div>
-      <input type="hidden" name="happy" id="happy">
-    </div>
-    <div class="menu-counterpartymain">
-      <input type="text" id="year" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy',depth:'decade', start: 'decade',change: function(e){ counterpartymain.onChangeYearmonth(e.sender._old)}}" class="filter-space">
-    </div>
-    <div class="menu-counterpartymain">
-      <input type="text" id="month" data-bind="kendoDatePicker:{value:new Date(),format:'MMM',depth:'year', start: 'year',change: function(e){ counterpartymain.onChangeMonth(e.sender._old)}}" class="filter-space">
-    </div>
-    <div class="menu-counterpartymain">
-      <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
-    </div>
-    <div class="menu-counterpartymain">
-      <img width="20px"src="/main/static/3rdparty/img/pdf.png" alt="pdf">
-    </div>
-  </div>
-</div>
-
-<div id="maps" class="row">
-  <!-- <div class="panel ez no-padding hardcore">
-    <div class="panel-body no-padding"> -->
-      <div class="row" style="width: 130px; margin-left: 0px" >
-      <div class="col-lg-6 col-md-6 col-sm-6">
-        <div class="box lightblue">
-          ETB
-        </div>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-6">
-        <div class="box darkblue">
-          NTB
-        </div>
-        </div>
+   </div>
+   <div class="row" id="maps" >
+      <div class="row" style="width: 130px">
+         <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="box lightblue">
+               ETB
+            </div>
+         </div>
+         <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="box darkblue">
+               NTB
+            </div>
+         </div>
       </div>
       <div id="graph" class="graph"></div>
       <div id="bubble" class="graph" style="display:none">
-        <svg></svg>
+         <svg></svg>
       </div>
-
-<div id="counterpartyModalNTB" data-toggle="tooltip" data-placement="left" style="opacity:0;display:none">
-  <div class="row header align-center">
-    <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
-    <h4 data-bind="text:counterpartymain.headtext"></h4>
-  </div>
-  <div class="row body">
-    <ul class="top-padding" data-bind="foreach:counterpartymain.dataDetailItemsNTB">
-       <li data-bind="text:$data"></li>
-  </ul>
-  </div>
-</div>
-<div id="counterpartyModalETB" data-toggle="tooltip" data-placement="left" style="opacity:0;display:none">
-  <div class="row header align-center">
-    <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
-    <h4 data-bind="text:counterpartymain.headtext"></h4>
-  </div>
-  <div class="row body">
-  <ul class="top-padding" data-bind="foreach:counterpartymain.dataMasterGraphDetail">
-    <li >No. of Transactions : <span data-bind="text:numberTransaction"></span></li>
-        <li >Average Transaction Value
-             <table style="margin-left:20px">
-             <tr>
-             <td>Monthly </td><td >: $<span data-bind="text:counterpartymain.avgMonthly1"></span></td></tr>
-             <tr>
-             <td>Yearly </td><td>: $<span  data-bind="text:counterpartymain.avgYearly1"></span></td>
-             </tr>
-             </table>
-        </li>
-    <span  data-bind="foreach:counterpartymain.dataDetailItemsETB" >
-    <li><span data-bind="text:$data"></span></li>
-    </span>
-    </ul>
-  </div>
+      <div id="counterpartyModalNTB" data-toggle="tooltip" data-placement="left" style="opacity:0;display:none">
+         <div class="row header align-center">
+            <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
+            <h4 data-bind="text:counterpartymain.headtext"></h4>
+         </div>
+         <div class="row body">
+            <ul class="top-padding" data-bind="foreach:counterpartymain.dataDetailItemsNTB">
+               <li data-bind="text:$data"></li>
+            </ul>
+         </div>
+      </div>
+      <div id="counterpartyModalETB" data-toggle="tooltip" data-placement="left" style="opacity:0;display:none">
+         <div class="row header align-center">
+            <button type="button" class="close" data-dismiss="modal" onclick="counterpartymain.close()">&times;</button>
+            <h4 data-bind="text:counterpartymain.headtext"></h4>
+         </div>
+         <div class="row body">
+            <ul class="top-padding" data-bind="foreach:counterpartymain.dataMasterGraphDetail">
+               <li >No. of Transactions : <span data-bind="text:numberTransaction"></span></li>
+               <li >
+                  Average Transaction Value
+                  <table style="margin-left:20px">
+                     <tr>
+                        <td>Monthly </td>
+                        <td >: $<span data-bind="text:counterpartymain.avgMonthly1"></span></td>
+                     </tr>
+                     <tr>
+                        <td>Yearly </td>
+                        <td>: $<span  data-bind="text:counterpartymain.avgYearly1"></span></td>
+                     </tr>
+                  </table>
+               </li>
+               <span  data-bind="foreach:counterpartymain.dataDetailItemsETB" >
+                  <li><span data-bind="text:$data"></span></li>
+               </span>
+            </ul>
+         </div>
+      </div>
+   </div>
 </div>
 <div id="datadetailgraph" class="modal fade"  role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content" style="border-radius: 0px; border:0px">
-      <div class="modal-header" style="background-color:  #373949; color: #fff; border-radius: 0px; border: 0px; padding-bottom: 5px">
-        <button type="button" style="color: #fff" class="close" data-dismiss="modal" onclick="counterpartymain.closeBubbleChart()">&times;</button>
-        <h4 class="modal-title"><span data-bind="text:counterpartymain.titleCountryPartyBuble"></span></h4>
+   <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content" style="border-radius: 0px; border:0px">
+         <div class="modal-header" style="background-color:  #373949; color: #fff; border-radius: 0px; border: 0px; padding-bottom: 5px">
+            <button type="button" style="color: #fff" class="close" data-dismiss="modal" onclick="counterpartymain.closeBubbleChart()">&times;</button>
+            <h4 class="modal-title"><span data-bind="text:counterpartymain.titleCountryPartyBuble"></span></h4>
+         </div>
+         <div class="modal-body" style="background-color: #373949; padding-top: 0px">
+            <form class="form-horizontal"   style="">
+               <div align="right" style="font-weight:   bold; font-size:  15px;">
+                  <!-- <div align="center" id="exporttoexcel" ><i class="fa fa-download" aria-hidden="true"></i> Export Excel</div> -->
+                  <button type="button" class="btn btn-success bottom-margin"><i class="fa fa-download" aria-hidden="true"></i> Export Excel</button>
+                  <div style="overflow: scroll; height:300px">
+                     <table class="table" style="color:  #fff; background-color:  #828282">
+                        <thead>
+                           <tr>
+                              <th>Bank</th>
+                              <th>Product</th>
+                              <th>Flow</th>
+                              <th>No. of Transactions</th>
+                           </tr>
+                        </thead>
+                        <tbody data-bind="foreach: counterpartymain.dataDetailItemsGraphBubble">
+                           <tr>
+                              <td data-bind="text: cpty_bank"></td>
+                              <td data-bind="text: product_category"></td>
+                              <td>flow</td>
+                              <!-- <td data-bind="text: flow" align="right"></td> -->
+                              <td data-bind="text: number_transaction" align="center"></td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </form>
+         </div>
       </div>
-      <div class="modal-body" style="background-color: #373949; padding-top: 0px">
-        <form class="form-horizontal"   style="">
-          <div align="right" style="font-weight:   bold; font-size:  15px;">
-            <!-- <div align="center" id="exporttoexcel" ><i class="fa fa-download" aria-hidden="true"></i> Export Excel</div> -->
-            <button type="button" class="btn btn-success bottom-margin"><i class="fa fa-download" aria-hidden="true"></i> Export Excel</button>
-            <div style="overflow: scroll; height:300px">
-            <table class="table" style="color:  #fff; background-color:  #828282">
-              <thead>
-                <tr>
-                  <th>Bank</th>
-                  <th>Product</th>
-                  <th>Flow</th>
-                  <th>No. of Transactions</th>
-                </tr>
-              </thead>
-              <tbody data-bind="foreach: counterpartymain.dataDetailItemsGraphBubble">
-
-                <tr>
-                  <td data-bind="text: cpty_bank"></td>
-                  <td data-bind="text: product_category"></td>
-                  <td>flow</td>
-                  <!-- <td data-bind="text: flow" align="right"></td> -->
-                  <td data-bind="text: number_transaction" align="center"></td>
-                </tr>
-              </tbody>
-            </table>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+   </div>
 </div>
 </div>
-

@@ -14,14 +14,17 @@
     font-size: 10px;
     font-weight: normal;
 }
+
 .box.lightblue {
     background-color: #68c4fc;
-   /* float: left;*/
+    /* float: left;*/
 }
+
 .box.darkblue {
     background-color: #587b9e;
     /*float: left;*/
 }
+
 .groupbox {
     position: relative;
     bottom: 18px;
@@ -29,64 +32,79 @@
     margin-right: 0px;
     margin-left: 0px;
 }
+
 .graph {
     height: 600px;
 }
+
 .link {
     stroke: #587b9e;
     stroke-opacity: .6;
     stroke-width: 1px;
     stroke-dasharray: 2;
 }
+
 .linkdash {
     stroke: #68c4fc;
     stroke-opacity: .6;
     stroke-width: 1px;
 }
+
 .node circle {
     stroke: #fff;
     stroke-width: 1.5px;
 }
+
 .node text {
     fill: #fff;
 }
+
 .menu-counterpartymain {
     display: inline-block;
     font-size: 11px;
     margin-bottom: 6px;
 }
+
 #radioBtn .notActive {
     color: #3276b1;
     background-color: #fff;
 }
+
 #filter .k-dropdown .k-state-default {
     background: #22313F;
     border-color: #22313F;
     color: #ffffff;
 }
+
 #filter .k-input {
     color: #ffffff;
     background: #22313F;
 }
+
 #filter .k-picker-wrap {
     background: #22313F;
     border-color: #22313F;
     color: #ffffff;
 }
+
 #filter .k-picker-wrap.k-state-default>.k-select {
     border-color: #22313F;
 }
+
 .active {
     min-width: 50px;
     min-height: 25px;
 }
+
 .notActive {
     min-width: 50px;
     min-height: 25px;
 }
+
 .top-padding {
     padding-top: 20px;
 }
+
 div.tooltip {
     position: absolute;
     width: 230px;
@@ -96,6 +114,7 @@ div.tooltip {
     border: 0px;
     pointer-events: auto;
 }
+
 div.tooltip .header {
     background: #1e88e5;
     color: #ffffff;
@@ -103,6 +122,7 @@ div.tooltip .header {
     text-align: center;
     padding-right: 5px;
 }
+
 div.tooltip .body {
     background: #fff;
     color: #000;
@@ -110,19 +130,25 @@ div.tooltip .body {
     padding: 0px 5px 15px 5px;
     border: 1px solid #1e88e5;
 }
+
 #bubble circle {
     margin: 20px;
 }
+
 .bottom-margin {
     margin-bottom: 5px;
 }
 
-#bubble text{
+#bubble text {
     fill: #fff;
 }
 
 text.shadow {
-  stroke: #fff;
-  stroke-width: 4px;
-  stroke-opacity: .8;
+    stroke: #fff;
+    stroke-width: 4px;
+    stroke-opacity: .8;
+}
+
+#pdfButton {
+    cursor: pointer;
 }

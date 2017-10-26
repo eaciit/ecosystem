@@ -88,7 +88,7 @@ counterpartymain.loadEntity = function () {
 }
 
 counterpartymain.loadGraphData = function () {
-  var entity = "Zanesfield I"
+  var entity = "Zanesfield"
   if (counterpartymain.filterRecord.entityName() != undefined) {
     var entity = counterpartymain.filterRecord.entityName()
   }
@@ -102,7 +102,6 @@ counterpartymain.loadGraphData = function () {
     datetype: counterpartymain.filterRecord.datetype(),
     yearmonth: parseInt(counterpartymain.filterRecord.yearmonth())
   }, function (data) {
-    console.log(data)
     var datas = data[_.keys(data)[0]]
     tempnodes = [];
     templinks = []
@@ -184,7 +183,7 @@ counterpartymain.loadGraphData = function () {
 
 var div = d3.select(".layout-content").append("div")
   .attr("class", "tooltip")
-  .style("opacity", 0);
+  .style("display", "none");
 
 counterpartymain.bm = function (databm) {
   if (databm < 1000000000) {
@@ -353,7 +352,7 @@ counterpartymain.generateGraph = function () {
                 .style("top", (d3.select(ThisTemp).attr("cy")) + 50 + "px")
                 .style("margin-top", "50px")
                 .style("margin-left", "120px")
-
+                .style("display", "block")
 
               d3.selectAll("circle").transition().duration(500)
                 .style("opacity", function (o) {
@@ -377,6 +376,7 @@ counterpartymain.generateGraph = function () {
                 .style("top", (d3.select(ThisTemp).attr("cy")) + 50 + "px")
                 .style("margin-top", "50px")
                 .style("margin-left", "120px")
+                .style("display", "block")
 
 
               d3.selectAll("circle").transition().duration(500)
@@ -624,7 +624,7 @@ counterpartymain.generateGraph = function () {
 counterpartymain.generateGraphBubble = function () {
   $("#bubble").html("<svg></svg>")
   var nodes = counterpartymain.dataMasterBubble()
-  
+
   // normalize circle
   function preprocess(nod) {
     var max = _.maxBy(nod, "limited").limited;
@@ -833,12 +833,14 @@ counterpartymain.onChangeBuyerSupplier = function (e) {
   if (e != "") {
     $("#graph").hide()
     $("#bubble").show()
+    $("#bubble").addClass("display-active")
     counterpartymain.close()
     counterpartymain.filterRecord.role()
     counterpartymain.loadGraphData()
     return
   }
   $("#graph").show()
+  $("#graph").addClass("display-active")
   $("#bubble").hide()
   counterpartymain.closeBubbleChart()
   counterpartymain.generateGraph()
@@ -885,6 +887,95 @@ counterpartymain.onChangeMonth = function (e) {
   counterpartymain.loadGraphData()
 }
 
+counterpartymain.beforePDFPrinting = function () {
+  var def = $.Deferred();
+
+  var cc = $("div.display-active svg");
+  var count = cc.length;
+
+  for (var i = 0; i < cc.length; i++) {
+    var svg = cc[i];
+
+    // inject style
+    var st = document.createElement("style");
+    st.innerHTML = st.innerHTML + ".link {stroke: #587b9e;stroke-opacity: .6;stroke-width: 1px;stroke-dasharray: 2;} "
+    st.innerHTML = st.innerHTML + ".linkdash {stroke: #68c4fc;stroke-opacity: .6;stroke-width: 1px; } "
+
+    $(svg).find("style").remove();
+    $(svg).prepend(st);
+
+    var rect = svg.getBoundingClientRect();
+    var img = document.createElement("img");
+    var canvas = document.createElement('canvas');
+    canvas.width = 1386 * 2;
+    canvas.height = 600 * 2;
+    var ctx = canvas.getContext('2d');
+
+    var imgCanvas = new Image(),
+      serializer = new XMLSerializer(),
+      svgStr = serializer.serializeToString(svg);
+
+    // You could also use the actual string without base64 encoding it:
+    imgCanvas.onload = function () {
+      ctx.webkitImageSmoothingEnabled = false;
+      ctx.mozImageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, 1386 * 2, 600 * 2);
+      ctx.drawImage(imgCanvas, 0, 0, 1386 * 2, 600 * 2);
+
+      var base64Image = canvas.toDataURL("image/jpeg", 0.75);
+
+      img.src = base64Image;
+      img.style = "position:absolute;top:" + rect.top + "px;left:" + rect.left + "px;";
+      img.className = "remove-after-print";
+      img.width = 1386;
+      img.height = 600;
+      svg.parentNode.insertBefore(img, svg);
+
+      def.resolve(true)
+    }
+
+    imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(svgStr);
+  }
+
+  return def
+}
+
+counterpartymain.afterPDFPrinting = function () {
+  $(".remove-after-print").remove();
+}
+
+counterpartymain.getPDF = function (selector) {
+  $.when(
+    counterpartymain.beforePDFPrinting()
+  ).done(function () {
+    kendo.drawing.drawDOM($(selector))
+      .then(function (group) {
+        // Render the result as a PDF file
+        return kendo.drawing.exportPDF(group, {
+          paperSize: "auto",
+          margin: {
+            left: "1cm",
+            top: "1cm",
+            right: "1cm",
+            bottom: "1cm"
+          }
+        });
+      })
+      .then(function (data) {
+        // Save the PDF file
+        kendo.saveAs({
+          dataURI: data,
+          fileName: "Export.pdf"
+        });
+      })
+      .done(function () {
+        counterpartymain.afterPDFPrinting();
+      })
+  })
+}
+
 counterpartymain.init = function () {
   counterpartymain.loadEntity()
   counterpartymain.loadGraphData()
@@ -892,6 +983,7 @@ counterpartymain.init = function () {
 
 $(window).load(function () {
   counterpartymain.init()
+  $("#graph").addClass("display-active")
   $('#month').data('kendoDatePicker').enable(false);
   $('#radioBtn a').on('click', function () {
     var sel = $(this).data('title');
