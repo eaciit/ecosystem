@@ -1,6 +1,7 @@
 var counterparty = {}
 counterparty.detail = ko.observableArray([])
 counterparty.activeEntityName = ko.observable()
+counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
 counterparty.activeGroup = ko.observable("DOW CHEMICAL GROUP")
 
@@ -114,6 +115,7 @@ filter.loadEntities = function () {
 
 filter.loadAll = function () {
   $("#month").data('kendoDatePicker').enable(false)
+  counterparty.activeEntityCOI($.urlParam("entityCOI"))
 
   filter.selectedEntity.subscribe(function (nv) {
     counterparty.activeEntityName(nv)
@@ -191,7 +193,7 @@ network.processData = function (data) {
   _.each(data[parent], function (e) {
     var link = {
       total: e.total,
-      type: e.cpty_bank.substring(0, 3) != "SCB" && e.cust_bank.substring(0, 3) != "SCB" ? "missed" : "flow",
+      type: String(e.cpty_bank).substring(0, 3) != "SCB" && String(e.cust_bank).substring(0, 3) != "SCB" ? "missed" : "flow",
       text: kendo.toString(e.total / 1000000, "n2") + "M",
     }
 
@@ -252,7 +254,7 @@ network.processData = function (data) {
       return {
         name: e.cpty_long_name,
         coi: e.cpty_coi,
-        opportunity: e.cpty_bank != "SCBL" ? true : false,
+        opportunity: String(e.cpty_bank).substring(0, 3) != "SCB" ? true : false,
         class: e.is_ntb == "Y" ? "ntb" : "etb",
         role: e.cust_role,
         isFade: false
@@ -260,7 +262,7 @@ network.processData = function (data) {
     })
     .concat({
       name: parent,
-      coi: "",
+      coi: counterparty.activeEntityCOI(),
       opportunity: false,
       class: "center",
       isFade: false
@@ -446,7 +448,19 @@ network.generate = function () {
 
   var text = svg.append("svg:g").selectAll("g")
     .data(force.nodes())
-    .enter().append("svg:g")
+    .enter()
+    .append("svg:g")
+    .attr("class", function (d) {
+      var c = "wrapper " + d.class
+      if (d.role == "BUYER") {
+        c += " buyer"
+      } else if (d.role == "PAYEE") {
+        c += " supplier"
+      }
+
+      return c
+    })
+    .append("svg:g")
     .attr("class", function (d) {
       return d.isFade ? "fade" : ""
     })
@@ -509,7 +523,7 @@ network.generate = function () {
     .attr("x", 25)
     .attr("y", 28)
     .attr("class", function (d) {
-      return d.opportunity ? "shadow" : "hide"
+      return d.class != "center" ? "shadow" : "hide"
     })
 
   text.append("svg:text")
@@ -520,7 +534,7 @@ network.generate = function () {
     .attr("x", 25)
     .attr("y", 28)
     .attr("class", function (d) {
-      return d.opportunity ? "detail-button" : "hide"
+      return d.class != "center" ? "detail-button" : "hide"
     })
 
   // Use elliptical arc path segments to doubly-encode directionality.

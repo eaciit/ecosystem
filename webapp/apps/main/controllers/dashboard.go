@@ -269,7 +269,7 @@ func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
 
 	transactionYear := 2016
 	groupName := "Rollin"
-	sql := `SELECT COUNT(cust_sci_leid) AS value
+	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + groupName + `" 
@@ -287,7 +287,7 @@ func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT COUNT(cust_sci_leid) AS value
+	sql = `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + groupName + `" 
