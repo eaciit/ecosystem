@@ -1,5 +1,5 @@
 var dashboard = {}
-dashboard.activeGroup = ko.observable("DOW CHEMICAL GROUP")
+dashboard.activeGroup = ko.observable("Rollin")
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
 dashboard.inflow = ko.observable(true)
@@ -54,8 +54,17 @@ dashboard.payment = [{
   "text": "Installment"
 }]
 
+var filter = {}
+filter.payload = ko.computed(function(){
+  return {
+    fromYearMonth: 201509,
+    toYearMonth: 201609,
+    groupName: dashboard.activeGroup()
+  }
+})
+
 dashboard.getMapData = function (callback) {
-  viewModel.ajaxPostCallback("/main/dashboard/getmapdata", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getmapdata", filter.payload(), function (data) {
     $.getJSON("/main/static/core/js/countries.json", function (countries) {
       var result = _(data)
         .groupBy('country')
@@ -504,41 +513,25 @@ widget.buildChart = function (id, data, unit) {
 }
 
 widget.generateChart1 = function () {
-  var param = {
-    fromYearMonth: 201509,
-    toYearMonth: 201609
-  }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartetb", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartetb", filter.payload(), function (data) {
     widget.buildChart("#widgetChart1", data)
   })
 }
 
 widget.generateChart2 = function () {
-  var param = {
-    fromYearMonth: 201509,
-    toYearMonth: 201609
-  }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartbuyer", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartbuyer", filter.payload(), function (data) {
     widget.buildChart("#widgetChart2", data)
   })
 }
 
 widget.generateChart3 = function () {
-  var param = {
-    fromYearMonth: 201509,
-    toYearMonth: 201609
-  }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartseller", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartseller", filter.payload(), function (data) {
     widget.buildChart("#widgetChart3", data)
   })
 }
 
 widget.generateChart4 = function () {
-  var param = {
-    fromYearMonth: 201509,
-    toYearMonth: 201609
-  }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartinflow", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartinflow", filter.payload(), function (data) {
     data = _.map(data, function (e) {
       e.value = e.value / 1000000000
 
@@ -550,11 +543,7 @@ widget.generateChart4 = function () {
 }
 
 widget.generateChart5 = function () {
-  var param = {
-    fromYearMonth: 201509,
-    toYearMonth: 201609
-  }
-  viewModel.ajaxPostCallback("/main/dashboard/getchartoutflow", param, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getchartoutflow", filter.payload(), function (data) {
     data = _.map(data, function (e) {
       e.value = e.value / 1000000000
 
@@ -584,44 +573,44 @@ widget.generateCharts = function () {
 
 widget.loadData = function () {
   // Loading current data
-  viewModel.ajaxPostCallback("/main/dashboard/getetb", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getetb", filter.payload(), function (data) {
     widget.etb(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getbuyer", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getbuyer", filter.payload(), function (data) {
     widget.buyer(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getseller", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getseller", filter.payload(), function (data) {
     widget.seller(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getinflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getinflow", filter.payload(), function (data) {
     widget.inFlow(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getoutflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getoutflow", filter.payload(), function (data) {
     widget.outFlow(data)
   })
 
   // Loading annualy change data
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeetb", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeetb", filter.payload(), function (data) {
     widget.etbYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangebuyer", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangebuyer", filter.payload(), function (data) {
     widget.buyerYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeseller", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeseller", filter.payload(), function (data) {
     widget.sellerYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeinflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeinflow", filter.payload(), function (data) {
     widget.inFlowYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", filter.payload(), function (data) {
     widget.outFlowYearChange(data)
   })
 }

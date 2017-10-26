@@ -34,11 +34,16 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	groupName := "Rollin"
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
 	sql := `SELECT cust_coi AS country, cust_long_name AS entity 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   GROUP BY cust_coi, cust_long_name`
 
@@ -48,7 +53,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 	}
 
 	results := []tk.M{}
-	err := qr.Fetch(&results, 0)
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -117,11 +122,16 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	groupName := "Rollin"
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016`
 
@@ -131,7 +141,7 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 	}
 
 	results := []tk.M{}
-	err := qr.Fetch(&results, 0)
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -145,12 +155,17 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	groupName := "Rollin"
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016`
 
@@ -160,7 +175,7 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 	}
 
 	results := []tk.M{}
-	err := qr.Fetch(&results, 0)
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -174,12 +189,17 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	groupName := "Rollin"
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016`
 
@@ -189,7 +209,7 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 	}
 
 	results := []tk.M{}
-	err := qr.Fetch(&results, 0)
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -203,12 +223,17 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	groupName := "Rollin"
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
 	sql := `SELECT IFNULL(SUM(amount),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016`
 
@@ -218,7 +243,7 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 	}
 
 	results := []tk.M{}
-	err := qr.Fetch(&results, 0)
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -232,12 +257,17 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	groupName := "Rollin"
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
 	sql := `SELECT IFNULL(SUM(amount),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016`
 
@@ -247,7 +277,7 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 	}
 
 	results := []tk.M{}
-	err := qr.Fetch(&results, 0)
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -268,11 +298,10 @@ func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
 	}
 
 	transactionYear := 2016
-	groupName := "Rollin"
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear)
 
@@ -290,7 +319,7 @@ func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
 	sql = `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear-1)
 
@@ -323,12 +352,11 @@ func (c *DashboardController) GetYearChangeBuyer(k *knot.WebContext) interface{}
 	}
 
 	transactionYear := 2016
-	groupName := "Rollin"
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear)
 
@@ -347,7 +375,7 @@ func (c *DashboardController) GetYearChangeBuyer(k *knot.WebContext) interface{}
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear-1)
 
@@ -380,12 +408,11 @@ func (c *DashboardController) GetYearChangeSeller(k *knot.WebContext) interface{
 	}
 
 	transactionYear := 2016
-	groupName := "Rollin"
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear)
 
@@ -404,7 +431,7 @@ func (c *DashboardController) GetYearChangeSeller(k *knot.WebContext) interface{
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear-1)
 
@@ -437,12 +464,11 @@ func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{
 	}
 
 	transactionYear := 2016
-	groupName := "Rollin"
 	sql := `SELECT IFNULL(SUM(amount),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear)
 
@@ -461,7 +487,7 @@ func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear-1)
 
@@ -494,12 +520,11 @@ func (c *DashboardController) GetYearChangeOutFlow(k *knot.WebContext) interface
 	}
 
 	transactionYear := 2016
-	groupName := "Rollin"
 	sql := `SELECT IFNULL(SUM(amount),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear)
 
@@ -518,7 +543,7 @@ func (c *DashboardController) GetYearChangeOutFlow(k *knot.WebContext) interface
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(transactionYear-1)
 
@@ -550,11 +575,10 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	groupName := "Rollin"
 	sql := `SELECT COUNT(cust_sci_leid) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016 
   GROUP BY transaction_month ORDER BY transaction_month`
@@ -585,12 +609,11 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	groupName := "Rollin"
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016 
   GROUP BY transaction_month ORDER BY transaction_month`
@@ -621,12 +644,11 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	groupName := "Rollin"
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016 
   GROUP BY transaction_month ORDER BY transaction_month`
@@ -657,12 +679,11 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	groupName := "Rollin"
 	sql := `SELECT IFNULL(SUM(amount),0) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016
   GROUP BY transaction_month ORDER BY transaction_month`
@@ -693,12 +714,11 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	groupName := "Rollin"
 	sql := `SELECT IFNULL(SUM(amount),0) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + groupName + `" 
+  AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
   AND transaction_year = 2016
   GROUP BY transaction_month ORDER BY transaction_month`
