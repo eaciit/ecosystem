@@ -17,6 +17,7 @@ type CounterPartyController struct {
 }
 
 type CounterPartyPayload struct {
+	GroupName        string
 	EntityName       string
 	CounterpartyName string
 	Role             string
@@ -198,7 +199,13 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 		for _, v := range results {
 			values := []string{}
 			for _, k := range keys {
-				values = append(values, fmt.Sprintf("%v", v.Get(k)))
+				sv := fmt.Sprintf("%v", v.Get(k))
+				switch v.Get(k).(type) {
+				case string:
+					sv = fmt.Sprintf("%s", v.Get(k))
+				}
+
+				values = append(values, sv)
 			}
 
 			writer.Write(values)

@@ -26,7 +26,8 @@ counterpartymain.filterRecord = {
   group: ko.observable(),
   flowabove: ko.observable(),
   yearmonth: ko.observable(),
-  datetype: ko.observable()
+  datetype: ko.observable(),
+  productCategory: ko.observable()
 }
 counterpartymain.filterDataArray.buyerSupplierGroup = [{
   "value": "PAYEE",
@@ -35,6 +36,18 @@ counterpartymain.filterDataArray.buyerSupplierGroup = [{
   "value": "BUYER",
   "text": "Buyer"
 }]
+
+counterpartymain.productCategories = [{
+  "value": "",
+  "text": "All"
+}, {
+  "value": "Cash",
+  "text": "Cash"
+}, {
+  "value": "Trade",
+  "text": "Trade"
+}]
+
 counterpartymain.filterDataArray.limitGroup = [{
   "value": 5,
   "text": "Top 5"
@@ -73,7 +86,7 @@ counterpartymain.loadEntity = function() {
   })
 }
 
-counterpartymain.loadGraphData = function() {
+counterpartymain.loadGraphData = function () {
   var entity = "Zanesfield"
   if (counterpartymain.filterRecord.entityName() != undefined) {
     var entity = counterpartymain.filterRecord.entityName()
@@ -82,6 +95,7 @@ counterpartymain.loadGraphData = function() {
     role: counterpartymain.filterRecord.role(),
     entityName: entity,
     limit: parseInt(counterpartymain.filterRecord.limit()),
+    productCategory: counterpartymain.filterRecord.productCategory(),
     group: counterpartymain.filterRecord.group(),
     flowabove: parseInt(counterpartymain.filterRecord.flowabove()),
     datetype: counterpartymain.filterRecord.datetype(),
@@ -633,8 +647,6 @@ counterpartymain.generateGraphBubble = function() {
   var width = $("#bubble").width(),
     height = $("#bubble").height()
   nodes = preprocess(nodes);
-
-  console.log(width)
   var chart = bubbleChart().width(width).height(height);
   d3.selectAll('#bubble').data(nodes).call(chart);
 
@@ -845,7 +857,12 @@ counterpartymain.onChangeLimit = function(e) {
   counterpartymain.loadGraphData()
 }
 
-counterpartymain.onChangeFlowabove = function(e) {
+counterpartymain.onChangeProductCategories = function (e) {
+  counterpartymain.filterRecord.productCategory()
+  counterpartymain.loadGraphData()
+}
+
+counterpartymain.onChangeFlowabove = function (e) {
   counterpartymain.close()
   counterpartymain.filterRecord.flowabove()
   counterpartymain.loadGraphData()
