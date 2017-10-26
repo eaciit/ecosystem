@@ -1,5 +1,5 @@
 <script>
-   viewModel.title('Dashboard')
+  viewModel.title('Dashboard')
 </script>
 <!-- content -->
 <script src="{{ NoCacheUrl "/main/static/core/js/map-template.js" }}"></script>
@@ -25,296 +25,328 @@
    </div>
    </div> -->
 <script id="tableProductMix" type="text/html">
-   <div class="box-product">
-     <label data-bind="text:product"></label>
-   </div>
+  <div class="box-product">
+    <label data-bind="text:product"></label>
+  </div>
 </script>
 
 <div style="position:absolute; z-index: 0">
-<svg>
-  <filter id="shadow" x="-5" y="-5" width="1000%" height="1000%">
-    <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="black" flood-opacity="0.6" />
-  </filter>
-</svg>
+  <svg>
+    <filter id="shadow" x="-5" y="-5" width="1000%" height="1000%">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="black" flood-opacity="0.6" />
+    </filter>
+  </svg>
 </div>
 
 <div class="row">
-   <div class="col-sm-2">
-      <div class="panel ez no-padding hardcore widget">
-         <div class="panel-heading">
-            <span>ETB</span>
-         </div>
-         <div class="panel-body widget-body">
-            <div class="widget-left">
-               <p data-bind="text: widget.etb"></p>
-               <span>
-               Q
-               <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.etbYearChange() > 0, 'red-text fa-caret-down': widget.etbYearChange() < 0}"></i>
-               <span data-bind="text: widget.etbYearChange"></span>
-               </span>
-            </div>
-            <div class="widget-right">
-               <div class="chart-container" id="widgetChart1">
-               </div>
-               <div>
-                  <span>
-                  Y
-                  <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.etbYearChange() > 0, 'red-text fa-caret-down': widget.etbYearChange() < 0}"></i>
-                  <span data-bind="text: widget.etbYearChange"></span>
-                  </span>
-               </div>
-            </div>
-         </div>
+  <div class="col-lg-12 breadcrumb-container">
+    <span data-bind="text: dashboard.activeGroup"></span>
+    <i class="fa fa-fw fa-caret-right"></i>
+    <span>Dashboard</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>ETB</span>
       </div>
-   </div>
-   <div class="col-sm-2">
-      <div class="panel ez no-padding hardcore widget">
-         <div class="panel-heading">
-            <span>Buyers</span>
-         </div>
-         <div class="panel-body widget-body">
-            <div class="widget-left">
-               <p data-bind="text: widget.buyer"></p>
-               <span>
-               Q
-               <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.buyerYearChange() > 0, 'red-text fa-caret-down': widget.buyerYearChange() < 0}"></i>
-               <span data-bind="text: widget.buyerYearChange"></span>
-               </span>
-            </div>
-            <div class="widget-right">
-               <div class="chart-container" id="widgetChart2">
-               </div>
-               <div>
-                  <span>
-                  Y
-                  <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.buyerYearChange() > 0, 'red-text fa-caret-down': widget.buyerYearChange() < 0}"></i>
-                  <span data-bind="text: widget.buyerYearChange"></span>
-                  </span>
-               </div>
-            </div>
-         </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">
+          <p data-bind="text: widget.etb"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.etbYearChange() > 0, 'red-text fa-caret-down': widget.etbYearChange() < 0}"></i>
+            <span data-bind="text: widget.etbYearChange"></span>
+          </span>
+        </div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart1">
+          </div>
+          <div>
+            <span>
+              Y
+              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.etbYearChange() > 0, 'red-text fa-caret-down': widget.etbYearChange() < 0}"></i>
+              <span data-bind="text: widget.etbYearChange"></span>
+            </span>
+          </div>
+        </div>
       </div>
-   </div>
-   <div class="col-sm-2">
-      <div class="panel ez no-padding hardcore widget">
-         <div class="panel-heading">
-            <span>Suppliers</span>
-         </div>
-         <div class="panel-body widget-body">
-            <div class="widget-left">
-               <p data-bind="text: widget.seller"></p>
-               <span>
-               Q
-               <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.sellerYearChange() > 0, 'red-text fa-caret-down': widget.sellerYearChange() < 0}"></i>
-               <span data-bind="text: widget.sellerYearChange"></span>
-               </span>
-            </div>
-            <div class="widget-right">
-               <div class="chart-container" id="widgetChart3">
-               </div>
-               <div>
-                  <span>
-                  Y
-                  <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.sellerYearChange() > 0, 'red-text fa-caret-down': widget.sellerYearChange() < 0}"></i>
-                  <span data-bind="text: widget.sellerYearChange"></span>
-                  </span>
-               </div>
-            </div>
-         </div>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Buyers</span>
       </div>
-   </div>
-   <div class="col-sm-2">
-      <div class="panel ez no-padding hardcore widget">
-         <div class="panel-heading">
-            <span>In Flows ($B)</span>
-         </div>
-         <div class="panel-body widget-body">
-            <div class="widget-left">
-               <p data-bind="text: kendo.toString(widget.inFlow() / 1000000000, 'n2')"></p>
-               <span>
-               Q
-               <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
-               <span data-bind="text: kendo.toString(widget.inFlowYearChange() / 1000000000, 'n2')"></span>
-               </span>
-            </div>
-            <div class="widget-right">
-               <div class="chart-container" id="widgetChart4">
-               </div>
-               <div>
-                  <span>
-                  Y
-                  <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
-                  <span data-bind="text: kendo.toString(widget.inFlowYearChange() / 1000000000, 'n2')"></span>
-                  </span>
-               </div>
-            </div>
-         </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">
+          <p data-bind="text: widget.buyer"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.buyerYearChange() > 0, 'red-text fa-caret-down': widget.buyerYearChange() < 0}"></i>
+            <span data-bind="text: widget.buyerYearChange"></span>
+          </span>
+        </div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart2">
+          </div>
+          <div>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.buyerYearChange() > 0, 'red-text fa-caret-down': widget.buyerYearChange() < 0}"></i>
+              <span data-bind="text: widget.buyerYearChange"></span>
+            </span>
+          </div>
+        </div>
       </div>
-   </div>
-   <div class="col-sm-2">
-      <div class="panel ez no-padding hardcore widget">
-         <div class="panel-heading">
-            <span>Out Flows ($B)</span>
-         </div>
-         <div class="panel-body widget-body">
-            <div class="widget-left">
-               <p data-bind="text: kendo.toString(widget.outFlow() / 1000000000, 'n2')"></p>
-               <span>
-               Q
-               <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.outFlowYearChange() > 0, 'red-text fa-caret-down': widget.outFlowYearChange() < 0}"></i>
-               <span data-bind="text: kendo.toString(widget.outFlowYearChange() / 1000000000, 'n2')"></span>
-               </span>
-            </div>
-            <div class="widget-right">
-               <div class="chart-container" id="widgetChart5">
-               </div>
-               <div>
-                  <span>
-                  Y
-                  <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.outFlowYearChange() > 0, 'red-text fa-caret-down': widget.outFlowYearChange() < 0}"></i>
-                  <span data-bind="text: kendo.toString(widget.outFlowYearChange() / 1000000000, 'n2')"></span>
-                  </span>
-               </div>
-            </div>
-         </div>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Suppliers</span>
       </div>
-   </div>
-   <div class="col-sm-2">
-      <div class="panel ez no-padding hardcore widget">
-         <div class="panel-heading">
-            <span>Pipeline Workbench ($B)</span>
-         </div>
-         <div class="panel-body widget-body">
-            <div class="widget-left">
-               <p data-bind="text: widget.pipeline"></p>
-               <span>
-               Q
-               <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.pipelineYearChange() > 0, 'red-text fa-caret-down': widget.pipelineYearChange() < 0}"></i>
-               <span data-bind="text: widget.pipelineYearChange"></span>
-               </span>
-            </div>
-            <div class="widget-right">
-               <div class="chart-container" id="widgetChart6">
-               </div>
-               <div>
-                  <span>
-                  Y
-                  <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.pipelineYearChange() > 0, 'red-text fa-caret-down': widget.pipelineYearChange() < 0}"></i>
-                  <span data-bind="text: widget.pipelineYearChange"></span>
-                  </span>
-               </div>
-            </div>
-         </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">
+          <p data-bind="text: widget.seller"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.sellerYearChange() > 0, 'red-text fa-caret-down': widget.sellerYearChange() < 0}"></i>
+            <span data-bind="text: widget.sellerYearChange"></span>
+          </span>
+        </div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart3">
+          </div>
+          <div>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.sellerYearChange() > 0, 'red-text fa-caret-down': widget.sellerYearChange() < 0}"></i>
+              <span data-bind="text: widget.sellerYearChange"></span>
+            </span>
+          </div>
+        </div>
       </div>
-   </div>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>In Flows ($B)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">
+          <p data-bind="text: kendo.toString(widget.inFlow() / 1000000000, 'n2')"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
+            <span data-bind="text: kendo.toString(widget.inFlowYearChange() / 1000000000, 'n2')"></span>
+          </span>
+        </div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart4">
+          </div>
+          <div>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
+              <span data-bind="text: kendo.toString(widget.inFlowYearChange() / 1000000000, 'n2')"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Out Flows ($B)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">
+          <p data-bind="text: kendo.toString(widget.outFlow() / 1000000000, 'n2')"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.outFlowYearChange() > 0, 'red-text fa-caret-down': widget.outFlowYearChange() < 0}"></i>
+            <span data-bind="text: kendo.toString(widget.outFlowYearChange() / 1000000000, 'n2')"></span>
+          </span>
+        </div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart5">
+          </div>
+          <div>
+            <span>
+              Y
+              <i class="fa fa-fw" data-bind="css: {'green-text fa-caret-up': widget.outFlowYearChange() > 0, 'red-text fa-caret-down': widget.outFlowYearChange() < 0}"></i>
+              <span data-bind="text: kendo.toString(widget.outFlowYearChange() / 1000000000, 'n2')"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="panel ez no-padding hardcore widget">
+      <div class="panel-heading">
+        <span>Pipeline Workbench ($B)</span>
+      </div>
+      <div class="panel-body widget-body">
+        <div class="widget-left">
+          <p data-bind="text: widget.pipeline"></p>
+          <span>
+            Q
+            <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.pipelineYearChange() > 0, 'red-text fa-caret-down': widget.pipelineYearChange() < 0}"></i>
+            <span data-bind="text: widget.pipelineYearChange"></span>
+          </span>
+        </div>
+        <div class="widget-right">
+          <div class="chart-container" id="widgetChart6">
+          </div>
+          <div>
+            <span>
+              Y
+              <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.pipelineYearChange() > 0, 'red-text fa-caret-down': widget.pipelineYearChange() < 0}"></i>
+              <span data-bind="text: widget.pipelineYearChange"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <div id="maps" class="row">
-   <div class="col-lg-12">
-      <div class="panel ez no-padding hardcore">
-         <div class="panel-body no-padding">
-            <div id="map" class="map"></div>
-            <div class="row groupbox">
-               <div class="box redbox">
-                  Domicile<br/>Group
-               </div>
-               <div class="box bluebox">
-                  <span data-bind="text: widget.etb"></span><br/>ETB
-               </div>
-               <div class="box greenbox">
-                  63<br/>NTB
-               </div>
-            </div>
-         </div>
+  <div class="col-lg-12">
+    <div class="panel ez no-padding hardcore">
+      <div class="panel-body no-padding">
+        <div id="map" class="map"></div>
+        <div class="row groupbox">
+          <div class="box redbox">
+            Domicile
+            <br/>Group
+          </div>
+          <div class="box bluebox">
+            <span data-bind="text: widget.etb"></span>
+            <br/>ETB
+          </div>
+          <!-- <div class="box greenbox">
+            63
+            <br/>NTB
+          </div> -->
+        </div>
       </div>
-   </div>
+    </div>
+  </div>
 </div>
 <!-- Template -->
 <div id="mapDetailModal" class="modal fade" role="dialog">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <div class="modal-title"><span data-bind="text:dashboard.activeEntity().country"></span> <i class="fa fa-caret-right" aria-hidden="true"></i> <span id="titleName" data-bind="text: dashboard.activeEntity().name,click:dashboard.btnBack"></span> <i class="fa fa-caret-right" aria-hidden="true"></i><span data-bind="text: dashboard.activeEntityDetail.noteHeaderModal"></span></div>
-         </div>
-         <div class="modal-body">
-            <div class="row" id="groupbuttondetail">
-               <div class="col-sm-6 align-center top-margin">
-                  <button type="button" class="btn btn-flat" data-bind="click:dashboard.btnCash">Cash <i class="fa fa-play-circle-o" aria-hidden="true"></i></button>
-               </div>
-               <div class="col-sm-6 align-center top-margin">
-                  <button type="button" class="btn btn-flat" data-bind="click:dashboard.btnTrade">Trade <i class="fa fa-play-circle-o" aria-hidden="true"></i></button>
-               </div>
-               <div class="col-sm-12 align-center top-margin">
-                  <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + dashboard.activeEntity().name }" class="btn btn-flat">Network Diagram <i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
-               </div>
-            </div>
-            <div class="row" id="tradetabs" style="display:none" >
-               <ul class="nav nav-tabs" role="tablist">
-                  <li role="presentation" class="active tab1"><a href="#Flows" aria-controls="Flows" role="tab" data-toggle="tab">Flows</a></li>
-                  <li role="presentation"><a href="#Trade" class="" aria-controls="Trade" role="tab" data-toggle="tab">Products</a></li>
-               </ul>
-               <div class="tab-content">
-                  <!--panel list-->
-                  <div role="tabpanel" class="tab-pane active" id="Flows">
-                     <div class="row align-center top-padding inflow" 
-                     data-bind="visible : dashboard.inflow" >
-                        IN $ <span data-bind="text:dashboard.activeEntityDetail.sumInFlow"></span>
-                     </div>
-                     <div align="center" data-bind="visible : dashboard.inflow">
-                        <i class="fa fa-play fa-out fa-hide" aria-hidden="true"></i>
-                        <div style="display: inline-block;width: 400px;">
-                        <table id="table-flows-in" width="100%" style="margin-left: auto;margin-right: auto;">
-                           <tr style="cursor: pointer;" data-bind="foreach:dashboard.activeEntityDetail.dataInFlow">
-                              <td class="some" data-placement="right" data-toggle="tooltip" data-bind="attr: {title: text+' $ '+tooltip }, style: { width: value + '%',background:color}" align="center" ><span data-bind="text:text"></span></td>
-                           </tr>
-                        </table>
-                        </div>
-                        <i class="fa fa-play fa-in" aria-hidden="true"></i>            
-                     </div>
-                     <div data-bind="visible : dashboard.outflow" class="row align-center top-padding outflow">
-                        OUT $ <span data-bind="text:dashboard.activeEntityDetail.sumOutFlow"></span>
-                     </div>
-                     <div data-bind="visible : dashboard.outflow" id="flows-out" class="row align-center outflow">
-                        <i class="fa fa-play fa-out" aria-hidden="true"></i> 
-                        <div style="display: inline-block;width: 400px;">              
-                        <table id="table-flows-out" width="100%" style="margin-left: auto;margin-right: auto;">
-                           <tr style="cursor: pointer;" data-bind="foreach:dashboard.activeEntityDetail.dataOutFlow">
-                              <td class="some" data-bind="attr: {'data-toggle' : 'tooltip', title: text+' $ '+tooltip }, style: { width: value + '%',background:color}"><span data-bind="text:text"></span></td>
-                           </tr>
-                        </table>
-                        </div>
-                        <i class="fa fa-play fa-in fa-hide" aria-hidden="true"></i>
-                     </div>
-                  </div>
-                  <div role="tabpanel" class="tab-pane" id="Trade">
-                     <div class="row align-center">
-                        <label class="texthead">Product Mix</label>
-                     </div>
-                     <div data-bind="template:{name:'tableProductMix', foreach:dashboard.activeEntityDetail.dataProductMix}">              
-                     </div>
-                  </div>
-               </div>
-
-            </div>
-         </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-title">
+          <span data-bind="text:dashboard.activeEntity().country"></span>
+          <i class="fa fa-caret-right" aria-hidden="true"></i>
+          <span id="titleName" data-bind="text: dashboard.activeEntity().name,click:dashboard.btnBack"></span>
+          <i class="fa fa-caret-right" aria-hidden="true"></i>
+          <span data-bind="text: dashboard.activeEntityDetail.noteHeaderModal"></span>
+        </div>
       </div>
-   </div>
+      <div class="modal-body">
+        <div class="row" id="groupbuttondetail">
+          <div class="col-sm-6 align-center top-margin">
+            <button type="button" class="btn btn-flat" data-bind="click:dashboard.btnCash">Cash
+              <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="col-sm-6 align-center top-margin">
+            <button type="button" class="btn btn-flat" data-bind="click:dashboard.btnTrade">Trade
+              <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="col-sm-12 align-center top-margin">
+            <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + dashboard.activeEntity().name }" class="btn btn-flat">Network Diagram
+              <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+        <div class="row" id="tradetabs" style="display:none">
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active tab1">
+              <a href="#Flows" aria-controls="Flows" role="tab" data-toggle="tab">Flows</a>
+            </li>
+            <li role="presentation">
+              <a href="#Trade" class="" aria-controls="Trade" role="tab" data-toggle="tab">Products</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <!--panel list-->
+            <div role="tabpanel" class="tab-pane active" id="Flows">
+              <div class="row align-center top-padding inflow" data-bind="visible : dashboard.inflow">
+                IN $
+                <span data-bind="text:dashboard.activeEntityDetail.sumInFlow"></span>
+              </div>
+              <div align="center" data-bind="visible : dashboard.inflow">
+                <i class="fa fa-play fa-out fa-hide" aria-hidden="true"></i>
+                <div style="display: inline-block;width: 400px;">
+                  <table id="table-flows-in" width="100%" style="margin-left: auto;margin-right: auto;">
+                    <tr style="cursor: pointer;" data-bind="foreach:dashboard.activeEntityDetail.dataInFlow">
+                      <td class="some" data-placement="right" data-toggle="tooltip" data-bind="attr: {title: 'Bank : '+text+'<br>Flow Amount : $ '+tooltip }, style: { width: value + '%',background:color}"
+                        align="center">
+                        <span data-bind="text:text"></span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <i class="fa fa-play fa-in" aria-hidden="true"></i>
+              </div>
+              <div data-bind="visible : dashboard.outflow" class="row align-center top-padding outflow">
+                OUT $
+                <span data-bind="text:dashboard.activeEntityDetail.sumOutFlow"></span>
+              </div>
+              <div data-bind="visible : dashboard.outflow" id="flows-out" class="row align-center outflow">
+                <i class="fa fa-play fa-out" aria-hidden="true"></i>
+                <div style="display: inline-block;width: 400px;">
+                  <table id="table-flows-out" width="100%" style="margin-left: auto;margin-right: auto;">
+                    <tr style="cursor: pointer;" data-bind="foreach:dashboard.activeEntityDetail.dataOutFlow">
+                      <td class="some" data-bind="attr: {'data-toggle' : 'tooltip', title: 'Bank : '+text+'<br>Flow Amount : $ '+tooltip }, style: { width: value + '%',background:color}">
+                        <span data-bind="text:text"></span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <i class="fa fa-play fa-in fa-hide" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="Trade">
+              <div class="row align-center">
+                <label class="texthead">Product Mix</label>
+              </div>
+              <div data-bind="template:{name:'tableProductMix', foreach:dashboard.activeEntityDetail.dataProductMix}">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script id="tooltip-template" type="text/x-kendo-template">
-   <div class="head">
-     <p>
-       #= value #
-       #= name #
-     </p>
-   </div>
-   <div>
-     <div>
-       # entities.forEach(function(e, i) { #
-       
-           <div class="cssnowrap" onclick="dashboard.showMapDetails(#= i #)">#= e #</div>
-        
-       # }) #
-     </div>
-   </div>
+  <div class="head">
+    <p>
+      #= value # #= name #
+    </p>
+  </div>
+  <div>
+    <div>
+      # entities.forEach(function(e, i) { #
+
+      <div class="cssnowrap" onclick="dashboard.showMapDetails(#= i #)">#= e #</div>
+
+      # }) #
+    </div>
+  </div>
 </script>

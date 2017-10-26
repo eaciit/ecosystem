@@ -197,11 +197,7 @@ viewModel.getNavigationMenu = function () {
   },{
     Icon: "cog",
     Title: "Recommend Engine",
-    Url: "/main/recommendengine/index"
-  },{
-    Icon: "database",
-    Title: "Master Data",
-    Url: "/main/access/master"
+    Url: ""
   }])
 }
 

@@ -168,7 +168,7 @@ counterpartymain.loadGraphData = function() {
 
 var div = d3.select(".layout-content").append("div")
   .attr("class", "tooltip")
-  .style("opacity", 0);
+  .style("display", "none");
 
 counterpartymain.bm = function(databm) {
   if (databm < 1000000000) {
@@ -337,7 +337,7 @@ counterpartymain.generateGraph = function() {
                 .style("top", (d3.select(ThisTemp).attr("cy")) + 50 + "px")
                 .style("margin-top", "50px")
                 .style("margin-left", "120px")
-
+                .style("display", "block")
 
               d3.selectAll("circle").transition().duration(500)
                 .style("opacity", function(o) {
@@ -361,6 +361,7 @@ counterpartymain.generateGraph = function() {
                 .style("top", (d3.select(ThisTemp).attr("cy")) + 50 + "px")
                 .style("margin-top", "50px")
                 .style("margin-left", "120px")
+                .style("display", "block")
 
 
               d3.selectAll("circle").transition().duration(500)

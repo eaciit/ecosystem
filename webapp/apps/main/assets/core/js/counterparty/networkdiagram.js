@@ -1,7 +1,8 @@
 var counterparty = {}
 counterparty.detail = ko.observableArray([])
-counterparty.activeEnityName = ko.observable()
+counterparty.activeEntityName = ko.observable()
 counterparty.activeName = ko.observable()
+counterparty.activeGroup = ko.observable("DOW CHEMICAL GROUP")
 
 var filter = {}
 filter.entities = ko.observableArray([])
@@ -83,7 +84,7 @@ filter.selectedFilters = ko.computed(function () {
   }
 
   return {
-    entityName: counterparty.activeEnityName(),
+    entityName: counterparty.activeEntityName(),
     role: filter.selectedRole(),
     group: filter.selectedGroup(),
     productCategory: filter.selectedProductCategory(),
@@ -115,7 +116,7 @@ filter.loadAll = function () {
   $("#month").data('kendoDatePicker').enable(false)
 
   filter.selectedEntity.subscribe(function (nv) {
-    counterparty.activeEnityName(nv)
+    counterparty.activeEntityName(nv)
   })
 
   filter.selectedEntity($.urlParam("entityName"))
@@ -151,7 +152,7 @@ network.loadData = function () {
 
 network.loadDetail = function (name) {
   viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", {
-    entityName: counterparty.activeEnityName(),
+    entityName: counterparty.activeEntityName(),
     counterpartyName: name
   }, function (data) {
     counterparty.activeName(name)
@@ -164,7 +165,7 @@ network.loadDetailCSV = function () {
   console.log("warsawa")
   // Manual XHR based on stackoverflow jquery does not support responseType params
   var data = {
-    entityName: counterparty.activeEnityName(),
+    entityName: counterparty.activeEntityName(),
     counterpartyName: counterparty.activeName()
   }
   var xhr = new XMLHttpRequest();
@@ -190,11 +191,11 @@ network.processData = function (data) {
   _.each(data[parent], function (e) {
     var link = {
       total: e.total,
-      type: e.cpty_bank != "SCBL" && e.cust_bank != "SCBL" ? "missed" : "flow",
+      type: e.cpty_bank.substring(0, 3) != "SCB" && e.cust_bank.substring(0, 3) != "SCB" ? "missed" : "flow",
       text: kendo.toString(e.total / 1000000, "n2") + "M",
     }
 
-    if (e.cust_role == "PAYEE") {
+    if (e.cust_role == "BUYER") {
       link.source = e.cpty_long_name
       link.source_bank = e.cpty_bank
       link.target = parent
@@ -402,7 +403,7 @@ network.generate = function () {
       } else if (d.role == "PAYEE") {
         c += " supplier"
       }
-      
+
       return c
     })
     .call(force.drag)
@@ -550,7 +551,7 @@ network.generate = function () {
     if (!d3.event.defaultPrevented) {
       if (d.class != "center") {
         network.isExpanding = true
-        counterparty.activeEnityName(d.name)
+        counterparty.activeEntityName(d.name)
       }
     }
   }
