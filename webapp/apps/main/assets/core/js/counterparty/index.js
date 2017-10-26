@@ -66,9 +66,6 @@ counterpartymain.group = [{
 }]
 
 counterpartymain.flows = [{
-  "value": 500000,
-  "text": "Flows>$50M"
-}, {
   "value": 30000000,
   "text": "Flows>$30M"
 }, {
