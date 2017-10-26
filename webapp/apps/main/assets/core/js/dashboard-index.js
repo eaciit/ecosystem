@@ -1,4 +1,5 @@
 var dashboard = {}
+dashboard.activeGroup = ko.observable("DOW CHEMICAL GROUP")
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
 dashboard.inflow = ko.observable(true)
@@ -74,6 +75,7 @@ dashboard.getMapData = function (callback) {
         })
         .value()
 
+      console.log(result)
       callback(result)
     })
   })
@@ -105,6 +107,23 @@ dashboard.generateMap = function () {
         style: {
           fill: {
             opacity: 0.5
+          }
+        }
+      }, {
+        type: "bubble",
+        dataSource: [{
+          country: "US",
+          location: [44, -85],
+          name: "United States",
+          value: 1
+        }],
+        style: {
+          fill: {
+            color: "#E15613",
+            opacity: circledMapAlpha
+          },
+          stroke: {
+            width: 0
           }
         }
       }, {
@@ -279,11 +298,11 @@ dashboard.btnCash = function () {
         text: "Other",
         value: (100 - sumtin),
         color: colorval[3],
-        tooltip: dashboard.bm(suminflow-summaxthreein, "")
+        tooltip: dashboard.bm(suminflow - summaxthreein, "")
       });
     }
-     console.log(tempdatain)
-     console.log(summaxthreein)
+    console.log(tempdatain)
+    console.log(summaxthreein)
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
     var suminflowr = dashboard.bm(suminflow, "inflow")
     dashboard.activeEntityDetail.sumInFlow(suminflowr)
@@ -307,7 +326,7 @@ dashboard.btnCash = function () {
         text: "Other",
         value: (100 - sumtout),
         color: colorval[3],
-        tooltip: dashboard.bm(sumoutflow-summaxthreeout, "")
+        tooltip: dashboard.bm(sumoutflow - summaxthreeout, "")
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
@@ -317,10 +336,10 @@ dashboard.btnCash = function () {
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
   $(".some").kendoTooltip({
-        animation: false,
-        width: 180,
-        position: "top"
-      })
+    animation: false,
+    width: 180,
+    position: "top"
+  })
 }
 
 dashboard.btnTrade = function () {
@@ -373,7 +392,7 @@ dashboard.btnTrade = function () {
         text: "Other",
         value: (100 - sumtin),
         color: colorval[3],
-        tooltip: dashboard.bm(suminflow-summaxthreein, "")
+        tooltip: dashboard.bm(suminflow - summaxthreein, "")
       });
     }
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
@@ -399,7 +418,7 @@ dashboard.btnTrade = function () {
         text: "Other",
         value: (100 - sumtout),
         color: colorval[3],
-        tooltip: dashboard.bm(sumoutflow-summaxthreeout, "")
+        tooltip: dashboard.bm(sumoutflow - summaxthreeout, "")
       });
     }
     dashboard.activeEntityDetail.dataOutFlow(tempdataout)
@@ -409,10 +428,10 @@ dashboard.btnTrade = function () {
   $("#groupbuttondetail").hide()
   $("#tradetabs").show()
   $(".some").kendoTooltip({
-        animation: false,
-        width: 180,
-        position: "top"
-      });
+    animation: false,
+    width: 180,
+    position: "top"
+  });
 }
 
 dashboard.btnBack = function () {
