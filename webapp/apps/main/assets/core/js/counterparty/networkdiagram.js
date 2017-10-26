@@ -3,7 +3,7 @@ counterparty.detail = ko.observableArray([])
 counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
-counterparty.activeGroup = ko.observable("DOW CHEMICAL GROUP")
+counterparty.activeGroup = ko.observable("Rollin")
 
 var filter = {}
 filter.entities = ko.observableArray([])
@@ -107,7 +107,9 @@ filter.switchDateType = function (data, event) {
 }
 
 filter.loadEntities = function () {
-  viewModel.ajaxPostCallback("/main/master/getentities", {}, function (data) {
+  viewModel.ajaxPostCallback("/main/master/getentities", {
+    groupName: counterparty.activeGroup()
+  }, function (data) {
     filter.entities(_.map(data, "value"))
     filter.selectedEntity.valueHasMutated()
   })

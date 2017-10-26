@@ -1,4 +1,5 @@
 var counterpartymain = {}
+counterpartymain.activeGroup = ko.observable("Rollin")
 counterpartymain.headtext = ko.observable()
 counterpartymain.dataDetailItemsNTB = ko.observableArray([])
 counterpartymain.dataDetailItemsETB = ko.observableArray([])
@@ -77,7 +78,7 @@ counterpartymain.flows = [{
 
 counterpartymain.loadEntity = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {
-    limit: counterpartymain.filterRecord.limit()
+    groupName: counterpartymain.activeGroup()
   }, function (data) {
     counterpartymain.filterDataArray.entityGroup(data)
     if (data != undefined && data.length > 0) {
