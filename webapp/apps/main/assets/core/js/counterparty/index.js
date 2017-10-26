@@ -26,7 +26,8 @@ counterpartymain.filterRecord = {
   group: ko.observable(),
   flowabove: ko.observable(),
   yearmonth: ko.observable(),
-  datetype: ko.observable()
+  datetype: ko.observable(),
+  productCategory: ko.observable()
 }
 counterpartymain.filterDataArray.buyerSupplierGroup = [{
   "value": "PAYEE",
@@ -35,6 +36,18 @@ counterpartymain.filterDataArray.buyerSupplierGroup = [{
   "value": "BUYER",
   "text": "Buyer"
 }]
+
+counterpartymain.productCategories = [{
+  "value": "",
+  "text": "All"
+}, {
+  "value": "Cash",
+  "text": "Cash"
+}, {
+  "value": "Trade",
+  "text": "Trade"
+}]
+
 counterpartymain.filterDataArray.limitGroup = [{
   "value": 5,
   "text": "Top 5"
@@ -74,7 +87,7 @@ counterpartymain.loadEntity = function () {
 }
 
 counterpartymain.loadGraphData = function () {
-  var entity = "Zanesfield"
+  var entity = "Zanesfield I"
   if (counterpartymain.filterRecord.entityName() != undefined) {
     var entity = counterpartymain.filterRecord.entityName()
   }
@@ -82,11 +95,13 @@ counterpartymain.loadGraphData = function () {
     role: counterpartymain.filterRecord.role(),
     entityName: entity,
     limit: parseInt(counterpartymain.filterRecord.limit()),
+    productCategory: counterpartymain.filterRecord.productCategory(),
     group: counterpartymain.filterRecord.group(),
     flowabove: parseInt(counterpartymain.filterRecord.flowabove()),
     datetype: counterpartymain.filterRecord.datetype(),
     yearmonth: parseInt(counterpartymain.filterRecord.yearmonth())
   }, function (data) {
+    console.log(data)
     var datas = data[_.keys(data)[0]]
     tempnodes = [];
     templinks = []
@@ -837,6 +852,11 @@ counterpartymain.onChangeAllGroups = function (e) {
 counterpartymain.onChangeLimit = function (e) {
   counterpartymain.close()
   counterpartymain.filterRecord.limit()
+  counterpartymain.loadGraphData()
+}
+
+counterpartymain.onChangeProductCategories = function (e) {
+  counterpartymain.filterRecord.productCategory()
   counterpartymain.loadGraphData()
 }
 
