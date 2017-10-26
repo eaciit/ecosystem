@@ -191,7 +191,7 @@ network.processData = function (data) {
   _.each(data[parent], function (e) {
     var link = {
       total: e.total,
-      type: e.cpty_bank != "SCBL" && e.cust_bank != "SCBL" ? "missed" : "flow",
+      type: e.cpty_bank.substring(0, 3) != "SCB" && e.cust_bank.substring(0, 3) != "SCB" ? "missed" : "flow",
       text: kendo.toString(e.total / 1000000, "n2") + "M",
     }
 
@@ -403,7 +403,7 @@ network.generate = function () {
       } else if (d.role == "PAYEE") {
         c += " supplier"
       }
-      
+
       return c
     })
     .call(force.drag)

@@ -75,7 +75,6 @@ dashboard.getMapData = function (callback) {
         })
         .value()
 
-      console.log(result)
       callback(result)
     })
   })
@@ -223,7 +222,7 @@ dashboard.getEntityDetail = function (entityName) {
     var product = _(data.product)
       .groupBy("product_category")
       .value()
-    console.log(dashboard.activeEntities().name)
+    
     dashboard.activeEntity({
       name: entityName,
       bank: bank,
@@ -301,8 +300,7 @@ dashboard.btnCash = function () {
         tooltip: dashboard.bm(suminflow - summaxthreein, "")
       });
     }
-    console.log(tempdatain)
-    console.log(summaxthreein)
+    
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
     var suminflowr = dashboard.bm(suminflow, "inflow")
     dashboard.activeEntityDetail.sumInFlow(suminflowr)
