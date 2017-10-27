@@ -197,7 +197,7 @@ viewModel.getNavigationMenu = function () {
   },{
     Icon: "cog",
     Title: "Recommend Engine",
-    Url: ""
+    Url: "/main/recommendengine/index"
   }])
 }
 
