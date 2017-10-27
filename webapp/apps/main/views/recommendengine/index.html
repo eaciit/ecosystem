@@ -3,6 +3,145 @@
 
 <div class="row">
   <div class="col-lg-12">
-    Hellow Recommend Engine
+
+   <div class="header" style="background-color:#23313e; color:white; padding: 5px 5px 5px 9px ">View all Supplier Programs
+   </div>
+
+   <div class="">
+
+   	<div class="col-lg-4 col-md-4 col-sm-4 programs">
+    <div class="col-lg-12 col-md-12 col-sm-12 supprogram">
+    <div class="settingicon" data-bind="click:recommendengine.onclickopportunity"><i class="fa fa-cog" aria-hidden="true"></i></div>
+    <div class="nameprogram">
+      <div class="childnameprogram">
+      Supplier Program 1
+      </div>
+    </div>
+    </div>
+    <div class="col-lg-12 childprogram">
+    <div class="row conbutton">
+    <div class="col-lg-4 col-md-4 col-sm-4" align="center"><div class="buttonprogramone">$50M +</div></div>
+    <div class="col-lg-4 col-md-4 col-sm-4" align="center"><div class="buttonprogramtwo">Annual</div></div>
+    <div class="col-lg-4 col-md-4 col-sm-4" align="center"><div class="buttonprogramthree">AAA</div></div>
+    </div>
+    </div>
+    </div>
+
+	  <div class="col-lg-4 col-md-4 col-sm-4 programs">
+   	<div class="col-lg-12 col-md-12 col-sm-12 supprogram">
+    <div class="settingicon" data-bind="click:recommendengine.onclickopportunity"><i class="fa fa-cog" aria-hidden="true"></i></div>
+    <div class="nameprogram">
+    	<div class="childnameprogram">
+	    Supplier Program 2
+	    </div>
+    </div>
+   	</div>
+   	<div class="col-lg-12 childprogram">
+    <div class="row conbutton">
+    <div class="col-lg-4 col-md-4 col-sm-4" align="center"><div class="buttonprogramone">$25M - $50M</div></div>
+    <div class="col-lg-4 col-md-4 col-sm-4" align="center"><div class="buttonprogramtwo">Annual</div></div>
+    <div class="col-lg-4 col-md-4 col-sm-4" align="center"><div class="buttonprogramthree"> > B</div></div>
+    </div>
+   	</div>
+   	</div>
+
+
+    <div class="col-lg-4 col-md-4 col-sm-4 addprograms">
+    <div id="addmain">
+    <div id="addbutton" data-bind="click: recommendengine.onclickaddprogram">
+    <i style="font-size: 23px;" class="fa fa-plus" aria-hidden="true"></i><br>
+    Create New Supplier<br>Program
+    </div>
+    </div>
+   	</div>
+
+
+      <!-- Modal -->
+    <div class="modal fade" id="modalopportunity" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-title">Opportunity Summary</div>
+          </div>
+          <div class="modal-body">
+            
+          <div class="inputname">Enter Opportunity Name</div>
+          <div class="vtext">
+          <div class="invoicefin" >Invoice Financing </div>
+          <div class="btnblue">#opp001</div>
+          </div>
+
+        
+          <div class="inputname">In Scope</div>
+          <div class="stext">Supplier 1 concept</div>
+          <div class="stext" >Supplier 2</div>
+          <div class="stext" >Supplier 3</div>
+          <div class="stext">Supplier 4</div>
+
+          <div>
+          <div class="inline">
+          <div class="inputname">Enter Opportunity Value</div>
+          <div><input type="text" class="inputtext" value="$2M"></div>
+          </div>
+          
+          <div class="inline">
+          <div class="inputname">Select Closure Date</div>
+          <div><input type="text" class="inputtext" value=""></div>
+          </div>
+          </div>
+
+          <div class="line"></div>
+
+          <div class="headertext">NTB Opportunity</div>
+
+       
+          <div class="inline">
+          <div class="vtextbottom">
+          <div class="invoicefin" >Supplier 3</div>
+          <div class="btngreen">#opp001</div>
+          </div>
+          </div>
+        
+          <div class="stextbottom" >In</div>
+          <div class="sasbottom">Select Applicable Segment : </div>
+          <div class="stextbottom" >BB</div>
+          <div class="stextbottomblue" >CB</div>
+          <div class="stextbottom" >CIB</div>
+          <div class="btnbottom" >Enrich</div>
+
+          <br> <br>
+
+          <div class="inline">
+          <div class="vtextbottom">
+          <div class="invoicefin" >Supplier 4</div>
+          <div class="btngreen">#opp001</div>
+          </div>
+          </div>
+        
+          <div class="stextbottom" >In</div>
+          <div class="sasbottom">Select Applicable Segment : </div>
+          <div class="stextbottomblue" >BB</div>
+          <div class="stextbottom" >CB</div>
+          <div class="stextbottom" >CIB</div>
+          <div class="btnbottom" >Enrich</div>
+
+          
+          <div class="inbottom">
+          <div class="buttonpublish">Publish to Workbench <i class="fa fa-chevron-circle-right" style="font-size: 14px; margin-left: 8px;" aria-hidden="true"></i></div>
+          </div>
+
+
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+
+   </div>
+
   </div>
 </div>
