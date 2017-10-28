@@ -3,7 +3,7 @@ counterparty.detail = ko.observableArray([])
 counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
-counterparty.activeGroup = ko.observable("Rollin")
+counterparty.activeGroupName = ko.observable("Rollin")
 
 var filter = {}
 filter.entities = ko.observableArray([])
@@ -108,7 +108,7 @@ filter.switchDateType = function (data, event) {
 
 filter.loadEntities = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {
-    groupName: counterparty.activeGroup()
+    groupName: counterparty.activeGroupName()
   }, function (data) {
     filter.entities(_.map(data, "value"))
     filter.selectedEntity.valueHasMutated()
@@ -139,13 +139,14 @@ filter.loadAll = function () {
 var network = {}
 network.data = []
 network.links = []
-network.nodes = {}
+network.nodes = []
+network.level = 0
 network.isExpanding = false
 
 network.clean = function () {
   network.data = []
   network.links = []
-  network.nodes = {}
+  network.nodes = []
 }
 
 network.loadData = function () {
@@ -166,7 +167,6 @@ network.loadDetail = function (name) {
 }
 
 network.loadDetailCSV = function () {
-  console.log("warsawa")
   // Manual XHR based on stackoverflow jquery does not support responseType params
   var data = {
     entityName: counterparty.activeEntityName(),
@@ -186,7 +186,6 @@ network.loadDetailCSV = function () {
   }
   xhr.responseType = "arraybuffer";
   xhr.send(JSON.stringify(data));
-
 }
 
 network.processData = function (data) {
@@ -195,8 +194,7 @@ network.processData = function (data) {
   _.each(data[parent], function (e) {
     var link = {
       total: e.total,
-      type: String(e.cpty_bank).substring(0, 3) != "SCB" && String(e.cust_bank).substring(0, 3) != "SCB" ? "missed" : "flow",
-      text: kendo.toString(e.total / 1000000, "n2") + "M",
+      type: String(e.cpty_bank).substring(0, 3) == "SCB" && String(e.cust_bank).substring(0, 3) == "SCB" ? "flow" : "missed",
     }
 
     if (e.cust_role == "BUYER") {
@@ -237,49 +235,78 @@ network.processData = function (data) {
     }
   })
 
-  if (network.nodes[parent]) {
-    delete network.nodes[parent]
-  }
-
-  _.keys(network.nodes).forEach(function (key) {
-    if (network.nodes[key].class != "center") {
-      network.nodes[key].isFade = true
-    }
-  });
-
   var nodes = _(data[parent])
     .map(function (e) {
-      if (network.nodes[e.cpty_long_name]) {
-        delete network.nodes[e.cpty_long_name]
-      }
-
       return {
         name: e.cpty_long_name,
         coi: e.cpty_coi,
+        groupName: e.cpty_group_name,
+        amountText: kendo.toString(e.total / 1000000, "n2") + "M",
         opportunity: String(e.cpty_bank).substring(0, 3) != "SCB" ? true : false,
         class: e.is_ntb == "Y" ? "ntb" : "etb",
         role: e.cust_role,
-        isFade: false
+        isFade: false,
+        level: network.level,
       }
     })
     .concat({
       name: parent,
       coi: counterparty.activeEntityCOI(),
+      groupName: counterparty.activeGroupName(),
+      amountText: "",
       opportunity: false,
       class: "center",
-      isFade: false
+      isFade: false,
+      level: network.level
     })
     .uniqBy("name")
-    .keyBy("name")
     .value()
 
-  nodes = _.merge(nodes, network.nodes)
+  var prevNodes = _(network.nodes).remove(function (e) {
+    return (_.findIndex(nodes, {
+      name: e.name
+    }) == -1)
+  }).map(function (e) {
+    e.isFade = true
+
+    return e
+  }).value()
+
+  nodes = nodes.concat(prevNodes)
 
   links.forEach(function (link) {
-    link.source = nodes[link.source]
-    link.target = nodes[link.target]
+    link.s = _.find(nodes, {
+      name: link.source
+    })
+    link.t = _.find(nodes, {
+      name: link.target
+    })
   })
 
+  nodes = _.map(nodes, function (n) {
+    n.total = _.sumBy(links, function (l) {
+      if (l.t.name == n.name || l.s.name == n.name) {
+        return l.total
+      } else {
+        return 0
+      }
+    })
+
+    return n
+  })
+
+  var minV = _.minBy(nodes, 'total').total
+  var maxV = _.maxBy(nodes, 'total').total
+  var minR = 10
+  var maxR = 100
+
+  nodes = _.map(nodes, function (n) {
+    n.r = parseInt(minR + (n.total - minV) / (maxV - minV) * (maxR - minR))
+
+    return n
+  })
+
+  network.level += 1
   network.nodes = nodes
   network.links = links
 
@@ -290,8 +317,9 @@ network.generate = function () {
   var links = network.links
   var nodes = network.nodes
 
+  var levelHeight = 400
   var w = $("#graph").width(),
-    h = 600
+    h = (network.level + 1) * levelHeight
 
   d3.select("#graph").selectAll("*").remove()
 
@@ -324,22 +352,42 @@ network.generate = function () {
     .attr("in", "SourceGraphic");
   // End of filter
 
-  var force = d3.layout.force()
-    .nodes(d3.values(nodes))
-    .links(links)
-    .size([w, h])
-    .linkDistance(200)
-    .charge(-1000)
-    .on("tick", tick)
-    .start()
+  // Force Simulation
+  var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function (d) {
+      return d.name;
+    }).distance(300).strength(1))
+    .force("charge", d3.forceManyBody())
+    .force("x", d3.forceX(function (d) {
+      if (d.role == "BUYER") {
+        return w / 4 * 3
+      } else if (d.role == "PAYEE") {
+        return w / 4
+      } else {
+        return w / 2
+      }
+    }))
+    .force("y", d3.forceY(function (d) {
+      return levelHeight / 2 + (network.level - d.level - 1) * levelHeight
+    }))
+    .force("collision", d3.forceCollide().radius(function (d) {
+      return 50;
+    }))
 
   // Per-type markers, as they don't inherit styles.
-  svg.append("svg:defs").selectAll("marker")
-    .data(["flow", "missed"])
-    .enter().append("svg:marker")
-    .attr("id", String)
+  var marker = svg.append("svg:defs").selectAll("marker")
+    .data(nodes)
+    .enter()
+
+  marker.append("svg:marker")
+    .attr("id", function (d) {
+      return "missed" + d.r
+    })
+    .attr("class", "missed")
     .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 25)
+    .attr("refX", function (d) {
+      return d.r + 10 + d.r * 0.1
+    })
     .attr("refY", -0)
     .attr("markerWidth", 6)
     .attr("markerHeight", 6)
@@ -347,57 +395,42 @@ network.generate = function () {
     .append("svg:path")
     .attr("d", "M0,-5L10,0L0,5")
 
-  svg.append("svg:defs").selectAll("marker")
-    .data(["flow-big", "missed-big"])
-    .enter().append("svg:marker")
-    .attr("id", String)
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 32)
-    .attr("refY", -0)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-    .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5")
-
-  var path = svg.append("svg:g").selectAll("path")
-    .data(force.links())
+  var path = svg.append("svg:g")
+    .selectAll("path")
+    .data(links)
     .enter().append("svg:path")
     .attr("id", function (d, i) {
       return "linkId_" + i
     })
     .attr("class", function (d) {
       var c = "link " + d.type
-      c += (d.target.isFade || d.source.isFade) ? " fade" : ""
+      c += (d.t.isFade || d.s.isFade) ? " fade" : ""
       return c
     })
     .attr("marker-end", function (d) {
-      var type = d.type
-      type += d.target.class == "center" ? "-big" : ""
-      return "url(#" + type + ")"
+      return "url(#" + d.type + d.t.r + ")"
     })
 
-  var pathText = svg.selectAll(".pathText")
-    .data(force.links())
+  var pathText = svg.append("svg:g")
+    .selectAll(".pathText")
+    .data(links)
     .enter().append("svg:text")
-    .attr("dx", 85)
+    .attr("dx", 125)
     .attr("dy", -3)
     .attr("class", function (d) {
-      return (d.target.isFade || d.source.isFade) ? " fade" : ""
+      return (d.t.isFade || d.s.isFade) ? " fade" : ""
     })
     .append("textPath")
     .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
     .text(function (d) {
-      return d.text
+      return d.t.groupName == d.s.groupName ? "G" : ""
     })
 
-  var rb = 20,
-    r = 15
-
+  var prevNode = "#nodeDetail"
   var circle = svg.append("svg:g").selectAll("g")
-    .data(force.nodes())
+    .data(nodes)
     .enter()
     .append("svg:g")
     .attr("class", function (d) {
@@ -409,47 +442,42 @@ network.generate = function () {
       }
 
       return c
+    }).on("mouseover", function(d, i) {
+      d3.select(prevNode).classed("hide", true)
+      prevNode = "#nodeDetail" + i
+      d3.select(prevNode).classed("hide", false)
     })
-    .call(force.drag)
 
   circle.append("svg:circle")
     .on("click", expand)
     .attr("r", function (d) {
-      return d.class == "center" ? rb : r;
+      return d.r
     })
     .attr("class", function (d) {
       var c = d.class
       c += d.isFade ? " fade" : ""
       return c
     })
-    .attr("filter", function (d) {
-      return d.opportunity && !d.isFade ? "url(#dropshadow)" : ""
-    })
 
-  circle.append("svg:circle")
-    .on("click", expand)
-    .attr("r", function (d) {
-      return d.class == "center" ? rb - 1 : r - 1;
+  circle.append("svg:text")
+    .text(function (d) {
+      if (d.role == "BUYER") {
+        return "□"
+      } else if (d.role == "PAYEE") {
+        return "+"
+      } else {
+        return ""
+      }
     })
-    .attr("class", function (d) {
-      var c = d.role == "BUYER" ? "buyer" : "hide"
-      c += d.isFade ? " fade" : ""
-      return c
+    .attr("x", function (d) {
+      return d.r / 2 - 5
     })
-
-  circle.append("svg:circle")
-    .on("click", expand)
-    .attr("r", function (d) {
-      return d.class == "center" ? rb - 12 : r - 12;
-    })
-    .attr("class", function (d) {
-      var c = d.role == "PAYEE" ? "supplier" : "hide"
-      c += d.isFade ? " fade" : ""
-      return c
+    .attr("y", function (d) {
+      return -d.r / 2 + 5
     })
 
   var text = svg.append("svg:g").selectAll("g")
-    .data(force.nodes())
+    .data(nodes)
     .enter()
     .append("svg:g")
     .attr("class", function (d) {
@@ -463,66 +491,84 @@ network.generate = function () {
       return c
     })
     .append("svg:g")
+    .attr("id", function (d, i) {
+      return "nodeDetail" + i
+    })
     .attr("class", function (d) {
-      return d.isFade ? "fade" : ""
+      return d.isFade ? "hide fade" : "hide"
     })
 
   // A copy of the text with a thick white stroke for legibility.
+  // Name Text
   text.append("svg:text")
     .attr("class", "shadow")
-    .tspans(function (d) {
-      var comp = d.name.split(" ")
-      var top = comp.splice(0, comp.length / 2)
-      var bottom = comp.splice(comp.length / 2, comp.length)
-
-      return [top.join(" "), bottom.join(" ")]
+    .text(function (d) {
+      return d.name
     })
-    .each(function (d, i) {
-      if (i == 1) {
-        d3.select(this).attr("dy", 10)
-      }
+    .attr("x", function (d) {
+      return d.r + 10
     })
-    .attr("x", 25)
-    .attr("y", -5)
-
-  text.append("svg:text")
-    .tspans(function (d) {
-      var comp = d.name.split(" ")
-      var top = comp.splice(0, comp.length / 2)
-      var bottom = comp.splice(comp.length / 2, comp.length)
-
-      return [top.join(" "), bottom.join(" ")]
-    })
-    .each(function (d, i) {
-      if (i == 1) {
-        d3.select(this).attr("dy", 10)
-      }
-    })
-    .attr("x", 25)
     .attr("y", -5)
 
   text.append("svg:text")
     .text(function (d) {
+      return d.name
+    })
+    .attr("x", function (d) {
+      return d.r + 10
+    })
+    .attr("y", -5)
+
+  // COI Text
+  text.append("svg:text")
+    .text(function (d) {
       return d.coi
     })
-    .attr("x", 25)
-    .attr("y", 17)
+    .attr("x", function (d) {
+      return d.r + 10
+    })
+    .attr("y", 6)
     .attr("class", "shadow")
 
   text.append("svg:text")
     .text(function (d) {
       return d.coi
     })
-    .attr("x", 25)
-    .attr("y", 17)
+    .attr("x", function (d) {
+      return d.r + 10
+    })
+    .attr("y", 6)
     .attr("class", "coi")
 
+  // Amount Text
   text.append("svg:text")
     .text(function (d) {
-      return "detail"
+      return d.amountText
+    })
+    .attr("x", function (d) {
+      return d.r + 10
+    })
+    .attr("y", 17)
+    .attr("class", "shadow")
+
+  text.append("svg:text")
+    .text(function (d) {
+      return d.amountText
+    })
+    .attr("x", function (d) {
+      return d.r + 10
+    })
+    .attr("y", 17)
+
+  // Detail Link
+  text.append("svg:text")
+    .text(function (d) {
+      return "show detail"
     })
     .on("click", detail)
-    .attr("x", 25)
+    .attr("x", function (d) {
+      return d.r + 10
+    })
     .attr("y", 28)
     .attr("class", function (d) {
       return d.class != "center" ? "shadow" : "hide"
@@ -530,17 +576,25 @@ network.generate = function () {
 
   text.append("svg:text")
     .text(function (d) {
-      return "detail"
+      return "show detail"
     })
     .on("click", detail)
-    .attr("x", 25)
+    .attr("x", function (d) {
+      return d.r + 10
+    })
     .attr("y", 28)
     .attr("class", function (d) {
       return d.class != "center" ? "detail-button" : "hide"
     })
 
-  // Use elliptical arc path segments to doubly-encode directionality.
-  function tick() {
+  simulation
+    .nodes(nodes)
+    .on("tick", ticked);
+
+  simulation.force("link")
+    .links(links);
+
+  function ticked() {
     path.attr("d", function (d) {
       var dx = d.target.x - d.source.x,
         dy = d.target.y - d.source.y,
@@ -549,11 +603,11 @@ network.generate = function () {
     })
 
     circle.attr("transform", function (d) {
-      return "translate(" + d.x + "," + d.y + ")"
+      return "translate(" + d.x + ", " + d.y + ")";
     })
 
     text.attr("transform", function (d) {
-      return "translate(" + d.x + "," + d.y + ")"
+      return "translate(" + d.x + ", " + d.y + ")";
     })
   }
 
@@ -568,6 +622,7 @@ network.generate = function () {
       if (d.class != "center") {
         network.isExpanding = true
         counterparty.activeEntityName(d.name)
+        counterparty.activeGroupName(d.groupName)
       }
     }
   }

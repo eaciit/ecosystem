@@ -21,13 +21,11 @@ path.link.missed {
   stroke-dasharray: 5, 5;
 }
 
-marker#flow,
-marker#flow-big {
+marker.flow {
   fill: #4289bd;
 }
 
-marker#missed,
-marker#missed-big {
+marker.missed {
   fill: #666;
 }
 

@@ -59,7 +59,7 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT cpty_long_name, cpty_coi,
+	sql := `SELECT cpty_group_name, cpty_long_name, cpty_coi,
   LEFT(counterparty_bank, 4) AS cpty_bank, 
   LEFT(customer_bank, 4) AS cust_bank, 
   ` + c.customerRoleClause() + `AS cust_role, 
@@ -102,7 +102,7 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		sql += " AND product_category = 'Trade'"
 	}
 
-	sql += " GROUP BY cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank, is_ntb "
+	sql += " GROUP BY cpty_group_name, cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank, is_ntb "
 
 	// Filters for Flows
 	if payload.FlowAbove > 0 {
