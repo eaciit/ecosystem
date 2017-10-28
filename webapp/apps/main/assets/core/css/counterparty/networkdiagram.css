@@ -44,18 +44,15 @@ circle.supplier {
 }
 
 circle.ntb {
-  fill: #009fda;
-  stroke-width: 1px;
+  fill: #4689bb;
 }
 
 circle.etb {
-  fill: #69be28;
-  stroke-width: 1px;
+  fill: #5ba84e;
 }
 
 circle.center {
-  fill: #6d6e71;
-  stroke-width: 1px;
+  fill: #f1963d;
 }
 
 text {
