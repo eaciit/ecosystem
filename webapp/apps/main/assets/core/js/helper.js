@@ -65,3 +65,17 @@ function currencynum(angka) {
         return "(" + TotminString + ")";
     }
 }
+
+function setbm(databm) {
+  if (databm < 1000000000) {
+    var databmr = databm / 1000000
+    databmr = currencynum(databmr)
+    databmr = databmr + " M"
+    return databmr
+  } else if (databm >= 1000000000) {
+    var databmr = databm / 1000000000
+    databmr = currencynum(databmr)
+    databmr = databmr + " B"
+    return databmr
+  }
+}
