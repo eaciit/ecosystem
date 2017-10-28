@@ -1,0 +1,289 @@
+.programs{
+	width: 25%;
+	height: 200px;
+	background-color: #23313e;
+	margin:15px 25px 15px 25px;
+	color:white;
+	display: table;
+}
+
+.supprogram{
+	height: 70%;
+	background-color: #1e88e5;
+	padding: none;
+	position: relative;
+	display: table;
+	align-items: center;
+}
+
+.childprogram{
+    height: 30%; 
+    background-color: #23313e;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: table;
+}
+
+.col-lg-4.programs{
+	padding-left: 0px;
+    padding-right: 0px;
+}
+
+.settingicon{
+	position: absolute;
+	right:3px;
+	margin: 5px 5px 5px 5px;
+	cursor: pointer;
+	font-size: 18px;
+}
+
+.settingicon:hover{
+	color: #e9e9e9;
+}
+
+.settingicon:active{
+	color: #d2d2d2;
+}
+
+.nameprogram{
+	margin:0 auto;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	height: auto;
+	width: 100%;
+}
+.childnameprogram{
+	border: solid 2px white;
+	border-radius: 4px;
+	margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+    padding: 10px;
+}
+
+.buttonprogramone{
+	border-radius: 2px;
+	background-color: #404B5F;
+	padding: 5%;
+	cursor: pointer;
+	font-size: 10px;
+}
+
+.buttonprogramtwo{
+	border-radius: 2px;
+	background-color: #8893A6;
+	padding: 5%;
+	cursor: pointer;
+	font-size: 10px;
+}
+
+.buttonprogramthree{
+	border-radius: 2px;
+	background-color: #1E88E5;
+	padding: 5%;
+	cursor: pointer;
+	font-size: 10px;
+}
+
+.conbutton{
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.addprograms{
+	width: 25%;
+	height: 200px;
+	margin:15px 25px 15px 25px;
+	color:white;
+	display: table;
+	cursor: pointer;
+}
+
+#addmain{
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#addbutton{
+	border: solid 1px white;
+	 margin-left: auto;
+     margin-right: auto;
+     width: 50%;	
+     padding: 14px;
+     border-radius: 5px;
+     background-color: #dddddd;
+     color: #4b4b4b;
+}
+
+#addbutton:hover{
+	background-color: #dedede;
+	color: black;
+}
+
+#addbutton:active{
+	background-color: #969696;
+	color: #ececec;
+}
+
+.modal-content{
+	border-radius: 0;
+	background-color: #EDEDED;
+}
+
+.modal-header{
+	text-align: center;
+	padding:7px;
+	color: white;
+	background-color: #3C96E8;
+}
+
+.modal-body{
+	padding: 10px 12px 12px 12px;
+	font-size: 11px;
+}
+
+.inputname{
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.vtext{
+	background-color: #ffffff;
+	padding: 5px;
+	width: 300px;
+	display: table;
+	vertical-align: middle;
+}
+
+.invoicefin{
+	/*background-color: #ffffff;
+	padding: 5px;
+	width: 300px;*/
+	display: inline-block;
+	vertical-align: bottom;
+	margin-top: 5px;
+}
+
+.btnblue{
+	float: right;
+	background-color: #3C96E8;
+	color: white;
+	border-radius: 3px;
+	padding: 5px;
+	display: inline-block;
+}
+
+.stext{
+	background-color: #ffffff;
+	padding: 9px 5px 9px 5px;
+	min-width: 40px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 3px;
+}
+
+.inputtext{
+	width: 150px;
+	line-height: 22px;
+	padding:3px;
+}
+
+.inline{
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.line{
+	border-bottom: 1px solid #5F636B; 
+	width: 100%; 
+	position: absolute; 
+	left: 0; 
+	margin-top: 24px; 
+	margin-bottom: 10px;
+}
+
+.headertext{
+	padding: 10px;
+	font-size: 13px;
+	margin-top: 45px;
+	margin-bottom: 12px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.vtextbottom{
+	background-color: #ffffff;
+	padding: 5px;
+	width: 160px;
+	display: table;
+	vertical-align: middle;
+}
+
+.stextbottom{
+	background-color: #ffffff;
+	padding: 10px 5px 10px 5px;
+	min-width: 40px;
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 3px;
+}
+
+.sasbottom{
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 10px;
+}
+
+.btnbottom{
+	background-color: #3DCB8B;
+	padding: 10px 10px 10px 10px;
+	min-width: 40px;
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 3px;
+	color:#ffffff;
+	border-radius: 3px;
+	float: right;
+}
+
+.inbottom{
+	text-align: center;
+	margin-top: 38PX;
+	margin-bottom: 15px;
+}
+
+.buttonpublish{
+	text-align: center;
+	width: 180px;
+	background-color: #3C96E8;
+	color: white;
+	font-weight: bold;
+	line-height: 35px;
+    text-align: center;
+    border-radius: 3px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.btngreen{
+	float: right;
+	background-color: #60E19C;
+	color: white;
+	border-radius: 3px;
+	padding: 5px;
+	display: inline-block;
+}
+
+.stextbottomblue{
+	background-color: #3C96E8;
+	padding: 10px 5px 10px 5px;
+	min-width: 40px;
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 3px;
+	color: white;
+}
