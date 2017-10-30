@@ -245,7 +245,6 @@ network.processData = function (data) {
         opportunity: String(e.cpty_bank).substring(0, 3) != "SCB" ? true : false,
         class: e.is_ntb == "Y" ? "ntb" : "etb",
         role: e.cust_role,
-        isFade: false,
         level: network.level,
       }
     })
@@ -256,7 +255,6 @@ network.processData = function (data) {
       amountText: "",
       opportunity: false,
       class: "center",
-      isFade: false,
       level: network.level
     })
     .uniqBy("name")
@@ -266,10 +264,6 @@ network.processData = function (data) {
     return (_.findIndex(nodes, {
       name: e.name
     }) == -1)
-  }).map(function (e) {
-    e.isFade = true
-
-    return e
   }).value()
 
   nodes = nodes.concat(prevNodes)
@@ -297,8 +291,8 @@ network.processData = function (data) {
 
   var minV = _.minBy(nodes, 'total').total
   var maxV = _.maxBy(nodes, 'total').total
-  var minR = 10
-  var maxR = 100
+  var minR = 15
+  var maxR = 80
 
   nodes = _.map(nodes, function (n) {
     n.r = parseInt(minR + (n.total - minV) / (maxV - minV) * (maxR - minR))
@@ -317,7 +311,7 @@ network.generate = function () {
   var links = network.links
   var nodes = network.nodes
 
-  var levelHeight = 400
+  var levelHeight = 300
   var w = $("#graph").width(),
     h = (network.level + 1) * levelHeight
 
@@ -368,7 +362,7 @@ network.generate = function () {
       }
     }))
     .force("y", d3.forceY(function (d) {
-      return levelHeight / 2 + (network.level - d.level - 1) * levelHeight
+      return levelHeight / 1.5 + (network.level - d.level - 1) * levelHeight
     }))
     .force("collision", d3.forceCollide().radius(function (d) {
       return 50;
@@ -403,9 +397,7 @@ network.generate = function () {
       return "linkId_" + i
     })
     .attr("class", function (d) {
-      var c = "link " + d.type
-      c += (d.t.isFade || d.s.isFade) ? " fade" : ""
-      return c
+      return "link " + d.type
     })
     .attr("marker-end", function (d) {
       return "url(#" + d.type + d.t.r + ")"
@@ -417,9 +409,6 @@ network.generate = function () {
     .enter().append("svg:text")
     .attr("dx", 125)
     .attr("dy", -3)
-    .attr("class", function (d) {
-      return (d.t.isFade || d.s.isFade) ? " fade" : ""
-    })
     .append("textPath")
     .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
@@ -434,7 +423,7 @@ network.generate = function () {
     .enter()
     .append("svg:g")
     .attr("class", function (d) {
-      var c = "wrapper " + d.class
+      var c = "wrapper node " + d.class
       if (d.role == "BUYER") {
         c += " buyer"
       } else if (d.role == "PAYEE") {
@@ -442,7 +431,7 @@ network.generate = function () {
       }
 
       return c
-    }).on("mouseover", function(d, i) {
+    }).on("mouseover", function (d, i) {
       d3.select(prevNode).classed("hide", true)
       prevNode = "#nodeDetail" + i
       d3.select(prevNode).classed("hide", false)
@@ -454,26 +443,25 @@ network.generate = function () {
       return d.r
     })
     .attr("class", function (d) {
-      var c = d.class
-      c += d.isFade ? " fade" : ""
-      return c
+      return d.class
     })
 
   circle.append("svg:text")
     .text(function (d) {
       if (d.role == "BUYER") {
-        return "□"
+        return "-"
       } else if (d.role == "PAYEE") {
         return "+"
       } else {
         return ""
       }
     })
+    .attr("class", "bs-indicator")
     .attr("x", function (d) {
-      return d.r / 2 - 5
+      return d.r / 1.5
     })
     .attr("y", function (d) {
-      return -d.r / 2 + 5
+      return -d.r / 1.5
     })
 
   var text = svg.append("svg:g").selectAll("g")
@@ -494,9 +482,7 @@ network.generate = function () {
     .attr("id", function (d, i) {
       return "nodeDetail" + i
     })
-    .attr("class", function (d) {
-      return d.isFade ? "hide fade" : "hide"
-    })
+    .attr("class", "hide")
 
   // A copy of the text with a thick white stroke for legibility.
   // Name Text
@@ -625,6 +611,24 @@ network.generate = function () {
         counterparty.activeGroupName(d.groupName)
       }
     }
+  }
+
+  function detach(d) {
+    network.nodes = _.remove(network.nodes, function (e) {
+      return e.name == d.name
+    })
+
+    network.links = _.remove(network.links, function (e) {
+      return e.t.name == d.name || e.s.name == d.name
+    })
+
+    d3.selectAll(".node").filter(function (e) {
+      return e.name == d.name
+    }).remove()
+
+    d3.selectAll(".link").filter(function (e) {
+      return e.t.name == d.name || e.s.name == d.name
+    }).remove()
   }
 
 }

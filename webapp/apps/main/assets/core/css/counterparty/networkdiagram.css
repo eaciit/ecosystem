@@ -6,6 +6,10 @@
   display: none;
 }
 
+.bs-indicator {
+  font-size: 1.2em;
+}
+
 path.link {
   fill: none;
   stroke: #666;
