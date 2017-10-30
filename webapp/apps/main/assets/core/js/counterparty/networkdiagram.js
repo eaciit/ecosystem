@@ -449,7 +449,7 @@ network.generate = function () {
   circle.append("svg:text")
     .text(function (d) {
       if (d.role == "BUYER") {
-        return "-"
+        return "□"
       } else if (d.role == "PAYEE") {
         return "+"
       } else {
@@ -458,10 +458,10 @@ network.generate = function () {
     })
     .attr("class", "bs-indicator")
     .attr("x", function (d) {
-      return d.r / 1.5
+      return d.r / 2 - 8
     })
     .attr("y", function (d) {
-      return -d.r / 1.5
+      return -d.r / 2 + 8
     })
 
   var text = svg.append("svg:g").selectAll("g")
