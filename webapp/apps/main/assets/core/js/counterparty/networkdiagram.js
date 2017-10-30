@@ -651,7 +651,113 @@ network.unhighlight = function () {
   d3.select("#graph").selectAll(".wrapper").classed("fade", false)
 }
 
+counterparty.beforePDFPrinting = function() {
+  var def = $.Deferred();
+
+  var cc = $("div.display-active svg");
+  var count = cc.length;
+
+  for (var i = 0; i < cc.length; i++) {
+    var svg = cc[i];
+
+    // inject style
+    var st = document.createElement("style");
+    st.innerHTML = st.innerHTML + ".ntb {fill: #4689bb;} "
+    st.innerHTML = st.innerHTML + ".etb {fill: #5ba84e;} "
+    st.innerHTML = st.innerHTML + "text.shadow {stroke: #fff;stroke-width: 4px;stroke-opacity: .8;} "
+    st.innerHTML = st.innerHTML + ".supplier {fill: #000f46;} "
+    st.innerHTML = st.innerHTML + ".center {fill: #f1963d;} "
+    st.innerHTML = st.innerHTML + "text {font: 10px sans-serif;} "
+    st.innerHTML = st.innerHTML + "path.link {font: 10px sans-serif; fill: none;stroke: #666;stroke-width: 1.5px;} "
+    st.innerHTML = st.innerHTML + "path.link.flow {stroke: #4289bd;} "
+    st.innerHTML = st.innerHTML + "path.link.missed {stroke: #666;stroke-dasharray: 5, 5;} "
+    st.innerHTML = st.innerHTML + "marker.flow {fill: #4289bd;} "
+    st.innerHTML = st.innerHTML + "marker.missed {fill: #666;} "
+    st.innerHTML = st.innerHTML + "text.hide {visibility:hidden} "
+   
+
+    $(svg).find("style").remove();
+    $(svg).prepend(st);
+    $(".legend").prepend('<div id="onlyprint" ><img  src="/main/static/3rdparty/img/legend.jpg" width="120" height="90" ></div>')
+
+    var sheight = $("div svg").attr("height")
+
+    var rect = svg.getBoundingClientRect();
+    var img = document.createElement("img");
+    var canvas = document.createElement('canvas');
+    canvas.width = 1386 * 2;
+    canvas.height = sheight * 2;
+    var ctx = canvas.getContext('2d');
+
+    var imgCanvas = new Image(),
+      serializer = new XMLSerializer(),
+      svgStr = serializer.serializeToString(svg);
+
+    // You could also use the actual string without base64 encoding it:
+    imgCanvas.onload = function() {
+      ctx.webkitImageSmoothingEnabled = false;
+      ctx.mozImageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, 1386 * 2, sheight * 2);
+      ctx.drawImage(imgCanvas, 0, 0, 1386 * 2, sheight * 2);
+
+      var base64Image = canvas.toDataURL("image/jpeg", 0.75);
+
+      img.src = base64Image;
+      img.style = "position:absolute;top:" + rect.top + "px;left:" + rect.left + "px;";
+      img.className = "remove-after-print";
+      img.width = 1386;
+      img.height = sheight;
+      svg.parentNode.insertBefore(img, svg);
+
+      def.resolve(true)
+    }
+
+    imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(svgStr);
+  }
+
+  return def
+}
+
+counterparty.afterPDFPrinting = function() {
+  $(".remove-after-print").remove();
+  $( "#onlyprint" ).remove();
+}
+
+counterparty.getPDF = function(selector) {
+  $.when(
+    counterparty.beforePDFPrinting()
+  ).done(function() {
+    kendo.drawing.drawDOM($(selector))
+      .then(function(group) {
+        // Render the result as a PDF file
+        return kendo.drawing.exportPDF(group, {
+          paperSize: "auto",
+          margin: {
+            left: "1cm",
+            top: "1cm",
+            right: "1cm",
+            bottom: "1cm"
+          }
+        });
+      })
+      .then(function(data) {
+        // Save the PDF file
+        kendo.saveAs({
+          dataURI: data,
+          fileName: "ExportND.pdf"
+        });
+      })
+      .done(function() {
+        counterparty.afterPDFPrinting();
+      })
+  })
+}
+
 $(window).load(function () {
+  $("#graph").addClass("display-active")
+  // $(".legend").addClass("display-active")
   filter.loadAll()
   network.loadData()
 })
