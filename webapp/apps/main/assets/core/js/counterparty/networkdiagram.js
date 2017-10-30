@@ -699,7 +699,7 @@ counterparty.beforePDFPrinting = function () {
     st.innerHTML = st.innerHTML + "text.shadow {stroke: #fff;stroke-width: 4px;stroke-opacity: .8;} "
     st.innerHTML = st.innerHTML + ".supplier {fill: #000f46;} "
     st.innerHTML = st.innerHTML + ".center {fill: #f1963d;} "
-    st.innerHTML = st.innerHTML + "text {font: 10px sans-serif;} "
+    st.innerHTML = st.innerHTML + "text {font: 10px sans-serif; fill: #5F5F5F} "
     st.innerHTML = st.innerHTML + "path.link {font: 10px sans-serif; fill: none;stroke: #666;stroke-width: 1.5px;} "
     st.innerHTML = st.innerHTML + "path.link.flow {stroke: #4289bd;} "
     st.innerHTML = st.innerHTML + "path.link.missed {stroke: #666;stroke-dasharray: 5, 5;} "
@@ -746,7 +746,7 @@ counterparty.beforePDFPrinting = function () {
       def.resolve(true)
     }
 
-    imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(svgStr);
+    imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgStr)));
   }
 
   return def
