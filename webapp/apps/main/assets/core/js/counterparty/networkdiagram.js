@@ -166,7 +166,7 @@ network.loadDetail = function (name, displayName) {
     } else {
       counterparty.activeDisplayName(name)
     }
-    
+
     counterparty.activeName(name)
     counterparty.detail(data)
     $('#modalDetail').modal('show')
@@ -179,20 +179,20 @@ network.loadDetailCSV = function () {
     entityName: counterparty.activeEntityName(),
     counterpartyName: counterparty.activeName()
   }
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/main/counterparty/getdetailnetworkdiagramcsv", true);
-  xhr.setRequestHeader("Content-type", "application/json");
+  var xhr = new XMLHttpRequest()
+  xhr.open("POST", "/main/counterparty/getdetailnetworkdiagramcsv", true)
+  xhr.setRequestHeader("Content-type", "application/json")
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.status == 200) {
       var blob = new Blob([xhr.response], {
         type: "octet/stream"
-      });
-      var fileName = "download.csv";
-      saveAs(blob, fileName);
+      })
+      var fileName = "download.csv"
+      saveAs(blob, fileName)
     }
   }
-  xhr.responseType = "arraybuffer";
-  xhr.send(JSON.stringify(data));
+  xhr.responseType = "arraybuffer"
+  xhr.send(JSON.stringify(data))
 }
 
 network.processData = function (data) {
@@ -246,9 +246,9 @@ network.processData = function (data) {
     .map(function (e) {
       return {
         name: e.cpty_long_name,
+        bank: e.cpty_bank,
         coi: e.cpty_coi,
         groupName: e.cpty_group_name,
-        amountText: kendo.toString(e.total / 1000000, "n2") + "M",
         opportunity: String(e.cpty_bank).substring(0, 3) != "SCB" ? true : false,
         class: e.is_ntb == "Y" ? "ntb" : "etb",
         role: e.cust_role,
@@ -257,14 +257,20 @@ network.processData = function (data) {
     })
     .concat({
       name: parent,
+      bank: "",
       coi: counterparty.activeEntityCOI(),
       groupName: counterparty.activeGroupName(),
-      amountText: "",
       opportunity: false,
       class: "center",
       level: network.level
     })
-    .uniqBy("name")
+    .groupBy("name")
+    .map(function (e) {
+      var d = _.first(e)
+      d.banks = _.map(e, "bank")
+
+      return d
+    })
     .value()
 
   var prevNodes = _(network.nodes).remove(function (e) {
@@ -292,6 +298,7 @@ network.processData = function (data) {
         return 0
       }
     })
+    n.amountText = !isNaN(n.total) ? kendo.toString(n.total / 1000000, "n2") + "M" : ""
 
     return n
   })
@@ -329,34 +336,34 @@ network.generate = function () {
     .attr("height", h)
 
   // Filter
-  var defs = svg.append("defs");
+  var defs = svg.append("defs")
   var filter = defs.append("filter")
     .attr("id", "dropshadow")
   filter.append("feGaussianBlur")
     .attr("in", "SourceAlpha")
     .attr("stdDeviation", 2)
-    .attr("result", "blur");
+    .attr("result", "blur")
   filter.append("feFlood")
     .attr("in", "offsetBlur")
     .attr("flood-opacity", "0.5")
-    .attr("result", "offsetColor");
+    .attr("result", "offsetColor")
   filter.append("feOffset")
     .attr("in", "blur")
     .attr("dx", 0)
     .attr("dy", 0)
-    .attr("result", "offsetBlur");
+    .attr("result", "offsetBlur")
 
-  var feMerge = filter.append("feMerge");
+  var feMerge = filter.append("feMerge")
   feMerge.append("feMergeNode")
     .attr("in", "offsetBlur")
   feMerge.append("feMergeNode")
-    .attr("in", "SourceGraphic");
+    .attr("in", "SourceGraphic")
   // End of filter
 
   // Force Simulation
   var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) {
-      return d.name;
+      return d.name
     }).distance(300).strength(1))
     .force("charge", d3.forceManyBody())
     .force("x", d3.forceX(function (d) {
@@ -372,8 +379,15 @@ network.generate = function () {
       return levelHeight / 1.5 + (network.level - d.level - 1) * levelHeight
     }))
     .force("collision", d3.forceCollide().radius(function (d) {
-      return 50;
+      return 50
     }))
+
+  simulation
+    .nodes(nodes)
+    .on("tick", ticked)
+
+  simulation.force("link")
+    .links(links)
 
   // Per-type markers, as they don't inherit styles.
   var marker = svg.append("svg:defs").selectAll("marker")
@@ -414,14 +428,17 @@ network.generate = function () {
     .selectAll(".pathText")
     .data(links)
     .enter().append("svg:text")
-    .attr("dx", 125)
-    .attr("dy", -3)
-    .append("textPath")
+    .attr("dx", 150)
+    .attr("dy", 13)
+
+  pathText.append("textPath")
     .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
     .text(function (d) {
-      return d.t.groupName == d.s.groupName ? "G" : ""
+      var s = d.t.banks.length > 1 || d.s.banks.length > 1 ? "M" : ""
+      s += d.t.groupName == d.s.groupName ? "G" : ""
+      return s
     })
 
   var prevNode = "#nodeDetail"
@@ -456,7 +473,7 @@ network.generate = function () {
   circle.append("svg:text")
     .text(function (d) {
       if (d.role == "BUYER") {
-        return "□"
+        return "■"
       } else if (d.role == "PAYEE") {
         return "+"
       } else {
@@ -470,6 +487,13 @@ network.generate = function () {
     .attr("y", function (d) {
       return -d.r / 2 + 8
     })
+
+  circle.append("svg:text")
+    .text(function (d) {
+      return d.r > 30 ? d.name.match(/\b(\w)/g).join("") : ""
+    })
+    .attr("x", -5)
+    .attr("y", 5)
 
   var text = svg.append("svg:g").selectAll("g")
     .data(nodes)
@@ -491,67 +515,32 @@ network.generate = function () {
     })
     .attr("class", "hide")
 
-  // A copy of the text with a thick white stroke for legibility.
-  // Name Text
-  text.append("svg:text")
-    .attr("class", "shadow")
-    .text(function (d) {
-      return d.name
-    })
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", -5)
+  // Detail Texts
+  text.each(function (d) {
+    var g = d3.select(this)
+    var texts = [d.name, d.coi, d.amountText, d.banks.join(", ")]
 
-  text.append("svg:text")
-    .text(function (d) {
-      return d.name
-    })
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", -5)
+    var start = -5
+    _.each(texts, function (text) {
+      // A copy of the text with a thick white stroke for legibility.
+      g.append("svg:text")
+        .attr("class", "shadow")
+        .text(text)
+        .attr("x", function (d) {
+          return d.r + 10
+        })
+        .attr("y", start)
 
-  // COI Text
-  text.append("svg:text")
-    .text(function (d) {
-      return d.coi
-    })
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", 6)
-    .attr("class", "shadow")
+      g.append("svg:text")
+        .text(text)
+        .attr("x", function (d) {
+          return d.r + 10
+        })
+        .attr("y", start)
 
-  text.append("svg:text")
-    .text(function (d) {
-      return d.coi
+      start += 12
     })
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", 6)
-    .attr("class", "coi")
-
-  // Amount Text
-  text.append("svg:text")
-    .text(function (d) {
-      return d.amountText
-    })
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", 17)
-    .attr("class", "shadow")
-
-  text.append("svg:text")
-    .text(function (d) {
-      return d.amountText
-    })
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", 17)
+  })
 
   // Detail Link
   text.append("svg:text")
@@ -562,7 +551,7 @@ network.generate = function () {
     .attr("x", function (d) {
       return d.r + 10
     })
-    .attr("y", 28)
+    .attr("y", 42)
     .attr("class", "shadow")
 
   text.append("svg:text")
@@ -573,15 +562,8 @@ network.generate = function () {
     .attr("x", function (d) {
       return d.r + 10
     })
-    .attr("y", 28)
+    .attr("y", 42)
     .attr("class", "detail-button")
-
-  simulation
-    .nodes(nodes)
-    .on("tick", ticked);
-
-  simulation.force("link")
-    .links(links);
 
   function ticked() {
     path.attr("d", function (d) {
@@ -592,11 +574,22 @@ network.generate = function () {
     })
 
     circle.attr("transform", function (d) {
-      return "translate(" + d.x + ", " + d.y + ")";
+      return "translate(" + d.x + ", " + d.y + ")"
     })
 
     text.attr("transform", function (d) {
-      return "translate(" + d.x + ", " + d.y + ")";
+      return "translate(" + d.x + ", " + d.y + ")"
+    })
+
+    pathText.attr("transform", function (d) {
+      if (d.target.x < d.source.x) {
+        var bbox = this.getBBox()
+        rx = bbox.x + bbox.width / 2
+        ry = bbox.y + bbox.height / 2
+        return 'rotate(180 ' + rx + ' ' + ry + ')'
+      } else {
+        return 'rotate(0)'
+      }
     })
   }
 
@@ -604,7 +597,7 @@ network.generate = function () {
     if (!d3.event.defaultPrevented) {
       if (d.class == "center") {
         var counterparties = []
-        var connectedLinks = _.each(network.links, function(e) {
+        var connectedLinks = _.each(network.links, function (e) {
           if (e.s.name == d.name) {
             counterparties.push(e.t.name)
           } else if (e.t.name == d.name) {

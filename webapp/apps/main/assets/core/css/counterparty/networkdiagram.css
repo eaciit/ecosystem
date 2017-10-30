@@ -8,6 +8,7 @@
 
 .bs-indicator {
   font-size: 1.2em;
+  fill: #f1963d;
 }
 
 path.link {
@@ -74,7 +75,7 @@ text.coi {
 }
 
 text.detail-button {
-  fill: #000f46;
+  fill: steelblue;
 }
 
 text.detail-button:hover {

@@ -66,7 +66,7 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
   SUM(amount) AS total,
   ` + c.isNTBClause() + ` AS is_ntb
   FROM ` + c.tableName() + `
-  WHERE cust_long_name=  "` + payload.EntityName + `"
+  WHERE cust_long_name="` + payload.EntityName + `"
 	AND ` + c.commonWhereClause() + `
 	AND ` + c.eitherBuyerSupplierClause()
 
