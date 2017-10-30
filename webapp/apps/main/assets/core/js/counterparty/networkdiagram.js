@@ -161,12 +161,7 @@ network.loadDetail = function (name, displayName) {
     entityName: counterparty.activeEntityName(),
     counterpartyName: name
   }, function (data) {
-    if (displayName) {
-      counterparty.activeDisplayName(displayName)
-    } else {
-      counterparty.activeDisplayName(name)
-    }
-
+    counterparty.activeDisplayName(displayName)
     counterparty.activeName(name)
     counterparty.detail(data)
     $('#modalDetail').modal('show')
@@ -255,15 +250,6 @@ network.processData = function (data) {
         level: network.level,
       }
     })
-    .concat({
-      name: parent,
-      bank: "",
-      coi: counterparty.activeEntityCOI(),
-      groupName: counterparty.activeGroupName(),
-      opportunity: false,
-      class: "center",
-      level: network.level
-    })
     .groupBy("name")
     .map(function (e) {
       var d = _.first(e)
@@ -271,7 +257,17 @@ network.processData = function (data) {
 
       return d
     })
+    .concat({
+      name: parent,
+      banks: _.uniq(_.map(data[parent], "cust_bank")),
+      coi: counterparty.activeEntityCOI(),
+      groupName: counterparty.activeGroupName(),
+      opportunity: false,
+      class: "center",
+      level: network.level
+    })
     .value()
+
 
   var prevNodes = _(network.nodes).remove(function (e) {
     return (_.findIndex(nodes, {
@@ -455,10 +451,68 @@ network.generate = function () {
       }
 
       return c
-    }).on("mouseover", function (d, i) {
-      d3.select(prevNode).classed("hide", true)
-      prevNode = "#nodeDetail" + i
-      d3.select(prevNode).classed("hide", false)
+    })
+    .each(function (d) {
+      var displayName = d.name
+      var name = d.name
+
+      if (d.class == "center") {
+        var counterparties = []
+        var connectedLinks = _.each(network.links, function (e) {
+          if (e.s.name == d.name) {
+            counterparties.push(e.t.name)
+          } else if (e.t.name == d.name) {
+            counterparties.push(e.s.name)
+          }
+        })
+
+        name = counterparties.join("|"), d.name
+      }
+
+      $(this).popover({
+          placement: "top",
+          container: "body",
+          trigger: "manual",
+          html: true,
+          content: `
+          <table class="tooltip-table">
+            <tr>
+              <td><b>Name</b></td>
+              <td>` + d.name + `</td>
+            </tr>
+            <tr>
+              <td><b>COI</b></td>
+              <td>` + d.coi + `</td>
+            </tr>
+            <tr>
+              <td><b>Total Flow</b></td>
+              <td>` + d.amountText + `</td>
+            </tr>
+            <tr>
+              <td><b>Bank</b></td>
+              <td>` + d.banks.join(", ") + `</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><a onclick="network.loadDetail('` + name + `', '` + displayName + `')">Show Detail</a></td>
+            </tr>
+          </tabl>
+        `
+        })
+        .on("mouseenter", function () {
+          var _this = this
+          $(this).popover("show")
+          $(".popover").on("mouseleave", function () {
+            $(_this).popover('hide')
+          })
+        }).on("mouseleave", function () {
+          var _this = this
+          setTimeout(function () {
+            if (!$(".popover:hover").length) {
+              $(_this).popover("hide")
+            }
+          }, 300)
+        })
     })
 
   circle.append("svg:circle")
@@ -519,9 +573,10 @@ network.generate = function () {
   text.each(function (d) {
     var g = d3.select(this)
     var texts = [d.name, d.coi, d.amountText, d.banks.join(", ")]
+    var classes = ["", "coi", "", ""]
 
     var start = -5
-    _.each(texts, function (text) {
+    _.each(texts, function (text, i) {
       // A copy of the text with a thick white stroke for legibility.
       g.append("svg:text")
         .attr("class", "shadow")
@@ -532,6 +587,7 @@ network.generate = function () {
         .attr("y", start)
 
       g.append("svg:text")
+        .attr("class", classes[i])
         .text(text)
         .attr("x", function (d) {
           return d.r + 10
@@ -541,29 +597,6 @@ network.generate = function () {
       start += 12
     })
   })
-
-  // Detail Link
-  text.append("svg:text")
-    .text(function (d) {
-      return "show detail"
-    })
-    .on("click", detail)
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", 42)
-    .attr("class", "shadow")
-
-  text.append("svg:text")
-    .text(function (d) {
-      return "show detail"
-    })
-    .on("click", detail)
-    .attr("x", function (d) {
-      return d.r + 10
-    })
-    .attr("y", 42)
-    .attr("class", "detail-button")
 
   function ticked() {
     path.attr("d", function (d) {
@@ -591,25 +624,6 @@ network.generate = function () {
         return 'rotate(0)'
       }
     })
-  }
-
-  function detail(d) {
-    if (!d3.event.defaultPrevented) {
-      if (d.class == "center") {
-        var counterparties = []
-        var connectedLinks = _.each(network.links, function (e) {
-          if (e.s.name == d.name) {
-            counterparties.push(e.t.name)
-          } else if (e.t.name == d.name) {
-            counterparties.push(e.s.name)
-          }
-        })
-
-        network.loadDetail(counterparties.join("|"), d.name)
-      } else {
-        network.loadDetail(d.name)
-      }
-    }
   }
 
   function expand(d) {
@@ -651,7 +665,7 @@ network.unhighlight = function () {
   d3.select("#graph").selectAll(".wrapper").classed("fade", false)
 }
 
-counterparty.beforePDFPrinting = function() {
+counterparty.beforePDFPrinting = function () {
   var def = $.Deferred();
 
   var cc = $("div.display-active svg");
@@ -674,7 +688,7 @@ counterparty.beforePDFPrinting = function() {
     st.innerHTML = st.innerHTML + "marker.flow {fill: #4289bd;} "
     st.innerHTML = st.innerHTML + "marker.missed {fill: #666;} "
     st.innerHTML = st.innerHTML + "text.hide {visibility:hidden} "
-   
+
 
     $(svg).find("style").remove();
     $(svg).prepend(st);
@@ -694,7 +708,7 @@ counterparty.beforePDFPrinting = function() {
       svgStr = serializer.serializeToString(svg);
 
     // You could also use the actual string without base64 encoding it:
-    imgCanvas.onload = function() {
+    imgCanvas.onload = function () {
       ctx.webkitImageSmoothingEnabled = false;
       ctx.mozImageSmoothingEnabled = false;
       ctx.imageSmoothingEnabled = false;
@@ -720,17 +734,17 @@ counterparty.beforePDFPrinting = function() {
   return def
 }
 
-counterparty.afterPDFPrinting = function() {
+counterparty.afterPDFPrinting = function () {
   $(".remove-after-print").remove();
-  $( "#onlyprint" ).remove();
+  $("#onlyprint").remove();
 }
 
-counterparty.getPDF = function(selector) {
+counterparty.getPDF = function (selector) {
   $.when(
     counterparty.beforePDFPrinting()
-  ).done(function() {
+  ).done(function () {
     kendo.drawing.drawDOM($(selector))
-      .then(function(group) {
+      .then(function (group) {
         // Render the result as a PDF file
         return kendo.drawing.exportPDF(group, {
           paperSize: "auto",
@@ -742,14 +756,14 @@ counterparty.getPDF = function(selector) {
           }
         });
       })
-      .then(function(data) {
+      .then(function (data) {
         // Save the PDF file
         kendo.saveAs({
           dataURI: data,
           fileName: "ExportND.pdf"
         });
       })
-      .done(function() {
+      .done(function () {
         counterparty.afterPDFPrinting();
       })
   })

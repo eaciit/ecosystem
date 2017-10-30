@@ -74,11 +74,21 @@ text.coi {
   fill: #6d6e71;
 }
 
-text.detail-button {
-  fill: steelblue;
+/* Tooltip */
+.tooltip-table tr td {
+  font-size: 0.8em !important;
+  padding: 1px;
 }
 
-text.detail-button:hover {
+.tooltip-table tr td:first-child {
+  padding-right: 20px;
+}
+
+.tooltip-table tr td a {
+  color: steelblue;
+}
+
+.tooltip-table tr td a:hover {
   cursor: pointer;
   text-decoration: underline;
 }
