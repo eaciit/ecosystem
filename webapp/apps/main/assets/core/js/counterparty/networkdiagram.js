@@ -3,6 +3,7 @@ counterparty.detail = ko.observableArray([])
 counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
+counterparty.activeDisplayName = ko.observable()
 counterparty.activeGroupName = ko.observable("Rollin")
 
 var filter = {}
@@ -155,11 +156,17 @@ network.loadData = function () {
   })
 }
 
-network.loadDetail = function (name) {
+network.loadDetail = function (name, displayName) {
   viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", {
     entityName: counterparty.activeEntityName(),
     counterpartyName: name
   }, function (data) {
+    if (displayName) {
+      counterparty.activeDisplayName(displayName)
+    } else {
+      counterparty.activeDisplayName(name)
+    }
+    
     counterparty.activeName(name)
     counterparty.detail(data)
     $('#modalDetail').modal('show')
@@ -556,9 +563,7 @@ network.generate = function () {
       return d.r + 10
     })
     .attr("y", 28)
-    .attr("class", function (d) {
-      return d.class != "center" ? "shadow" : "hide"
-    })
+    .attr("class", "shadow")
 
   text.append("svg:text")
     .text(function (d) {
@@ -569,9 +574,7 @@ network.generate = function () {
       return d.r + 10
     })
     .attr("y", 28)
-    .attr("class", function (d) {
-      return d.class != "center" ? "detail-button" : "hide"
-    })
+    .attr("class", "detail-button")
 
   simulation
     .nodes(nodes)
@@ -599,7 +602,20 @@ network.generate = function () {
 
   function detail(d) {
     if (!d3.event.defaultPrevented) {
-      network.loadDetail(d.name)
+      if (d.class == "center") {
+        var counterparties = []
+        var connectedLinks = _.each(network.links, function(e) {
+          if (e.s.name == d.name) {
+            counterparties.push(e.t.name)
+          } else if (e.t.name == d.name) {
+            counterparties.push(e.s.name)
+          }
+        })
+
+        network.loadDetail(counterparties.join("|"), d.name)
+      } else {
+        network.loadDetail(d.name)
+      }
     }
   }
 
@@ -614,11 +630,11 @@ network.generate = function () {
   }
 
   function detach(d) {
-    network.nodes = _.remove(network.nodes, function (e) {
+    _.remove(network.nodes, function (e) {
       return e.name == d.name
     })
 
-    network.links = _.remove(network.links, function (e) {
+    _.remove(network.links, function (e) {
       return e.t.name == d.name || e.s.name == d.name
     })
 

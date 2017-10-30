@@ -179,10 +179,15 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	keys := []string{"cust_long_name", "cpty_long_name", "cust_role", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount"}
 	selectKeys := []string{"cust_long_name", "cpty_long_name", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount"}
 
+	counterparties := []string{}
+	for _, v := range strings.Split(payload.CounterpartyName, "|") {
+		counterparties = append(counterparties, "cpty_long_name='"+v+"'")
+	}
+
 	sql := `SELECT ` + strings.Join(selectKeys, ", ") + `,
 	` + c.customerRoleClause() + ` AS cust_role
   FROM ` + c.tableName() + ` 
-	WHERE cust_long_name='` + payload.EntityName + `' AND cpty_long_name='` + payload.CounterpartyName + `' AND transaction_year=2016 
+	WHERE cust_long_name='` + payload.EntityName + `' AND (` + strings.Join(counterparties, " OR ") + `) AND transaction_year=2016 
 	AND ` + c.commonWhereClause()
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
