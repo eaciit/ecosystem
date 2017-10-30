@@ -420,20 +420,33 @@ network.generate = function () {
       return "url(#" + d.type + d.t.r + ")"
     })
 
+  var pathCircle = svg.append("svg:g")
+    .selectAll("path")
+    .data(links)
+    .enter().append("svg:circle")
+    .attr("r", 10)
+    .attr("class", function (d) {
+      var s = d.t.banks.length > 1 || d.s.banks.length > 1 ? "M" : ""
+      s += d.t.groupName == d.s.groupName ? "I" : ""
+
+      return s == "" ? "hide" : d.type
+    })
+
   var pathText = svg.append("svg:g")
     .selectAll(".pathText")
     .data(links)
     .enter().append("svg:text")
-    .attr("dx", 150)
-    .attr("dy", 13)
+    .attr("dy", 3)
 
   pathText.append("textPath")
     .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
+    .style("text-anchor", "middle")
+    .attr("startOffset", "50%")
     .text(function (d) {
       var s = d.t.banks.length > 1 || d.s.banks.length > 1 ? "M" : ""
-      s += d.t.groupName == d.s.groupName ? "G" : ""
+      s += d.t.groupName == d.s.groupName ? "I" : ""
       return s
     })
 
@@ -544,10 +557,11 @@ network.generate = function () {
 
   circle.append("svg:text")
     .text(function (d) {
-      return d.r > 30 ? d.name.match(/\b(\w)/g).join("") : ""
+      return d.r < 40 ? d.name.match(/\b(\w)/g).join("") : d.name
     })
-    .attr("x", -5)
-    .attr("y", 5)
+    .attr("text-anchor", "middle")
+    .attr("x", 0)
+    .attr("dy", ".35em")
 
   var text = svg.append("svg:g").selectAll("g")
     .data(nodes)
@@ -604,6 +618,10 @@ network.generate = function () {
         dy = d.target.y - d.source.y,
         dr = d.type == "opportunity" ? 200 : 0
       return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
+    })
+
+    pathCircle.attr("transform", function (d) {
+      return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2) + ", " + (d.source.y - (d.source.y - d.target.y) / 2) + ")"
     })
 
     circle.attr("transform", function (d) {

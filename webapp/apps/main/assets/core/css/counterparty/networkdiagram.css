@@ -1,3 +1,5 @@
+
+/* d3 Network */
 .fade {
   opacity: 0.2;
 }
@@ -23,7 +25,19 @@ path.link.flow {
 
 path.link.missed {
   stroke: #666;
-  stroke-dasharray: 5, 5;
+  stroke-dasharray: 4, 4;
+}
+
+circle.flow {
+  fill: white;
+  stroke: #4289bd;
+  stroke-width: 2;
+}
+
+circle.missed {
+  fill: white;
+  stroke: #666;
+  stroke-width: 2;
 }
 
 marker.flow {
@@ -32,10 +46,6 @@ marker.flow {
 
 marker.missed {
   fill: #666;
-}
-
-circle:hover {
-  cursor: pointer;
 }
 
 circle.buyer {
@@ -92,6 +102,7 @@ text.coi {
   cursor: pointer;
   text-decoration: underline;
 }
+/* End of Tooltip */
 
 .menu-counterparty {
   display: inline-block;
