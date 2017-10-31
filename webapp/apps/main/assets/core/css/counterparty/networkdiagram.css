@@ -1,3 +1,5 @@
+/* d3 Network */
+
 .fade {
   opacity: 0.2;
 }
@@ -23,7 +25,19 @@ path.link.flow {
 
 path.link.missed {
   stroke: #666;
-  stroke-dasharray: 5, 5;
+  stroke-dasharray: 4, 4;
+}
+
+circle.flow {
+  fill: white;
+  stroke: #4289bd;
+  stroke-width: 2;
+}
+
+circle.missed {
+  fill: white;
+  stroke: #666;
+  stroke-width: 2;
 }
 
 marker.flow {
@@ -34,14 +48,9 @@ marker.missed {
   fill: #666;
 }
 
-circle:hover {
-  cursor: pointer;
-}
-
 circle.buyer {
-  fill: none;
-  stroke-width: 3;
-  stroke: #000f46;
+  fill: white !important;
+  stroke-width: 7;
 }
 
 circle.supplier {
@@ -49,10 +58,20 @@ circle.supplier {
 }
 
 circle.ntb {
+  stroke: #4689bb;
   fill: #4689bb;
 }
 
 circle.etb {
+  stroke: #5ba84e;
+  fill: #5ba84e;
+}
+
+rect.ntb {
+  fill: #4689bb;
+}
+
+rect.etb {
   fill: #5ba84e;
 }
 
@@ -74,13 +93,59 @@ text.coi {
   fill: #6d6e71;
 }
 
-text.detail-button {
-  fill: steelblue;
+
+/* End of d3 Network */
+
+
+/* Tooltip */
+
+.tooltip-table tr td {
+  font-size: 0.8em !important;
+  padding: 1px;
 }
 
-text.detail-button:hover {
+.tooltip-table tr td:first-child {
+  padding-right: 20px;
+}
+
+.tooltip-table tr td a {
+  color: steelblue;
+}
+
+.tooltip-table tr td a:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+
+/* End of Tooltip */
+
+
+/* Main HTML */
+
+.bottom-navigation {
+  position: fixed;
+  bottom: 0px;
+  margin-left: 2px;
+}
+
+.bottom-navigation ul {
+  padding: 0;
+}
+
+.bottom-navigation ul li {
+  display: inline-block;
+  text-align: center;
+  padding: 5px 15px;
+  border-radius: 2px;
+  background-color: #22313F;
+  color: white;
+  margin-right: 8px;
+}
+
+.bottom-navigation ul > li:hover, .bottom-navigation ul > li.active {
+  cursor: pointer;
+  background-color: #446CB3;
 }
 
 .menu-counterparty {
