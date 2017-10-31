@@ -92,7 +92,7 @@ filter.selectedDateType = "Y"
 filter.selectedYear = ko.observable("")
 filter.selectedMonth = ko.observable("")
 
-filter.selectedFilters = ko.computed(function() {
+filter.selectedFilters = ko.computed(function () {
   var yearMonth = 0
   var dateType = ""
   var y = moment(filter.selectedYear())
@@ -118,7 +118,7 @@ filter.selectedFilters = ko.computed(function() {
   }
 })
 
-filter.switchDateType = function(data, event) {
+filter.switchDateType = function (data, event) {
   $(event.target).siblings().removeClass("active")
   $(event.target).addClass("active")
 
@@ -128,27 +128,27 @@ filter.switchDateType = function(data, event) {
   filter.selectedDateType = $(event.target).text()
 }
 
-filter.loadEntities = function() {
+filter.loadEntities = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {
     groupName: counterparty.activeGroupName()
-  }, function(data) {
+  }, function (data) {
     filter.entities(_.map(data, "value"))
     filter.selectedEntity.valueHasMutated()
   })
 }
 
-filter.loadAll = function() {
+filter.loadAll = function () {
   $("#month").data('kendoDatePicker').enable(false)
   counterparty.activeEntityCOI($.urlParam("entityCOI"))
 
-  filter.selectedEntity.subscribe(function(nv) {
+  filter.selectedEntity.subscribe(function (nv) {
     counterparty.activeEntityName(nv)
   })
 
   filter.selectedEntity($.urlParam("entityName"))
   filter.loadEntities()
 
-  filter.selectedFilters.subscribe(function() {
+  filter.selectedFilters.subscribe(function () {
     if (!network.isExpanding) {
       network.clean()
     }
@@ -165,23 +165,23 @@ network.nodes = []
 network.level = 0
 network.isExpanding = false
 
-network.clean = function() {
+network.clean = function () {
   network.data = []
   network.links = []
   network.nodes = []
 }
 
-network.loadData = function() {
-  viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", filter.selectedFilters(), function(data) {
+network.loadData = function () {
+  viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", filter.selectedFilters(), function (data) {
     network.processData(data)
   })
 }
 
-network.loadDetail = function(name, displayName) {
+network.loadDetail = function (name, displayName) {
   viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", {
     entityName: counterparty.activeEntityName(),
     counterpartyName: name
-  }, function(data) {
+  }, function (data) {
     counterparty.activeDisplayName(displayName)
     counterparty.activeName(name)
     counterparty.detail(data)
@@ -189,7 +189,7 @@ network.loadDetail = function(name, displayName) {
   })
 }
 
-network.loadDetailCSV = function() {
+network.loadDetailCSV = function () {
   // Manual XHR based on stackoverflow jquery does not support responseType params
   var data = {
     entityName: counterparty.activeEntityName(),
@@ -198,7 +198,7 @@ network.loadDetailCSV = function() {
   var xhr = new XMLHttpRequest()
   xhr.open("POST", "/main/counterparty/getdetailnetworkdiagramcsv", true)
   xhr.setRequestHeader("Content-type", "application/json")
-  xhr.onreadystatechange = function() {
+  xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.status == 200) {
       var blob = new Blob([xhr.response], {
         type: "octet/stream"
@@ -211,10 +211,10 @@ network.loadDetailCSV = function() {
   xhr.send(JSON.stringify(data))
 }
 
-network.processData = function(data) {
+network.processData = function (data) {
   var rawLinks = []
   var parent = _.keys(data)[0]
-  _.each(data[parent], function(e) {
+  _.each(data[parent], function (e) {
     var link = {
       total: e.total,
       type: String(e.cpty_bank).substring(0, 3) == "SCB" && String(e.cust_bank).substring(0, 3) == "SCB" ? "flow" : "missed",
@@ -241,7 +241,7 @@ network.processData = function(data) {
   var links = JSON.parse(JSON.stringify(rawLinks))
 
   //sort links by source, then target
-  links.sort(function(a, b) {
+  links.sort(function (a, b) {
     if (a.source > b.source) {
       return 1
     } else if (a.source < b.source) {
@@ -259,7 +259,7 @@ network.processData = function(data) {
   })
 
   var nodes = _(data[parent])
-    .map(function(e) {
+    .map(function (e) {
       return {
         name: e.cpty_long_name,
         bank: e.cpty_bank,
@@ -272,7 +272,7 @@ network.processData = function(data) {
       }
     })
     .groupBy("name")
-    .map(function(e) {
+    .map(function (e) {
       var d = _.first(e)
       d.banks = _.map(e, "bank")
 
@@ -290,7 +290,7 @@ network.processData = function(data) {
     .value()
 
 
-  var prevNodes = _(network.nodes).remove(function(e) {
+  var prevNodes = _(network.nodes).remove(function (e) {
     return (_.findIndex(nodes, {
       name: e.name
     }) == -1)
@@ -298,7 +298,7 @@ network.processData = function(data) {
 
   nodes = nodes.concat(prevNodes)
 
-  links.forEach(function(link) {
+  links.forEach(function (link) {
     link.s = _.find(nodes, {
       name: link.source
     })
@@ -307,8 +307,8 @@ network.processData = function(data) {
     })
   })
 
-  nodes = _.map(nodes, function(n) {
-    n.total = _.sumBy(links, function(l) {
+  nodes = _.map(nodes, function (n) {
+    n.total = _.sumBy(links, function (l) {
       if (l.t.name == n.name || l.s.name == n.name) {
         return l.total
       } else {
@@ -325,7 +325,7 @@ network.processData = function(data) {
   var minR = 15
   var maxR = 80
 
-  nodes = _.map(nodes, function(n) {
+  nodes = _.map(nodes, function (n) {
     n.r = parseInt(minR + (n.total - minV) / (maxV - minV) * (maxR - minR))
 
     return n
@@ -343,7 +343,7 @@ network.processData = function(data) {
   }
 }
 
-network.generate = function() {
+network.generate = function () {
   var links = network.links
   var nodes = network.nodes
 
@@ -384,11 +384,11 @@ network.generate = function() {
 
   // Force Simulation
   var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) {
+    .force("link", d3.forceLink().id(function (d) {
       return d.name
     }).distance(300).strength(1))
     .force("charge", d3.forceManyBody())
-    .force("x", d3.forceX(function(d) {
+    .force("x", d3.forceX(function (d) {
       if (d.role == "BUYER") {
         return w / 4 * 3
       } else if (d.role == "PAYEE") {
@@ -397,10 +397,10 @@ network.generate = function() {
         return w / 2
       }
     }))
-    .force("y", d3.forceY(function(d) {
+    .force("y", d3.forceY(function (d) {
       return levelHeight / 1.5 + (network.level - d.level - 1) * levelHeight
     }))
-    .force("collision", d3.forceCollide().radius(function(d) {
+    .force("collision", d3.forceCollide().radius(function (d) {
       return 50
     }))
 
@@ -417,12 +417,12 @@ network.generate = function() {
     .enter()
 
   marker.append("svg:marker")
-    .attr("id", function(d) {
+    .attr("id", function (d) {
       return "missed" + d.r
     })
     .attr("class", "missed")
     .attr("viewBox", "0 -5 10 10")
-    .attr("refX", function(d) {
+    .attr("refX", function (d) {
       return d.r + 10 + d.r * 0.1
     })
     .attr("refY", -0)
@@ -436,13 +436,13 @@ network.generate = function() {
     .selectAll("path")
     .data(links)
     .enter().append("svg:path")
-    .attr("id", function(d, i) {
+    .attr("id", function (d, i) {
       return "linkId_" + i
     })
-    .attr("class", function(d) {
+    .attr("class", function (d) {
       return "link missed"
     })
-    .attr("marker-end", function(d) {
+    .attr("marker-end", function (d) {
       return "url(#missed"
       d.t.r + ")"
     })
@@ -452,7 +452,7 @@ network.generate = function() {
     .data(links)
     .enter().append("svg:circle")
     .attr("r", 10)
-    .attr("class", function(d) {
+    .attr("class", function (d) {
       return d.type == "missed" ? "missed" : "hide"
     })
 
@@ -461,7 +461,7 @@ network.generate = function() {
     .data(links)
     .enter().append("svg:circle")
     .attr("r", 10)
-    .attr("class", function(d) {
+    .attr("class", function (d) {
       return d.type != "missed" ? "missed" : "hide"
     })
 
@@ -470,7 +470,7 @@ network.generate = function() {
     .data(links)
     .enter().append("svg:circle")
     .attr("r", 10)
-    .attr("class", function(d) {
+    .attr("class", function (d) {
       return d.t.groupName == d.s.groupName ? "missed" : "hide"
     })
 
@@ -482,12 +482,12 @@ network.generate = function() {
     .attr("dy", 3)
 
   pathText1.append("textPath")
-    .attr("xlink:href", function(d, i) {
+    .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
     .style("text-anchor", "middle")
     .attr("startOffset", "40%")
-    .text(function(d) {
+    .text(function (d) {
       return d.type == "missed" ? "M" : ""
     })
 
@@ -499,12 +499,12 @@ network.generate = function() {
     .attr("dy", 3)
 
   pathText2.append("textPath")
-    .attr("xlink:href", function(d, i) {
+    .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
     .style("text-anchor", "middle")
     .attr("startOffset", "50%")
-    .text(function(d) {
+    .text(function (d) {
       return d.type != "missed" ? "S" : ""
     })
 
@@ -517,12 +517,12 @@ network.generate = function() {
     .attr("dy", 3)
 
   pathText3.append("textPath")
-    .attr("xlink:href", function(d, i) {
+    .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
     .style("text-anchor", "middle")
     .attr("startOffset", "60%")
-    .text(function(d) {
+    .text(function (d) {
       return d.t.groupName == d.s.groupName ? "I" : ""
     })
 
@@ -531,7 +531,7 @@ network.generate = function() {
     .data(nodes)
     .enter()
     .append("svg:g")
-    .attr("class", function(d) {
+    .attr("class", function (d) {
       var c = "wrapper node " + d.class
       if (d.role == "BUYER") {
         c += " buyer"
@@ -550,14 +550,14 @@ network.generate = function() {
     .attr("r", function (d) {
       return d.role == "BUYER" ? d.r - 3 : d.r
     })
-    .attr("class", function(d) {
+    .attr("class", function (d) {
       var c = d.class
       c += d.role == "BUYER" ? " buyer" : ""
       return c
     })
 
   circle.append("svg:text")
-    .text(function(d) {
+    .text(function (d) {
       return d.r < 40 ? d.name.match(/\b(\w)/g).join("") : d.name
     })
     .attr("text-anchor", "middle")
@@ -568,7 +568,7 @@ network.generate = function() {
     .data(nodes)
     .enter()
     .append("svg:g")
-    .attr("class", function(d) {
+    .attr("class", function (d) {
       var c = "wrapper " + d.class
       if (d.role == "BUYER") {
         c += " buyer"
@@ -579,24 +579,24 @@ network.generate = function() {
       return c
     })
     .append("svg:g")
-    .attr("id", function(d, i) {
+    .attr("id", function (d, i) {
       return "nodeDetail" + i
     })
     .attr("class", "hide")
 
   // Detail Texts
-  text.each(function(d) {
+  text.each(function (d) {
     var g = d3.select(this)
     var texts = [d.name, d.coi, d.amountText, d.banks.join(", ")]
     var classes = ["", "coi", "", ""]
 
     var start = -5
-    _.each(texts, function(text, i) {
+    _.each(texts, function (text, i) {
       // A copy of the text with a thick white stroke for legibility.
       g.append("svg:text")
         .attr("class", "shadow")
         .text(text)
-        .attr("x", function(d) {
+        .attr("x", function (d) {
           return d.r + 10
         })
         .attr("y", start)
@@ -604,7 +604,7 @@ network.generate = function() {
       g.append("svg:text")
         .attr("class", classes[i])
         .text(text)
-        .attr("x", function(d) {
+        .attr("x", function (d) {
           return d.r + 10
         })
         .attr("y", start)
@@ -614,34 +614,34 @@ network.generate = function() {
   })
 
   function ticked() {
-    path.attr("d", function(d) {
+    path.attr("d", function (d) {
       var dx = d.target.x - d.source.x,
         dy = d.target.y - d.source.y,
         dr = d.type == "opportunity" ? 200 : 0
       return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
     })
 
-    pathCircle1.attr("transform", function(d) {
+    pathCircle1.attr("transform", function (d) {
       return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2 * 0.8) + ", " + (d.source.y - (d.source.y - d.target.y) / 2 * 0.8) + ")"
     })
 
-    pathCircle2.attr("transform", function(d) {
+    pathCircle2.attr("transform", function (d) {
       return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2) + ", " + (d.source.y - (d.source.y - d.target.y) / 2) + ")"
     })
 
-    pathCircle3.attr("transform", function(d) {
+    pathCircle3.attr("transform", function (d) {
       return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2 * 1.2) + ", " + (d.source.y - (d.source.y - d.target.y) / 2 * 1.2) + ")"
     })
 
-    circle.attr("transform", function(d) {
+    circle.attr("transform", function (d) {
       return "translate(" + d.x + ", " + d.y + ")"
     })
 
-    text.attr("transform", function(d) {
+    text.attr("transform", function (d) {
       return "translate(" + d.x + ", " + d.y + ")"
     })
 
-    d3.selectAll(".pathText").attr("transform", function(d) {
+    d3.selectAll(".pathText").attr("transform", function (d) {
       if (d.target.x < d.source.x) {
         var bbox = this.getBBox()
         rx = bbox.x + bbox.width / 2
@@ -664,19 +664,19 @@ network.generate = function() {
   }
 
   function detach(d) {
-    _.remove(network.nodes, function(e) {
+    _.remove(network.nodes, function (e) {
       return e.name == d.name
     })
 
-    _.remove(network.links, function(e) {
+    _.remove(network.links, function (e) {
       return e.t.name == d.name || e.s.name == d.name
     })
 
-    d3.selectAll(".node").filter(function(e) {
+    d3.selectAll(".node").filter(function (e) {
       return e.name == d.name
     }).remove()
 
-    d3.selectAll(".link").filter(function(e) {
+    d3.selectAll(".link").filter(function (e) {
       return e.t.name == d.name || e.s.name == d.name
     }).remove()
   }
@@ -825,11 +825,12 @@ network.highlight = function (c) {
   d3.select("#graph").selectAll("g." + c).classed("fade", false)
 }
 
-network.unhighlight = function() {
+network.unhighlight = function () {
   d3.select("#graph").selectAll(".wrapper").classed("fade", false)
 }
 
-counterparty.drawInlineSVG = function() {
+// Printing
+counterparty.drawInlineSVG = function () {
   var svg = document.querySelector('#svg');
   var cc = $(".legend svg");
   for (var i = 0; i < cc.length; i++) {
@@ -853,41 +854,23 @@ counterparty.drawInlineSVG = function() {
 
 }
 
-
-counterparty.beforePDFPrinting = function() {
+counterparty.beforePDFPrinting = function (style) {
   counterparty.drawInlineSVG()
+
   var def = $.Deferred();
 
-  var cc = $(".display-active svg");
+  var cc = $("#graph svg");
   var count = cc.length;
-
-  console.log(cc.length)
 
   for (var i = 0; i < cc.length; i++) {
     var svg = cc[i];
 
+    var styleElement = document.createElement("style")
+    styleElement.innerHTML = style
+    styleElement.innerHTML += ".wrapper>.hide{display: block !important;}"
+
     // inject style
-    var st = document.createElement("style");
-    st.innerHTML = st.innerHTML + ".ntb {fill: #4689bb;} "
-    st.innerHTML = st.innerHTML + ".etb {fill: #5ba84e;} "
-    st.innerHTML = st.innerHTML + "text.shadow {stroke: #fff;stroke-width: 4px;stroke-opacity: .8;} "
-    st.innerHTML = st.innerHTML + ".supplier {fill: #000f46;} "
-    st.innerHTML = st.innerHTML + ".center {fill: #f1963d;} "
-    st.innerHTML = st.innerHTML + "text {font: 10px sans-serif; fill: #22313F} "
-    st.innerHTML = st.innerHTML + "path.link {font: 10px sans-serif; fill: none;stroke: #666;stroke-width: 1.5px;} "
-    st.innerHTML = st.innerHTML + "path.link.flow {stroke: #4289bd;} "
-    st.innerHTML = st.innerHTML + "path.link.missed {stroke: #666;stroke-dasharray: 5, 5;} "
-    st.innerHTML = st.innerHTML + "marker.flow {fill: #4289bd;} "
-    st.innerHTML = st.innerHTML + "marker.missed {fill: #666;} "
-    st.innerHTML = st.innerHTML + "circle.hide {display: none;} "
-    st.innerHTML = st.innerHTML + "circle.missed {fill: white;stroke: #666;stroke-width: 2;}"
-    st.innerHTML = st.innerHTML + "circle.ntb { stroke: #4689bb;fill: #4689bb;}"
-    st.innerHTML = st.innerHTML + "circle.buyer {fill: white !important;stroke-width: 7;}"
-    st.innerHTML = st.innerHTML + "circle.etb {stroke: #5ba84e;fill: #5ba84e;}"
-
-
-    $(svg).find("style").remove();
-    $(svg).prepend(st);
+    $(svg).prepend(styleElement);
 
     var sheight = $("div svg").attr("height")
 
@@ -902,8 +885,7 @@ counterparty.beforePDFPrinting = function() {
       serializer = new XMLSerializer(),
       svgStr = serializer.serializeToString(svg);
 
-    // You could also use the actual string without base64 encoding it:
-    imgCanvas.onload = function() {
+    imgCanvas.onload = function () {
       ctx.webkitImageSmoothingEnabled = false;
       ctx.mozImageSmoothingEnabled = false;
       ctx.imageSmoothingEnabled = false;
@@ -929,43 +911,51 @@ counterparty.beforePDFPrinting = function() {
   return def
 }
 
-counterparty.afterPDFPrinting = function() {
+counterparty.afterPDFPrinting = function () {
   $(".remove-after-print").remove();
   $("#onlyprint").remove();
+  $("svg > style").remove();
 }
 
-counterparty.getPDF = function(selector) {
-  $.when(
-    counterparty.beforePDFPrinting()
-  ).done(function() {
-    kendo.drawing.drawDOM($(selector))
-      .then(function(group) {
-        // Render the result as a PDF file
-        return kendo.drawing.exportPDF(group, {
-          paperSize: "auto",
-          margin: {
-            left: "1cm",
-            top: "1cm",
-            right: "1cm",
-            bottom: "1cm"
-          }
-        });
-      })
-      .then(function(data) {
-        // Save the PDF file
-        kendo.saveAs({
-          dataURI: data,
-          fileName: "ExportND.pdf"
-        });
-      })
-      .done(function() {
-        counterparty.afterPDFPrinting();
-      })
+counterparty.getPDF = function (selector) {
+  $.ajax({
+    url: "/main/static/core/css/counterparty/networkdiagram.css",
+    success: function (data) {
+      buildAndSave(data)
+    },
+    dataType: 'html'
   })
+
+  function buildAndSave(style) {
+    $.when(
+      counterparty.beforePDFPrinting(style)
+    ).done(function () {
+      kendo.drawing.drawDOM($(selector))
+        .then(function (group) {
+          return kendo.drawing.exportPDF(group, {
+            paperSize: "auto",
+            margin: {
+              left: "1cm",
+              top: "1cm",
+              right: "1cm",
+              bottom: "1cm"
+            }
+          });
+        })
+        .then(function (data) {
+          kendo.saveAs({
+            dataURI: data,
+            fileName: "ExportND.pdf"
+          });
+        })
+        .done(function () {
+          counterparty.afterPDFPrinting();
+        })
+    })
+  }
 }
 
-$(window).load(function() {
-  $("#graph").addClass("display-active")
+$(window).load(function () {
   filter.loadAll()
   network.loadData()
 })
