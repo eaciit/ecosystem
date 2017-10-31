@@ -724,11 +724,39 @@ network.unhighlight = function () {
   d3.select("#graph").selectAll(".wrapper").classed("fade", false)
 }
 
+counterparty.drawInlineSVG = function () {
+  var svg = document.querySelector('#svg');
+  var cc = $(".legend svg");
+  for (var i = 0; i < cc.length; i++) {
+    var svg = cc[i];
+    var st = document.createElement("style");
+    st.innerHTML = st.innerHTML + ".ntb {fill: #4689bb;} "
+    st.innerHTML = st.innerHTML + ".etb {fill: #5ba84e;} "
+    st.innerHTML = st.innerHTML + ".center {fill: #f1963d;} "
+    st.innerHTML = st.innerHTML + "text {font: 10px sans-serif; fill: #5F5F5F} "
+    $(svg).prepend(st);
+  }
+  var data = (new XMLSerializer()).serializeToString(svg);
+  var DOMURL = window.URL || window.webkitURL || window;
+
+  var img = new Image();
+  var svgBlob = new Blob([data], {
+    type: 'image/svg+xml;charset=utf-8'
+  });
+  var url = DOMURL.createObjectURL(svgBlob);
+  $(".legend").prepend('<div id="onlyprint" ><img  src="' + url + '" width="150"  ></div>')
+
+}
+
+
 counterparty.beforePDFPrinting = function () {
+  counterparty.drawInlineSVG()
   var def = $.Deferred();
 
-  var cc = $("div.display-active svg");
+  var cc = $(".display-active svg");
   var count = cc.length;
+
+  console.log(cc.length)
 
   for (var i = 0; i < cc.length; i++) {
     var svg = cc[i];
@@ -751,7 +779,8 @@ counterparty.beforePDFPrinting = function () {
 
     $(svg).find("style").remove();
     $(svg).prepend(st);
-    $(".legend").prepend('<div id="onlyprint" ><img  src="/main/static/3rdparty/img/legend.jpg" width="120" height="90" ></div>')
+
+    //$(".legend").prepend('<div id="onlyprint" ><img  src="/main/static/3rdparty/img/legend.jpg" width="120" height="90" ></div>')
 
     var sheight = $("div svg").attr("height")
 
@@ -830,7 +859,7 @@ counterparty.getPDF = function (selector) {
 
 $(window).load(function () {
   $("#graph").addClass("display-active")
-  // $(".legend").addClass("display-active")
+  $(".legend").addClass("display-active2")
   filter.loadAll()
   network.loadData()
 })
