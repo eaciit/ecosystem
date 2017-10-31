@@ -263,13 +263,6 @@ network.processData = function (data) {
     rawLinks.push(link)
   })
 
-  // Get the previous nodes if exist
-  var prevNodes = _(network.nodes).remove(function (e) {
-    return (_.findIndex(nodes, {
-      name: e.name
-    }) == -1)
-  }).value()
-
   // Adding the new center node (customer)
   nodes = _.concat(nodes, {
     name: parent,
@@ -279,6 +272,13 @@ network.processData = function (data) {
     class: "center",
     level: network.level
   })
+
+  // Get the previous nodes if exist and remove the duplicate nodes
+  var prevNodes = _(network.nodes).remove(function (e) {
+    return (_.findIndex(nodes, {
+      name: e.name
+    }) == -1)
+  }).value()
 
   // Merge the new nodes to previous node
   nodes = nodes.concat(prevNodes)
@@ -345,8 +345,6 @@ network.processData = function (data) {
 
     return n
   })
-
-  console.log(nodes)
 
   // Keep track of network levels
   network.level += 1
