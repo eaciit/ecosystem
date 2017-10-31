@@ -159,14 +159,14 @@ filter.loadAll = function () {
 }
 
 var network = {}
-network.data = []
+network.rawLinks = []
 network.links = []
 network.nodes = []
 network.level = 0
 network.isExpanding = false
 
 network.clean = function () {
-  network.data = []
+  network.rawLinks = []
   network.links = []
   network.nodes = []
 }
@@ -212,35 +212,83 @@ network.loadDetailCSV = function () {
 }
 
 network.processData = function (data) {
-  var rawLinks = []
   var parent = _.keys(data)[0]
-  _.each(data[parent], function (e) {
+  // Group the node based on the counterparty node, so the multiple link will be merged into 1 link only
+  var nodes = _(data[parent])
+    .map(function (e) {
+      var flow = String(e.cpty_bank).substring(0, 3) == "SCB" && String(e.cust_bank).substring(0, 3) == "SCB" ? true : false
+
+      return {
+        name: e.cpty_long_name,
+        bank: e.cpty_bank,
+        coi: e.cpty_coi,
+        groupName: e.cpty_group_name,
+        total: e.total,
+        class: e.is_ntb == "Y" ? "ntb" : "etb",
+        role: e.cust_role,
+        isFlow: flow,
+        isMissed: !flow,
+        level: network.level
+      }
+    })
+    .groupBy("name")
+    .map(function (e) {
+      var d = _.first(e)
+      d.banks = _.map(e, "bank")
+      d.total = _.sum(_.map(e, "total"))
+      d.isFlow = _.sum(_.map(e, "isFlow")) >= 1
+      d.isMissed = _.sum(_.map(e, "isMissed")) >= 1
+
+      return d
+    })
+    .value()
+
+  // Generate links based on merged nodes
+  var rawLinks = []
+  _.each(nodes, function (e) {
     var link = {
       total: e.total,
-      type: String(e.cpty_bank).substring(0, 3) == "SCB" && String(e.cust_bank).substring(0, 3) == "SCB" ? "flow" : "missed",
+      isFlow: e.isFlow,
+      isMissed: e.isMissed
     }
 
-    if (e.cust_role == "BUYER") {
-      link.source = e.cpty_long_name
-      link.source_bank = e.cpty_bank
+    if (e.role == "BUYER") {
+      link.source = e.name
       link.target = parent
-      link.target_bank = e.cust_bank
     } else {
-      link.target = e.cpty_long_name
-      link.target_bank = e.cpty_bank
       link.source = parent
-      link.source_bank = e.cust_bank
+      link.target = e.name
     }
 
     rawLinks.push(link)
   })
 
-  rawLinks = rawLinks.concat(network.data)
-  network.data = rawLinks
+  // Get the previous nodes if exist
+  var prevNodes = _(network.nodes).remove(function (e) {
+    return (_.findIndex(nodes, {
+      name: e.name
+    }) == -1)
+  }).value()
 
-  var links = JSON.parse(JSON.stringify(rawLinks))
+  // Adding the new center node (customer)
+  nodes = _.concat(nodes, {
+    name: parent,
+    banks: _.uniq(_.map(data[parent], "cust_bank")),
+    coi: counterparty.activeEntityCOI(),
+    groupName: counterparty.activeGroupName(),
+    class: "center",
+    level: network.level
+  })
 
-  //sort links by source, then target
+  // Merge the new nodes to previous node
+  nodes = nodes.concat(prevNodes)
+
+  // Merge the rawLinks
+  // RawLinks is used because the links that used by d3 is modified, so we need to keep the original version
+  var links = rawLinks.concat(network.rawLinks)
+  network.rawLinks = JSON.parse(JSON.stringify(links))
+
+  // Sort links by source, then target
   links.sort(function (a, b) {
     if (a.source > b.source) {
       return 1
@@ -258,55 +306,19 @@ network.processData = function (data) {
     }
   })
 
-  var nodes = _(data[parent])
-    .map(function (e) {
-      return {
-        name: e.cpty_long_name,
-        bank: e.cpty_bank,
-        coi: e.cpty_coi,
-        groupName: e.cpty_group_name,
-        opportunity: String(e.cpty_bank).substring(0, 3) != "SCB" ? true : false,
-        class: e.is_ntb == "Y" ? "ntb" : "etb",
-        role: e.cust_role,
-        level: network.level,
-      }
-    })
-    .groupBy("name")
-    .map(function (e) {
-      var d = _.first(e)
-      d.banks = _.map(e, "bank")
-
-      return d
-    })
-    .concat({
-      name: parent,
-      banks: _.uniq(_.map(data[parent], "cust_bank")),
-      coi: counterparty.activeEntityCOI(),
-      groupName: counterparty.activeGroupName(),
-      opportunity: false,
-      class: "center",
-      level: network.level
-    })
-    .value()
-
-
-  var prevNodes = _(network.nodes).remove(function (e) {
-    return (_.findIndex(nodes, {
-      name: e.name
-    }) == -1)
-  }).value()
-
-  nodes = nodes.concat(prevNodes)
-
-  links.forEach(function (link) {
+  // Linking the object of source and target based on name
+  links = _.map(links, function (link) {
     link.s = _.find(nodes, {
       name: link.source
     })
     link.t = _.find(nodes, {
       name: link.target
     })
+
+    return link
   })
 
+  // calculate nodes total ampount based on the amount flow going and or going in
   nodes = _.map(nodes, function (n) {
     n.total = _.sumBy(links, function (l) {
       if (l.t.name == n.name || l.s.name == n.name) {
@@ -320,17 +332,23 @@ network.processData = function (data) {
     return n
   })
 
+  // Define max and min of node radius and find the max and min of total amount of all nodes
+  // used to calculate node radius
   var minV = _.minBy(nodes, 'total').total
   var maxV = _.maxBy(nodes, 'total').total
-  var minR = 15
+  var minR = 20
   var maxR = 80
 
+  // Calculate the radius for each nodes based on the total amount
   nodes = _.map(nodes, function (n) {
     n.r = parseInt(minR + (n.total - minV) / (maxV - minV) * (maxR - minR))
 
     return n
   })
 
+  console.log(nodes)
+
+  // Keep track of network levels
   network.level += 1
   network.nodes = nodes
   network.links = links
@@ -447,24 +465,27 @@ network.generate = function () {
       d.t.r + ")"
     })
 
+  // For Missed flow (non-SCB) indicator
   var pathCircle1 = svg.append("svg:g")
     .selectAll("path")
     .data(links)
     .enter().append("svg:circle")
     .attr("r", 10)
     .attr("class", function (d) {
-      return d.type == "missed" ? "missed" : "hide"
+      return d.isMissed ? "missed" : "hide"
     })
 
+  // For SCB to SCB indicator
   var pathCircle2 = svg.append("svg:g")
     .selectAll("path")
     .data(links)
     .enter().append("svg:circle")
     .attr("r", 10)
     .attr("class", function (d) {
-      return d.type != "missed" ? "missed" : "hide"
+      return d.isFlow ? "missed" : "hide"
     })
 
+  // For Intragroup transaction indicator
   var pathCircle3 = svg.append("svg:g")
     .selectAll("path")
     .data(links)
@@ -474,6 +495,7 @@ network.generate = function () {
       return d.t.groupName == d.s.groupName ? "missed" : "hide"
     })
 
+  // For Missed flow (non-SCB) indicator
   var pathText1 = svg.append("svg:g")
     .selectAll(".pathText")
     .data(links)
@@ -488,9 +510,10 @@ network.generate = function () {
     .style("text-anchor", "middle")
     .attr("startOffset", "40%")
     .text(function (d) {
-      return d.type == "missed" ? "M" : ""
+      return d.isMissed ? "M" : ""
     })
 
+  // For SCB to SCB indicator
   var pathText2 = svg.append("svg:g")
     .selectAll(".pathText")
     .data(links)
@@ -505,10 +528,10 @@ network.generate = function () {
     .style("text-anchor", "middle")
     .attr("startOffset", "50%")
     .text(function (d) {
-      return d.type != "missed" ? "S" : ""
+      return d.isFlow ? "S" : ""
     })
 
-
+  // For Intragroup transaction indicator
   var pathText3 = svg.append("svg:g")
     .selectAll(".pathText")
     .data(links)
@@ -526,7 +549,6 @@ network.generate = function () {
       return d.t.groupName == d.s.groupName ? "I" : ""
     })
 
-  var prevNode = "#nodeDetail"
   var circle = svg.append("svg:g").selectAll("g")
     .data(nodes)
     .enter()
@@ -617,7 +639,7 @@ network.generate = function () {
     path.attr("d", function (d) {
       var dx = d.target.x - d.source.x,
         dy = d.target.y - d.source.y,
-        dr = d.type == "opportunity" ? 200 : 0
+        dr = 0
       return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
     })
 
