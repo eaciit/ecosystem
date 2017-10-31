@@ -414,40 +414,90 @@ network.generate = function () {
       return "linkId_" + i
     })
     .attr("class", function (d) {
-      return "link " + d.type
+      return "link missed"
     })
     .attr("marker-end", function (d) {
-      return "url(#" + d.type + d.t.r + ")"
+      return "url(#missed"
+      d.t.r + ")"
     })
 
-  var pathCircle = svg.append("svg:g")
+  var pathCircle1 = svg.append("svg:g")
     .selectAll("path")
     .data(links)
     .enter().append("svg:circle")
     .attr("r", 10)
     .attr("class", function (d) {
-      var s = d.t.banks.length > 1 || d.s.banks.length > 1 ? "M" : ""
-      s += d.t.groupName == d.s.groupName ? "I" : ""
-
-      return s == "" ? "hide" : d.type
+      return d.type == "missed" ? "missed" : "hide"
     })
 
-  var pathText = svg.append("svg:g")
+  var pathCircle2 = svg.append("svg:g")
+    .selectAll("path")
+    .data(links)
+    .enter().append("svg:circle")
+    .attr("r", 10)
+    .attr("class", function (d) {
+      return d.type != "missed" ? "missed" : "hide"
+    })
+
+  var pathCircle3 = svg.append("svg:g")
+    .selectAll("path")
+    .data(links)
+    .enter().append("svg:circle")
+    .attr("r", 10)
+    .attr("class", function (d) {
+      return d.t.groupName == d.s.groupName ? "missed" : "hide"
+    })
+
+  var pathText1 = svg.append("svg:g")
     .selectAll(".pathText")
     .data(links)
     .enter().append("svg:text")
+    .attr("class", "pathText")
     .attr("dy", 3)
 
-  pathText.append("textPath")
+  pathText1.append("textPath")
+    .attr("xlink:href", function (d, i) {
+      return "#linkId_" + i
+    })
+    .style("text-anchor", "middle")
+    .attr("startOffset", "40%")
+    .text(function (d) {
+      return d.type == "missed" ? "M" : ""
+    })
+
+  var pathText2 = svg.append("svg:g")
+    .selectAll(".pathText")
+    .data(links)
+    .enter().append("svg:text")
+    .attr("class", "pathText")
+    .attr("dy", 3)
+
+  pathText2.append("textPath")
     .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
     })
     .style("text-anchor", "middle")
     .attr("startOffset", "50%")
     .text(function (d) {
-      var s = d.t.banks.length > 1 || d.s.banks.length > 1 ? "M" : ""
-      s += d.t.groupName == d.s.groupName ? "I" : ""
-      return s
+      return d.type != "missed" ? "S" : ""
+    })
+
+
+  var pathText3 = svg.append("svg:g")
+    .selectAll(".pathText")
+    .data(links)
+    .enter().append("svg:text")
+    .attr("class", "pathText")
+    .attr("dy", 3)
+
+  pathText3.append("textPath")
+    .attr("xlink:href", function (d, i) {
+      return "#linkId_" + i
+    })
+    .style("text-anchor", "middle")
+    .attr("startOffset", "60%")
+    .text(function (d) {
+      return d.t.groupName == d.s.groupName ? "I" : ""
     })
 
   var prevNode = "#nodeDetail"
@@ -534,25 +584,9 @@ network.generate = function () {
       return d.r
     })
     .attr("class", function (d) {
-      return d.class
-    })
-
-  circle.append("svg:text")
-    .text(function (d) {
-      if (d.role == "BUYER") {
-        return "■"
-      } else if (d.role == "PAYEE") {
-        return "+"
-      } else {
-        return ""
-      }
-    })
-    .attr("class", "bs-indicator")
-    .attr("x", function (d) {
-      return d.r / 2 - 8
-    })
-    .attr("y", function (d) {
-      return -d.r / 2 + 8
+      var c = d.class
+      c += d.role == "BUYER" ? " buyer" : ""
+      return c
     })
 
   circle.append("svg:text")
@@ -620,8 +654,16 @@ network.generate = function () {
       return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
     })
 
-    pathCircle.attr("transform", function (d) {
+    pathCircle1.attr("transform", function (d) {
+      return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2 * 0.8) + ", " + (d.source.y - (d.source.y - d.target.y) / 2 * 0.8) + ")"
+    })
+
+    pathCircle2.attr("transform", function (d) {
       return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2) + ", " + (d.source.y - (d.source.y - d.target.y) / 2) + ")"
+    })
+
+    pathCircle3.attr("transform", function (d) {
+      return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2 * 1.2) + ", " + (d.source.y - (d.source.y - d.target.y) / 2 * 1.2) + ")"
     })
 
     circle.attr("transform", function (d) {
@@ -632,7 +674,7 @@ network.generate = function () {
       return "translate(" + d.x + ", " + d.y + ")"
     })
 
-    pathText.attr("transform", function (d) {
+    d3.selectAll(".pathText").attr("transform", function (d) {
       if (d.target.x < d.source.x) {
         var bbox = this.getBBox()
         rx = bbox.x + bbox.width / 2
@@ -671,7 +713,6 @@ network.generate = function () {
       return e.t.name == d.name || e.s.name == d.name
     }).remove()
   }
-
 }
 
 network.highlight = function (c) {
