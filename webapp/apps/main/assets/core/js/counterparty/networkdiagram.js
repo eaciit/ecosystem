@@ -516,72 +516,13 @@ network.generate = function () {
       return c
     })
     .each(function (d) {
-      var displayName = d.name
-      var name = d.name
-
-      if (d.class == "center") {
-        var counterparties = []
-        var connectedLinks = _.each(network.links, function (e) {
-          if (e.s.name == d.name) {
-            counterparties.push(e.t.name)
-          } else if (e.t.name == d.name) {
-            counterparties.push(e.s.name)
-          }
-        })
-
-        name = counterparties.join("|"), d.name
-      }
-
-      $(this).popover({
-          placement: "top",
-          container: "body",
-          trigger: "manual",
-          html: true,
-          content: `
-          <table class="tooltip-table">
-            <tr>
-              <td><b>Name</b></td>
-              <td>` + d.name + `</td>
-            </tr>
-            <tr>
-              <td><b>COI</b></td>
-              <td>` + d.coi + `</td>
-            </tr>
-            <tr>
-              <td><b>Total Flow</b></td>
-              <td>` + d.amountText + `</td>
-            </tr>
-            <tr>
-              <td><b>Bank</b></td>
-              <td>` + d.banks.join(", ") + `</td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><a onclick="network.loadDetail('` + name + `', '` + displayName + `')">Show Detail</a></td>
-            </tr>
-          </tabl>
-        `
-        })
-        .on("mouseenter", function () {
-          var _this = this
-          $(this).popover("show")
-          $(".popover").on("mouseleave", function () {
-            $(_this).popover('hide')
-          })
-        }).on("mouseleave", function () {
-          var _this = this
-          setTimeout(function () {
-            if (!$(".popover:hover").length) {
-              $(_this).popover("hide")
-            }
-          }, 300)
-        })
+      network.tooltip(this, d)
     })
 
   circle.append("svg:circle")
     .on("click", expand)
     .attr("r", function (d) {
-      return d.r
+      return d.role == "BUYER" ? d.r - 3 : d.r
     })
     .attr("class", function (d) {
       var c = d.class
@@ -713,6 +654,144 @@ network.generate = function () {
       return e.t.name == d.name || e.s.name == d.name
     }).remove()
   }
+}
+
+network.bubble = {}
+network.bubble.force = d3.forceSimulation()
+
+network.bubble.generate = function () {
+  var nodes = network.nodes
+
+  var w = $("#graph").width(),
+    h = 600
+
+  d3.select("#graph").selectAll("*").remove()
+
+  var svg = d3.select("#graph").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h)
+
+  var simulation = network.bubble.force
+    .force("charge", d3.forceManyBody())
+    .force("x", d3.forceX(w / 2))
+    .force("y", d3.forceY(h / 2))
+    .force("collision", d3.forceCollide().radius(function (d) {
+      return d.r + 5
+    }))
+    .nodes(nodes)
+    .on("tick", ticked)
+    .alpha(1).restart();
+
+  var bubbles = svg.append("svg:g").selectAll("g")
+    .data(nodes)
+    .enter()
+    .append("svg:g")
+    .attr("class", function (d) {
+      var c = "wrapper node " + d.class
+      if (d.role == "BUYER") {
+        c += " buyer"
+      } else if (d.role == "PAYEE") {
+        c += " supplier"
+      }
+
+      return c
+    })
+    .each(function (d) {
+      network.tooltip(this, d)
+    })
+
+  bubbles.append("svg:circle")
+    .attr("r", function (d) {
+      return d.role == "BUYER" ? d.r - 3 : d.r
+    })
+    .attr("class", function (d) {
+      var c = d.class
+      c += d.role == "BUYER" ? " buyer" : ""
+      return c
+    })
+
+  bubbles.append("svg:circle")
+    .attr("r", function (d) {
+      return d.r
+    })
+    .attr("class", "bubble")
+
+  bubbles.append("svg:text")
+    .text(function (d) {
+      return d.r < 40 ? d.name.match(/\b(\w)/g).join("") : d.name
+    })
+    .attr("text-anchor", "middle")
+    .attr("x", 0)
+    .attr("dy", ".35em")
+
+  function ticked() {
+    bubbles.attr("transform", function (d) {
+      return "translate(" + d.x + ", " + d.y + ")"
+    })
+  }
+}
+
+network.tooltip = function (elem, d) {
+  var displayName = d.name
+  var name = d.name
+
+  if (d.class == "center") {
+    var counterparties = []
+    var connectedLinks = _.each(network.links, function (e) {
+      if (e.s.name == d.name) {
+        counterparties.push(e.t.name)
+      } else if (e.t.name == d.name) {
+        counterparties.push(e.s.name)
+      }
+    })
+
+    name = counterparties.join("|"), d.name
+  }
+
+  $(elem).popover({
+      placement: "top",
+      container: "body",
+      trigger: "manual",
+      html: true,
+      content: `
+      <table class="tooltip-table">
+        <tr>
+          <td><b>Name</b></td>
+          <td>` + d.name + `</td>
+        </tr>
+        <tr>
+          <td><b>COI</b></td>
+          <td>` + d.coi + `</td>
+        </tr>
+        <tr>
+          <td><b>Total Flow</b></td>
+          <td>` + d.amountText + `</td>
+        </tr>
+        <tr>
+          <td><b>Bank</b></td>
+          <td>` + d.banks.join(", ") + `</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><a onclick="network.loadDetail('` + name + `', '` + displayName + `')">Show Detail</a></td>
+        </tr>
+      </tabl>
+    `
+    })
+    .on("mouseenter", function () {
+      var _this = this
+      $(this).popover("show")
+      $(".popover").on("mouseleave", function () {
+        $(_this).popover('hide')
+      })
+    }).on("mouseleave", function () {
+      var _this = this
+      setTimeout(function () {
+        if (!$(".popover:hover").length) {
+          $(_this).popover("hide")
+        }
+      }, 300)
+    })
 }
 
 network.highlight = function (c) {

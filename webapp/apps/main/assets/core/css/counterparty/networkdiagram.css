@@ -28,6 +28,15 @@ path.link.missed {
   stroke-dasharray: 4, 4;
 }
 
+circle.bubble {
+  fill: none;
+}
+
+circle:hover+circle.bubble {
+  stroke: black;
+  stroke-width: 2;
+}
+
 circle.flow {
   fill: white;
   stroke: #4289bd;
@@ -50,7 +59,7 @@ marker.missed {
 
 circle.buyer {
   fill: white !important;
-  stroke-width: 7;
+  stroke-width: 6;
 }
 
 circle.supplier {
@@ -64,14 +73,6 @@ circle.ntb {
 
 circle.etb {
   stroke: #5ba84e;
-  fill: #5ba84e;
-}
-
-rect.ntb {
-  fill: #4689bb;
-}
-
-rect.etb {
   fill: #5ba84e;
 }
 
@@ -143,7 +144,8 @@ text.coi {
   margin-right: 8px;
 }
 
-.bottom-navigation ul > li:hover, .bottom-navigation ul > li.active {
+.bottom-navigation ul>li:hover,
+.bottom-navigation ul>li.active {
   cursor: pointer;
   background-color: #446CB3;
 }
