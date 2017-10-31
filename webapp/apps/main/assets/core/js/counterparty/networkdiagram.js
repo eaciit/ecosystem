@@ -5,6 +5,27 @@ counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
 counterparty.activeDisplayName = ko.observable()
 counterparty.activeGroupName = ko.observable("Rollin")
+// Graph indicator R = Relationship, B = Buyer only (bubble), S = Supplier only (bubble)
+counterparty.activeGraphIndicator = ko.observable("R")
+
+counterparty.switchGraph = function (element, event) {
+  var e = $(event.target)
+
+  if (e.attr("name") != counterparty.activeGraphIndicator()) {
+    counterparty.activeGraphIndicator(e.attr("name"))
+
+    if (e.attr("name") == "R") {
+      filter.selectedRole("")
+    } else if (e.attr("name") == "B") {
+      filter.selectedRole("BUYER")
+    } else {
+      filter.selectedRole("PAYEE")
+    }
+
+    e.siblings().removeClass("active")
+    e.addClass("active")
+  }
+}
 
 var filter = {}
 filter.entities = ko.observableArray([])
@@ -314,7 +335,12 @@ network.processData = function (data) {
   network.nodes = nodes
   network.links = links
 
-  network.generate()
+  // R for Relationship
+  if (counterparty.activeGraphIndicator() == "R") {
+    network.generate()
+  } else {
+    network.bubble.generate()
+  }
 }
 
 network.generate = function () {

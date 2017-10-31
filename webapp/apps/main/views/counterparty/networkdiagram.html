@@ -130,9 +130,9 @@
 
 <div class="row bottom-navigation">
   <ul>
-    <li>Relationship</li>
-    <li>Buyers</li>
-    <li>Suppliers</li>
+    <li class="active" data-bind="click: counterparty.switchGraph" name="R">Relationship</li>
+    <li data-bind="click: counterparty.switchGraph" name="B">Buyers</li>
+    <li data-bind="click: counterparty.switchGraph" name="S">Suppliers</li>
   </ul>
 </div>
 
