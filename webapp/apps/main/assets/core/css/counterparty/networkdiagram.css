@@ -28,15 +28,6 @@ path.link.missed {
   stroke-dasharray: 4, 4;
 }
 
-circle.bubble {
-  fill: none;
-}
-
-circle:hover+circle.bubble {
-  stroke: black;
-  stroke-width: 2;
-}
-
 circle.flow {
   fill: white;
   stroke: #4289bd;
@@ -55,6 +46,11 @@ marker.flow {
 
 marker.missed {
   fill: #666;
+}
+
+circle.bubble:hover {
+  fill: #89C4F4;
+  stroke: #89C4F4;
 }
 
 circle.buyer {

@@ -731,16 +731,10 @@ network.bubble.generate = function () {
       return d.role == "BUYER" ? d.r - 3 : d.r
     })
     .attr("class", function (d) {
-      var c = d.class
+      var c = "bubble " + d.class
       c += d.role == "BUYER" ? " buyer" : ""
       return c
     })
-
-  bubbles.append("svg:circle")
-    .attr("r", function (d) {
-      return d.r
-    })
-    .attr("class", "bubble")
 
   bubbles.append("svg:text")
     .text(function (d) {
