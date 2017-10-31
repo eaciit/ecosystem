@@ -361,6 +361,35 @@ network.processData = function (data) {
   }
 }
 
+network.generateLegend = function (parent) {
+  var g = parent.append("svg:g")
+  var texts = ["Customer Node", "ETB Node", "NTB Node"]
+  var classes = ["center", "etb", "ntb"]
+
+  var y = 15
+  _.each(texts, function (t, i) {
+    g.append("svg:circle")
+      .attr("r", 10)
+      .attr("cx", 15)
+      .attr("cy", y)
+      .attr("class", classes[i])
+      .on("mouseover", function () {
+        network.highlight(classes[i])
+      })
+      .on("mouseout", function () {
+        network.unhighlight()
+      })
+
+    g.append("svg:text")
+      .attr("x", 35)
+      .attr("y", y + 3)
+      .text(t)
+
+    y += 30
+  })
+
+}
+
 network.generate = function () {
   var links = network.links
   var nodes = network.nodes
@@ -374,6 +403,8 @@ network.generate = function () {
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
     .attr("height", h)
+
+  network.generateLegend(svg)
 
   // Filter
   var defs = svg.append("defs")
@@ -719,6 +750,8 @@ network.bubble.generate = function () {
     .attr("width", w)
     .attr("height", h)
 
+  network.generateLegend(svg)
+
   var simulation = network.bubble.force
     .force("charge", d3.forceManyBody())
     .force("x", d3.forceX(w / 2))
@@ -846,90 +879,57 @@ network.unhighlight = function () {
 }
 
 // Printing
-counterparty.drawInlineSVG = function () {
-  var svg = document.querySelector('#svg');
-  var cc = $(".legend svg");
-  for (var i = 0; i < cc.length; i++) {
-    var svg = cc[i];
-    var st = document.createElement("style");
-    st.innerHTML = st.innerHTML + ".ntb {fill: #4689bb;} "
-    st.innerHTML = st.innerHTML + ".etb {fill: #5ba84e;} "
-    st.innerHTML = st.innerHTML + ".center {fill: #f1963d;} "
-    st.innerHTML = st.innerHTML + "text {font: 10px sans-serif; fill: #5F5F5F} "
-    $(svg).prepend(st);
-  }
-  var data = (new XMLSerializer()).serializeToString(svg);
-  var DOMURL = window.URL || window.webkitURL || window;
-
-  var img = new Image();
-  var svgBlob = new Blob([data], {
-    type: 'image/svg+xml;charset=utf-8'
-  });
-  var url = DOMURL.createObjectURL(svgBlob);
-  $(".legend").prepend('<div id="onlyprint" ><img  src="' + url + '" width="150"  ></div>')
-
-}
-
 counterparty.beforePDFPrinting = function (style) {
-  counterparty.drawInlineSVG()
-
   var def = $.Deferred();
 
-  var cc = $("#graph svg");
-  var count = cc.length;
+  var svg = $("#graph svg")[0];
 
-  for (var i = 0; i < cc.length; i++) {
-    var svg = cc[i];
+  var styleElement = document.createElement("style")
+  styleElement.innerHTML = style
+  styleElement.innerHTML += ".wrapper>.hide{display: block !important;}"
 
-    var styleElement = document.createElement("style")
-    styleElement.innerHTML = style
-    styleElement.innerHTML += ".wrapper>.hide{display: block !important;}"
+  // inject style
+  $(svg).prepend(styleElement);
 
-    // inject style
-    $(svg).prepend(styleElement);
+  var sheight = $("#graph svg").attr("height")
 
-    var sheight = $("div svg").attr("height")
+  var rect = svg.getBoundingClientRect();
+  var img = document.createElement("img");
+  var canvas = document.createElement('canvas');
+  canvas.width = 1386 * 2;
+  canvas.height = sheight * 2;
+  var ctx = canvas.getContext('2d');
 
-    var rect = svg.getBoundingClientRect();
-    var img = document.createElement("img");
-    var canvas = document.createElement('canvas');
-    canvas.width = 1386 * 2;
-    canvas.height = sheight * 2;
-    var ctx = canvas.getContext('2d');
+  var imgCanvas = new Image(),
+    serializer = new XMLSerializer(),
+    svgStr = serializer.serializeToString(svg);
 
-    var imgCanvas = new Image(),
-      serializer = new XMLSerializer(),
-      svgStr = serializer.serializeToString(svg);
+  imgCanvas.onload = function () {
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, 1386 * 2, sheight * 2);
+    ctx.drawImage(imgCanvas, 0, 0, 1386 * 2, sheight * 2);
 
-    imgCanvas.onload = function () {
-      ctx.webkitImageSmoothingEnabled = false;
-      ctx.mozImageSmoothingEnabled = false;
-      ctx.imageSmoothingEnabled = false;
-      ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, 1386 * 2, sheight * 2);
-      ctx.drawImage(imgCanvas, 0, 0, 1386 * 2, sheight * 2);
+    var base64Image = canvas.toDataURL("image/jpeg", 0.75);
 
-      var base64Image = canvas.toDataURL("image/jpeg", 0.75);
+    img.src = base64Image;
+    img.style = "position:absolute;top:" + rect.top + "px;left:" + rect.left + "px;";
+    img.className = "remove-after-print";
+    img.width = 1386;
+    img.height = sheight;
+    svg.parentNode.insertBefore(img, svg);
 
-      img.src = base64Image;
-      img.style = "position:absolute;top:" + rect.top + "px;left:" + rect.left + "px;";
-      img.className = "remove-after-print";
-      img.width = 1386;
-      img.height = sheight;
-      svg.parentNode.insertBefore(img, svg);
-
-      def.resolve(true)
-    }
-
-    imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgStr)));
+    def.resolve(true)
   }
 
+  imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgStr)));
   return def
 }
 
 counterparty.afterPDFPrinting = function () {
   $(".remove-after-print").remove();
-  $("#onlyprint").remove();
   $("svg > style").remove();
 }
 
