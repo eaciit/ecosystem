@@ -785,7 +785,6 @@ counterparty.getPDF = function(selector) {
 
 $(window).load(function () {
   $("#graph").addClass("display-active")
-  $(".legend").addClass("display-active2")
   filter.loadAll()
   network.loadData()
 })
