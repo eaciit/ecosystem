@@ -620,7 +620,14 @@ network.generate = function () {
 
   circle.append("svg:text")
     .text(function (d) {
-      return d.r < 40 ? d.name.match(/\b(\w)/g).join("") : d.name
+      if (d.r <= 40) {
+        var matches = d.name.match(/\b(\w)/g)
+        if (matches) {
+          return matches.join("")
+        }
+      }
+
+      return d.name
     })
     .attr("text-anchor", "middle")
     .attr("x", 0)
