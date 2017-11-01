@@ -48,14 +48,26 @@ marker.missed {
   fill: #666;
 }
 
-circle.bubble:hover {
-  fill: #89C4F4;
-  stroke: #89C4F4;
+.wrapper.bubble:hover>circle.inner-bubble {
+  fill: #fad749;
+  stroke: #fad749;
+}
+
+circle.outer-bubble {
+  fill: none;
+  stroke: none;
+}
+
+.wrapper.bubble:hover>circle.outer-bubble {
+  fill: none;
+  stroke: white;
+  stroke-width: 10px;
+  stroke-opacity: 0.5;
 }
 
 circle.buyer {
   fill: white !important;
-  stroke-width: 6;
+  stroke-width: 10;
 }
 
 circle.supplier {

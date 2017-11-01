@@ -738,6 +738,14 @@ network.bubble.force = d3.forceSimulation()
 
 network.bubble.generate = function () {
   var nodes = network.nodes
+  // Readjust the node raidus for Bubble Diagram
+  var min = 25
+  var max = 100
+  nodes = _.map(nodes, function (d) {
+    d.r = min + (d.r - 20) / (80 - 20) * (max - min)
+
+    return d
+  })
 
   var w = $("#graph").width(),
     h = 600
@@ -766,7 +774,7 @@ network.bubble.generate = function () {
     .enter()
     .append("svg:g")
     .attr("class", function (d) {
-      var c = "wrapper node " + d.class
+      var c = "wrapper node bubble " + d.class
       if (d.role == "BUYER") {
         c += " buyer"
       } else if (d.role == "PAYEE") {
@@ -778,16 +786,60 @@ network.bubble.generate = function () {
     .each(function (d) {
       network.tooltip(this, d)
     })
+    .on("mouseover", function (d) {
+      d3.select(this)
+        .select(".inner-bubble")
+        .transition()
+        .ease(d3.easeElastic)
+        .duration(1000)
+        .attr("r", function (d) {
+          return d.role == "BUYER" ? (d.r - 5) * 1.2 : d.r * 1.2
+        })
+
+      d3.select(this)
+        .selectAll(".outer-bubble")
+        .transition()
+        .ease(d3.easeElastic)
+        .duration(1000)
+        .attr("r", function (d) {
+          return d.r * 1.2
+        })
+    })
+    .on("mouseout", function (d) {
+      d3.select(this)
+        .select(".inner-bubble")
+        .transition()
+        .ease(d3.easeElastic)
+        .duration(1000)
+        .attr("r", function (d) {
+          return d.role == "BUYER" ? (d.r - 5) / 1.2 : d.r / 1.2
+        })
+
+      d3.select(this)
+        .select(".outer-bubble")
+        .transition()
+        .ease(d3.easeElastic)
+        .duration(1000)
+        .attr("r", function (d) {
+          return d.r / 1.2
+        })
+    })
 
   bubbles.append("svg:circle")
     .attr("r", function (d) {
-      return d.role == "BUYER" ? d.r - 3 : d.r
+      return d.role == "BUYER" ? d.r - 5 : d.r
     })
     .attr("class", function (d) {
-      var c = "bubble " + d.class
+      var c = "inner-bubble " + d.class
       c += d.role == "BUYER" ? " buyer" : ""
       return c
     })
+
+  bubbles.append("svg:circle")
+    .attr("r", function (d) {
+      return d.r
+    })
+    .attr("class", "outer-bubble")
 
   bubbles.append("svg:text")
     .text(function (d) {
