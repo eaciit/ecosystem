@@ -802,7 +802,7 @@ network.bubble.generate = function () {
         .ease(d3.easeElastic)
         .duration(1000)
         .attr("r", function (d) {
-          return d.role == "BUYER" ? (d.r - 5) * 1.2 : d.r * 1.2
+          return (d.role == "BUYER" ? d.r - 5 : d.r) * 1.1 + 10
         })
 
       d3.select(this)
@@ -811,7 +811,7 @@ network.bubble.generate = function () {
         .ease(d3.easeElastic)
         .duration(1000)
         .attr("r", function (d) {
-          return d.r * 1.2
+          return d.r * 1.1 + 10
         })
     })
     .on("mouseout", function (d) {
@@ -821,7 +821,7 @@ network.bubble.generate = function () {
         .ease(d3.easeElastic)
         .duration(1000)
         .attr("r", function (d) {
-          return d.role == "BUYER" ? (d.r - 5) / 1.2 : d.r / 1.2
+          return d.role == "BUYER" ? d.r - 5 : d.r
         })
 
       d3.select(this)
@@ -830,7 +830,7 @@ network.bubble.generate = function () {
         .ease(d3.easeElastic)
         .duration(1000)
         .attr("r", function (d) {
-          return d.r / 1.2
+          return d.r
         })
     })
 
@@ -852,7 +852,14 @@ network.bubble.generate = function () {
 
   bubbles.append("svg:text")
     .text(function (d) {
-      return d.r < 40 ? d.name.match(/\b(\w)/g).join("") : d.name
+      if (d.r <= 40) {
+        var matches = d.name.match(/\b(\w)/g)
+        if (matches) {
+          return matches.join("")
+        }
+      }
+
+      return d.name
     })
     .attr("text-anchor", "middle")
     .attr("x", 0)
