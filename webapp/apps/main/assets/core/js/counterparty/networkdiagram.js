@@ -275,6 +275,10 @@ network.processData = function (data) {
   })
 
   // Adding the new center node (customer)
+  _.remove(nodes, function(e) {
+    return e.name == parent
+  })
+  
   nodes = _.concat(nodes, {
     name: parent,
     banks: _.uniq(_.map(data[parent], "cust_bank")),
