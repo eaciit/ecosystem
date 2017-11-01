@@ -139,23 +139,25 @@ text.coi {
 }
 
 .bottom-navigation ul {
+  text-align: center;
   padding: 0;
 }
 
 .bottom-navigation ul li {
   display: inline-block;
   text-align: center;
-  padding: 5px 15px;
+  padding: 10px 50px;
   border-radius: 2px;
-  background-color: #22313F;
+  background-color: #BDC3C7;
   color: white;
-  margin-right: 8px;
+  margin-right: 20px;
+  box-shadow: 0 0 20px -5px #BDC3C7;
 }
 
 .bottom-navigation ul>li:hover,
 .bottom-navigation ul>li.active {
   cursor: pointer;
-  background-color: #446CB3;
+  background-color: #89C4F4;
 }
 
 .menu-counterparty {

@@ -18,8 +18,10 @@ counterparty.switchGraph = function (element, event) {
       filter.selectedRole("")
     } else if (e.attr("name") == "B") {
       filter.selectedRole("BUYER")
-    } else {
+    } else if (e.attr("name") == "S") {
       filter.selectedRole("PAYEE")
+    } else {
+      window.location.href = "/main/missedflow/index";
     }
 
     e.siblings().removeClass("active")
