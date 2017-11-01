@@ -73,6 +73,15 @@ filter.limit = [{
 }, {
   "value": 10,
   "text": "Top 10"
+}, {
+  "value": 50,
+  "text": "Top 50"
+}, {
+  "value": 100,
+  "text": "Top 100"
+}, {
+  "value": 0,
+  "text": "All"
 }]
 filter.selectedLimit = ko.observable(5)
 
@@ -445,7 +454,7 @@ network.generate = function () {
       }
     }))
     .force("y", d3.forceY(function (d) {
-      return levelHeight / 1.5 + (network.level - d.level - 1) * levelHeight
+      return levelHeight + (network.level - d.level - 1) * levelHeight
     }))
     .force("collision", d3.forceCollide().radius(function (d) {
       return 50

@@ -109,7 +109,11 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		sql += " HAVING total > " + strconv.Itoa(payload.FlowAbove)
 	}
 
-	sql += " ORDER BY total DESC LIMIT " + strconv.Itoa(payload.Limit)
+	sql += " ORDER BY total DESC"
+
+	if payload.Limit > 0 {
+		sql += " LIMIT " + strconv.Itoa(payload.Limit)
+	}
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -291,7 +295,11 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
 		sql += " HAVING total > " + strconv.Itoa(payload.FlowAbove)
 	}
 
-	sql += " ORDER BY total DESC LIMIT " + strconv.Itoa(payload.Limit)
+	sql += " ORDER BY total DESC"
+
+	if payload.Limit > 0 {
+		sql += " LIMIT " + strconv.Itoa(payload.Limit)
+	}
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
