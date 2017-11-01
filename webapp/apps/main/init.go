@@ -26,6 +26,9 @@ func init() {
 		os.Exit(0)
 	}
 
+	// Generate Default user
+	helper.PrepareDefaultUser(db)
+
 	baseCtrl := new(controllers.BaseController)
 	// baseCtrl.NoLogin = true
 	baseCtrl.Db = db
