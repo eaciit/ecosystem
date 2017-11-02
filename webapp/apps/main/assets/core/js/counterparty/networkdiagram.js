@@ -275,10 +275,10 @@ network.processData = function (data) {
   })
 
   // Adding the new center node (customer)
-  _.remove(nodes, function(e) {
+  _.remove(nodes, function (e) {
     return e.name == parent
   })
-  
+
   nodes = _.concat(nodes, {
     name: parent,
     banks: _.uniq(_.map(data[parent], "cust_bank")),
@@ -382,8 +382,8 @@ network.generateLegend = function (parent) {
   var y = 15
   _.each(texts, function (t, i) {
     g.append("svg:circle")
-      .attr("r", 10)
-      .attr("cx", 15)
+      .attr("r", 8)
+      .attr("cx", 30)
       .attr("cy", y)
       .attr("class", classes[i])
       .on("mouseover", function () {
@@ -394,8 +394,75 @@ network.generateLegend = function (parent) {
       })
 
     g.append("svg:text")
-      .attr("x", 35)
-      .attr("y", y + 3)
+      .attr("x", 65)
+      .attr("y", y + 4)
+      .text(t)
+
+    y += 30
+  })
+
+  texts = ["Supplier Node", "Buyer Node"]
+  classes = ["supplier", "buyer"]
+
+  _.each(texts, function (t, i) {
+    g.append("svg:circle")
+      .attr("r", 10)
+      .attr("cx", 15)
+      .attr("cy", y)
+      .attr("class", "legend-circle etb " + classes[i])
+      .on("mouseover", function () {
+        network.highlight(classes[i])
+      })
+      .on("mouseout", function () {
+        network.unhighlight()
+      })
+
+    g.append("svg:circle")
+      .attr("r", 10 - i)
+      .attr("cx", 45)
+      .attr("cy", y)
+      .attr("class", "legend-circle ntb " + classes[i])
+      .on("mouseover", function () {
+        network.highlight(classes[i])
+      })
+      .on("mouseout", function () {
+        network.unhighlight()
+      })
+
+    g.append("svg:text")
+      .attr("x", 65)
+      .attr("y", y + 4)
+      .text(t)
+
+    y += 30
+  })
+
+  texts = ["Missed Flow", "SCB Flow", "Intragroup Flow"]
+  var indicators = ["M", "S", "I"]
+
+  _.each(texts, function (t, i) {
+    g.append("svg:line")
+      .attr("x1", 5)
+      .attr("x2", 55)
+      .attr("y1", y)
+      .attr("y2", y)
+      .attr("class", "link missed")
+
+    g.append("svg:circle")
+      .attr("r", 10)
+      .attr("cx", 30)
+      .attr("cy", y)
+      .attr("class", "missed")
+
+    g.append("svg:text")
+      .attr("x", 30)
+      .attr("y", y + 4)
+      .attr("text-anchor", "middle")
+      .text(indicators[i])
+
+    g.append("svg:text")
+      .attr("x", 65)
+      .attr("y", y + 4)
       .text(t)
 
     y += 30

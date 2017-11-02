@@ -13,17 +13,17 @@
   fill: #f1963d;
 }
 
-path.link {
+.link {
   fill: none;
   stroke: #666;
   stroke-width: 1.5px;
 }
 
-path.link.flow {
+.link.flow {
   stroke: #4289bd;
 }
 
-path.link.missed {
+.link.missed {
   stroke: #666;
   stroke-dasharray: 4, 4;
 }
@@ -68,6 +68,11 @@ circle.outer-bubble {
 circle.buyer {
   fill: white !important;
   stroke-width: 10;
+}
+
+circle.buyer.legend-circle {
+  fill: white !important;
+  stroke-width: 4;
 }
 
 circle.supplier {
