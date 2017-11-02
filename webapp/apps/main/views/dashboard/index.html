@@ -24,11 +24,6 @@
      </div>
    </div>
    </div> -->
-<script id="tableProductMix" type="text/html">
-  <div class="box-product">
-    <label data-bind="text:product"></label>
-  </div>
-</script>
 
 <div style="position:absolute; z-index: 0">
   <svg>
@@ -320,14 +315,44 @@
               </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="Trade">
-              <div class="row align-center">
+              <div class="align-center">
                 <label class="texthead">Product Mix</label>
               </div>
-              <div data-bind="template:{name:'tableProductMix', foreach:dashboard.activeEntityDetail.dataProductMix}">
-              </div>
+             
+             <div class="row">
+             <div class="col-sm-6">
+             <table class="table" style="color:  #fff; background-color:  #4F5F79">
+              <thead>
+                <tr>
+                  <th class="dash_act" align="center" colspan="2" data-bind="text:dashboard.dataAA"></th>
+                </tr>
+              </thead>
+              <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixA" >
+                <tr >
+                  <td data-bind="text: product"></td>
+                  <td align="right" data-bind="text: '$'+dashboard.bm(value, '')"></td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+            <div class="col-sm-6">
+             <table class="table" style="color:  #fff; background-color:  #4F5F79">
+              <thead>
+                <tr>
+                  <th class="dash_act" colspan="2" data-bind="text:dashboard.dataBB"></th>    
+                </tr>
+              </thead>
+              <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixB">
+                <tr >
+                  <td data-bind="text: product"></td>
+                  <td align="right" data-bind="text:  '$'+dashboard.bm(value, '')"></td>   
+                </tr>
+              </tbody>
+            </table>
+            </div>
+            </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
