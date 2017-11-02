@@ -289,7 +289,7 @@ network.processData = function (data) {
   })
 
   // Get the previous nodes if exist and remove the duplicate nodes
-  var prevNodes = _(network.nodes).remove(function (e) {
+  var prevNodes = _(network.nodes).filter(function (e) {
     return (_.findIndex(nodes, {
       name: e.name
     }) == -1)
