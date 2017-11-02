@@ -4,6 +4,7 @@ dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
 dashboard.inflow = ko.observable(true)
 dashboard.outflow = ko.observable(true)
+dashboard.other = ko.observable(true)
 dashboard.dataAA = ko.observable()
 dashboard.dataBB = ko.observable()
 dashboard.activeEntityDetail = {
@@ -11,6 +12,7 @@ dashboard.activeEntityDetail = {
   dataProductMix: ko.observableArray([]),
   dataProductMixA: ko.observableArray([]),
   dataProductMixB: ko.observableArray([]),
+  dataProductMixC: ko.observableArray([]),
   dataInFlow: ko.observableArray([]),
   dataOutFlow: ko.observableArray([]),
   sumInFlow: ko.observable(),
@@ -292,6 +294,7 @@ dashboard.btnCash = function () {
   dashboard.activeEntityDetail.dataOutFlow([])
   dashboard.activeEntityDetail.sumInFlow(0)
   dashboard.activeEntityDetail.sumOutFlow(0)
+  dashboard.other(false)
   // for trade  
   var data = dashboard.activeEntity().product.Cash
   var AA = []
@@ -300,7 +303,7 @@ dashboard.btnCash = function () {
   BB = dashboard.activeEntity().product.undefined[0].outward;
   dashboard.activeEntityDetail.dataProductMixA(AA)
   dashboard.activeEntityDetail.dataProductMixB(BB)
-  console.log(AA)
+  dashboard.activeEntityDetail.dataProductMixC("")
   dashboard.dataAA("Inward")
   dashboard.dataBB("Outward")
   // for flow
@@ -391,17 +394,21 @@ dashboard.btnTrade = function () {
   dashboard.activeEntityDetail.dataOutFlow([])
   dashboard.activeEntityDetail.sumInFlow(0)
   dashboard.activeEntityDetail.sumOutFlow(0)
+  dashboard.other(true)
   // for trade  
 
   var AA = []
   AA = dashboard.activeEntity().product.undefined[1].export;
   var BB = []
   BB = dashboard.activeEntity().product.undefined[1].import;
+  var CC = []
+  CC = dashboard.activeEntity().product.undefined[1].other;
   dashboard.activeEntityDetail.dataProductMixA(AA)
   dashboard.activeEntityDetail.dataProductMixB(BB)
+  dashboard.activeEntityDetail.dataProductMixC(CC)
   dashboard.dataAA("Export")
   dashboard.dataBB("Import")
-
+  
   var data = dashboard.activeEntity().product.Trade
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)
