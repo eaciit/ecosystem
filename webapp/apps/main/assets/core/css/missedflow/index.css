@@ -25,15 +25,22 @@
 	font-size: 12px;
 }
 
+.stop-left {
+	stop-color: #1CB5E0;
+}
+
+.stop-right {
+	stop-color: #000046;
+}
+
 .link {
 	fill: none;
-	stroke: #000;
 	stroke-opacity: .2;
 }
 
 .link:hover,
 .link.selected {
-	stroke-opacity: .5;
+	stroke-opacity: 1;
 	cursor: pointer;
 }
 

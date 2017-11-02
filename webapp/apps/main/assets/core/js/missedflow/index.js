@@ -150,11 +150,36 @@ missedflow.loadGraphData = function () {
 
     _.each(data, function (e) {
       var total = e.total
-      source = _.find(nodes, {
+
+      var source = _.find(nodes, {
         name: e.cust_long_name,
         as: "source"
       })
+
+      var target = _.find(nodes, {
+        name: e.cpty_long_name,
+        as: "target"
+      })
+
+      var isReversed = false
+      var rs = _.find(nodes, {
+        name: e.cpty_long_name,
+        as: "source"
+      })
+
+      var rt = _.find(nodes, {
+        name: e.cust_long_name,
+        as: "target"
+      })
+
+      if (rt && rs) {
+        source = rs
+        target = rt
+        isReversed = true
+      }
+
       var sourceIndex = undefined
+      var targetIndex = undefined
 
       if (source) {
         sourceIndex = source.node
@@ -168,12 +193,6 @@ missedflow.loadGraphData = function () {
 
         sourceIndex = nodes.length - 1
       }
-
-      target = _.find(nodes, {
-        name: e.cpty_long_name,
-        as: "target"
-      })
-      var targetIndex = undefined
 
       if (target) {
         targetIndex = target.node
@@ -192,8 +211,9 @@ missedflow.loadGraphData = function () {
         source: sourceIndex,
         target: targetIndex,
         value: total,
-        sourceBank: e.cust_bank,
-        targetBank: e.cpty_bank
+        sourceBank: isReversed ? e.cpty_bank : e.cust_bank,
+        targetBank: isReversed ? e.cust_bank : e.cpty_bank,
+        isReversed: isReversed
       })
     })
 
@@ -231,6 +251,31 @@ missedflow.generateGraph = function (data) {
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(tipLinks)
 
+  var svgDefs = svg.append('defs')
+  var mainGradient = svgDefs.append('linearGradient')
+    .attr('id', 'mainGradient')
+    .attr('gradientUnits', 'userSpaceOnUse')
+
+  mainGradient.append('stop')
+    .attr('class', 'stop-left')
+    .attr('offset', '0')
+
+  mainGradient.append('stop')
+    .attr('class', 'stop-right')
+    .attr('offset', '1')
+
+  var reversedGradient = svgDefs.append('linearGradient')
+    .attr('id', 'reversedGradient')
+    .attr('gradientUnits', 'userSpaceOnUse')
+
+  reversedGradient.append('stop')
+    .attr('class', 'stop-right')
+    .attr('offset', '0')
+
+  reversedGradient.append('stop')
+    .attr('class', 'stop-left')
+    .attr('offset', '1')
+
   // Set the sankey diagram properties
   var sankey = d3sankey()
     .nodeWidth(20)
@@ -255,6 +300,9 @@ missedflow.generateGraph = function (data) {
     .attr("d", path)
     .style("stroke-width", function (d) {
       return Math.max(1, d.dy)
+    })
+    .style("stroke", function (d) {
+      return d.isReversed ? "url(#reversedGradient)" : "url(#mainGradient)"
     })
     .sort(function (a, b) {
       return b.dy - a.dy
