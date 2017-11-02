@@ -1,16 +1,159 @@
 var missedflow = {}
 missedflow.data = ko.observableArray([])
+missedflow.activeEntityName = ko.observable("")
+missedflow.activeGroupName = ko.observable("Rollin")
+missedflow.activeEntityCOI = ko.observable()
+
+var filter = {}
+filter.entities = ko.observableArray([])
+filter.selectedEntity = ko.observable("")
+
+filter.role = [{
+  "value": "",
+  "text": "Buyer & Supplier"
+}, {
+  "value": "BUYER",
+  "text": "Buyer"
+}, {
+  "value": "PAYEE",
+  "text": "Supplier"
+}]
+filter.selectedRole = ko.observable("")
+
+filter.group = [
+{
+  "value": "",
+  "text": "ETB"
+}, {
+  "value": "NTB",
+  "text": "NTB"
+},{
+  "value": "Intra-Group",
+  "text": "Intra-Group"
+}]
+filter.selectedGroup = ko.observable("")
+
+filter.productCategories = [{
+  "value": "",
+  "text": "All"
+}, {
+  "value": "Cash",
+  "text": "Cash"
+}, {
+  "value": "Trade",
+  "text": "Trade"
+}]
+filter.selectedProductCategory = ko.observable("")
+
+filter.limit = [{
+  "value": 5,
+  "text": "Top 5"
+}, {
+  "value": 10,
+  "text": "Top 10"
+}, {
+  "value": 50,
+  "text": "Top 50"
+}, {
+  "value": 100,
+  "text": "Top 100"
+}, {
+  "value": 0,
+  "text": "All"
+}]
+filter.selectedLimit = ko.observable(5)
+
+filter.flow = [{
+  "value": 0,
+  "text": "All"
+}, {
+  "value": 30000000,
+  "text": "Flows > $30M"
+}, {
+  "value": 100000000,
+  "text": "Flows > $100M"
+}]
+filter.selectedFlow = ko.observable(0)
+
+filter.selectedDateType = "Y"
+filter.selectedYear = ko.observable("")
+filter.selectedMonth = ko.observable("")
+
+filter.selectedFilters = ko.computed(function () {
+  var yearMonth = 0
+  var dateType = ""
+  var y = moment(filter.selectedYear())
+  var m = moment(filter.selectedMonth())
+
+  if (filter.selectedDateType == "Y") {
+    dateType = "YEAR"
+    yearMonth = y.isValid() ? parseInt(y.format("YYYY")) : 0
+  } else {
+    dateType = "MONTH"
+    yearMonth = m.isValid() ? parseInt(m.format("YYYYMM")) : 0
+  }
+
+  return {
+    entityName: missedflow.activeEntityName(),
+    role: filter.selectedRole(),
+    group: filter.selectedGroup(),
+    productCategory: filter.selectedProductCategory(),
+    limit: parseInt(filter.selectedLimit()),
+    flowAbove: parseInt(filter.selectedFlow()),
+    datetype: dateType,
+    yearMonth: yearMonth
+  }
+})
+
+filter.switchDateType = function (data, event) {
+  $(event.target).siblings().removeClass("active")
+  $(event.target).addClass("active")
+
+  $($(event.target).siblings().data("target")).data('kendoDatePicker').enable(false)
+  $($(event.target).data("target")).data('kendoDatePicker').enable(true)
+
+  filter.selectedDateType = $(event.target).text()
+}
+
+filter.loadEntities = function () {
+  viewModel.ajaxPostCallback("/main/master/getentities", {
+    groupName: missedflow.activeGroupName()
+  }, function (data) {
+    filter.entities(_.map(data, "value"))
+    filter.selectedEntity(filter.entities()[0])
+  })
+}
+
+filter.loadAll = function () {
+
+  $("#month").data('kendoDatePicker').enable(false)
+  missedflow.activeEntityCOI($.urlParam("entityCOI"))
+
+  filter.selectedEntity.subscribe(function (nv) {
+    missedflow.activeEntityName(nv)
+  })
+
+  filter.selectedEntity($.urlParam("entityName"))
+  filter.loadEntities()
+
+  filter.selectedFilters.subscribe(function () {
+    // if (!network.isExpanding) {
+    //   network.clean()
+    // }
+
+    // network.isExpanding = false
+    missedflow.loadGraphData()
+  })
+}
 
 missedflow.loadGraphData = function() {
-  viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", {
-    limit: 20
-  }, function(data) {
+  viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", filter.selectedFilters(), function(data) {
     var links = []
     var nodes = []
 
     _.each(data, function(e) {
       var total = e.total
-      var source = _.find(nodes, {
+       source = _.find(nodes, {
         name: e.cust_long_name,
         as: "source"
       })
@@ -31,7 +174,7 @@ missedflow.loadGraphData = function() {
         sourceIndex = nodes.length - 1
       }
 
-      var target = _.find(nodes, {
+       target = _.find(nodes, {
         name: e.cpty_long_name,
         as: "target"
       })
@@ -67,6 +210,7 @@ missedflow.loadGraphData = function() {
 }
 
 missedflow.generateGraph = function(data) {
+  $("#missedflowchart").html("")
   var margin = {
       top: 20,
       right: 20,
@@ -77,6 +221,8 @@ missedflow.generateGraph = function(data) {
     height = $("#missedflowchart").height() - margin.top - margin.bottom
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
+  colorsource = d3.scaleOrdinal().range(["#c4e6e8","#61cae8","#00b4e1","#0197d2","#01677e","#02667e","#005667","#3d1c9f","#92d0e7","#005399","#192d4e","#6e8cd5"])
+  colortarget = d3.scaleOrdinal().range(["#702a72","#7b2580","#85298c","#9a43a4","#a160bc","#cca6d5","#e6d8e7","#cd4ec3","#7b316c","#d0bae1","#683256","#ebd0df"])
   /* Initialize tooltip */
   var tipLinks = d3.tip()
       .attr('class', 'd3-tip')
@@ -154,7 +300,10 @@ missedflow.generateGraph = function(data) {
     })
     .attr("width", sankey.nodeWidth())
     .style("fill", function(d) {
-      return d.color = color(d.name.replace(/ .*/, ""))
+      if(d.as == "source"){
+       return d.color = colorsource(d.name.replace(/ .*/, ""))
+      }
+       return d.color = colortarget(d.name.replace(/ .*/, ""))
     })
     .on("mouseover", function(d) {
       highlightLink(d.node)
@@ -219,7 +368,7 @@ missedflow.generateGraph = function(data) {
                 '</tr>'+
                 '<tr>'+
                     '<td class="col-left">Total Flow</td>'+
-                    '<td class="col-left">: '+currencynum(d.value)+'</td>'+
+                    '<td class="col-left">: $ '+currencynum(d.value)+'</td>'+
                 '</tr>'+
             '</table>'+
             '</div>';
@@ -227,6 +376,101 @@ missedflow.generateGraph = function(data) {
     });
 }
 
+// Printing
+missedflow.beforePDFPrinting = function (style) {
+  var def = $.Deferred();
+
+  var svg = $("#missedflowchart svg")[0];
+
+  var styleElement = document.createElement("style")
+  styleElement.innerHTML = style
+  styleElement.innerHTML += ".wrapper>.hide{display: block !important;}"
+
+  // inject style
+  $(svg).prepend(styleElement);
+
+  // var sheight = $("#missedflowchart svg").attr("height")
+  var sheight = 700
+
+  var rect = svg.getBoundingClientRect();
+  var img = document.createElement("img");
+  var canvas = document.createElement('canvas');
+  canvas.width = 693 * 2;
+  canvas.height = sheight * 2;
+  var ctx = canvas.getContext('2d');
+
+  var imgCanvas = new Image(),
+    serializer = new XMLSerializer(),
+    svgStr = serializer.serializeToString(svg);
+
+  imgCanvas.onload = function () {
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, 693 * 2, sheight * 2);
+    ctx.drawImage(imgCanvas, 0, 0, 693 * 2, sheight * 2);
+
+    var base64Image = canvas.toDataURL("image/jpeg", 0.75);
+
+    img.src = base64Image;
+    img.style = "position:absolute;top:" + rect.top + "px;left:" + rect.left + "px;";
+    img.className = "remove-after-print";
+    img.width = 693;
+    img.height = sheight;
+    svg.parentNode.insertBefore(img, svg);
+
+    def.resolve(true)
+  }
+
+  imgCanvas.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgStr)));
+  return def
+}
+
+missedflow.afterPDFPrinting = function () {
+  $(".remove-after-print").remove();
+  $("svg > style").remove();
+}
+
+missedflow.getPDF = function (selector) {
+  $.ajax({
+    url: "/main/static/core/css/missedflow/index.css",
+    success: function (data) {
+      buildAndSave(data)
+    },
+    dataType: 'html'
+  })
+
+  function buildAndSave(style) {
+    $.when(
+      missedflow.beforePDFPrinting(style)
+    ).done(function () {
+      kendo.drawing.drawDOM($(selector))
+        .then(function (group) {
+          return kendo.drawing.exportPDF(group, {
+            paperSize: "auto",
+            margin: {
+              left: "1cm",
+              top: "1cm",
+              right: "1cm",
+              bottom: "1cm"
+            }
+          });
+        })
+        .then(function (data) {
+          kendo.saveAs({
+            dataURI: data,
+            fileName: "ExportMissedFlow.pdf"
+          });
+        })
+        .done(function () {
+          missedflow.afterPDFPrinting();
+        })
+    })
+  }
+}
+
 $(window).load(function() {
+  filter.loadAll()
   missedflow.loadGraphData()
 })
