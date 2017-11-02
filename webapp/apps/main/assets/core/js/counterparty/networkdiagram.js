@@ -4,7 +4,7 @@ counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
 counterparty.activeDisplayName = ko.observable()
-counterparty.activeGroupName = ko.observable("Rollin")
+counterparty.activeGroupName = ko.observable("DOW CHEMICAL GROUP")
 // Graph indicator R = Relationship, B = Buyer only (bubble), S = Supplier only (bubble)
 counterparty.activeGraphIndicator = ko.observable("R")
 
@@ -690,8 +690,13 @@ network.generate = function () {
 
   circle.append("svg:text")
     .text(function (d) {
+      var matches = d.name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
+      if (matches) {
+        return d.name.substring(0, 4) + "..."
+      }
+
       if (d.r <= 40) {
-        var matches = d.name.match(/\b(\w)/g)
+        matches = d.name.match(/\b(\w)/g)
         if (matches) {
           return matches.join("")
         }
@@ -931,8 +936,13 @@ network.bubble.generate = function () {
 
   bubbles.append("svg:text")
     .text(function (d) {
+      var matches = d.name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
+      if (matches) {
+        return d.name.substring(0, 4) + "..."
+      }
+
       if (d.r <= 40) {
-        var matches = d.name.match(/\b(\w)/g)
+        matches = d.name.match(/\b(\w)/g)
         if (matches) {
           return matches.join("")
         }

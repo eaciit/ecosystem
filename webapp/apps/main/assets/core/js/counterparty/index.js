@@ -1,5 +1,5 @@
 var counterpartymain = {}
-counterpartymain.activeGroup = ko.observable("Rollin")
+counterpartymain.activeGroup = ko.observable("DOW CHEMICAL GROUP")
 counterpartymain.headtext = ko.observable()
 counterpartymain.dataDetailItemsNTB = ko.observableArray([])
 counterpartymain.dataDetailItemsETB = ko.observableArray([])

@@ -1,5 +1,5 @@
 var dashboard = {}
-dashboard.activeGroup = ko.observable("Rollin")
+dashboard.activeGroup = ko.observable("DOW CHEMICAL GROUP")
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
 dashboard.inflow = ko.observable(true)

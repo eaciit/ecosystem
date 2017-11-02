@@ -45,7 +45,7 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	groupName := "Rollin"
+	groupName := "DOW CHEMICAL GROUP"
 	sql := `SELECT cpty_long_name, cpty_coi, cust_long_name, cust_coi,
   LEFT(counterparty_bank, 4) AS cpty_bank, 
   LEFT(customer_bank, 4) AS cust_bank, 
