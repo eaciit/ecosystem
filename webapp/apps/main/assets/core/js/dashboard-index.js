@@ -151,6 +151,7 @@ dashboard.generateMap = function () {
           }
         }
       }],
+      shapeCreated: onShapeCreated,
       shapeMouseEnter: onShapeMouseEnter,
       shapeMouseLeave: onShapeMouseLeave
     })
@@ -158,6 +159,30 @@ dashboard.generateMap = function () {
     $("#map").unbind("mousewheel")
     $("#map").unbind("DOMMouseScroll")
   })
+
+  function onShapeCreated(e) {
+    if (e.shape.dataItem.country) {
+      // Calculate shape bounding box
+      var bbox = e.shape.bbox();
+      var center = bbox.center();
+
+      // Create the label
+      var labelText = e.shape.dataItem.country;
+      var label = new kendo.drawing.Text(labelText);
+      var labelCenter = label.bbox().center();
+
+      label.fill("white")
+
+      // Position the label
+      label.position([
+        center.x - labelCenter.x,
+        center.y - labelCenter.y
+      ]);
+
+      // Render the label on the layer surface
+      e.layer.surface.draw(label);
+    }
+  }
 
   function onShapeMouseEnter(e) {
     $("#groupbuttondetail").show()

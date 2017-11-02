@@ -351,6 +351,7 @@ network.processData = function (data) {
   // used to calculate node radius
   var minV = _.minBy(nodes, 'total').total
   var maxV = _.maxBy(nodes, 'total').total
+  maxV = maxV == minV ? maxV + 1 : maxV
   var minR = 20
   var maxR = 80
 
@@ -376,7 +377,7 @@ network.processData = function (data) {
 
 network.generateLegend = function (parent) {
   var g = parent.append("svg:g")
-  var texts = ["Customer Node", "ETB Node", "NTB Node"]
+  var texts = ["Anchor Entity", "ETB Node", "NTB Node"]
   var classes = ["center", "etb", "ntb"]
 
   var y = 15
@@ -689,24 +690,25 @@ network.generate = function () {
     })
 
   circle.append("svg:text")
-    .text(function (d) {
+    .attr("y", "-1em")
+    .tspans(function (d) {
       var matches = d.name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
       if (matches) {
-        return d.name.substring(0, 4) + "..."
+        return [d.name.substring(0, 4) + "..."]
       }
 
       if (d.r <= 40) {
         matches = d.name.match(/\b(\w)/g)
         if (matches) {
-          return matches.join("")
+          return [matches.join("")]
         }
       }
 
-      return d.name
+      return d3.wordwrap(d.name, d.name.length / 2);
     })
     .attr("text-anchor", "middle")
     .attr("x", 0)
-    .attr("dy", ".35em")
+    .attr("dy", "1.2em")
 
   var text = svg.append("svg:g").selectAll("g")
     .data(nodes)
