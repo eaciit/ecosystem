@@ -38,6 +38,7 @@
 
 #missedflowchart {
 	height: 700px;
+	
 }
 
 #missedflowchart .tooltipStyle{
@@ -52,6 +53,7 @@
 	margin-bottom: 5px;
 	width: 100%;
 }
+
 .d3-tip h2 {
 	font-weight: bold;
 	font-size: 12px;
@@ -61,12 +63,14 @@
 	padding-bottom: 2px;
 	margin: 0px;
 }
+
 .d3-tip h3 {
 	font-weight: normal;
 	font-size: 8px;
 	margin: 0;
 	padding: 0;
 }
+
 .d3-tip table {
 	font-weight: normal;
 	font-size: 12px;
@@ -76,18 +80,22 @@
 	border: none;
 	border-collapse: collapse;
 }
+
 .d3-tip td {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
+
 .d3-tip .col-left {
 	padding-right: 8px;
 }
+
 .d3-tip .table-wrapper {
 	margin: 0;
 	padding: inherit;
 	border: none;
 }
+
 .d3-tip {
 	line-height: 1;
 	font-weight: normal;
@@ -98,4 +106,41 @@
 	pointer-events: none;
 	background:  white;
 	box-shadow: 1px 1px 4px grey;
+}
+
+.menu-missedflow {
+  display: inline-block;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+#printpdf {
+	cursor: pointer;
+}
+
+.switch {
+  color: #3276b1;
+  background-color: #fff;
+  height: 27px;
+}
+
+#filter .k-dropdown .k-state-default {
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
+}
+
+#filter .k-input {
+  color: #ffffff;
+  background: #22313F;
+}
+
+#filter .k-picker-wrap {
+  background: #22313F;
+  border-color: #22313F;
+  color: #ffffff;
+}
+
+#filter .k-picker-wrap.k-state-default>.k-select {
+  border-color: #22313F;
 }
