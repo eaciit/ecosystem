@@ -350,6 +350,18 @@
               </tbody>
             </table>
             </div>
+
+            <div class="col-sm-12" data-bind="visible : dashboard.other">
+             <table class="table" style="color:  #fff; background-color:  #4F5F79">
+              <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixC">
+                <tr>
+                  <td data-bind="text: product"></td>
+                  <td align="right" data-bind="text:  '$'+dashboard.bm(value, '')"></td>   
+                </tr>
+              </tbody>
+            </table>
+            </div>
+
             </div>
             </div>
           </div>
