@@ -53,25 +53,29 @@
     <div id="missedflowchart" class="col-md-12"></div>
   </div>
   <div class="col-md-6">
-    <div class="row" style="padding-bottom:20px;font-weight:bold">
-    <h2 data-bind="text: missedflow.highlightedNode().name"></h2>
-    <span data-bind="text:missedflow.highlightedSum" ></span>
-    </div>
     <div class="row">
-    <table class="detail-table">
-      <tbody data-bind="foreach: missedflow.highlightedLinks">
-        <tr>
-          <td class="bold" data-bind="text: source.name"></td>
-          <td rowspan="2">➡︎</td>
-          <td class="bold" data-bind="text: target.name"></td>
-          <td data-bind="text: '$'+setbm(value)" rowspan="2"></td>
-        </tr>
-        <tr>
+      <h2 data-bind="text: missedflow.highlightedNode().name"></h2>
+      <span data-bind="text:missedflow.highlightedSum" ></span>
+    </div>
+    <br>
+    <div class="row">
+      <table class="detail-table">
+        <tbody data-bind="foreach: missedflow.highlightedLinks">
+          <tr>
+            <td class="bold" data-bind="text: source.name"></td>
+            <td rowspan="2">
+              <span data-bind="if: !isReversed">→</span>
+              <span data-bind="if: isReversed">←</span>
+            </td>
+            <td class="bold" data-bind="text: target.name"></td>
+            <td data-bind="text: '$'+setbm(value)" rowspan="2"></td>
+          </tr>
+          <tr>
             <td data-bind="text: sourceBank"></td>
             <td data-bind="text: targetBank"></td>
-        </tr>
-      </tbody>
-    </table>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

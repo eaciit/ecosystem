@@ -155,3 +155,7 @@
 .detail-table {
 	width: 100%;
 }
+
+.detail-table tr td:nth-child(even) {
+	padding-bottom: 10px;
+}

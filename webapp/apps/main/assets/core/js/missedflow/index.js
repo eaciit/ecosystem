@@ -399,26 +399,23 @@ missedflow.generateGraph = function (data) {
   // "➡" 
 
   tipLinks.html(function (d) {
-    var title, candidate;
-    candidate = d.source.name;
-    title = d.target.name;
     var html = '<div class="table-wrapper">' +
       '<table>' +
       '<tr>' +
       '<td class="col-left">Customer Name</td>' +
-      '<td class="col-left">: ' + candidate + '</td>' +
+      '<td class="col-left">: ' + (d.isReversed ? d.target.name : d.source.name) + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Customer Bank</td>' +
-      '<td class="col-left">: ' + d.sourceBank + '</td>' +
+      '<td class="col-left">: ' + (d.isReversed? d.targetBank : d.sourceBank) + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Counterparty Name</td>' +
-      '<td class="col-left">: ' + title + '</td>' +
+      '<td class="col-left">: ' + (d.isReversed ? d.source.name : d.target.name) + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Counterparty Bank</td>' +
-      '<td class="col-left">: ' + d.targetBank + '</td>' +
+      '<td class="col-left">: ' + (d.isReversed ? d.sourceBank : d.targetBank) + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Total Flow</td>' +
