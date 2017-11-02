@@ -5,6 +5,7 @@ missedflow.activeGroupName = ko.observable("DOW CHEMICAL GROUP")
 missedflow.activeEntityCOI = ko.observable()
 missedflow.highlightedNode = ko.observable("")
 missedflow.highlightedLinks = ko.observableArray([])
+missedflow.highlightedSum = ko.observable()
 
 var filter = {}
 filter.entities = ko.observableArray([])
@@ -384,6 +385,9 @@ missedflow.generateGraph = function (data) {
 
     missedflow.highlightedNode(graph.nodes[n])
     missedflow.highlightedLinks(highlightedLinks)
+
+    var sumvalue = _.sumBy(highlightedLinks, 'value')
+    missedflow.highlightedSum("Total Flow : $ "+setbm(sumvalue))
   }
 
   function unhighlightLink() {
