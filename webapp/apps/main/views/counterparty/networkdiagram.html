@@ -4,8 +4,7 @@
 <!-- Content -->
 <script src="{{ NoCacheUrl "/main/static/3rdparty/filesaver/Blob.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/3rdparty/filesaver/FileSaver.min.js" }}"></script>
-<script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v4.min.js" }}"></script>
-<script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-jetpack.js" }}"></script>
+<script src="/main/static/3rdparty/d3/d3.v4.min.js"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/counterparty/networkdiagram.css" }}" />
 <div class="row">
   <div class="col-lg-12 breadcrumb-container">
@@ -16,6 +15,9 @@
     <span data-bind="text: counterparty.activeEntityName"></span>
   </div>
 </div>
+
+<div id="setarea">
+
 <div class="row" id="filter">
   <div class="col-lg-12">
     <div class="menu-counterparty">
@@ -52,29 +54,14 @@
       <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
     </div>
     <div class="menu-counterparty">
-      <img width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf">
+      <img width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf" onclick="counterparty.getPDF('#setarea')">
     </div>
   </div>
 </div>
 
-<div id="graph" style="width: 100%; height: 500px;">
+<div id="graph" class="col-lg-12">
 </div>
 
-<div class="legend">
-  <svg id="svg" width="300" height="200" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <g data-bind="event: { mouseover: function() { network.highlight('center') }, mouseout: network.unhighlight }" >
-      <circle id="bar" r="10" cx="20" cy="20" class="center"></circle>
-      <text x="45" y="22">Customer Node</text>
-    </g>
-    <g data-bind="event: { mouseover: function() { network.highlight('etb') }, mouseout: network.unhighlight }" >
-      <circle id="bar" r="10" cx="20" cy="50" class="etb"></circle>
-      <text x="45" y="52">ETB Node</text>
-    </g>
-    <g data-bind="event: { mouseover: function() { network.highlight('ntb') }, mouseout: network.unhighlight }" >
-      <circle id="bar" r="10" cx="20" cy="80" class="ntb"></circle>
-      <text x="45" y="82">NTB Node</text>
-    </g>
-  </svg>
 </div>
 
 <div id="modalDetail" class="modal fade" role="dialog">
@@ -88,7 +75,7 @@
         <form class="form-horizontal" style="">
           <div align="right" style="font-weight:   bold; font-size:  15px">
             <div class="row">
-              <div align="left" class="col-lg-6 col-md-6 detail-title" data-bind="text: counterparty.activeName"></div>
+              <div align="left" class="col-lg-6 col-md-6 detail-title" data-bind="text: counterparty.activeDisplayName"></div>
               <div align="right" class="col-lg-6 col-md-6">
                 <div align="center" id="exporttoexcel">
                   <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel" data-bind="click: network.loadDetailCSV">
@@ -122,5 +109,13 @@
   </div>
 </div>
 
+<div class="container-fluid bottom-navigation">
+  <ul>
+    <li class="active" data-bind="click: counterparty.switchGraph" name="R">Relationship</li>
+    <li data-bind="click: counterparty.switchGraph" name="B">Buyers</li>
+    <li data-bind="click: counterparty.switchGraph" name="S">Suppliers</li>
+    <li data-bind="click: counterparty.switchGraph" name="SANKEY">Sankey Diagram</li>
+  </ul>
+</div>
 
 <script src="{{ NoCacheUrl "/main/static/core/js/counterparty/networkdiagram.js" }}"></script>

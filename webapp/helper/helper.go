@@ -26,8 +26,7 @@ func GetCurrentFolderPath(anything interface{}) string {
 	dir, _ := os.Getwd()
 	packagePath := reflect.TypeOf(anything).PkgPath()
 	// Prevsiously using os.PathSeparator but failed on windows, so we harcode it
-	topPackageFolderName := strings.Split(packagePath, "/")[0]
-	finalPath := filepath.Join(strings.Split(dir, topPackageFolderName)[0], packagePath)
+	finalPath := filepath.Join(dir, packagePath[strings.Index(packagePath, "webapp")+6:])
 
 	return finalPath
 }
