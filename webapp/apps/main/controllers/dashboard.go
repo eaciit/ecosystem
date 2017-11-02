@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/sqlh"
@@ -17,6 +18,114 @@ type DashboardPayload struct {
 
 type DashboardController struct {
 	*BaseController
+}
+
+func (c *DashboardController) InCash() []string {
+	texts := []string{
+		"Book Transfer Incoming",
+		"Inward CNAPS",
+		"Inward Demand Draft",
+		"Inward Direct Debit",
+		"Inward ACH",
+		"Foreign Bank Cheques",
+		"Inward Local Transfer",
+		"Inward Telegraphic Transfer",
+		"Local Bank Cheques (Incoming)",
+	}
+
+	quotedTexts := []string{}
+	for _, v := range texts {
+		quotedTexts = append(quotedTexts, `"`+v+`"`)
+	}
+
+	return quotedTexts
+}
+
+func (c *DashboardController) OutCash() []string {
+	texts := []string{
+		"Outward CNAPS",
+		"Book Transfer",
+		"Corporate Cheques (Outgoing)",
+		"Direct Debit",
+		"Local Bank Cheques (Outgoing)",
+		"Outward ACH",
+		"Outward Demand Draft",
+		"Outward Local Transfer",
+		"Outward Telegraphic Transfer",
+		"Salary Payment",
+	}
+
+	quotedTexts := []string{}
+	for _, v := range texts {
+		quotedTexts = append(quotedTexts, `"`+v+`"`)
+	}
+
+	return quotedTexts
+}
+
+func (c *DashboardController) ExportTrade() []string {
+	texts := []string{
+		"Export Bills under collection",
+		"Export Bills under LC",
+		"Export LC",
+		"Export Standalone Finance",
+		"Brazil Trade Advance",
+		"ECR Postshipment - LC",
+		"ECR Postshipment- Open Acct",
+		"ECR Preshipment",
+		"Input Finance",
+		"Invoice Financing SUpplier",
+		"Limited Resource Recv Purchase",
+		"Local Bill Discounting Supplier",
+		"Portofolio Receivable Services",
+		"Post Acceptance Discounting",
+		"Preshipment Finance Export Orders",
+		"Receiveable Services",
+		"Trade Receiveables Discounting",
+	}
+
+	quotedTexts := []string{}
+	for _, v := range texts {
+		quotedTexts = append(quotedTexts, `"`+v+`"`)
+	}
+
+	return quotedTexts
+}
+
+func (c *DashboardController) ImportTrade() []string {
+	texts := []string{
+		"Import Bills under collection",
+		"Import LC and Import Bills Under LC",
+		"Import Standalone Finance",
+		"Bankers Acceptance Trade Buyers",
+		"Bill Discounting Against Buyer Risk",
+		"Finance Againts Inventory Receipts",
+		"Finance Againts WareHouse Receipt",
+		"Invoice Financing Buyer",
+		"Receivable Guarantee",
+		"Vendor Prepay",
+	}
+
+	quotedTexts := []string{}
+	for _, v := range texts {
+		quotedTexts = append(quotedTexts, `"`+v+`"`)
+	}
+
+	return quotedTexts
+}
+
+func (c *DashboardController) OtherTrade() []string {
+	texts := []string{
+		"Guarantee",
+		"Borrowing Base Trade Loan",
+	}
+
+	quotedTexts := []string{}
+	for _, v := range texts {
+		quotedTexts = append(quotedTexts, `"`+v+`"`)
+	}
+
+	return quotedTexts
 }
 
 func (c *DashboardController) Index(k *knot.WebContext) interface{} {
@@ -85,32 +194,120 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
 
-	results1 := []tk.M{}
-	err = qr.Fetch(&results1, 0)
+	results := []tk.M{}
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT product_category, product_desc AS product, IFNULL(SUM(amount),0) AS value
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
   FROM ` + c.tableName() + `
-  WHERE cust_long_name = "` + payload.EntityName + `"
+	WHERE cust_long_name = "` + payload.EntityName + `"
+	AND product_category = "Cash"
+	AND product_desc IN (` + strings.Join(c.InCash(), ", ") + `)
   AND ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.commonWhereClause() + ` 
-  GROUP BY product_category, product`
+  GROUP BY product ORDER BY value DESC LIMIT 3`
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
 
-	results2 := []tk.M{}
-	err = qr.Fetch(&results2, 0)
+	resultInward := []tk.M{}
+	err = qr.Fetch(&resultInward, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+  FROM ` + c.tableName() + `
+	WHERE cust_long_name = "` + payload.EntityName + `"
+	AND product_category = "Cash"
+	AND product_desc IN (` + strings.Join(c.OutCash(), ", ") + `)
+  AND ` + c.isNTBClause() + ` <> "NA" 
+  AND ` + c.commonWhereClause() + ` 
+  GROUP BY product ORDER BY value DESC LIMIT 3`
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	resultOutward := []tk.M{}
+	err = qr.Fetch(&resultOutward, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+  FROM ` + c.tableName() + `
+	WHERE cust_long_name = "` + payload.EntityName + `"
+	AND product_category = "Trade"
+	AND product_desc IN (` + strings.Join(c.ExportTrade(), ", ") + `)
+  AND ` + c.isNTBClause() + ` <> "NA" 
+  AND ` + c.commonWhereClause() + ` 
+  GROUP BY product ORDER BY value DESC LIMIT 3`
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	resultExport := []tk.M{}
+	err = qr.Fetch(&resultExport, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+  FROM ` + c.tableName() + `
+	WHERE cust_long_name = "` + payload.EntityName + `"
+	AND product_category = "Trade"
+	AND product_desc IN (` + strings.Join(c.ImportTrade(), ", ") + `)
+  AND ` + c.isNTBClause() + ` <> "NA" 
+  AND ` + c.commonWhereClause() + ` 
+  GROUP BY product ORDER BY value DESC LIMIT 3`
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	resultImport := []tk.M{}
+	err = qr.Fetch(&resultImport, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+  FROM ` + c.tableName() + `
+	WHERE cust_long_name = "` + payload.EntityName + `"
+	AND product_category = "Trade"
+	AND product_desc IN (` + strings.Join(c.OtherTrade(), ", ") + `)
+  AND ` + c.isNTBClause() + ` <> "NA" 
+  AND ` + c.commonWhereClause() + ` 
+  GROUP BY product`
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	resultOther := []tk.M{}
+	err = qr.Fetch(&resultOther, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
 
 	returnData := tk.M{
-		"bank":    results1,
-		"product": results2,
+		"bank": results,
+		"product": tk.M{
+			"Cash": tk.M{
+				"inward":  resultInward,
+				"outward": resultOutward,
+			},
+			"Trade": tk.M{
+				"export": resultExport,
+				"import": resultImport,
+				"other":  resultOther,
+			},
+		},
 	}
 
 	return c.SetResultOK(returnData)
