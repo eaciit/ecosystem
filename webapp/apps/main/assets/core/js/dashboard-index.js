@@ -55,10 +55,10 @@ dashboard.payment = [{
 }]
 
 var filter = {}
-filter.payload = ko.computed(function(){
+filter.payload = ko.computed(function () {
   return {
-    fromYearMonth: 201509,
-    toYearMonth: 201609,
+    fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
+    toYearMonth: parseInt(moment().format("YYYYMM")),
     groupName: dashboard.activeGroup()
   }
 })
@@ -231,7 +231,7 @@ dashboard.getEntityDetail = function (entityName) {
     var product = _(data.product)
       .groupBy("product_category")
       .value()
-    
+
     dashboard.activeEntity({
       name: entityName,
       bank: bank,
@@ -309,7 +309,7 @@ dashboard.btnCash = function () {
         tooltip: dashboard.bm(suminflow - summaxthreein, "")
       });
     }
-    
+
     dashboard.activeEntityDetail.dataInFlow(tempdatain)
     var suminflowr = dashboard.bm(suminflow, "inflow")
     dashboard.activeEntityDetail.sumInFlow(suminflowr)

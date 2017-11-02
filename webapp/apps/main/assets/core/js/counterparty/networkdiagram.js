@@ -448,7 +448,7 @@ network.generate = function () {
   var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) {
       return d.name
-    }).distance(300).strength(1))
+    }).distance(300).strength(0.5))
     .force("charge", d3.forceManyBody())
     .force("x", d3.forceX(function (d) {
       if (d.role == "BUYER") {
@@ -458,12 +458,12 @@ network.generate = function () {
       } else {
         return w / 2
       }
-    }))
+    }).strength(0.1))
     .force("y", d3.forceY(function (d) {
       return levelHeight + (network.level - d.level - 1) * levelHeight
-    }))
+    }).strength(0.1))
     .force("collision", d3.forceCollide().radius(function (d) {
-      return 50
+      return d.r + 10
     }))
 
   simulation
@@ -505,8 +505,7 @@ network.generate = function () {
       return "link missed"
     })
     .attr("marker-end", function (d) {
-      return "url(#missed"
-      d.t.r + ")"
+      return "url(#missed" + d.t.r + ")"
     })
 
   // For Missed flow (non-SCB) indicator
