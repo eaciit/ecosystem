@@ -408,7 +408,7 @@ dashboard.btnTrade = function () {
   dashboard.activeEntityDetail.dataProductMixC(CC)
   dashboard.dataAA("Export")
   dashboard.dataBB("Import")
-  
+
   var data = dashboard.activeEntity().product.Trade
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
   dashboard.activeEntityDetail.dataProductMix(maxthree)

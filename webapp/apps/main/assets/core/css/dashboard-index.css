@@ -15,7 +15,7 @@ html {
   background-color: #ECF0F1 !important;
 }
 
-th.dash_act{
+th.dash_act {
   text-align: center;
 }
 
@@ -34,7 +34,7 @@ th.dash_act{
   float: left;
 }
 
-.widget-body .widget-left > p {
+.widget-body .widget-left>p {
   font-size: 2em;
 }
 
@@ -64,14 +64,14 @@ th.dash_act{
 }
 
 .bubble-tooltip {
-  text-align: left;  
+  text-align: left;
   background-color: #428bca;
   color: white;
   border-radius: 5px;
   border: 0px solid white;
 }
 
-.bubble-tooltip > div {
+.bubble-tooltip>div {
   padding: 5px 10px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
@@ -260,7 +260,7 @@ th.dash_act{
   margin-bottom: 5px;
   color: #ffffff;
   background: #4f5f79;
-  font-size:  12px;
+  font-size: 12px;
 }
 
 .box-product label {
@@ -268,18 +268,18 @@ th.dash_act{
   font-weight: normal;
 }
 
-.table tr:first-child td:nth-child(1), 
+.table tr:first-child td:nth-child(1),
 .table tr:first-child td:nth-child(2) {
-    border:1px transparent;    
+  border: 1px transparent;
 }
 
-.modal-title{
+.modal-title {
   font-size: 17px;
 }
 
 .texthead {
   padding-top: 10px;
-  padding-bottom:  4px;
+  padding-bottom: 4px;
   font-size: 17px;
 }
 
@@ -344,42 +344,42 @@ th.dash_act{
 #titleName:hover {
   cursor: pointer;
   text-decoration: underline;
-} 
+}
 
 circle:hover {
   filter: url(#shadow);
-}   
+}
 
 .btn.btn-flat {
   font-size: 14px !important;
 }
 
-.head{
+.head {
   font-size: 16px !important;
 }
 
-div.cssnowrap{
-    text-overflow:ellipsis;
-    width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
+div.cssnowrap {
+  text-overflow: ellipsis;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-div.cssnowrap:hover{
-    text-overflow:clip;
-    width:auto;
-    white-space: normal;
-    cursor: pointer;
-    text-decoration: underline;
-    font-weight: bold;
+div.cssnowrap:hover {
+  text-overflow: clip;
+  width: auto;
+  white-space: normal;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 .close {
-    color: #fff; 
-    opacity: 0.8;
+  color: #fff;
+  opacity: 0.8;
 }
 
 .close:hover {
-    color: #fff; 
-     opacity: 2;
+  color: #fff;
+  opacity: 2;
 }
