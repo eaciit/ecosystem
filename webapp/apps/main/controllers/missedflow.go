@@ -10,6 +10,7 @@ import (
 )
 
 type MissedFlowPayload struct {
+	GroupName        string
 	EntityName       string
 	CounterpartyName string
 	Role             string
@@ -45,15 +46,13 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	groupName := "DOW CHEMICAL GROUP"
 	sql := `SELECT cpty_long_name, cpty_coi, cust_long_name, cust_coi,
   LEFT(counterparty_bank, 4) AS cpty_bank, 
   LEFT(customer_bank, 4) AS cust_bank, 
   SUM(amount) AS total
   FROM ` + c.tableName() + `
-  WHERE LEFT(counterparty_bank, 3) <> 'SCB' 
-	AND LEFT(customer_bank, 3) <> 'SCB' 
-	AND cust_group_name = '` + groupName + `'
+  WHERE (LEFT(counterparty_bank, 3) <> 'SCB' OR LEFT(customer_bank, 3) <> 'SCB')
+	AND cust_group_name = '` + payload.GroupName + `'
   AND ` + c.commonWhereClause()
 
 	// Filters for YearMonth
@@ -79,6 +78,8 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		sql += " AND " + c.isNTBClause() + " = 'Y'"
 	} else if strings.ToUpper(payload.Group) == "ETB" {
 		sql += " AND " + c.isNTBClause() + " = 'N'"
+	} else if strings.ToUpper(payload.Group) == "INTRA-GROUP" {
+		sql += " AND cust_group_name = cpty_group_name"
 	}
 
 	sql += " GROUP BY cpty_coi, cpty_long_name, cust_coi, cust_long_name, cpty_bank, cust_bank "
@@ -88,7 +89,11 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		sql += " HAVING total > " + strconv.Itoa(payload.FlowAbove)
 	}
 
-	sql += " ORDER BY total DESC LIMIT " + strconv.Itoa(payload.Limit)
+	sql += " ORDER BY total DESC"
+
+	if payload.Limit > 0 {
+		sql += " LIMIT " + strconv.Itoa(payload.Limit)
+	}
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {

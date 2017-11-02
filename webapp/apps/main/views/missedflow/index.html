@@ -53,5 +53,20 @@
     <div id="missedflowchart" class="col-md-12"></div>
   </div>
   <div class="col-md-6">
+    <h2 data-bind="text: missedflow.highlightedNode().name"></h2>
+    <table class="detail-table">
+      <tbody data-bind="foreach: missedflow.highlightedLinks">
+        <tr>
+          <td class="bold" data-bind="text: source.name"></td>
+          <td rowspan="2">➡︎</td>
+          <td class="bold" data-bind="text: target.name"></td>
+          <td data-bind="text: value" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td data-bind="text: sourceBank"></td>
+            <td data-bind="text: targetBank"></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

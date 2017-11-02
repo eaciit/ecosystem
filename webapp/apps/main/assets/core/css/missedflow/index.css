@@ -1,47 +1,47 @@
 #incoming {
-	height:50px;
-	background:#404b5f;
-	margin-bottom:5px;
-	text-align:center;
+	height: 50px;
+	background: #404b5f;
+	margin-bottom: 5px;
+	text-align: center;
 	vertical-align: middle;
-	font-size:20px;
-	color:#fff;
-	padding-top:10px
+	font-size: 20px;
+	color: #fff;
+	padding-top: 10px
 }
 
 #detailincoming {
-	height:500px;
-	background:#4f5f79
+	height: 500px;
+	background: #4f5f79
 }
 
 .node rect {
-  cursor: move;
-  fill-opacity: .9;
+	cursor: move;
+	fill-opacity: .9;
 }
 
 .node text {
-  pointer-events: none;  
-  fill: #333;
-  font-size: 12px;
+	pointer-events: none;
+	fill: #333;
+	font-size: 12px;
 }
 
 .link {
-  fill: none;
-  stroke: #000;
-  stroke-opacity: .2;
+	fill: none;
+	stroke: #000;
+	stroke-opacity: .2;
 }
 
-.link:hover, .link.selected {
-  stroke-opacity: .5;
-  cursor: pointer;
+.link:hover,
+.link.selected {
+	stroke-opacity: .5;
+	cursor: pointer;
 }
 
 #missedflowchart {
 	height: 700px;
-	
 }
 
-#missedflowchart .tooltipStyle{
+#missedflowchart .tooltipStyle {
 	background: #333;
 	color: #fff;
 }
@@ -104,14 +104,14 @@
 	color: black;
 	border-radius: 5px;
 	pointer-events: none;
-	background:  white;
+	background: white;
 	box-shadow: 1px 1px 4px grey;
 }
 
 .menu-missedflow {
-  display: inline-block;
-  font-size: 11px;
-  margin-bottom: 6px;
+	display: inline-block;
+	font-size: 11px;
+	margin-bottom: 6px;
 }
 
 #printpdf {
@@ -119,28 +119,32 @@
 }
 
 .switch {
-  color: #3276b1;
-  background-color: #fff;
-  height: 27px;
+	color: #3276b1;
+	background-color: #fff;
+	height: 27px;
 }
 
 #filter .k-dropdown .k-state-default {
-  background: #22313F;
-  border-color: #22313F;
-  color: #ffffff;
+	background: #22313F;
+	border-color: #22313F;
+	color: #ffffff;
 }
 
 #filter .k-input {
-  color: #ffffff;
-  background: #22313F;
+	color: #ffffff;
+	background: #22313F;
 }
 
 #filter .k-picker-wrap {
-  background: #22313F;
-  border-color: #22313F;
-  color: #ffffff;
+	background: #22313F;
+	border-color: #22313F;
+	color: #ffffff;
 }
 
 #filter .k-picker-wrap.k-state-default>.k-select {
-  border-color: #22313F;
+	border-color: #22313F;
+}
+
+.detail-table {
+	width: 100%;
 }
