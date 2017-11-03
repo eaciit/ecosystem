@@ -2,10 +2,15 @@ var missedflow = {}
 missedflow.data = ko.observableArray([])
 missedflow.activeEntityName = ko.observable("")
 missedflow.activeGroupName = ko.observable("DOW CHEMICAL GROUP")
-missedflow.activeEntityCOI = ko.observable()
+missedflow.activeEntityCOI = ko.observable("")
 missedflow.highlightedNode = ko.observable("")
 missedflow.highlightedLinks = ko.observableArray([])
 missedflow.highlightedSum = ko.observable()
+
+missedflow.loadAll = function() {
+  missedflow.activeGroupName($.urlParam("entityGroup"))
+  missedflow.activeEntityCOI($.urlParam("entityCOI"))
+}
 
 var filter = {}
 filter.entities = ko.observableArray([])
@@ -122,21 +127,18 @@ filter.loadEntities = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {
     groupName: missedflow.activeGroupName()
   }, function (data) {
-    filter.entities(_.map(data, "value"))
-    filter.selectedEntity(filter.entities()[0])
+    filter.entities(["All"].concat(_.map(data, "value")))
+    filter.selectedEntity($.urlParam("entityName"))
   })
 }
 
 filter.loadAll = function () {
-
   $("#month").data('kendoDatePicker').enable(false)
-  missedflow.activeEntityCOI($.urlParam("entityCOI"))
 
   filter.selectedEntity.subscribe(function (nv) {
     missedflow.activeEntityName(nv)
   })
 
-  filter.selectedEntity($.urlParam("entityName"))
   filter.loadEntities()
 
   filter.selectedFilters.subscribe(function () {
@@ -208,6 +210,8 @@ missedflow.loadGraphData = function () {
         targetIndex = nodes.length - 1
       }
 
+      isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
+
       links.push({
         source: sourceIndex,
         target: targetIndex,
@@ -234,7 +238,7 @@ missedflow.generateGraph = function (data) {
       left: 20
     },
     width = $("#missedflowchart").width() - margin.left - margin.right,
-    height = $("#missedflowchart").height() - margin.top - margin.bottom
+    height = Math.log2(data.links.length) * 180
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
   colorsource = d3.scaleOrdinal().range(["#c4e6e8", "#61cae8", "#00b4e1", "#0197d2", "#01677e", "#02667e", "#005667", "#3d1c9f", "#92d0e7", "#005399", "#192d4e", "#6e8cd5"])
@@ -387,7 +391,7 @@ missedflow.generateGraph = function (data) {
     missedflow.highlightedLinks(highlightedLinks)
 
     var sumvalue = _.sumBy(highlightedLinks, 'value')
-    missedflow.highlightedSum("Total Flow : $ "+setbm(sumvalue))
+    missedflow.highlightedSum("Total Flow : $ " + setbm(sumvalue))
   }
 
   function unhighlightLink() {
@@ -407,7 +411,7 @@ missedflow.generateGraph = function (data) {
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Customer Bank</td>' +
-      '<td class="col-left">: ' + (d.isReversed? d.targetBank : d.sourceBank) + '</td>' +
+      '<td class="col-left">: ' + (d.isReversed ? d.targetBank : d.sourceBank) + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Counterparty Name</td>' +
@@ -521,6 +525,6 @@ missedflow.getPDF = function (selector) {
 }
 
 $(window).load(function () {
+  missedflow.loadAll()
   filter.loadAll()
-  missedflow.loadGraphData()
 })

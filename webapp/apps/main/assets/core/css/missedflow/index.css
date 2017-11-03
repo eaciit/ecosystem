@@ -44,10 +44,6 @@
 	cursor: pointer;
 }
 
-#missedflowchart {
-	height: 700px;
-}
-
 #missedflowchart .tooltipStyle {
 	background: #333;
 	color: #fff;
@@ -158,4 +154,32 @@
 
 .detail-table tr td:nth-child(even) {
 	padding-bottom: 10px;
+}
+
+.bottom-navigation {
+  position: fixed;
+  bottom: 0px;
+  margin-left: 2px;
+}
+
+.bottom-navigation ul {
+  text-align: center;
+  padding: 0;
+}
+
+.bottom-navigation ul li {
+  display: inline-block;
+  text-align: center;
+  padding: 10px 50px;
+  border-radius: 2px;
+  background-color: #BDC3C7;
+  color: black;
+  margin-right: 20px;
+  box-shadow: 0 0 20px -5px #BDC3C7;
+}
+
+.bottom-navigation ul li:hover,
+.bottom-navigation ul li.active {
+  cursor: pointer;
+  background-color: #89C4F4;
 }

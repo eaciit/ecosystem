@@ -13,27 +13,51 @@ counterparty.switchGraph = function (element, event) {
 
   if (e.attr("name") != counterparty.activeGraphIndicator()) {
     counterparty.activeGraphIndicator(e.attr("name"))
+  }
+}
 
-    if (e.attr("name") == "R") {
+counterparty.loadAll = function () {
+  counterparty.activeGraphIndicator.subscribe(function (nv) {
+    if (nv == "R") {
+      filter.role([{
+        "value": "",
+        "text": "Buyer & Supplier"
+      }, {
+        "value": "BUYER",
+        "text": "Buyer"
+      }, {
+        "value": "PAYEE",
+        "text": "Supplier"
+      }])
       filter.selectedRole("")
-    } else if (e.attr("name") == "B") {
+    } else if (nv == "B") {
+      filter.role([{
+        "value": "BUYER",
+        "text": "Buyer"
+      }])
       filter.selectedRole("BUYER")
-    } else if (e.attr("name") == "S") {
+    } else if (nv == "S") {
+      filter.role([{
+        "value": "PAYEE",
+        "text": "Supplier"
+      }])
       filter.selectedRole("PAYEE")
     } else {
-      window.location.href = "/main/missedflow/index";
+      window.location.href = "/main/missedflow/index?entityName=" + counterparty.activeEntityName() + "&entityGroup=" + counterparty.activeGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
     }
+  })
 
-    e.siblings().removeClass("active")
-    e.addClass("active")
-  }
+  // TODO: Enable this later
+  // counterparty.activeGroupName($.urlParam("entityGroup"))
+  counterparty.activeEntityCOI($.urlParam("entityCOI"))
+  counterparty.activeGraphIndicator($.urlParam("activeGraphIndicator") ? $.urlParam("activeGraphIndicator") : "R")
 }
 
 var filter = {}
 filter.entities = ko.observableArray([])
 filter.selectedEntity = ko.observable("")
 
-filter.role = [{
+filter.role = ko.observableArray([{
   "value": "",
   "text": "Buyer & Supplier"
 }, {
@@ -42,7 +66,7 @@ filter.role = [{
 }, {
   "value": "PAYEE",
   "text": "Supplier"
-}]
+}])
 filter.selectedRole = ko.observable("")
 
 filter.group = [{
@@ -150,7 +174,6 @@ filter.loadEntities = function () {
 
 filter.loadAll = function () {
   $("#month").data('kendoDatePicker').enable(false)
-  counterparty.activeEntityCOI($.urlParam("entityCOI"))
 
   filter.selectedEntity.subscribe(function (nv) {
     counterparty.activeEntityName(nv)
@@ -805,6 +828,7 @@ network.generate = function () {
         network.isExpanding = true
         counterparty.activeEntityName(d.name)
         counterparty.activeGroupName(d.groupName)
+        counterparty.activeEntityCOI(d.coi)
       }
     }
   }
@@ -832,20 +856,25 @@ network.bubble = {}
 network.bubble.force = d3.forceSimulation()
 
 network.bubble.generate = function () {
+  var w = $("#graph").width(),
+    h = 600
+
+  d3.select("#graph").selectAll("*").remove()
+
   var nodes = network.nodes
   // Readjust the node raidus for Bubble Diagram
   var min = 25
   var max = 100
   nodes = _.map(nodes, function (d) {
+    if (d.class == "center") {
+      d.fx = w / 2
+      d.fy = h / 2
+    }
+
     d.r = min + (d.r - 20) / (80 - 20) * (max - min)
 
     return d
   })
-
-  var w = $("#graph").width(),
-    h = 600
-
-  d3.select("#graph").selectAll("*").remove()
 
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
@@ -937,24 +966,25 @@ network.bubble.generate = function () {
     .attr("class", "outer-bubble")
 
   bubbles.append("svg:text")
-    .text(function (d) {
+    .attr("y", "-1em")
+    .tspans(function (d) {
       var matches = d.name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
       if (matches) {
-        return d.name.substring(0, 4) + "..."
+        return [d.name.substring(0, 4) + "..."]
       }
 
       if (d.r <= 40) {
         matches = d.name.match(/\b(\w)/g)
         if (matches) {
-          return matches.join("")
+          return [matches.join("")]
         }
       }
 
-      return d.name
+      return d3.wordwrap(d.name, d.name.length / 2);
     })
     .attr("text-anchor", "middle")
     .attr("x", 0)
-    .attr("dy", ".35em")
+    .attr("dy", "1.2em")
 
   function ticked() {
     bubbles.attr("transform", function (d) {
@@ -1129,6 +1159,7 @@ counterparty.getPDF = function (selector) {
 }
 
 $(window).load(function () {
+  counterparty.loadAll()
   filter.loadAll()
   network.loadData()
 })

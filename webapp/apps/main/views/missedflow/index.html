@@ -8,6 +8,17 @@
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-tip.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/core/js/missedflow/index.js" }}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/missedflow/index.css" }}" />
+
+<div class="row">
+  <div class="col-lg-12 breadcrumb-container">
+    <span data-bind="text: missedflow.activeGroupName"></span>
+    <i class="fa fa-fw fa-caret-right"></i>
+    <span>Dashboard</span>
+    <i class="fa fa-fw fa-caret-right"></i>
+    <span data-bind="text: missedflow.activeEntityName"></span>
+  </div>
+</div>
+
 <div class="row" id="setarea">
   <div class="row col-md-12" id="filter">
   <div class="col-lg-12">
@@ -78,4 +89,13 @@
       </table>
     </div>
   </div>
+</div>
+
+<div class="container-fluid bottom-navigation">
+  <ul>
+    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=R' }"><li>Relationship</li></a>
+    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=B' }"><li>Buyers</li></a>
+    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=S' }"><li>Suppliers</li></a>
+    <li class="active">Sankey Diagram</li>
+  </ul>
 </div>

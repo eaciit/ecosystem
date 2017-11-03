@@ -48,12 +48,19 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 
 	sql := `SELECT cpty_long_name, cpty_coi, cust_long_name, cust_coi,
   LEFT(counterparty_bank, 4) AS cpty_bank, 
-  LEFT(customer_bank, 4) AS cust_bank, 
+	LEFT(customer_bank, 4) AS cust_bank, 
+	` + c.customerRoleClause() + ` AS cust_role,
   SUM(amount) AS total
   FROM ` + c.tableName() + `
   WHERE (LEFT(counterparty_bank, 3) <> 'SCB' OR LEFT(customer_bank, 3) <> 'SCB')
-	AND cust_group_name = '` + payload.GroupName + `'
-  AND ` + c.commonWhereClause()
+	AND ` + c.commonWhereClause()
+
+	// Filters for Entity Name
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	} else {
+		sql += " AND cust_group_name = '" + payload.GroupName + "'"
+	}
 
 	// Filters for YearMonth
 	if payload.YearMonth > 0 {
@@ -71,6 +78,8 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
 	} else if strings.ToUpper(payload.Role) == "PAYEE" {
 		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
+	} else {
+		sql += " AND " + c.customerRoleClause() + " IN ('BUYER', 'PAYEE')"
 	}
 
 	// Filters for NTB/ETB
@@ -82,7 +91,7 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		sql += " AND cust_group_name = cpty_group_name"
 	}
 
-	sql += " GROUP BY cpty_coi, cpty_long_name, cust_coi, cust_long_name, cpty_bank, cust_bank "
+	sql += " GROUP BY cpty_coi, cpty_long_name, cust_coi, cust_long_name, cpty_bank, cust_bank, cust_role "
 
 	// Filters for Flows
 	if payload.FlowAbove > 0 {
