@@ -73,6 +73,13 @@
       <table class="detail-table">
         <tbody data-bind="foreach: missedflow.highlightedLinks">
           <tr>
+            <td class="headtext">Anchor Entity</td>
+            <td>&nbsp;</td>
+            <td class="headtext">Counterparty</td>
+            <td class="headtext">Amount</td>
+            <td class="headtext">Flow</td>
+          </tr>
+          <tr>
             <td class="bold" data-bind="text: source.name"></td>
             <td rowspan="2">
               <span data-bind="if: !isReversed">→</span>
@@ -80,6 +87,7 @@
             </td>
             <td class="bold" data-bind="text: target.name"></td>
             <td data-bind="text: '$'+setbm(value)" rowspan="2"></td>
+            <td data-bind="text: isReversed ? 'IN' : 'OUT'" rowspan="2"></td>
           </tr>
           <tr>
             <td data-bind="text: sourceBank"></td>
