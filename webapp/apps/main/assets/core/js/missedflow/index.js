@@ -74,21 +74,19 @@ filter.flow = [{
 filter.selectedFlow = ko.observable(0)
 
 filter.selectedDateType = "Y"
-filter.selectedYear = ko.observable("")
-filter.selectedMonth = ko.observable("")
+filter.selectedDate = ko.observable("")
 
 filter.selectedFilters = ko.computed(function () {
   var yearMonth = 0
   var dateType = ""
-  var y = moment(filter.selectedYear())
-  var m = moment(filter.selectedMonth())
+  var d = moment(filter.selectedDate())
 
   if (filter.selectedDateType == "Y") {
     dateType = "YEAR"
-    yearMonth = y.isValid() ? parseInt(y.format("YYYY")) : 0
+    yearMonth = d.isValid() ? parseInt(d.format("YYYY")) : 0
   } else {
     dateType = "MONTH"
-    yearMonth = m.isValid() ? parseInt(m.format("YYYYMM")) : 0
+    yearMonth = d.isValid() ? parseInt(d.format("YYYYMM")) : 0
   }
 
   return {
@@ -107,10 +105,19 @@ filter.switchDateType = function (data, event) {
   $(event.target).siblings().removeClass("active")
   $(event.target).addClass("active")
 
-  $($(event.target).siblings().data("target")).data('kendoDatePicker').enable(false)
-  $($(event.target).data("target")).data('kendoDatePicker').enable(true)
-
   filter.selectedDateType = $(event.target).text()
+
+  if (filter.selectedDateType == "M") {
+    $("#datePicker").data("kendoDatePicker").setOptions({
+      start: "year",
+      depth: "year"
+    })
+  } else {
+    $("#datePicker").data("kendoDatePicker").setOptions({
+      start: "decade",
+      depth: "decade"
+    })
+  }
 }
 
 filter.loadEntities = function () {
@@ -123,8 +130,6 @@ filter.loadEntities = function () {
 }
 
 filter.loadAll = function () {
-  $("#month").data('kendoDatePicker').enable(false)
-
   filter.selectedEntity.subscribe(function (nv) {
     missedflow.activeEntityName(nv)
   })
