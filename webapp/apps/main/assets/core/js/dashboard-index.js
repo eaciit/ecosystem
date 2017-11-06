@@ -145,8 +145,10 @@ dashboard.generateMapbox = function () {
           var template = kendo.template($("#tooltip-template").html())
 
           layer.bindPopup(template(prop))
-          layer.on("click", function (e) {
+
+          layer.on("mouseover", function (e) {
             dashboard.activeEntities(prop)
+            this.openPopup()
           })
         })
       })
