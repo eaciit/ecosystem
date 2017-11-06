@@ -81,21 +81,111 @@ dashboard.getMapData = function (callback) {
           var entities = _.map(items, 'entity')
 
           return {
-            country: e,
-            location: c.latlng,
-            name: c.name,
-            entities: entities,
-            value: entities.length
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: c.latlng.reverse(),
+            },
+            properties: {
+              country: e,
+              name: c.name,
+              entities: entities,
+              value: entities.length
+            }
           }
         })
         .value()
 
-      callback(result)
+      callback({
+        type: "FeatureCollection",
+        features: result
+      })
     })
   })
 }
 
 var activeShape
+
+dashboard.generateMapbox = function () {
+  function generate(data) {
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYmFndXNjYWh5b25vIiwiYSI6ImNqOWpqbzBjYjByNXEzM2xnZ2ppcDBpN2EifQ.pFc9EQsAK5vd4ZWgCcAPJg';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v9',
+      center: [103.8, 1.3],
+      zoom: 2
+    })
+
+    map.on('load', function () {
+      map.addLayer({
+        'id': 'coi',
+        'type': 'circle',
+        'source': {
+          'type': 'geojson',
+          'data': data
+        },
+        'layout': {},
+        'paint': {
+          'circle-color': "#3A539B",
+          'circle-opacity': 0.5,
+          'circle-radius': {
+            property: 'value',
+            type: 'exponential',
+            stops: [
+              [1, 10],
+              [20, 60]
+            ]
+          },
+          'circle-stroke-width': 1,
+          'circle-stroke-color': "white"
+        }
+      })
+
+      map.addLayer({
+        'id': 'coi_text',
+        'type': 'symbol',
+        'source': {
+          'type': 'geojson',
+          'data': data
+        },
+        'layout': {
+          'text-field': "{country}"
+        },
+        'paint': {
+          'text-color': "white"
+        }
+      })
+    })
+
+    map.on('click', 'coi', function (e) {
+      var prop = e.features[0].properties
+      var html = "<ul>"
+
+      _.each(JSON.parse(prop.entities), function (e) {
+        html += "<li>" + e + "</li>"
+      })
+
+      html += "</ul>"
+
+      new mapboxgl.Popup()
+        .setLngLat(e.features[0].geometry.coordinates)
+        .setHTML(html)
+        .addTo(map)
+    })
+
+    map.on('mouseenter', 'coi', function () {
+      map.getCanvas().style.cursor = 'pointer';
+    })
+
+    map.on('mouseleave', 'coi', function () {
+      map.getCanvas().style.cursor = '';
+    })
+  }
+
+  dashboard.getMapData(function (data) {
+    generate(data)
+  })
+}
 
 dashboard.generateMap = function () {
   var highlightedMapAlpha = 0.8
@@ -670,5 +760,5 @@ widget.loadData = function () {
 $(window).load(function () {
   widget.loadData()
   widget.generateCharts()
-  dashboard.generateMap()
+  dashboard.generateMapbox()
 })
