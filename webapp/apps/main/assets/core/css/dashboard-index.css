@@ -55,7 +55,6 @@ th.dash_act {
 
 .map {
   height: 600px;
-  background-color: #22313F;
   border-radius: 5px;
 }
 
@@ -63,22 +62,12 @@ th.dash_act {
   outline: none;
 }
 
-.bubble-tooltip {
-  text-align: left;
-  background-color: #428bca;
-  color: white;
-  border-radius: 5px;
-  border: 0px solid white;
+.bubble-tooltip ul {
+  padding: 0;
 }
 
-.bubble-tooltip>div {
-  padding: 5px 10px;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-}
-
-.bubble-tooltip .head {
-  background-color: #1F3A93;
+.bubble-tooltip ul li {
+  list-style-type: none;
 }
 
 .table.ez thead {

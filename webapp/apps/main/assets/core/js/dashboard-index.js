@@ -81,172 +81,88 @@ dashboard.getMapData = function (callback) {
           var entities = _.map(items, 'entity')
 
           return {
-            country: e,
-            location: c.latlng,
-            name: c.name,
-            entities: entities,
-            value: entities.length
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: c.latlng.reverse(),
+            },
+            properties: {
+              country: e,
+              name: c.name,
+              entities: entities,
+              value: entities.length
+            }
           }
         })
         .value()
 
-      callback(result)
+      callback({
+        type: "FeatureCollection",
+        features: result
+      })
     })
   })
 }
 
 var activeShape
 
-dashboard.generateMap = function () {
-  var highlightedMapAlpha = 0.8
-  var circledMapAlpha = 0.5
-  var template = kendo.template($("#tooltip-template").html())
-  var popup = $("<div class='bubble-tooltip'>Foo</div>")
-    .appendTo(document.body)
-    .kendoPopup()
-    .data("kendoPopup")
+dashboard.generateMapbox = function () {
+  function generate(data) {
+    L.mapbox.accessToken = 'pk.eyJ1IjoiYmFndXNjYWh5b25vIiwiYSI6ImNqOWpqbzBjYjByNXEzM2xnZ2ppcDBpN2EifQ.pFc9EQsAK5vd4ZWgCcAPJg'
+    var map = L.mapbox.map('map', 'mapbox.light')
+      .setView([1.3, 103.8], 3)
+
+    var circles = L.geoJson(null, {
+      pointToLayer: function (feature, ll) {
+        return L.circle(ll, feature.properties.value * 100000, {
+          color: "white",
+          weight: 1,
+          fillColor: "#428bca",
+          fillOpacity: 0.5
+        })
+      }
+    }).addTo(map)
+
+    var texts = L.geoJson(null, {
+      pointToLayer: function (feature, ll) {
+        return L.marker(ll, {
+          icon: L.divIcon({
+            className: 'label',
+            html: feature.properties.country,
+            iconSize: [30, 12]
+          })
+        })
+      }
+    }).addTo(map)
+
+    L.mapbox.featureLayer('mapbox.dc-markers')
+      .on('ready', function (e) {
+        circles.addData(data)
+        texts.addData(data)
+
+        circles.eachLayer(function (layer) {
+          var prop = layer.feature.properties
+          var template = kendo.template($("#tooltip-template").html())
+
+          layer.bindPopup(template(prop))
+          layer.on("click", function (e) {
+            dashboard.activeEntities(prop)
+          })
+        })
+      })
+  }
 
   dashboard.getMapData(function (data) {
-    $("#map").kendoMap({
-      controls: {
-        navigator: false
-      },
-      center: [18.062312304546726, 108.28125],
-      zoom: 3,
-      layers: [{
-        type: "shape",
-        dataSource: {
-          data: mapTemplate.features,
-        },
-        style: {
-          fill: {
-            opacity: 0.5
-          }
-        }
-      }, {
-        type: "bubble",
-        dataSource: [{
-          country: "US",
-          location: [44, -85],
-          name: "United States",
-          value: 1
-        }],
-        style: {
-          fill: {
-            color: "#E15613",
-            opacity: circledMapAlpha
-          },
-          stroke: {
-            width: 0
-          }
-        }
-      }, {
-        type: "bubble",
-        dataSource: data,
-        style: {
-          fill: {
-            color: "#19B5FE",
-            opacity: circledMapAlpha
-          },
-          stroke: {
-            width: 0
-          }
-        }
-      }],
-      shapeCreated: onShapeCreated,
-      shapeMouseEnter: onShapeMouseEnter,
-      shapeMouseLeave: onShapeMouseLeave
-    })
-
-    $("#map").unbind("mousewheel")
-    $("#map").unbind("DOMMouseScroll")
+    generate(data)
   })
+}
 
-  function onShapeCreated(e) {
-    if (e.shape.dataItem.country) {
-      // Calculate shape bounding box
-      var bbox = e.shape.bbox();
-      var center = bbox.center();
+dashboard.showMapDetails = function (i) {
+  dashboard.activeEntityDetail.noteHeaderModal("")
+  dashboard.getEntityDetail(dashboard.activeEntities().entities[i])
 
-      // Create the label
-      var labelText = e.shape.dataItem.country;
-      var label = new kendo.drawing.Text(labelText);
-      var labelCenter = label.bbox().center();
-
-      label.fill("white")
-
-      // Position the label
-      label.position([
-        center.x - labelCenter.x,
-        center.y - labelCenter.y
-      ]);
-
-      // Render the label on the layer surface
-      e.layer.surface.draw(label);
-    }
-  }
-
-  function onShapeMouseEnter(e) {
-    $("#groupbuttondetail").show()
-    $("#tradetabs").hide()
-    e.shape.options.fill.set("opacity", highlightedMapAlpha)
-
-    if (activeShape) {
-      activeShape.geometry().radius *= 1 / 1.2
-      activeShape.geometryChange()
-    }
-
-    activeShape = e.shape
-    activeShape.geometry().radius *= 1.2
-    activeShape.geometryChange()
-
-    $("#map").css("cursor", "pointer")
-
-    if (e.shape.dataItem === undefined) {
-      return
-    }
-
-    dashboard.activeEntities(e.shape.dataItem)
-
-    var data = e.shape.dataItem
-    var arr = data.entities
-    var namel = data.name
-    var lentity = arr.reduce(function (a, b) {
-      return a.length > b.length ? a : b;
-    });
-    var nlength = (namel.length + 6) * 12
-    $(".bubble-tooltip").css("min-width", nlength)
-
-    var oe = e.originalEvent
-    var x = oe.pageX || oe.clientX
-    var y = oe.pageY || oe.clientY
-
-    popup.close()
-    popup.element.kendoStop(true, true)
-
-    popup.element.html(template(data))
-    popup.open(x, y)
-  }
-
-  function onShapeMouseLeave(e) {
-    e.shape.options.set("fill.opacity", circledMapAlpha)
-
-    $("#map").css("cursor", "inherit")
-
-    if (activeShape) {
-      activeShape.geometry().radius *= 1 / 1.2
-      activeShape.geometryChange()
-      activeShape = undefined
-    }
-  }
-
-  dashboard.showMapDetails = function (i) {
-    dashboard.activeEntityDetail.noteHeaderModal("")
-    dashboard.getEntityDetail(dashboard.activeEntities().entities[i])
-
-    popup.close()
-    popup.element.kendoStop(true, true)
-  }
+  popup.close()
+  popup.element.kendoStop(true, true)
 }
 
 dashboard.getEntityDetail = function (entityName) {
@@ -670,5 +586,5 @@ widget.loadData = function () {
 $(window).load(function () {
   widget.loadData()
   widget.generateCharts()
-  dashboard.generateMap()
+  dashboard.generateMapbox()
 })
