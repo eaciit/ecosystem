@@ -26,11 +26,11 @@
 }
 
 .stop-left {
-	stop-color: #1CB5E0;
+	stop-color: #ef8e38;
 }
 
 .stop-right {
-	stop-color: #000046;
+	stop-color: #108dc7;
 }
 
 .link {
@@ -153,12 +153,6 @@
 }
 
 .detail-table tr td:nth-child(even) {
-	padding-bottom: 10px;
-}
-
-.headtext {
-	font-size: 14px;
-	color: #337df4;
 	padding-bottom: 10px;
 }
 

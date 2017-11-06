@@ -26,9 +26,6 @@
       <select id="dropdownlist" name="Site" style="width:200px" class="filter" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">
-      <select name="Site" style="width:120px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
-    </div>
-    <div class="menu-missedflow">
       <select name="Site" style="width:60px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">
@@ -36,9 +33,6 @@
     </div>
     <div class="menu-missedflow">
       <select name="Site" style="width:70px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
-    </div>
-    <div class="menu-missedflow">
-      <select name="Site" style="width:100px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.flow, value: filter.selectedFlow, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">
       <div class="btn-group">
@@ -71,21 +65,23 @@
     <br>
     <div class="row">
       <table class="detail-table">
+        <thead>
+          <tr>
+            <td>Anchor Entity</td>
+            <td>&nbsp;</td>
+            <td>Counterparty</td>
+            <td>Amount</td>
+            <td>Flow</td>
+          </tr>
+        </thead>
         <tbody data-bind="foreach: missedflow.highlightedLinks">
           <tr>
-            <td class="headtext">Anchor Entity</td>
-            <td>&nbsp;</td>
-            <td class="headtext">Counterparty</td>
-            <td class="headtext">Amount</td>
-            <td class="headtext">Flow</td>
-          </tr>
-          <tr>
-            <td class="bold" data-bind="text: source.name"></td>
+            <td class="bold" data-bind="text: sourceName"></td>
             <td rowspan="2">
               <span data-bind="if: !isReversed">→</span>
               <span data-bind="if: isReversed">←</span>
             </td>
-            <td class="bold" data-bind="text: target.name"></td>
+            <td class="bold" data-bind="text: targetName"></td>
             <td data-bind="text: '$'+setbm(value)" rowspan="2"></td>
             <td data-bind="text: isReversed ? 'IN' : 'OUT'" rowspan="2"></td>
           </tr>

@@ -46,10 +46,11 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT cpty_long_name, cpty_coi, cust_long_name, cust_coi,
+	sql := `SELECT cpty_long_name, cpty_coi, cpty_group_name, cust_long_name, cust_coi, cust_group_name, 
   LEFT(counterparty_bank, 4) AS cpty_bank, 
 	LEFT(customer_bank, 4) AS cust_bank, 
 	` + c.customerRoleClause() + ` AS cust_role,
+	` + c.isNTBClause() + ` AS is_ntb,
   SUM(amount) AS total
   FROM ` + c.tableName() + `
   WHERE (LEFT(counterparty_bank, 3) <> 'SCB' OR LEFT(customer_bank, 3) <> 'SCB')
@@ -91,7 +92,7 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		sql += " AND cust_group_name = cpty_group_name"
 	}
 
-	sql += " GROUP BY cpty_coi, cpty_long_name, cust_coi, cust_long_name, cpty_bank, cust_bank, cust_role "
+	sql += " GROUP BY cpty_coi, cpty_long_name, cpty_group_name, cust_coi, cust_long_name, cust_group_name, cpty_bank, cust_bank, cust_role, is_ntb "
 
 	// Filters for Flows
 	if payload.FlowAbove > 0 {

@@ -7,7 +7,7 @@ missedflow.highlightedNode = ko.observable("")
 missedflow.highlightedLinks = ko.observableArray([])
 missedflow.highlightedSum = ko.observable()
 
-missedflow.loadAll = function() {
+missedflow.loadAll = function () {
   missedflow.activeGroupName($.urlParam("entityGroup"))
   missedflow.activeEntityCOI($.urlParam("entityCOI"))
 }
@@ -16,19 +16,10 @@ var filter = {}
 filter.entities = ko.observableArray([])
 filter.selectedEntity = ko.observable("")
 
-filter.role = [{
-  "value": "",
-  "text": "Buyer & Supplier"
-}, {
-  "value": "BUYER",
-  "text": "Buyer"
-}, {
-  "value": "PAYEE",
-  "text": "Supplier"
-}]
-filter.selectedRole = ko.observable("")
-
 filter.group = [{
+  "value": "ALL",
+  "text": "All"
+}, {
   "value": "ETB",
   "text": "ETB"
 }, {
@@ -38,7 +29,7 @@ filter.group = [{
   "value": "Intra-Group",
   "text": "Intra-Group"
 }]
-filter.selectedGroup = ko.observable("ETB")
+filter.selectedGroup = ko.observable("ALL")
 
 filter.productCategories = [{
   "value": "",
@@ -103,7 +94,6 @@ filter.selectedFilters = ko.computed(function () {
   return {
     groupName: missedflow.activeGroupName(),
     entityName: missedflow.activeEntityName(),
-    role: filter.selectedRole(),
     group: filter.selectedGroup(),
     productCategory: filter.selectedProductCategory(),
     limit: parseInt(filter.selectedLimit()),
@@ -151,76 +141,133 @@ missedflow.loadGraphData = function () {
     var links = []
     var nodes = []
 
-    _.each(data, function (e) {
-      var total = e.total
+    if (filter.selectedGroup() == "ALL" && data.length > 0) {
+      nodes = [{
+        as: "source",
+        node: 0,
+        name: data[0].cust_long_name,
+        country: data[0].cpty_coi
+      }]
 
-      var source = _.find(nodes, {
-        name: e.cust_long_name,
-        as: "source"
-      })
+      var groups = ["ETB", "NTB", "Intra-Group"]
 
-      var target = _.find(nodes, {
-        name: e.cpty_long_name,
-        as: "target"
-      })
+      _.each(groups, function (g, i) {
+        var count = 0
 
-      var isReversed = false
-      var rs = _.find(nodes, {
-        name: e.cpty_long_name,
-        as: "source"
-      })
+        _.each(data, function (e) {
+          var isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
+          var push = false
 
-      var rt = _.find(nodes, {
-        name: e.cust_long_name,
-        as: "target"
-      })
+          if (g == "ETB" && e.is_ntb == "Y") {
+            push = true
+          } else if (g == "NTB" && e.is_ntb == "N") {
+            push = true
+          } else if (g == "Intra-Group" && e.cust_group_name == e.cpty_group_name) {
+            push = true
+          }
 
-      if (rt && rs) {
-        source = rs
-        target = rt
-        isReversed = true
-      }
+          if (push) {
+            count += 1
 
-      var sourceIndex = undefined
-      var targetIndex = undefined
-
-      if (source) {
-        sourceIndex = source.node
-      } else {
-        nodes.push({
-          as: "source",
-          node: nodes.length,
-          name: e.cust_long_name,
-          country: e.cust_coi
+            links.push({
+              source: 0,
+              target: i + 1,
+              value: e.total,
+              sourceBank: isReversed ? e.cpty_bank : e.cust_bank,
+              sourceName: isReversed ? e.cpty_long_name : e.cust_long_name,
+              targetBank: isReversed ? e.cust_bank : e.cpty_bank,
+              targetName: isReversed ? e.cust_long_name : e.cpty_long_name,
+              isReversed: isReversed
+            })
+          }
         })
 
-        sourceIndex = nodes.length - 1
-      }
+        if (count > 0) {
+          nodes.push({
+            as: "target",
+            node: nodes.length,
+            name: g,
+            country: ""
+          })
+        }
+      })
+    } else {
+      _.each(data, function (e) {
+        var sourceName = e.cust_long_name
+        var targetName = e.cpty_long_name
 
-      if (target) {
-        targetIndex = target.node
-      } else {
-        nodes.push({
-          as: "target",
-          node: nodes.length,
-          name: e.cpty_long_name,
-          country: e.cpty_coi
+        var source = _.find(nodes, {
+          name: sourceName,
+          as: "source"
         })
 
-        targetIndex = nodes.length - 1
-      }
+        var target = _.find(nodes, {
+          name: targetName,
+          as: "target"
+        })
 
-      isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
+        var isReversed = false
+        var rs = _.find(nodes, {
+          name: targetName,
+          as: "source"
+        })
 
-      links.push({
-        source: sourceIndex,
-        target: targetIndex,
-        value: total,
-        sourceBank: isReversed ? e.cpty_bank : e.cust_bank,
-        targetBank: isReversed ? e.cust_bank : e.cpty_bank,
-        isReversed: isReversed
+        var rt = _.find(nodes, {
+          name: sourceName,
+          as: "target"
+        })
+
+        if (rt && rs) {
+          source = rs
+          target = rt
+          isReversed = true
+        }
+
+        var sourceIndex = undefined
+        var targetIndex = undefined
+
+        if (source) {
+          sourceIndex = source.node
+        } else {
+          nodes.push({
+            as: "source",
+            node: nodes.length,
+            name: sourceName,
+            country: e.cust_coi
+          })
+
+          sourceIndex = nodes.length - 1
+        }
+
+        if (target) {
+          targetIndex = target.node
+        } else {
+          nodes.push({
+            as: "target",
+            node: nodes.length,
+            name: targetName,
+            country: e.cpty_coi
+          })
+
+          targetIndex = nodes.length - 1
+        }
+
+        isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
+
+        links.push({
+          source: sourceIndex,
+          target: targetIndex,
+          value: e.total,
+          sourceBank: isReversed ? e.cpty_bank : e.cust_bank,
+          sourceName: isReversed ? e.cpty_long_name : e.cust_long_name,
+          targetBank: isReversed ? e.cust_bank : e.cpty_bank,
+          targetName: isReversed ? e.cust_long_name : e.cpty_long_name,
+          isReversed: isReversed
+        })
       })
-    })
+    }
+
+    console.log(nodes, JSON.parse(JSON.stringify(links)))
 
     missedflow.generateGraph({
       "nodes": nodes,
@@ -407,7 +454,7 @@ missedflow.generateGraph = function (data) {
       '<table>' +
       '<tr>' +
       '<td class="col-left">Customer Name</td>' +
-      '<td class="col-left">: ' + (d.isReversed ? d.target.name : d.source.name) + '</td>' +
+      '<td class="col-left">: ' + (d.isReversed ? d.targetName : d.sourceName) + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Customer Bank</td>' +
@@ -415,7 +462,7 @@ missedflow.generateGraph = function (data) {
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Counterparty Name</td>' +
-      '<td class="col-left">: ' + (d.isReversed ? d.source.name : d.target.name) + '</td>' +
+      '<td class="col-left">: ' + (d.isReversed ? d.sourceName : d.targetName) + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Counterparty Bank</td>' +
