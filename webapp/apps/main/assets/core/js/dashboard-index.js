@@ -4,8 +4,8 @@ dashboard.activeEntity = ko.observable({})
 dashboard.inflow = ko.observable(true)
 dashboard.outflow = ko.observable(true)
 dashboard.other = ko.observable(true)
-dashboard.dataAA = ko.observable()
-dashboard.dataBB = ko.observable()
+dashboard.labelimport = ko.observable()
+dashboard.labelexport = ko.observable()
 dashboard.activeEntityDetail = {
   noteHeaderModal: ko.observable(),
   dataProductMix: ko.observableArray([]),
@@ -146,6 +146,8 @@ dashboard.generateMapbox = function () {
 
 dashboard.showMapDetails = function (i) {
   dashboard.activeEntityDetail.noteHeaderModal("")
+  $("#groupbuttondetail").show()
+  $("#tradetabs").hide()
   dashboard.getEntityDetail(dashboard.activeEntities().entities[i])
 
   popup.close()
@@ -162,14 +164,10 @@ dashboard.getEntityDetail = function (entityName) {
         return _.groupBy(items, "flow")
       }).value()
 
-    var product = _(data.product)
-      .groupBy("product_category")
-      .value()
-
     dashboard.activeEntity({
       name: entityName,
       bank: bank,
-      product: product,
+      product: data.product,
       country: dashboard.activeEntities().name
     })
 
@@ -198,17 +196,27 @@ dashboard.btnCash = function () {
   dashboard.activeEntityDetail.sumInFlow(0)
   dashboard.activeEntityDetail.sumOutFlow(0)
   dashboard.other(false)
-  // for trade  
-  var data = dashboard.activeEntity().product.Cash
-  var AA = []
-  AA = dashboard.activeEntity().product.undefined[0].inward;
-  var BB = []
-  BB = dashboard.activeEntity().product.undefined[0].outward;
-  dashboard.activeEntityDetail.dataProductMixA(AA)
-  dashboard.activeEntityDetail.dataProductMixB(BB)
+  var cashinward = []
+  cashinward = dashboard.activeEntity().product.Cash.inward;
+  var cashoutward = []
+  cashoutward = dashboard.activeEntity().product.Cash.outward;
+
+  var keyMap = {
+    product: 'product2',
+    value: 'value2'
+  };
+
+  var cashoutward_val = cashoutward.map(function(obj) {
+    return _.mapKeys(obj, function(value, key) {
+      return keyMap[key];
+    });
+  });
+  var inwardoutward = _.merge(cashinward, cashoutward_val)
+
+  dashboard.activeEntityDetail.dataProductMixA(inwardoutward)
   dashboard.activeEntityDetail.dataProductMixC("")
-  dashboard.dataAA("Inward")
-  dashboard.dataBB("Outward")
+  dashboard.labelimport("Inward")
+  dashboard.labelexport("Outward")
   // for flow
   if (dashboard.activeEntity().bank.Cash != undefined) {
     var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
@@ -300,17 +308,29 @@ dashboard.btnTrade = function () {
   dashboard.other(true)
   // for trade  
 
-  var AA = []
-  AA = dashboard.activeEntity().product.undefined[1].export;
-  var BB = []
-  BB = dashboard.activeEntity().product.undefined[1].import;
-  var CC = []
-  CC = dashboard.activeEntity().product.undefined[1].other;
-  dashboard.activeEntityDetail.dataProductMixA(AA)
-  dashboard.activeEntityDetail.dataProductMixB(BB)
-  dashboard.activeEntityDetail.dataProductMixC(CC)
-  dashboard.dataAA("Export")
-  dashboard.dataBB("Import")
+  var tradeexport = []
+  tradeexport = dashboard.activeEntity().product.Trade.export;
+  var tradeimport = []
+  tradeimport = dashboard.activeEntity().product.Trade.import;
+  var tradeother = []
+  tradeother = dashboard.activeEntity().product.Trade.other;
+
+  var keyMap = {
+    product: 'product2',
+    value: 'value2'
+  };
+
+  var tradeimport_val = tradeimport.map(function(obj) {
+    return _.mapKeys(obj, function(value, key) {
+      return keyMap[key];
+    });
+  });
+  var exportimport = _.merge(tradeexport, tradeimport_val)
+ 
+  dashboard.activeEntityDetail.dataProductMixA(exportimport)
+  dashboard.activeEntityDetail.dataProductMixC(tradeother)
+  dashboard.labelimport("Export")
+  dashboard.labelexport("Import")
 
   var data = dashboard.activeEntity().product.Trade
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
