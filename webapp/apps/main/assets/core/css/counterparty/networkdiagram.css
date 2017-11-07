@@ -348,3 +348,7 @@ text.coi {
   padding-bottom: 5px;
   padding-top: 10px;
 }
+
+#buttongo {
+  cursor: pointer;
+}
