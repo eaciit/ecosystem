@@ -439,20 +439,34 @@ missedflow.generateGraph = function (data) {
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    // .text(function (d) {
-    //   return d.name
-    // })
-    .html(function (d) {
-      var aHtml = d.name;
-      var pos = aHtml.lastIndexOf(' ');
-      aHtml = aHtml.substring(0, pos) + '<br/>' + aHtml.substring(pos + 1)
-      return aHtml
+    .tspans(function (d) {
+      var name = d.name;
+      var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
+      if (matches) {
+        return [name.substring(0, 4) + "..."]
+      }
+
+      if (d.r <= 40) {
+        matches = name.match(/\b(\w)/g)
+        if (matches) {
+          return [matches.join("")]
+        }
+      }
+
+      return d3.wordwrap(name, name.length / 2);
     })
-    .filter(function (d) {
-      return d.x < width / 2
+    .attr("x", function (d) {
+      if (d.parent.as == "source") {
+        return 25
+      }
+      return -6
     })
-    .attr("x", 6 + sankey.nodeWidth())
-    .attr("text-anchor", "start")
+    .attr("text-anchor", function (d) {
+      if (d.parent.as == "source") {
+        return "start"
+      }
+      return "end"
+    })
 
   node.append("text")
     .attr("x", -6)
@@ -462,17 +476,34 @@ missedflow.generateGraph = function (data) {
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    .html(function (d) {
-      var aHtml = d.name;
-      var pos = aHtml.lastIndexOf(' ');
-      aHtml = aHtml.substring(0, pos) + '<br/>' + aHtml.substring(pos + 1)
-      return aHtml
+    .tspans(function (d) {
+      var name = d.name;
+      var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
+      if (matches) {
+        return [name.substring(0, 4) + "..."]
+      }
+
+      if (d.r <= 40) {
+        matches = name.match(/\b(\w)/g)
+        if (matches) {
+          return [matches.join("")]
+        }
+      }
+
+      return d3.wordwrap(name, name.length / 2);
     })
-    .filter(function (d) {
-      return d.x < width / 2
+    .attr("x", function (d) {
+      if (d.parent.as == "source") {
+        return 25
+      }
+      return -6
     })
-    .attr("x", 6 + sankey.nodeWidth())
-    .attr("text-anchor", "start")
+    .attr("text-anchor", function (d) {
+      if (d.parent.as == "source") {
+        return "start"
+      }
+      return "end"
+    })
 
   function setDash(d) {
     var d3this = d3.select(this);
