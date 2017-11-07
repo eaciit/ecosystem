@@ -293,7 +293,7 @@ missedflow.generateGraph = function (data) {
     height = Math.log2(data.links.length) * 180
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
-  colorsource = d3.scaleOrdinal().range(["#c4e6e8", "#61cae8", "#00b4e1", "#0197d2", "#01677e", "#02667e", "#005667", "#3d1c9f", "#92d0e7", "#005399", "#192d4e", "#6e8cd5"])
+  colorsource = d3.scaleOrdinal().range(["#111e6c", "#1d2951", "#0080ff", "#6694f6", "#73c2fb", "#589fd3", "#3fe0d0", "#0e4d92", "#008081", "#4f97a3", "#81d8d0", "#3fe0d0"])
   colortarget = d3.scaleOrdinal().range(["#702a72", "#7b2580", "#85298c", "#9a43a4", "#a160bc", "#cca6d5", "#e6d8e7", "#cd4ec3", "#7b316c", "#d0bae1", "#683256", "#ebd0df"])
   /* Initialize tooltip */
   var tipLinks = d3.tip()
@@ -401,8 +401,14 @@ missedflow.generateGraph = function (data) {
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    .text(function (d) {
-      return d.name
+    // .text(function (d) {
+    //   return d.name
+    // })
+    .html(function (d) {
+      var aHtml = d.name;
+      var pos = aHtml.lastIndexOf(' ');
+      aHtml = aHtml.substring(0,pos) + '<br/>' + aHtml.substring(pos+1)
+      return aHtml
     })
     .filter(function (d) {
       return d.x < width / 2
@@ -418,8 +424,11 @@ missedflow.generateGraph = function (data) {
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    .text(function (d) {
-      return d.name
+    .html(function (d) {
+      var aHtml = d.name;
+      var pos = aHtml.lastIndexOf(' ');
+      aHtml = aHtml.substring(0,pos) + '<br/>' + aHtml.substring(pos+1)
+      return aHtml
     })
     .filter(function (d) {
       return d.x < width / 2
