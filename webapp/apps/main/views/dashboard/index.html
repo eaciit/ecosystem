@@ -27,10 +27,10 @@
 
     <div class="filter-container">
       <div class="filtergroup">
-        <input type="text" id="date" data-bind="kendoDatePicker:{value:new Date(),format:'yyyy', start: 'decade'}">
+        <input type="text" id="date" data-bind="kendoDatePicker:{ value: filter.selectedYear,format:'yyyy', start: 'decade' }">
       </div>
       <div class="filtergroup"> 
-        <select name="Site" style="width:200px" data-bind="kendoDropDownList: { data: filter.groups, value: filter.selectedGroup, filter: 'contains'}"></select>
+        <select name="Site" style="width:200px" data-bind="kendoDropDownList: { data: filter.groups, value: filter.selectedGroup, filter: 'contains' }"></select>
       </div>
     </div>
   </div>
