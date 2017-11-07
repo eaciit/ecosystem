@@ -110,12 +110,14 @@ filter.switchDateType = function (data, event) {
   if (filter.selectedDateType == "M") {
     $("#datePicker").data("kendoDatePicker").setOptions({
       start: "year",
-      depth: "year"
+      depth: "year",
+      format: "MMM yyyy"
     })
   } else {
     $("#datePicker").data("kendoDatePicker").setOptions({
       start: "decade",
-      depth: "decade"
+      depth: "decade",
+      format: "yyyy"
     })
   }
 }
