@@ -32,20 +32,30 @@ text.shadow {
 }
 
 .stop-left {
-	stop-color: #ef8e38;
+	stop-color: #f2fcfe;
 }
 
 .stop-right {
-	stop-color: #108dc7;
+	stop-color: #1c92d2;
 }
 
 .link {
 	fill: none;
-	stroke-opacity: .2;
+	opacity: 0.2;
 }
 
-.link:hover,
-.link.selected {
+
+.link:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+
+.gradient-link {
+	fill: none;
+}
+
+.gradient-link:hover,
+.gradient-link.selected {
 	stroke-opacity: 1;
 	cursor: pointer;
 }

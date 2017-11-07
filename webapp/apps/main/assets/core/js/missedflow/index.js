@@ -176,7 +176,7 @@ missedflow.loadGraphData = function () {
 
             links.push({
               source: 0,
-              target: i + 1,
+              target: nodes.length,
               value: e.total,
               sourceBank: isReversed ? e.cpty_bank : e.cust_bank,
               sourceName: isReversed ? e.cpty_long_name : e.cust_long_name,
@@ -272,8 +272,6 @@ missedflow.loadGraphData = function () {
       })
     }
 
-    console.log(nodes, JSON.parse(JSON.stringify(links)))
-
     missedflow.generateGraph({
       "nodes": nodes,
       "links": links
@@ -367,6 +365,25 @@ missedflow.generateGraph = function (data) {
     .on('mouseover', tipLinks.show)
     .on('mouseout', tipLinks.hide)
 
+  var gradientLink = svg.append("g")
+    .selectAll(".gradient-link")
+    .data(graph.links)
+    .enter().append("path")
+    .attr("class", "gradient-link")
+    .attr("d", path)
+    .style("stroke-width", function (d) {
+      return Math.max(1, d.dy)
+    })
+    .style("stroke", function (d) {
+      return d.isReversed ? "url(#reversedGradient)" : "url(#mainGradient)"
+    })
+    .sort(function (a, b) {
+      return b.dy - a.dy
+    })
+    .each(setDash)
+    .on('mouseover', tipLinks.show)
+    .on('mouseout', tipLinks.hide)
+
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
     .data(graph.nodes)
@@ -427,14 +444,32 @@ missedflow.generateGraph = function (data) {
     .attr("x", 6 + sankey.nodeWidth())
     .attr("text-anchor", "start")
 
+  function setDash(d) {
+    var d3this = d3.select(this);
+    var totalLength = d3this.node().getTotalLength();
+    d3this
+      .attr('stroke-dasharray', totalLength + ' ' + totalLength)
+      .attr('stroke-dashoffset', totalLength)
+
+    d.pathLength = totalLength
+  }
+
   function highlightLink(n) {
     var highlightedLinks = []
 
-    d3.selectAll(".link").each(function () {
-      link = d3.select(this)
-      if (link.data()[0].source.node == n || link.data()[0].target.node == n) {
-        highlightedLinks.push(link.data()[0])
-        link.attr("class", "link selected")
+    d3.selectAll(".gradient-link").each(function () {
+      var link = d3.select(this)
+      var data = link.data()[0]
+      if (data.source.node == n || data.target.node == n) {
+        highlightedLinks.push(data)
+
+        var dashoffset = data.isReversed ? data.pathLength * 2 : 0
+        link.classed("selected", true)
+        link
+          .style("stroke-opacity", 1)
+          .transition()
+          .duration(500)
+          .attr("stroke-dashoffset", dashoffset)
       }
     })
 
@@ -446,12 +481,12 @@ missedflow.generateGraph = function (data) {
   }
 
   function unhighlightLink() {
-    d3.selectAll(".link.selected").each(function () {
-      d3.select(this).attr("class", "link")
+    d3.selectAll(".gradient-link.selected").each(function () {
+      d3.select(this)
+        .style("stroke-opacity", 0)
+        .each(setDash)
     })
   }
-
-  // "➡" 
 
   tipLinks.html(function (d) {
     var html = '<div class="table-wrapper">' +
