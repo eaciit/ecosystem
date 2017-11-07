@@ -402,7 +402,7 @@ missedflow.generateGraph = function(data) {
     .attr("text-anchor", "end")
     .attr("transform", null)
     .tspans(function(d) {
-      var name = "ROHM AND HAS CORPORATION INTERNATIONAL Pte. Ltd";
+      var name = d.name;
       var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
       if (matches) {
         return [name.substring(0, 4) + "..."]
@@ -439,7 +439,7 @@ missedflow.generateGraph = function(data) {
     .attr("text-anchor", "end")
     .attr("transform", null)
     .tspans(function(d) {
-      var name = "ROHM AND HAS CORPORATION INTERNATIONAL Pte. Ltd";
+      var name = d.name;
       var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
       if (matches) {
         return [name.substring(0, 4) + "..."]
