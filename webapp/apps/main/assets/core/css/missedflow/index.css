@@ -115,6 +115,7 @@ text.shadow {
 	pointer-events: none;
 	background: white;
 	box-shadow: 1px 1px 4px grey;
+	z-index: 1000;
 }
 
 .menu-missedflow {
