@@ -323,39 +323,28 @@
               </div>
              
              <div class="row">
-             <div class="col-sm-6">
+
+             <div class="col-sm-12">
              <table class="table" style="color:  #fff; background-color:  #4F5F79">
               <thead>
                 <tr>
-                  <th class="dash_act" align="center" colspan="2" data-bind="text:dashboard.dataAA"></th>
+                  <th width="50%" class="dash_act" align="center" colspan="2" data-bind="text:dashboard.dataAA"></th>
+                  <th width="50%" class="dash_act" colspan="2" data-bind="text:dashboard.dataBB"></th> 
                 </tr>
               </thead>
               <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixA" >
-                <tr >
+                <tr>
                   <td data-bind="text: product"></td>
                   <td align="right" data-bind="text: '$'+dashboard.bm(value, '')"></td>
-                </tr>
-              </tbody>
-            </table>
-            </div>
-            <div class="col-sm-6">
-             <table class="table" style="color:  #fff; background-color:  #4F5F79">
-              <thead>
-                <tr>
-                  <th class="dash_act" colspan="2" data-bind="text:dashboard.dataBB"></th>    
-                </tr>
-              </thead>
-              <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixB">
-                <tr >
-                  <td data-bind="text: product"></td>
-                  <td align="right" data-bind="text:  '$'+dashboard.bm(value, '')"></td>   
+                   <td data-bind="text:product2"></td>
+                  <td align="right" data-bind="text: '$'+dashboard.bm(value2, '')"></td>
                 </tr>
               </tbody>
             </table>
             </div>
 
             <div class="col-sm-12" data-bind="visible : dashboard.other">
-             <table class="table" style="color:  #fff; background-color:  #4F5F79">
+             <table class="table othertable" style="color:  #fff; background-color:  #4F5F79">
               <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixC">
                 <tr>
                   <td data-bind="text: product"></td>

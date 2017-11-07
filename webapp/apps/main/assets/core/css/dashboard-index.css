@@ -262,6 +262,14 @@ th.dash_act {
   border: 1px transparent;
 }
 
+.table {
+    margin-bottom: 9px;
+}
+
+.modal-content{
+ border : none;
+}
+
 .modal-title {
   font-size: 17px;
 }
@@ -371,4 +379,8 @@ div.cssnowrap:hover {
 .close:hover {
   color: #fff;
   opacity: 2;
+}
+
+.othertable>tbody>tr>td {
+  border-top: 2px solid #ddd;
 }
