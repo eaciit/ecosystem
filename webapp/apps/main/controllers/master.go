@@ -23,7 +23,7 @@ func (c *MasterController) GetGroups(k *knot.WebContext) interface{} {
 	sql := `SELECT DISTINCT cust_group_name
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.commonWhereClause()
+  AND ` + c.commonWhereClause() + ` ORDER BY cust_group_name`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -63,7 +63,7 @@ func (c *MasterController) GetEntities(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
 	AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause()
+  AND ` + c.commonWhereClause() + ` ORDER BY cust_long_name`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
