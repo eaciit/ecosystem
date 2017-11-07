@@ -5,8 +5,8 @@ dashboard.activeEntity = ko.observable({})
 dashboard.inflow = ko.observable(true)
 dashboard.outflow = ko.observable(true)
 dashboard.other = ko.observable(true)
-dashboard.dataAA = ko.observable()
-dashboard.dataBB = ko.observable()
+dashboard.labelimport = ko.observable()
+dashboard.labelexport = ko.observable()
 dashboard.activeEntityDetail = {
   noteHeaderModal: ko.observable(),
   dataProductMix: ko.observableArray([]),
@@ -230,8 +230,8 @@ dashboard.btnCash = function () {
 
   dashboard.activeEntityDetail.dataProductMixA(inwardoutward)
   dashboard.activeEntityDetail.dataProductMixC("")
-  dashboard.dataAA("Inward")
-  dashboard.dataBB("Outward")
+  dashboard.labelimport("Inward")
+  dashboard.labelexport("Outward")
   // for flow
   if (dashboard.activeEntity().bank.Cash != undefined) {
     var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
@@ -344,8 +344,8 @@ dashboard.btnTrade = function () {
  
   dashboard.activeEntityDetail.dataProductMixA(exportimport)
   dashboard.activeEntityDetail.dataProductMixC(tradeother)
-  dashboard.dataAA("Export")
-  dashboard.dataBB("Import")
+  dashboard.labelimport("Export")
+  dashboard.labelexport("Import")
 
   var data = dashboard.activeEntity().product.Trade
   var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
