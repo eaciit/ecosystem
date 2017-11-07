@@ -21,11 +21,13 @@ dashboard.activeEntityDetail = {
 var filter = {}
 filter.groups = ko.observableArray([])
 filter.selectedGroup = ko.observable("DOW CHEMICAL GROUP")
+filter.selectedYear = ko.observable(new Date())
 
 filter.payload = ko.computed(function () {
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
+    year: moment(filter.selectedYear()).format("YYYY"),
     groupName: filter.selectedGroup()
   }
 })

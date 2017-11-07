@@ -54,6 +54,8 @@ counterparty.loadAll = function () {
 }
 
 var filter = {}
+filter.groupNames = ko.observableArray([])
+filter.selectedGroupName = ko.observable()
 filter.entities = ko.observableArray([])
 filter.selectedEntity = ko.observable("")
 
@@ -174,20 +176,45 @@ filter.switchDateType = function (data, event) {
 
 filter.loadEntities = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {
-    groupName: counterparty.activeGroupName()
+    groupName: filter.selectedGroupName()
   }, function (data) {
     filter.entities(_.map(data, "value"))
     filter.selectedEntity.valueHasMutated()
   })
 }
 
+filter.loadGroupNames = function () {
+  viewModel.ajaxPostCallback("/main/master/getgroups", {}, function (data) {
+    filter.groupNames(_.map(data, "value"))
+    filter.selectedGroupName.valueHasMutated()
+  })
+}
+
 filter.loadAll = function () {
+  filter.selectedGroupName(counterparty.activeGroupName())
+
   filter.selectedEntity.subscribe(function (nv) {
-    counterparty.activeEntityName(nv)
+    counterparty.activeGroupName(filter.selectedGroupName())
+    if (nv != counterparty.activeEntityName()) {
+      counterparty.activeEntityName(nv)
+    }
+  })
+
+  filter.selectedGroupName.subscribe(function () {
+    filter.loadEntities()
+  })
+
+  counterparty.activeEntityName.subscribe(function(nv) {
+    filter.selectedEntity(nv)
+  })
+
+  counterparty.activeGroupName.subscribe(function(nv) {
+    filter.selectedGroupName(nv)
   })
 
   filter.selectedEntity($.urlParam("entityName"))
-  filter.loadEntities()
+
+  filter.loadGroupNames()
 
   filter.selectedFilters.subscribe(function () {
     if (!network.isExpanding) {

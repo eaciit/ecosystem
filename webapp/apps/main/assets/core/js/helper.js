@@ -5,7 +5,7 @@ function std(array) {
 };
 
 _.mixin({
-  median: function(data) {
+  median: function (data) {
     if (data.length < 1) return 0;
     var slot = (data.length + 1) / 2;
     if (slot % 1 === 0) {
@@ -16,25 +16,25 @@ _.mixin({
       return (data[lower - 1] + data[lower - 1]) / 2;
     }
   },
-  mean: function(data) {
+  mean: function (data) {
     if (data.length < 1) return 0;
-    return _.reduce(data, function(memo, num) {
+    return _.reduce(data, function (memo, num) {
       return memo + num;
     }, 0) / data.length;
   },
-  var: function(data) {
+  var: function (data) {
     if (data.length < 1) return 0;
     var setMean = _.mean(data);
-    var totalVariance = _.reduce(data, function(memo, num) {
+    var totalVariance = _.reduce(data, function (memo, num) {
       return memo + Math.pow(num - setMean, 2);
     }, 0);
     return totalVariance / data.length
   },
-  stdev: function(data) {
+  stdev: function (data) {
     if (data.length < 1) return 0;
     return Math.sqrt(_.var(data));
   },
-  cov: function(x, y) {
+  cov: function (x, y) {
     if (x.length < 1 || y.length < 1) return 0;
     var mx = _.mean(x);
     var my = _.mean(y);
@@ -57,13 +57,13 @@ $.urlParam = function (name) {
 }
 
 function currencynum(angka) {
-    if (angka >= 0) {
-        var TotString = kendo.toString(angka, "n");
-        return TotString;
-    } else {
-        var TotminString = kendo.toString(Math.abs(angka), "n");
-        return "(" + TotminString + ")";
-    }
+  if (angka >= 0) {
+    var TotString = kendo.toString(angka, "n");
+    return TotString;
+  } else {
+    var TotminString = kendo.toString(Math.abs(angka), "n");
+    return "(" + TotminString + ")";
+  }
 }
 
 function setbm(databm) {
@@ -79,3 +79,33 @@ function setbm(databm) {
     return databmr
   }
 }
+
+
+// KO Sneaky Update
+ko.observable.fn.sneaky = function () {
+  this.notifySubscribers = function () {
+    if (!this.pauseNotifications) {
+      ko.subscribable.fn.notifySubscribers.apply(this, arguments);
+    }
+  };
+
+  this.sneakyUpdate = function (newValue) {
+    this.pauseNotifications = true;
+    this(newValue);
+    this.pauseNotifications = false;
+  };
+
+  return this;
+};
+
+// KO beforeAfter
+ko.subscribable.fn.subscribeChanged = function (callback) {
+  var oldValue;
+  this.subscribe(function (_oldValue) {
+      oldValue = _oldValue;
+  }, this, 'beforeChange');
+
+  this.subscribe(function (newValue) {
+      callback(newValue, oldValue);
+  });
+};
