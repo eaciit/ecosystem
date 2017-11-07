@@ -14,6 +14,39 @@ type MasterPayload struct {
 	GroupName string
 }
 
+func (c *MasterController) GetGroups(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	sql := `SELECT DISTINCT cust_group_name
+  FROM ` + c.tableName() + ` 
+  WHERE ` + c.isNTBClause() + ` <> "NA" 
+  AND ` + c.commonWhereClause()
+
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	returnDatas := []tk.M{}
+	for _, v := range results {
+		returnDatas = append(returnDatas, tk.M{
+			"value": v.GetString("cust_group_name"),
+			"text":  v.GetString("cust_group_name"),
+		})
+	}
+
+	return c.SetResultOK(returnDatas)
+}
+
 func (c *MasterController) GetEntities(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {

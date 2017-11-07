@@ -97,55 +97,38 @@ th.dash_act {
   color: white !important;
 }
 
-.bottom-padding {
-  padding-bottom: 20px;
+.filter-container {
+  padding-bottom: 10px;
+  overflow: hidden;
 }
 
-.top-padding {
-  padding-top: 20px;
+.filtergroup .k-dropdown .k-state-default {
+	background: #22313F;
+	border-color: #22313F;
+	color: white;
 }
 
-#filter .k-dropdown .k-state-default {
-  background: #22313F;
-  border-color: #22313F;
-  color: #ffffff;
+.filtergroup .k-dropdown .k-state-default .k-input {
+  color: white;
 }
 
-#filter .k-input {
-  color: #ffffff;
-  background: #22313F;
+.filtergroup .k-input {
+	color: white;
+	background: #22313F;
 }
 
-#filter .k-picker-wrap {
-  background: #22313F;
-  border-color: #22313F;
-  color: #ffffff;
+.filtergroup .k-picker-wrap {
+	background: #22313F;
+	border-color: #22313F;
+	color: white;
 }
 
-#filter .k-picker-wrap.k-state-default>.k-select {
-  border-color: #22313F;
+.filtergroup .k-picker-wrap.k-state-default>.k-select {
+	border-color: #22313F;
 }
 
 #maps .k-i-marker-pin-target:before {
   content: none;
-}
-
-#maps .k-map .k-marker.k-icon.k-i-marker-pin-blue {
-  background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersblue.png);
-  background-repeat: no-repeat;
-  background-position: center bottom;
-}
-
-#maps .k-map .k-marker.k-icon.k-i-marker-pin-green {
-  background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersgreen.png);
-  background-repeat: no-repeat;
-  background-position: center bottom;
-}
-
-#maps .k-map .k-marker.k-icon.k-i-marker-pin-red {
-  background-image: url(../../3rdparty/kendoui/styles/scbecomarker/markersred.png);
-  background-repeat: no-repeat;
-  background-position: center bottom;
 }
 
 .box {
@@ -154,13 +137,13 @@ th.dash_act {
   -webkit-border-radius: 4px 4px 4px 4px;
   -moz-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid white;
   text-align: center;
   vertical-align: middle;
   padding-top: 5px;
   margin-bottom: 5px;
   position: initial;
-  color: #ffffff;
+  color: white;
   font-size: 10px;
   font-weight: normal;
 }
@@ -203,13 +186,13 @@ th.dash_act {
 
 #mapDetailModal .modal-header {
   background: #1e88e5;
-  color: #ffffff;
+  color: white;
   border-bottom: #1e88e5;
 }
 
 #mapDetailModal .modal-body {
   background: #404b5f;
-  color: #ffffff;
+  color: white;
   position: relative;
   padding: 0px 5px 15px 5px;
 }
@@ -219,8 +202,8 @@ th.dash_act {
 }
 
 .filtergroup {
-  float: left;
-  margin-right: 10px;
+  float: right;
+  margin-left: 10px;
 }
 
 .black-color {
@@ -247,7 +230,7 @@ th.dash_act {
   vertical-align: middle;
   padding-top: 7px;
   margin-bottom: 5px;
-  color: #ffffff;
+  color: white;
   background: #4f5f79;
   font-size: 12px;
 }
@@ -302,7 +285,7 @@ th.dash_act {
 #tradetabs .nav-tabs>li>a,
 .nav-tabs>li>a:focus,
 .nav-tabs>li>a:hover {
-  color: #ffffff;
+  color: white;
   cursor: default;
   background-color: #313a49;
   border-bottom-color: transparent;
@@ -313,7 +296,7 @@ th.dash_act {
 #tradetabs .nav-tabs>li.active>a,
 .nav-tabs>li.active>a:focus,
 .nav-tabs>li.active>a:hover {
-  color: #ffffff;
+  color: white;
   cursor: default;
   background-color: #404b5f;
   border-bottom-color: transparent;

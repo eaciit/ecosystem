@@ -1,5 +1,4 @@
 var dashboard = {}
-dashboard.activeGroup = ko.observable("DOW CHEMICAL GROUP")
 dashboard.activeEntities = ko.observable({})
 dashboard.activeEntity = ko.observable({})
 dashboard.inflow = ko.observable(true)
@@ -19,55 +18,33 @@ dashboard.activeEntityDetail = {
   sumOutFlow: ko.observable(),
 }
 
-dashboard.region = [{
-  "value": "ASA",
-  "text": "ASA"
-}, {
-  "value": "AME",
-  "text": "AME"
-}, {
-  "value": "GCNA",
-  "text": "GCNA"
-}]
-
-dashboard.country = [{
-  "value": "CN",
-  "text": "CHINA"
-}, {
-  "value": "BT",
-  "text": "BHUTAN"
-}, {
-  "value": "BY",
-  "text": "BELARUS"
-}]
-
-dashboard.businessmatric = [{
-  "value": "CIB",
-  "text": "CIB"
-}, {
-  "value": "TBD",
-  "text": "TBD"
-}, {
-  "value": "NETWORK",
-  "text": "NETWORK"
-}]
-
-dashboard.payment = [{
-  "value": "CASH",
-  "text": "Cash"
-}, {
-  "value": "INSTALLMENT",
-  "text": "Installment"
-}]
-
 var filter = {}
+filter.groups = ko.observableArray([])
+filter.selectedGroup = ko.observable("DOW CHEMICAL GROUP")
+
 filter.payload = ko.computed(function () {
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
-    groupName: dashboard.activeGroup()
+    groupName: filter.selectedGroup()
   }
 })
+
+filter.loadGroups = function () {
+  viewModel.ajaxPostCallback("/main/master/getgroups", {}, function (data) {
+    filter.groups(_.map(data, "value"))
+    filter.selectedGroup.valueHasMutated()
+  })
+}
+
+filter.loadAll = function () {
+  filter.payload.subscribe(function () {
+    widget.loadData()
+    dashboard.loadDataIntoMap()
+  })
+
+  filter.loadGroups()
+}
 
 dashboard.getMapData = function (callback) {
   viewModel.ajaxPostCallback("/main/dashboard/getmapdata", filter.payload(), function (data) {
@@ -107,12 +84,16 @@ dashboard.getMapData = function (callback) {
 var activeShape
 
 dashboard.generateMapbox = function () {
-  function generate(data) {
+  var map = undefined
+  var circles = undefined
+  var texts = undefined
+
+  function generate() {
     L.mapbox.accessToken = 'pk.eyJ1IjoiYmFndXNjYWh5b25vIiwiYSI6ImNqOWpqbzBjYjByNXEzM2xnZ2ppcDBpN2EifQ.pFc9EQsAK5vd4ZWgCcAPJg'
-    var map = L.mapbox.map('map', 'mapbox.light')
+    map = L.mapbox.map('map', 'mapbox.light')
       .setView([1.3, 103.8], 3)
 
-    var circles = L.geoJson(null, {
+    circles = L.geoJson(null, {
       pointToLayer: function (feature, ll) {
         return L.circle(ll, feature.properties.value * 100000, {
           color: "white",
@@ -123,7 +104,7 @@ dashboard.generateMapbox = function () {
       }
     }).addTo(map)
 
-    var texts = L.geoJson(null, {
+    texts = L.geoJson(null, {
       pointToLayer: function (feature, ll) {
         return L.marker(ll, {
           icon: L.divIcon({
@@ -134,29 +115,31 @@ dashboard.generateMapbox = function () {
         })
       }
     }).addTo(map)
-
-    L.mapbox.featureLayer('mapbox.dc-markers')
-      .on('ready', function (e) {
-        circles.addData(data)
-        texts.addData(data)
-
-        circles.eachLayer(function (layer) {
-          var prop = layer.feature.properties
-          var template = kendo.template($("#tooltip-template").html())
-
-          layer.bindPopup(template(prop))
-
-          layer.on("mouseover", function (e) {
-            dashboard.activeEntities(prop)
-            this.openPopup()
-          })
-        })
-      })
   }
 
-  dashboard.getMapData(function (data) {
-    generate(data)
-  })
+  dashboard.loadDataIntoMap = function () {
+    dashboard.getMapData(function (data) {
+      circles.clearLayers()
+      texts.clearLayers()
+
+      circles.addData(data)
+      texts.addData(data)
+
+      circles.eachLayer(function (layer) {
+        var prop = layer.feature.properties
+        var template = kendo.template($("#tooltip-template").html())
+
+        layer.bindPopup(template(prop))
+
+        layer.on("mouseover", function (e) {
+          dashboard.activeEntities(prop)
+          this.openPopup()
+        })
+      })
+    })
+  }
+
+  generate()
 }
 
 dashboard.showMapDetails = function (i) {
@@ -530,7 +513,7 @@ widget.generateChart6 = function () {
   widget.buildChart("#widgetChart6", data)
 }
 
-widget.generateCharts = function () {
+widget.loadCharts = function () {
   // $("#hiden").hide()
   widget.generateChart1()
   widget.generateChart2()
@@ -583,10 +566,12 @@ widget.loadData = function () {
   viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", filter.payload(), function (data) {
     widget.outFlowYearChange(data)
   })
+
+  // Loading charts
+  widget.loadCharts()
 }
 
 $(window).load(function () {
-  widget.loadData()
-  widget.generateCharts()
+  filter.loadAll()
   dashboard.generateMapbox()
 })

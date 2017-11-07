@@ -23,16 +23,16 @@
   <div class="row col-md-12" id="filter">
   <div class="col-lg-12">
     <div class="menu-missedflow">
-      <select id="dropdownlist" name="Site" style="width:200px" class="filter" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
+      <select id="dropdownlist" name="Site" style="width:200px" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">
-      <select name="Site" style="width:60px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:60px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">
-      <select name="Site" style="width:70px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">
-      <select name="Site" style="width:70px" class="full-width filter-space" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">
       <div class="btn-group">
@@ -50,7 +50,7 @@
       <img id="printpdf" width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf" onclick="missedflow.getPDF('#setarea')">
     </div>
   </div>
-</div>
+  </div>
   <div class="col-md-6">
     <div id="missedflowchart" class="col-md-12"></div>
   </div>
