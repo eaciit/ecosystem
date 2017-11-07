@@ -13,6 +13,8 @@ missedflow.loadAll = function () {
 }
 
 var filter = {}
+filter.groupNames = ko.observableArray([])
+filter.selectedGroupName = ko.observable("")
 filter.entities = ko.observableArray([])
 filter.selectedEntity = ko.observable("")
 
@@ -127,16 +129,33 @@ filter.loadEntities = function () {
     groupName: missedflow.activeGroupName()
   }, function (data) {
     filter.entities(["All"].concat(_.map(data, "value")))
-    filter.selectedEntity($.urlParam("entityName"))
+    filter.selectedEntity.valueHasMutated()
+  })
+}
+
+filter.loadGroupNames = function () {
+  viewModel.ajaxPostCallback("/main/master/getgroups", {}, function (data) {
+    filter.groupNames(_.map(data, "value"))
+    filter.selectedGroupName.valueHasMutated()
   })
 }
 
 filter.loadAll = function () {
+  filter.selectedGroupName(missedflow.activeGroupName())
+
   filter.selectedEntity.subscribe(function (nv) {
+    missedflow.activeGroupName(filter.selectedGroupName())
     missedflow.activeEntityName(nv)
   })
 
-  filter.loadEntities()
+  filter.selectedGroupName.subscribe(function () {
+    filter.loadEntities()
+  })
+
+  filter.selectedEntity($.urlParam("entityName"))
+
+  filter.loadGroupNames()
+  missedflow.loadGraphData()
 
   filter.selectedFilters.subscribe(function () {
     missedflow.loadGraphData()
@@ -426,7 +445,7 @@ missedflow.generateGraph = function (data) {
     .html(function (d) {
       var aHtml = d.name;
       var pos = aHtml.lastIndexOf(' ');
-      aHtml = aHtml.substring(0,pos) + '<br/>' + aHtml.substring(pos+1)
+      aHtml = aHtml.substring(0, pos) + '<br/>' + aHtml.substring(pos + 1)
       return aHtml
     })
     .filter(function (d) {
@@ -446,7 +465,7 @@ missedflow.generateGraph = function (data) {
     .html(function (d) {
       var aHtml = d.name;
       var pos = aHtml.lastIndexOf(' ');
-      aHtml = aHtml.substring(0,pos) + '<br/>' + aHtml.substring(pos+1)
+      aHtml = aHtml.substring(0, pos) + '<br/>' + aHtml.substring(pos + 1)
       return aHtml
     })
     .filter(function (d) {

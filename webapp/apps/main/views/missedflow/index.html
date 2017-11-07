@@ -23,6 +23,9 @@
   <div class="row col-md-12" id="filter">
   <div class="col-lg-12">
     <div class="menu-missedflow">
+      <select name="Site" style="width:200px" data-bind="kendoDropDownList: { data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
+    </div>
+    <div class="menu-missedflow">
       <select id="dropdownlist" name="Site" style="width:200px" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
     </div>
     <div class="menu-missedflow">

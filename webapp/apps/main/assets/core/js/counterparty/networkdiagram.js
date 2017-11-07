@@ -55,7 +55,7 @@ counterparty.loadAll = function () {
 
 var filter = {}
 filter.groupNames = ko.observableArray([])
-filter.selectedGroupName = ko.observable()
+filter.selectedGroupName = ko.observable("")
 filter.entities = ko.observableArray([])
 filter.selectedEntity = ko.observable("")
 
