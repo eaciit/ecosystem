@@ -7,7 +7,7 @@ missedflow.highlightedNode = ko.observable("")
 missedflow.highlightedLinks = ko.observableArray([])
 missedflow.highlightedSum = ko.observable()
 
-missedflow.loadAll = function () {
+missedflow.loadAll = function() {
   missedflow.activeGroupName($.urlParam("entityGroup"))
   missedflow.activeEntityCOI($.urlParam("entityCOI"))
 }
@@ -76,7 +76,7 @@ filter.selectedFlow = ko.observable(0)
 filter.selectedDateType = "Y"
 filter.selectedDate = ko.observable("")
 
-filter.selectedFilters = ko.computed(function () {
+filter.selectedFilters = ko.computed(function() {
   var yearMonth = 0
   var dateType = ""
   var d = moment(filter.selectedDate())
@@ -101,7 +101,7 @@ filter.selectedFilters = ko.computed(function () {
   }
 })
 
-filter.switchDateType = function (data, event) {
+filter.switchDateType = function(data, event) {
   $(event.target).siblings().removeClass("active")
   $(event.target).addClass("active")
 
@@ -120,29 +120,29 @@ filter.switchDateType = function (data, event) {
   }
 }
 
-filter.loadEntities = function () {
+filter.loadEntities = function() {
   viewModel.ajaxPostCallback("/main/master/getentities", {
     groupName: missedflow.activeGroupName()
-  }, function (data) {
+  }, function(data) {
     filter.entities(["All"].concat(_.map(data, "value")))
     filter.selectedEntity($.urlParam("entityName"))
   })
 }
 
-filter.loadAll = function () {
-  filter.selectedEntity.subscribe(function (nv) {
+filter.loadAll = function() {
+  filter.selectedEntity.subscribe(function(nv) {
     missedflow.activeEntityName(nv)
   })
 
   filter.loadEntities()
 
-  filter.selectedFilters.subscribe(function () {
+  filter.selectedFilters.subscribe(function() {
     missedflow.loadGraphData()
   })
 }
 
-missedflow.loadGraphData = function () {
-  viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", filter.selectedFilters(), function (data) {
+missedflow.loadGraphData = function() {
+  viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", filter.selectedFilters(), function(data) {
     var links = []
     var nodes = []
 
@@ -156,10 +156,10 @@ missedflow.loadGraphData = function () {
 
       var groups = ["ETB", "NTB", "Intra-Group"]
 
-      _.each(groups, function (g, i) {
+      _.each(groups, function(g, i) {
         var count = 0
 
-        _.each(data, function (e) {
+        _.each(data, function(e) {
           var isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
           var push = false
 
@@ -197,7 +197,7 @@ missedflow.loadGraphData = function () {
         }
       })
     } else {
-      _.each(data, function (e) {
+      _.each(data, function(e) {
         var sourceName = e.cust_long_name
         var targetName = e.cpty_long_name
 
@@ -272,7 +272,7 @@ missedflow.loadGraphData = function () {
       })
     }
 
-    console.log(nodes, JSON.parse(JSON.stringify(links)))
+    // console.log(nodes, JSON.parse(JSON.stringify(links)))
 
     missedflow.generateGraph({
       "nodes": nodes,
@@ -281,7 +281,7 @@ missedflow.loadGraphData = function () {
   })
 }
 
-missedflow.generateGraph = function (data) {
+missedflow.generateGraph = function(data) {
   $("#missedflowchart").html("")
   var margin = {
       top: 20,
@@ -355,13 +355,13 @@ missedflow.generateGraph = function (data) {
     .enter().append("path")
     .attr("class", "link")
     .attr("d", path)
-    .style("stroke-width", function (d) {
+    .style("stroke-width", function(d) {
       return Math.max(1, d.dy)
     })
-    .style("stroke", function (d) {
+    .style("stroke", function(d) {
       return d.isReversed ? "url(#reversedGradient)" : "url(#mainGradient)"
     })
-    .sort(function (a, b) {
+    .sort(function(a, b) {
       return b.dy - a.dy
     })
     .on('mouseover', tipLinks.show)
@@ -372,22 +372,22 @@ missedflow.generateGraph = function (data) {
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .attr("transform", function (d) {
+    .attr("transform", function(d) {
       return "translate(" + d.x + "," + d.y + ")"
     })
 
   node.append("rect")
-    .attr("height", function (d) {
+    .attr("height", function(d) {
       return d.dy
     })
     .attr("width", sankey.nodeWidth())
-    .style("fill", function (d) {
+    .style("fill", function(d) {
       if (d.as == "source") {
         return d.color = colorsource(d.name.replace(/ .*/, ""))
       }
       return d.color = colortarget(d.name.replace(/ .*/, ""))
     })
-    .on("mouseover", function (d) {
+    .on("mouseover", function(d) {
       highlightLink(d.node)
     })
     .on("mouseout", unhighlightLink)
@@ -395,51 +395,72 @@ missedflow.generateGraph = function (data) {
   node.append("text")
     .attr("class", "shadow")
     .attr("x", -6)
-    .attr("y", function (d) {
+    .attr("y", function(d) {
       return d.dy / 2
     })
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    // .text(function (d) {
-    //   return d.name
-    // })
-    .html(function (d) {
-      var aHtml = d.name;
-      var pos = aHtml.lastIndexOf(' ');
-      aHtml = aHtml.substring(0,pos) + '<br/>' + aHtml.substring(pos+1)
-      return aHtml
+    .tspans(function(d) {
+      var name = d.name;
+      var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
+      if (matches) {
+        return [name.substring(0, 4) + "..."]
+      }
+
+      if (d.r <= 40) {
+        matches = name.match(/\b(\w)/g)
+        if (matches) {
+          return [matches.join("")]
+        }
+      }
+
+      return d3.wordwrap(name, name.length / 2);
     })
-    .filter(function (d) {
-      return d.x < width / 2
+    .attr("x", function(d) {
+      if (d.parent.as == "source") {
+        return 30
+      }
+      return -30
     })
-    .attr("x", 6 + sankey.nodeWidth())
     .attr("text-anchor", "start")
 
   node.append("text")
     .attr("x", -6)
-    .attr("y", function (d) {
+    .attr("y", function(d) {
       return d.dy / 2
     })
     .attr("dy", ".35em")
     .attr("text-anchor", "end")
     .attr("transform", null)
-    .html(function (d) {
-      var aHtml = d.name;
-      var pos = aHtml.lastIndexOf(' ');
-      aHtml = aHtml.substring(0,pos) + '<br/>' + aHtml.substring(pos+1)
-      return aHtml
+    .tspans(function(d) {
+      var name = d.name;
+      var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
+      if (matches) {
+        return [name.substring(0, 4) + "..."]
+      }
+
+      if (d.r <= 40) {
+        matches = name.match(/\b(\w)/g)
+        if (matches) {
+          return [matches.join("")]
+        }
+      }
+
+      return d3.wordwrap(name, name.length / 2);
     })
-    .filter(function (d) {
-      return d.x < width / 2
+    .attr("x", function(d) {
+      if (d.parent.as == "source") {
+        return 30
+      }
+      return -30
     })
-    .attr("x", 6 + sankey.nodeWidth())
     .attr("text-anchor", "start")
 
   function highlightLink(n) {
     var highlightedLinks = []
 
-    d3.selectAll(".link").each(function () {
+    d3.selectAll(".link").each(function() {
       link = d3.select(this)
       if (link.data()[0].source.node == n || link.data()[0].target.node == n) {
         highlightedLinks.push(link.data()[0])
@@ -455,14 +476,14 @@ missedflow.generateGraph = function (data) {
   }
 
   function unhighlightLink() {
-    d3.selectAll(".link.selected").each(function () {
+    d3.selectAll(".link.selected").each(function() {
       d3.select(this).attr("class", "link")
     })
   }
 
   // "➡" 
 
-  tipLinks.html(function (d) {
+  tipLinks.html(function(d) {
     var html = '<div class="table-wrapper">' +
       '<table>' +
       '<tr>' +
@@ -492,7 +513,7 @@ missedflow.generateGraph = function (data) {
 }
 
 // Printing
-missedflow.beforePDFPrinting = function (style) {
+missedflow.beforePDFPrinting = function(style) {
   var def = $.Deferred();
 
   var svg = $("#missedflowchart svg")[0];
@@ -517,7 +538,7 @@ missedflow.beforePDFPrinting = function (style) {
     serializer = new XMLSerializer(),
     svgStr = serializer.serializeToString(svg);
 
-  imgCanvas.onload = function () {
+  imgCanvas.onload = function() {
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
@@ -541,15 +562,15 @@ missedflow.beforePDFPrinting = function (style) {
   return def
 }
 
-missedflow.afterPDFPrinting = function () {
+missedflow.afterPDFPrinting = function() {
   $(".remove-after-print").remove();
   $("svg > style").remove();
 }
 
-missedflow.getPDF = function (selector) {
+missedflow.getPDF = function(selector) {
   $.ajax({
     url: "/main/static/core/css/missedflow/index.css",
-    success: function (data) {
+    success: function(data) {
       buildAndSave(data)
     },
     dataType: 'html'
@@ -558,9 +579,9 @@ missedflow.getPDF = function (selector) {
   function buildAndSave(style) {
     $.when(
       missedflow.beforePDFPrinting(style)
-    ).done(function () {
+    ).done(function() {
       kendo.drawing.drawDOM($(selector))
-        .then(function (group) {
+        .then(function(group) {
           return kendo.drawing.exportPDF(group, {
             paperSize: "auto",
             margin: {
@@ -571,20 +592,20 @@ missedflow.getPDF = function (selector) {
             }
           });
         })
-        .then(function (data) {
+        .then(function(data) {
           kendo.saveAs({
             dataURI: data,
             fileName: "ExportMissedFlow.pdf"
           });
         })
-        .done(function () {
+        .done(function() {
           missedflow.afterPDFPrinting();
         })
     })
   }
 }
 
-$(window).load(function () {
+$(window).load(function() {
   missedflow.loadAll()
   filter.loadAll()
 })
