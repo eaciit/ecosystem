@@ -35,13 +35,23 @@ counterparty.loadAll = function () {
         "value": "BUYER",
         "text": "Buyer"
       }])
-      filter.selectedRole("BUYER")
+
+      if (filter.selectedRole() == "BUYER") {
+        filter.selectedRole.valueHasMutated()
+      } else {
+        filter.selectedRole("BUYER")
+      }
     } else if (nv == "S") {
       filter.role([{
         "value": "PAYEE",
         "text": "Supplier"
       }])
-      filter.selectedRole("PAYEE")
+
+      if (filter.selectedRole() == "PAYEE") {
+        filter.selectedRole.valueHasMutated()
+      } else {
+        filter.selectedRole("PAYEE")
+      }
     } else {
       window.location.href = "/main/missedflow/index?entityName=" + counterparty.activeEntityName() + "&entityGroup=" + counterparty.activeGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
     }
@@ -204,11 +214,11 @@ filter.loadAll = function () {
     filter.loadEntities()
   })
 
-  counterparty.activeEntityName.subscribe(function(nv) {
+  counterparty.activeEntityName.subscribe(function (nv) {
     filter.selectedEntity(nv)
   })
 
-  counterparty.activeGroupName.subscribe(function(nv) {
+  counterparty.activeGroupName.subscribe(function (nv) {
     filter.selectedGroupName(nv)
   })
 

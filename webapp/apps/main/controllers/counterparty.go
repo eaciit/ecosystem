@@ -47,18 +47,7 @@ func (c *CounterPartyController) NetworkDiagram(k *knot.WebContext) interface{} 
 	return c.SetViewData(nil)
 }
 
-func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) interface{} {
-	c.SetResponseTypeAJAX(k)
-	if !c.ValidateAccessOfRequestedURL(k) {
-		return nil
-	}
-
-	payload := CounterPartyPayload{}
-	err := k.GetPayload(&payload)
-	if err != nil {
-		return c.SetResultError(err.Error(), nil)
-	}
-
+func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload) string {
 	sql := `SELECT cpty_group_name, cpty_long_name, cpty_coi,
   LEFT(counterparty_bank, 4) AS cpty_bank, 
   LEFT(customer_bank, 4) AS cust_bank, 
@@ -115,19 +104,67 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
 
+	return sql
+}
+
+func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	payload := CounterPartyPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	if strings.ToUpper(payload.Role) == "BUYER" || strings.ToUpper(payload.Role) == "PAYEE" {
+		sql := c.NetworkDiagramSQL(&payload)
+		qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		results := []tk.M{}
+		err = qr.Fetch(&results, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
+
+		return c.SetResultOK(tk.M{
+			payload.EntityName: results,
+		})
+	}
+
+	payload.Role = "BUYER"
+	sql := c.NetworkDiagramSQL(&payload)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
 
-	results := []tk.M{}
-	err = qr.Fetch(&results, 0)
+	resultsB := []tk.M{}
+	err = qr.Fetch(&resultsB, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	payload.Role = "PAYEE"
+	sql = c.NetworkDiagramSQL(&payload)
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	resultsP := []tk.M{}
+	err = qr.Fetch(&resultsP, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
 
 	return c.SetResultOK(tk.M{
-		payload.EntityName: results,
+		payload.EntityName: append(resultsB, resultsP...),
 	})
 }
 
@@ -235,6 +272,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	return nil
 }
 
+// Old Code / Probably never use it again
 func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
