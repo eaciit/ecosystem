@@ -88,15 +88,6 @@ th.dash_act {
   border: none !important;
 }
 
-.dropdown-ez .k-dropdown-wrap {
-  background-color: #4183D7;
-  border: none;
-}
-
-.dropdown-ez .k-dropdown-wrap span {
-  color: white !important;
-}
-
 .filter-container {
   padding-bottom: 10px;
   overflow: hidden;
@@ -108,13 +99,9 @@ th.dash_act {
 	color: white;
 }
 
-.filtergroup .k-dropdown .k-state-default .k-input {
+.filtergroup .k-state-default .k-input {
+  background: #22313F;
   color: white;
-}
-
-.filtergroup .k-input {
-	color: white;
-	background: #22313F;
 }
 
 .filtergroup .k-picker-wrap {
