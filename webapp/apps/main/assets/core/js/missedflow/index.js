@@ -367,24 +367,6 @@ missedflow.generateGraph = function (data) {
     .on('mouseover', tipLinks.show)
     .on('mouseout', tipLinks.hide)
 
-  var pathText = svg.selectAll(".pathText")
-    .data(graph.links)
-    .enter().append("svg:text")
-    .attr("dx", width - 200)
-    .attr("dy", 2)
-    .attr("style", "fill:#fff")
-    .style("font-size", function (d) {
-      return Math.sqrt(d.dy * 2)
-    })
-    .append("textPath")
-    .attr("xlink:href", function (d, i) {
-      return "#linkId_" + i
-    })
-    .text(function (d, i) {
-      return d.target.bank
-    })
-
-
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
     .data(graph.nodes)
@@ -410,6 +392,23 @@ missedflow.generateGraph = function (data) {
     })
     .on("mouseout", unhighlightLink)
 
+  node.append("text")
+    .attr("class", "shadow")
+    .attr("x", -6)
+    .attr("y", function (d) {
+      return d.dy / 2
+    })
+    .attr("dy", ".35em")
+    .attr("text-anchor", "end")
+    .attr("transform", null)
+    .text(function (d) {
+      return d.name
+    })
+    .filter(function (d) {
+      return d.x < width / 2
+    })
+    .attr("x", 6 + sankey.nodeWidth())
+    .attr("text-anchor", "start")
 
   node.append("text")
     .attr("x", -6)

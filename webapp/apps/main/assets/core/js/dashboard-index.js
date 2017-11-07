@@ -116,7 +116,7 @@ dashboard.generateMapbox = function () {
       pointToLayer: function (feature, ll) {
         return L.circle(ll, feature.properties.value * 100000, {
           color: "white",
-          weight: 1,
+          weight: 0,
           fillColor: "#428bca",
           fillOpacity: 0.5
         })
