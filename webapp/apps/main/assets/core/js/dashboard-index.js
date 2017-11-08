@@ -24,6 +24,8 @@ filter.selectedGroup = ko.observable("DOW CHEMICAL GROUP")
 filter.selectedYear = ko.observable(new Date())
 
 filter.payload = ko.computed(function () {
+  viewModel.globalFilter.groupname(filter.selectedGroup()) 
+  viewModel.getNavigationMenu() 
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
@@ -596,4 +598,5 @@ widget.loadData = function () {
 $(window).load(function () {
   filter.loadAll()
   dashboard.generateMapbox()
+  viewModel.globalFilter.groupname()
 })

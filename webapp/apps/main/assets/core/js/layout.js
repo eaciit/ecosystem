@@ -179,6 +179,10 @@ viewModel.registerSidebarToggle = function () {
   })
 }
 
+viewModel.globalFilter = {  
+    groupname : ko.observable("") 
+}
+
 viewModel.dataNavigationMenuTree = ko.observableArray([])
 
 viewModel.getNavigationMenu = function () {
@@ -193,7 +197,7 @@ viewModel.getNavigationMenu = function () {
   },{
     Icon: "random",
     Title: "Missed Flow Analysis",
-    Url: "/main/missedflow/index"
+    Url: "/main/missedflow/index"+"?entityName=ALL&entityGroup="+viewModel.globalFilter.groupname()
   },{
     Icon: "cog",
     Title: "Recommend Engine",
@@ -216,6 +220,16 @@ viewModel.checkLoadedPageAccess = function () {
 
 viewModel.checkActiveMenu = function (path) {
   window.location.pathname == path
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 $(function () {
