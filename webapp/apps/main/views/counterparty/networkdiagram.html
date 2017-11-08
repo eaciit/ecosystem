@@ -98,7 +98,7 @@
                   <td data-bind="text: cust_bank"></td>
                   <td data-bind="text: cpty_bank"></td>
                   <td data-bind="text: product_category"></td>
-                  <td data-bind='text: kendo.toString(total / 1000000, "n2") + "M"' align="right"></td>
+                  <td data-bind="text: setbm(total)" align="right"></td>
                   <td data-bind="text: number_transaction" align="center"></td>
                 </tr>
               </tbody>
