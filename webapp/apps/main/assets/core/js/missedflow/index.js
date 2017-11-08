@@ -126,7 +126,7 @@ filter.switchDateType = function (data, event) {
 
 filter.loadEntities = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {
-    groupName: missedflow.activeGroupName()
+    groupName: filter.selectedGroupName()
   }, function (data) {
     filter.entities(["All"].concat(_.map(data, "value")))
     filter.selectedEntity.valueHasMutated()
