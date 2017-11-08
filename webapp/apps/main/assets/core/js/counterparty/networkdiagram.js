@@ -409,7 +409,7 @@ network.processData = function (data) {
         return 0
       }
     })
-    n.amountText = !isNaN(n.total) ? kendo.toString(n.total / 1000000, "n2") + "M" : ""
+    n.amountText = !isNaN(n.total) ? setbm(n.total) : ""
 
     return n
   })

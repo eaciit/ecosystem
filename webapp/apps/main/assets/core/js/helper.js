@@ -66,18 +66,17 @@ function currencynum(angka) {
   }
 }
 
-function setbm(databm) {
-  if (databm < 1000000000) {
-    var databmr = databm / 1000000
-    databmr = currencynum(databmr)
-    databmr = databmr + " M"
-    return databmr
-  } else if (databm >= 1000000000) {
-    var databmr = databm / 1000000000
-    databmr = currencynum(databmr)
-    databmr = databmr + " B"
-    return databmr
-  }
+function setbm(num) {
+     if (num >= 1000000000) {
+        return currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
+     }
+     if (num >= 1000000) {
+        return currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
+     }
+     if (num >= 1000) {
+        return currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
+     }
+     return currencynum(num.toFixed(2));
 }
 
 
