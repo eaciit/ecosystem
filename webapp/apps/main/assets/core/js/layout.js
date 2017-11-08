@@ -197,7 +197,7 @@ viewModel.getNavigationMenu = function () {
   },{
     Icon: "random",
     Title: "Missed Flow Analysis",
-    Url: "/main/missedflow/index"+"?entityName=ALL&entityGroup="+viewModel.globalFilter.groupname()
+    Url: "/main/missedflow/index"+"?entityName=All&entityGroup="+viewModel.globalFilter.groupname()
   },{
     Icon: "cog",
     Title: "Recommend Engine",
