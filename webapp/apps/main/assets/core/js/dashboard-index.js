@@ -82,6 +82,7 @@ dashboard.getMapData = function (callback) {
           }
         })
         .map(function (e) {
+          maxVal = minVal == maxVal ? minVal + 1 : maxVal
           e.properties.radius = (e.properties.value - minVal) / (maxVal - minVal) * (1000000 - 300000) + 300000
 
           return e
