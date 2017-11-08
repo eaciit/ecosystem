@@ -168,17 +168,11 @@ missedflow.loadGraphData = function () {
     var nodes = []
 
     if (filter.selectedGroup() == "ALL" && data.length > 0) {
-      nodes = [{
-        as: "source",
-        node: 0,
-        name: data[0].cust_long_name,
-        country: data[0].cpty_coi
-      }]
-
       var groups = ["ETB", "NTB", "Intra-Group"]
 
       _.each(groups, function (g, i) {
         var count = 0
+        var newNodes = []
 
         _.each(data, function (e) {
           var isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
@@ -193,16 +187,42 @@ missedflow.loadGraphData = function () {
           }
 
           if (push) {
+            var sourceName = e.cust_long_name
+            var source = _.find(nodes, {
+              name: sourceName,
+              as: "source"
+            })
+
+            if (!source) {
+              source = _.find(newNodes, {
+                name: sourceName,
+                as: "source"
+              })
+            }
+
+            if (source) {
+              sourceIndex = source.node
+            } else {
+              newNodes.push({
+                as: "source",
+                node: nodes.length + newNodes.length + 1,
+                name: sourceName,
+                country: e.cust_coi
+              })
+
+              sourceIndex = nodes.length + newNodes.length
+            }
+
             count += 1
 
             links.push({
-              source: 0,
+              source: sourceIndex,
               target: nodes.length,
               value: e.total,
-              sourceBank: isReversed ? e.cpty_bank : e.cust_bank,
-              sourceName: isReversed ? e.cpty_long_name : e.cust_long_name,
-              targetBank: isReversed ? e.cust_bank : e.cpty_bank,
-              targetName: isReversed ? e.cust_long_name : e.cpty_long_name,
+              sourceBank: e.cust_bank,
+              sourceName: e.cust_long_name,
+              targetBank: e.cpty_bank,
+              targetName: e.cpty_long_name,
               isReversed: isReversed
             })
           }
@@ -215,6 +235,8 @@ missedflow.loadGraphData = function () {
             name: g,
             country: ""
           })
+
+          nodes = nodes.concat(newNodes)
         }
       })
     } else {
@@ -284,14 +306,16 @@ missedflow.loadGraphData = function () {
           source: sourceIndex,
           target: targetIndex,
           value: e.total,
-          sourceBank: isReversed ? e.cpty_bank : e.cust_bank,
-          sourceName: isReversed ? e.cpty_long_name : e.cust_long_name,
-          targetBank: isReversed ? e.cust_bank : e.cpty_bank,
-          targetName: isReversed ? e.cust_long_name : e.cpty_long_name,
+          sourceBank: e.cust_bank,
+          sourceName: e.cust_long_name,
+          targetBank: e.cpty_bank,
+          targetName: e.cpty_long_name,
           isReversed: isReversed
         })
       })
     }
+
+    console.log(nodes, JSON.parse(JSON.stringify(links)))
 
     missedflow.generateGraph({
       "nodes": nodes,
@@ -555,19 +579,19 @@ missedflow.generateGraph = function (data) {
       '<table>' +
       '<tr>' +
       '<td class="col-left">Customer Name</td>' +
-      '<td class="col-left">: ' + (d.isReversed ? d.targetName : d.sourceName) + '</td>' +
+      '<td class="col-left">: ' + d.sourceName + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Customer Bank</td>' +
-      '<td class="col-left">: ' + (d.isReversed ? d.targetBank : d.sourceBank) + '</td>' +
+      '<td class="col-left">: ' + d.sourceBank + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Counterparty Name</td>' +
-      '<td class="col-left">: ' + (d.isReversed ? d.sourceName : d.targetName) + '</td>' +
+      '<td class="col-left">: ' + d.targetName + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Counterparty Bank</td>' +
-      '<td class="col-left">: ' + (d.isReversed ? d.sourceBank : d.targetBank) + '</td>' +
+      '<td class="col-left">: ' + d.targetBank + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Total Flow</td>' +
