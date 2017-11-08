@@ -36,7 +36,7 @@ func (c *BaseController) commonWhereClause() string {
 }
 
 func (c *BaseController) isNTBClause() string {
-	return `(CASE WHEN LEFT(counterparty_bank, 3) = "SCB" THEN "N" 
+	return `(CASE WHEN LEFT(counterparty_bank, 4) = "SCBL" THEN "N" 
 	WHEN source_system = "DTP" && ISNULL(counterparty_bank) THEN "N" 
 	WHEN source_system = "DTP" THEN "Y"
 	WHEN source_system = "OTP" && LENGTH(counterparty_bank) > 0 THEN "Y"

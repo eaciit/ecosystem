@@ -294,7 +294,7 @@ network.processData = function (data) {
   // Group the node based on the counterparty node, so the multiple link will be merged into 1 link only
   var nodes = _(data[parent])
     .map(function (e) {
-      var flow = String(e.cpty_bank).substring(0, 3) == "SCB" && String(e.cust_bank).substring(0, 3) == "SCB" ? true : false
+      var flow = e.cpty_bank == "SCBL" && e.cust_bank == "SCBL" ? true : false
 
       return {
         name: e.cpty_long_name,
