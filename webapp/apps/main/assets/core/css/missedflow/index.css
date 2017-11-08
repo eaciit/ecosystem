@@ -15,9 +15,9 @@
 }
 
 text.shadow {
-  stroke: white;
-  stroke-width: 4px;
-  stroke-opacity: .8;
+	stroke: white;
+	stroke-width: 4px;
+	stroke-opacity: .8;
 }
 
 .node rect {
@@ -43,7 +43,6 @@ text.shadow {
 	fill: none;
 	opacity: 0.2;
 }
-
 
 .link:hover {
 	opacity: 1;
@@ -199,4 +198,8 @@ text.shadow {
 .bottom-navigation ul li.active {
 	cursor: pointer;
 	background-color: #89C4F4;
+}
+
+.filter-button {
+	cursor: pointer;
 }

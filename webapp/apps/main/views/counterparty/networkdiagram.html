@@ -11,7 +11,7 @@
   <div class="col-lg-12 breadcrumb-container">
     <span data-bind="text: counterparty.activeGroupName"></span>
     <i class="fa fa-fw fa-caret-right"></i>
-    <span>Dashboard</span>
+    <span><a href="{{ NoCacheUrl "/main/dashboard/index"}}">Dashboard</a></span>
     <i class="fa fa-fw fa-caret-right"></i>
     <span data-bind="text: counterparty.activeEntityName"></span>
   </div>
@@ -52,7 +52,7 @@
       <input type="text" id="datePicker" data-bind="kendoDatePicker:{ value:new Date(), format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedDate }" class="filter-space">
     </div>
     <div class="menu-counterparty">
-      <div style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px">Go</div>
+      <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:filter.loadAll">Go</div>
     </div>
     <div class="menu-counterparty">
       <img width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf" onclick="counterparty.getPDF('#setarea')">

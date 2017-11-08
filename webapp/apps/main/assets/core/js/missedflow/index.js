@@ -184,9 +184,9 @@ missedflow.loadGraphData = function () {
           var isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
           var push = false
 
-          if (g == "ETB" && e.is_ntb == "Y") {
+          if (g == "ETB" && e.is_ntb == "N") {
             push = true
-          } else if (g == "NTB" && e.is_ntb == "N") {
+          } else if (g == "NTB" && e.is_ntb == "Y") {
             push = true
           } else if (g == "Intra-Group" && e.cust_group_name == e.cpty_group_name) {
             push = true
