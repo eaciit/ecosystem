@@ -8,6 +8,7 @@ missedflow.highlightedLinks = ko.observableArray([])
 missedflow.highlightedSum = ko.observable()
 
 missedflow.loadAll = function () {
+  $("#headtablehighlightedLinks").hide()
   missedflow.activeGroupName($.urlParam("entityGroup"))
   missedflow.activeEntityCOI($.urlParam("entityCOI"))
 }
@@ -142,7 +143,6 @@ filter.loadGroupNames = function () {
 
 filter.loadAll = function () {
   filter.selectedGroupName(missedflow.activeGroupName())
-
   filter.selectedEntity.subscribe(function (nv) {
     missedflow.activeGroupName(filter.selectedGroupName())
     missedflow.activeEntityName(nv)
@@ -313,7 +313,7 @@ missedflow.generateGraph = function (data) {
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
   colorsource = d3.scaleOrdinal().range(["#111e6c", "#1d2951", "#0080ff", "#6694f6", "#73c2fb", "#589fd3", "#3fe0d0", "#0e4d92", "#008081", "#4f97a3", "#81d8d0", "#3fe0d0"])
-  colortarget = d3.scaleOrdinal().range(["#702a72", "#7b2580", "#85298c", "#9a43a4", "#a160bc", "#cca6d5", "#e6d8e7", "#cd4ec3", "#7b316c", "#d0bae1", "#683256", "#ebd0df"])
+  colortarget = d3.scaleOrdinal().range(["#430943", "#9a469b", "#7e0880", "#db10de", "#a160bc", "#cca6d5", "#e6d8e7", "#cd4ec3", "#7b316c", "#d0bae1", "#683256", "#ebd0df"])
   /* Initialize tooltip */
   var tipLinks = d3.tip()
     .attr('class', 'd3-tip')
@@ -516,6 +516,7 @@ missedflow.generateGraph = function (data) {
   }
 
   function highlightLink(n) {
+    $("#headtablehighlightedLinks").show()
     var highlightedLinks = []
 
     d3.selectAll(".gradient-link").each(function () {
