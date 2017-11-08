@@ -445,7 +445,7 @@ network.processData = function (data) {
 network.generateLegend = function (parent) {
   var g = parent.append("svg:g")
   var texts = ["Anchor Entity", "ETB Node", "NTB Node"]
-  var classes = ["center", "etb", "ntb"]
+  var classes1 = ["center", "etb", "ntb"]
 
   var y = 15
   _.each(texts, function (t, i) {
@@ -453,9 +453,9 @@ network.generateLegend = function (parent) {
       .attr("r", 8)
       .attr("cx", 30)
       .attr("cy", y)
-      .attr("class", classes[i])
+      .attr("class", classes1[i])
       .on("mouseover", function () {
-        network.highlight(classes[i])
+        network.highlight(classes1[i])
       })
       .on("mouseout", function () {
         network.unhighlight()
@@ -470,16 +470,16 @@ network.generateLegend = function (parent) {
   })
 
   texts = ["Supplier Node", "Buyer Node"]
-  classes = ["supplier", "buyer"]
+  var classes2 = ["supplier", "buyer"]
 
   _.each(texts, function (t, i) {
     g.append("svg:circle")
       .attr("r", 10)
       .attr("cx", 15)
       .attr("cy", y)
-      .attr("class", "legend-circle etb " + classes[i])
+      .attr("class", "legend-circle etb " + classes2[i])
       .on("mouseover", function () {
-        network.highlight(classes[i])
+        network.highlight(classes2[i])
       })
       .on("mouseout", function () {
         network.unhighlight()
@@ -489,9 +489,9 @@ network.generateLegend = function (parent) {
       .attr("r", 10 - i)
       .attr("cx", 45)
       .attr("cy", y)
-      .attr("class", "legend-circle ntb " + classes[i])
+      .attr("class", "legend-circle ntb " + classes2[i])
       .on("mouseover", function () {
-        network.highlight(classes[i])
+        network.highlight(classes2[i])
       })
       .on("mouseout", function () {
         network.unhighlight()
@@ -1129,8 +1129,9 @@ network.tooltip = function (elem, d) {
 }
 
 network.highlight = function (c) {
+  console.log(c)
   d3.select("#graph").selectAll(".wrapper").classed("fade", true)
-  d3.select("#graph").selectAll("g." + c).classed("fade", false)
+  d3.select("#graph").selectAll(".wrapper." + c).classed("fade", false)
 }
 
 network.unhighlight = function () {
