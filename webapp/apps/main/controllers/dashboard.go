@@ -772,7 +772,7 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT COUNT(cust_sci_leid) AS value, transaction_month AS category
+	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + payload.GroupName + `" 
