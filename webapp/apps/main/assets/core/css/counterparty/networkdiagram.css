@@ -19,13 +19,18 @@
   stroke-width: 1.5px;
 }
 
-.link.flow {
-  stroke: #4289bd;
-}
-
 .link.missed {
   stroke: #666;
   stroke-dasharray: 4, 4;
+}
+
+.link.bg {
+  stroke-width: 0;
+}
+
+.link.selected {
+  stroke: #4289bd;
+  stroke-width: 3px;
 }
 
 circle.flow {

@@ -629,6 +629,12 @@ network.generate = function () {
     .append("svg:path")
     .attr("d", "M0,-5L10,0L0,5")
 
+  var pathBg = svg.append("svg:g")
+    .selectAll("path")
+    .data(links)
+    .enter().append("svg:path")
+    .attr("class", "link bg")
+
   var path = svg.append("svg:g")
     .selectAll("path")
     .data(links)
@@ -636,9 +642,7 @@ network.generate = function () {
     .attr("id", function (d, i) {
       return "linkId_" + i
     })
-    .attr("class", function (d) {
-      return "link missed"
-    })
+    .attr("class", "link missed")
     .attr("marker-end", function (d) {
       return "url(#missed" + d.t.r + ")"
     })
@@ -744,6 +748,10 @@ network.generate = function () {
     .each(function (d) {
       network.tooltip(this, d)
     })
+    .on("mouseover", function (d) {
+      highlightLink(d.name)
+    })
+    .on("mouseout", unhighlightLink)
 
   circle.append("svg:circle")
     .on("click", expand)
@@ -834,6 +842,13 @@ network.generate = function () {
       return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
     })
 
+    pathBg.attr("d", function (d) {
+      var dx = d.target.x - d.source.x,
+        dy = d.target.y - d.source.y,
+        dr = 0
+      return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y
+    })
+
     pathCircle1.attr("transform", function (d) {
       return "translate(" + (d.source.x - (d.source.x - d.target.x) / 2 * 0.8) + ", " + (d.source.y - (d.source.y - d.target.y) / 2 * 0.8) + ")"
     })
@@ -864,6 +879,19 @@ network.generate = function () {
         return 'rotate(0)'
       }
     })
+  }
+
+  function highlightLink(n) {
+    pathBg.each(function (d) {
+      var link = d3.select(this)
+      if (d.s.name == n || d.t.name == n) {
+        link.classed("selected", true)
+      }
+    })
+  }
+
+  function unhighlightLink() {
+    d3.selectAll(".link.selected").classed("selected", false)
   }
 
   function expand(d) {
