@@ -182,7 +182,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT LEFT(customer_bank, 4) AS bank, IFNULL(SUM(amount),0) AS value,
+	sql := `SELECT LEFT(customer_bank, 4) AS bank, IFNULL(SUM(amount * rate),0) AS value,
   product_category, ` + c.customerRoleClause() + ` AS flow 
   FROM ` + c.tableName() + `
   WHERE cust_long_name = "` + payload.EntityName + `"
@@ -200,7 +200,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + `
 	WHERE cust_long_name = "` + payload.EntityName + `"
 	AND product_category = "Cash"
@@ -219,7 +219,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + `
 	WHERE cust_long_name = "` + payload.EntityName + `"
 	AND product_category = "Cash"
@@ -238,7 +238,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + `
 	WHERE cust_long_name = "` + payload.EntityName + `"
 	AND product_category = "Trade"
@@ -257,7 +257,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + `
 	WHERE cust_long_name = "` + payload.EntityName + `"
 	AND product_category = "Trade"
@@ -276,7 +276,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount),0) AS value
+	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + `
 	WHERE cust_long_name = "` + payload.EntityName + `"
 	AND product_category = "Trade"
@@ -426,7 +426,7 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT IFNULL(SUM(amount),0) AS value
+	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
@@ -460,7 +460,7 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT IFNULL(SUM(amount),0) AS value
+	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
@@ -661,7 +661,7 @@ func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{
 	}
 
 	transactionYear := 2016
-	sql := `SELECT IFNULL(SUM(amount),0) AS value
+	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
@@ -680,7 +680,7 @@ func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT IFNULL(SUM(amount),0) AS value
+	sql = `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
@@ -717,7 +717,7 @@ func (c *DashboardController) GetYearChangeOutFlow(k *knot.WebContext) interface
 	}
 
 	transactionYear := 2016
-	sql := `SELECT IFNULL(SUM(amount),0) AS value
+	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
@@ -736,7 +736,7 @@ func (c *DashboardController) GetYearChangeOutFlow(k *knot.WebContext) interface
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT IFNULL(SUM(amount),0) AS value
+	sql = `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
@@ -876,7 +876,7 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT IFNULL(SUM(amount),0) AS value, transaction_month AS category
+	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
@@ -911,7 +911,7 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT IFNULL(SUM(amount),0) AS value, transaction_month AS category
+	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 

@@ -51,7 +51,7 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 	LEFT(customer_bank, 4) AS cust_bank, 
 	` + c.customerRoleClause() + ` AS cust_role,
 	` + c.isNTBClause() + ` AS is_ntb,
-  SUM(amount) AS total
+  SUM(amount * rate) AS total
   FROM ` + c.tableName() + `
   WHERE (LEFT(counterparty_bank, 3) <> 'SCB' OR LEFT(customer_bank, 3) <> 'SCB')
 	AND ` + c.commonWhereClause()

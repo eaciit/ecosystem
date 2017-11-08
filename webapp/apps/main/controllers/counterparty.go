@@ -52,7 +52,7 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
   LEFT(counterparty_bank, 4) AS cpty_bank, 
   LEFT(customer_bank, 4) AS cust_bank, 
   ` + c.customerRoleClause() + `AS cust_role, 
-  SUM(amount) AS total,
+  SUM(amount * rate) AS total,
   ` + c.isNTBClause() + ` AS is_ntb
   FROM ` + c.tableName() + `
   WHERE cust_long_name="` + payload.EntityName + `"
@@ -186,7 +186,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	}
 
 	sql := `SELECT cpty_long_name, LEFT(customer_bank, 4) AS cust_bank, LEFT(counterparty_bank, 4) AS cpty_bank, 
-  product_category, SUM(amount) AS total, COUNT(1) AS number_transaction
+  product_category, SUM(amount * rate) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + ` 
 	WHERE cust_long_name='` + payload.EntityName + `' AND (` + strings.Join(counterparties, " OR ") + `) AND transaction_year=2016 
 	AND ` + c.commonWhereClause() + `
@@ -218,15 +218,14 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	}
 
 	keys := []string{"cust_long_name", "cpty_long_name", "cust_role", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount"}
-	selectKeys := []string{"cust_long_name", "cpty_long_name", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount"}
+	selectKeys := []string{"cust_long_name", "cpty_long_name", c.customerRoleClause() + " AS cust_role", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount * rate AS amount"}
 
 	counterparties := []string{}
 	for _, v := range strings.Split(payload.CounterpartyName, "|") {
 		counterparties = append(counterparties, "cpty_long_name='"+v+"'")
 	}
 
-	sql := `SELECT ` + strings.Join(selectKeys, ", ") + `,
-	` + c.customerRoleClause() + ` AS cust_role
+	sql := `SELECT ` + strings.Join(selectKeys, ", ") + `
   FROM ` + c.tableName() + ` 
 	WHERE cust_long_name='` + payload.EntityName + `' AND (` + strings.Join(counterparties, " OR ") + `) AND transaction_year=2016 
 	AND ` + c.commonWhereClause()
@@ -293,7 +292,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
 	sql := `SELECT cpty_long_name, cpty_coi,
   ` + c.isNTBClause() + ` AS is_ntb,
   ` + c.customerRoleClause() + `AS cust_role, 
-  SUM(amount) AS total 
+  SUM(amount * rate) AS total 
   FROM ` + c.tableName() + `
   WHERE cust_long_name="` + payload.EntityName + `"  
   AND ` + c.customerRoleClause() + ` IN (` + role + `) 
@@ -386,7 +385,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierProducts(k *knot.WebCont
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT transaction_month, SUM(amount) AS total
+	sql = `SELECT transaction_month, SUM(amount * rate) AS total
   FROM ` + c.tableName() + `
   WHERE cust_long_name="` + payload.EntityName + `" 
   AND cpty_long_name="` + payload.CounterpartyName + `" AND transaction_year = 2016  
@@ -439,7 +438,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierDetail(k *knot.WebContex
 
 	sql := `SELECT cpty_long_name, cpty_coi, product_category,
   LEFT(counterparty_bank, 4) AS cpty_bank, 
-  SUM(amount) AS total, COUNT(1) AS number_transaction
+  SUM(amount * rate) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + `
   WHERE cpty_long_name="` + payload.CounterpartyName + `" AND transaction_year = 2016  
   AND ` + c.isNTBClause() + ` <> "NA" 
