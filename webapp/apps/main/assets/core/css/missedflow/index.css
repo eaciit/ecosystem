@@ -168,7 +168,7 @@ text.shadow {
 	width: 100%;
 }
 
-.detail-table tr td:nth-child(even) {
+.detail-table tr td{
 	padding-bottom: 10px;
 }
 
@@ -202,4 +202,8 @@ text.shadow {
 
 .filter-button {
 	cursor: pointer;
+}
+
+.bottom-margin {
+	margin-bottom:40px;
 }

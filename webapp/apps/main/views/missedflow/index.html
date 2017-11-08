@@ -1,5 +1,5 @@
 <script>
-  viewModel.title('Missed Flow Analysis')
+   viewModel.title('Missed Flow Analysis')
 </script>
 <!-- Content -->
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3.v4.min.js" }}"></script>
@@ -9,98 +9,103 @@
 <script src="{{ NoCacheUrl "/main/static/3rdparty/d3/d3-tip.js" }}"></script>
 <script src="{{ NoCacheUrl "/main/static/core/js/missedflow/index.js"}}"></script>
 <link rel="stylesheet" href="{{ NoCacheUrl "/main/static/core/css/missedflow/index.css" }}" />
-
 <div class="row">
-  <div class="col-lg-12 breadcrumb-container">
-    <span data-bind="text: missedflow.activeGroupName"></span>
-    <i class="fa fa-fw fa-caret-right"></i>
-     <span><a href="{{ NoCacheUrl "/main/dashboard/index"}}">Dashboard</a></span>
-    <i class="fa fa-fw fa-caret-right"></i>
-    <span data-bind="text: missedflow.activeEntityName"></span>
-  </div>
+   <div class="col-lg-12 breadcrumb-container">
+      <span data-bind="text: missedflow.activeGroupName"></span>
+      <i class="fa fa-fw fa-caret-right"></i>
+      <span><a href="{{ NoCacheUrl "/main/dashboard/index"}}">Dashboard</a></span>
+      <i class="fa fa-fw fa-caret-right"></i>
+      <span data-bind="text: missedflow.activeEntityName"></span>
+   </div>
 </div>
-
 <div class="row" id="setarea">
-  <div class="row col-md-12" id="filter">
-  <div class="col-lg-12">
-    <div class="menu-missedflow">
-      <select name="Site" style="width:200px" data-bind="kendoDropDownList: { data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
-    </div>
-    <div class="menu-missedflow">
-      <select id="dropdownlist" name="Site" style="width:200px" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
-    </div>
-    <div class="menu-missedflow">
-      <select name="Site" style="width:60px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
-    </div>
-    <div class="menu-missedflow">
-      <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
-    </div>
-    <div class="menu-missedflow">
-      <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
-    </div>
-    <div class="menu-missedflow">
-      <div class="btn-group">
-        <button class="btn btn-primary btn-sm switch active" data-target="#year" data-bind="click: filter.switchDateType">Y</button>
-        <button class="btn btn-primary btn-sm switch" data-target="#month" data-bind="click: filter.switchDateType">M</button>
+   <div class="row col-md-12" id="filter">
+      <div class="col-lg-12">
+         <div class="menu-missedflow">
+            <select name="Site" style="width:200px" data-bind="kendoDropDownList: { data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
+         </div>
+         <div class="menu-missedflow">
+            <select id="dropdownlist" name="Site" style="width:200px" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
+         </div>
+         <div class="menu-missedflow">
+            <select name="Site" style="width:60px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+         </div>
+         <div class="menu-missedflow">
+            <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+         </div>
+         <div class="menu-missedflow">
+            <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+         </div>
+         <div class="menu-missedflow">
+            <div class="btn-group">
+               <button class="btn btn-primary btn-sm switch active" data-target="#year" data-bind="click: filter.switchDateType">Y</button>
+               <button class="btn btn-primary btn-sm switch" data-target="#month" data-bind="click: filter.switchDateType">M</button>
+            </div>
+         </div>
+         <div class="menu-missedflow">
+            <input type="text" id="datePicker" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedDate }" class="filter-space">
+         </div>
+         <div class="menu-missedflow">
+            <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:filter.loadAll">Go</div>
+         </div>
+         <div class="menu-missedflow">
+            <img id="printpdf" width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf" onclick="missedflow.getPDF('#setarea')">
+         </div>
       </div>
-    </div>
-    <div class="menu-missedflow">
-      <input type="text" id="datePicker" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedDate }" class="filter-space">
-    </div>
-    <div class="menu-missedflow">
-      <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:filter.loadAll">Go</div>
-    </div>
-    <div class="menu-missedflow">
-      <img id="printpdf" width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf" onclick="missedflow.getPDF('#setarea')">
-    </div>
-  </div>
-  </div>
-  <div class="col-md-6">
-    <div id="missedflowchart" class="col-md-12"></div>
-  </div>
-  <div class="col-md-6">
-    <div class="row">
-      <h2 data-bind="text: missedflow.highlightedNode().name"></h2>
-      <span data-bind="text:missedflow.highlightedSum" ></span>
-    </div>
-    <br>
-    <div class="row">
-      <table class="detail-table">
-        <thead>
-          <tr>
-            <td>Anchor Entity</td>
-            <td>&nbsp;</td>
-            <td>Counterparty</td>
-            <td>Amount</td>
-            <td>Flow</td>
-          </tr>
-        </thead>
-        <tbody data-bind="foreach: missedflow.highlightedLinks">
-          <tr>
-            <td class="bold" data-bind="text: sourceName"></td>
-            <td rowspan="2">
-              <span data-bind="if: !isReversed">→</span>
-              <span data-bind="if: isReversed">←</span>
-            </td>
-            <td class="bold" data-bind="text: targetName"></td>
-            <td data-bind="text: '$'+setbm(value)" rowspan="2"></td>
-            <td data-bind="text: isReversed ? 'IN' : 'OUT'" rowspan="2"></td>
-          </tr>
-          <tr>
-            <td data-bind="text: sourceBank"></td>
-            <td data-bind="text: targetBank"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+   </div>
+   <div class="col-md-6 bottom-margin">
+      <div id="missedflowchart" class="col-md-12"></div>
+   </div>
+   <div class="col-md-6 bottom-margin">
+      <div class="row">
+         <h2 data-bind="text: missedflow.highlightedNode().name"></h2>
+         <span data-bind="text:missedflow.highlightedSum" ></span>
+      </div>
+      <br>
+      <div class="row">
+         <table class="detail-table">
+            <thead id="headtablehighlightedLinks">
+               <tr>
+                  <td colspan="2" class="bold">Anchor Entity - BANK</td>
+                  <td class="bold">&nbsp;</td>
+                  <td colspan="2" class="bold">Cpty - BANK</td>
+                  <td class="bold">Amount (USD)</td>
+                  <td class="bold">Business Flow</td>
+               </tr>
+            </thead>
+            <tbody data-bind="foreach: missedflow.highlightedLinks">
+               <tr>
+                  <td data-bind="text: sourceName"></td>
+                  <td data-bind="text: ' - '+sourceBank"></td>
+                  <td >
+                     <span data-bind="if: !isReversed">→</span>
+                     <span data-bind="if: isReversed">←</span>
+                  </td>
+                  <td data-bind="text: targetName"></td>
+                  <td data-bind="text: ' - '+targetBank"></td>
+                  <td data-bind="text: '$'+setbm(value)"></td>
+                  <td data-bind="text: isReversed ? 'IN (←)' : 'OUT(→)'"></td>
+               </tr>
+               <!--           <tr>
+                  <td data-bind="text: sourceBank"></td>
+                  <td data-bind="text: targetBank"></td>
+                  </tr> -->
+            </tbody>
+         </table>
+      </div>
+   </div>
 </div>
-
 <div class="container-fluid bottom-navigation">
-  <ul>
-    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=R' }"><li>Relationship</li></a>
-    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=B' }"><li>Buyers</li></a>
-    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=S' }"><li>Suppliers</li></a>
-    <li class="active">Sankey Diagram</li>
-  </ul>
+   <ul>
+      <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=R' }">
+         <li>Relationship</li>
+      </a>
+      <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=B' }">
+         <li>Buyers</li>
+      </a>
+      <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=S' }">
+         <li>Suppliers</li>
+      </a>
+      <li class="active">Sankey Diagram</li>
+   </ul>
 </div>
