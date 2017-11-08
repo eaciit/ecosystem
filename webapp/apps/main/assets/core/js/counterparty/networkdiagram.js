@@ -58,7 +58,7 @@ counterparty.loadAll = function () {
   })
 
   // TODO: Enable this later
-  // counterparty.activeGroupName($.urlParam("entityGroup"))
+  counterparty.activeGroupName($.urlParam("entityGroup"))
   counterparty.activeEntityCOI($.urlParam("entityCOI"))
   counterparty.activeGraphIndicator($.urlParam("activeGraphIndicator") ? $.urlParam("activeGraphIndicator") : "R")
 }
@@ -201,19 +201,6 @@ filter.loadGroupNames = function () {
 }
 
 filter.loadAll = function () {
-  filter.selectedGroupName(counterparty.activeGroupName())
-
-  filter.selectedEntity.subscribe(function (nv) {
-    counterparty.activeGroupName(filter.selectedGroupName())
-    if (nv != counterparty.activeEntityName()) {
-      counterparty.activeEntityName(nv)
-    }
-  })
-
-  filter.selectedGroupName.subscribe(function () {
-    filter.loadEntities()
-  })
-
   counterparty.activeEntityName.subscribe(function (nv) {
     filter.selectedEntity(nv)
   })
@@ -222,7 +209,20 @@ filter.loadAll = function () {
     filter.selectedGroupName(nv)
   })
 
+  filter.selectedEntity.subscribe(function (nv) {
+    if (nv != counterparty.activeEntityName()) {
+      counterparty.activeGroupName(filter.selectedGroupName())
+      counterparty.activeEntityName(nv)
+    }
+  })
+
+  filter.selectedGroupName(counterparty.activeGroupName())
   filter.selectedEntity($.urlParam("entityName"))
+
+  filter.selectedGroupName.subscribe(function (nv) {
+    viewModel.globalFilter.groupname(nv)
+    filter.loadEntities()
+  })
 
   filter.loadGroupNames()
 

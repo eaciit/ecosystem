@@ -179,9 +179,12 @@ viewModel.registerSidebarToggle = function () {
   })
 }
 
-viewModel.globalFilter = {  
-    groupname : ko.observable("") 
+viewModel.globalFilter = {
+  groupname: ko.observable("")
 }
+viewModel.globalFilter.groupname.subscribe(function () {
+  viewModel.getNavigationMenu()
+})
 
 viewModel.dataNavigationMenuTree = ko.observableArray([])
 
@@ -190,15 +193,15 @@ viewModel.getNavigationMenu = function () {
     Icon: "bar-chart",
     Title: "Dashboard",
     Url: "/main/dashboard/index"
-  },{
+  }, {
     Icon: "sitemap",
     Title: "Counter Party View",
     Url: "/main/counterparty/index"
-  },{
+  }, {
     Icon: "random",
     Title: "Missed Flow Analysis",
-    Url: "/main/missedflow/index"+"?entityName=All&entityGroup="+viewModel.globalFilter.groupname()
-  },{
+    Url: "/main/missedflow/index" + "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
+  }, {
     Icon: "cog",
     Title: "Recommend Engine",
     Url: "/main/recommendengine/index"

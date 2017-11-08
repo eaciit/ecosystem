@@ -25,7 +25,6 @@ filter.selectedYear = ko.observable(new Date())
 
 filter.payload = ko.computed(function () {
   viewModel.globalFilter.groupname(filter.selectedGroup())
-  viewModel.getNavigationMenu()
 
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
@@ -54,6 +53,9 @@ filter.loadAll = function () {
 dashboard.getMapData = function (callback) {
   viewModel.ajaxPostCallback("/main/dashboard/getmapdata", filter.payload(), function (data) {
     $.getJSON("/main/static/core/js/countries.json", function (countries) {
+      var maxVal = 0
+      var minVal = 1000
+
       var result = _(data)
         .groupBy('country')
         .map(function (items, e) {
@@ -61,6 +63,9 @@ dashboard.getMapData = function (callback) {
             "country_code": e
           })
           var entities = _.map(items, 'entity')
+
+          maxVal = entities.length > maxVal ? entities.length : maxVal
+          minVal = entities.length < minVal ? entities.length : minVal
 
           return {
             type: "Feature",
@@ -75,6 +80,11 @@ dashboard.getMapData = function (callback) {
               value: entities.length
             }
           }
+        })
+        .map(function (e) {
+          e.properties.radius = (e.properties.value - minVal) / (maxVal - minVal) * (1000000 - 300000) + 300000
+
+          return e
         })
         .value()
 
@@ -100,7 +110,7 @@ dashboard.generateMapbox = function () {
 
     circles = L.geoJson(null, {
       pointToLayer: function (feature, ll) {
-        return L.circle(ll, feature.properties.value * 100000, {
+        return L.circle(ll, feature.properties.radius, {
           color: "white",
           weight: 0,
           fillColor: "#428bca",
