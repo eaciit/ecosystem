@@ -482,7 +482,7 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 	return c.SetResultOK(results[0].Get("value"))
 }
 
-func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -494,13 +494,12 @@ func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	transactionYear := 2016
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear)
+  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -518,7 +517,7 @@ func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear-1)
+  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -536,7 +535,7 @@ func (c *DashboardController) GetYearChangeETB(k *knot.WebContext) interface{} {
 	return c.SetResultOK(diff)
 }
 
-func (c *DashboardController) GetYearChangeBuyer(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -548,14 +547,13 @@ func (c *DashboardController) GetYearChangeBuyer(k *knot.WebContext) interface{}
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	transactionYear := 2016
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear)
+  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -574,7 +572,7 @@ func (c *DashboardController) GetYearChangeBuyer(k *knot.WebContext) interface{}
   AND ` + c.customerRoleClause() + ` = "BUYER" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear-1)
+  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -592,7 +590,7 @@ func (c *DashboardController) GetYearChangeBuyer(k *knot.WebContext) interface{}
 	return c.SetResultOK(diff)
 }
 
-func (c *DashboardController) GetYearChangeSeller(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -604,14 +602,13 @@ func (c *DashboardController) GetYearChangeSeller(k *knot.WebContext) interface{
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	transactionYear := 2016
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear)
+  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -630,7 +627,7 @@ func (c *DashboardController) GetYearChangeSeller(k *knot.WebContext) interface{
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear-1)
+  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -648,7 +645,7 @@ func (c *DashboardController) GetYearChangeSeller(k *knot.WebContext) interface{
 	return c.SetResultOK(diff)
 }
 
-func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -660,14 +657,13 @@ func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	transactionYear := 2016
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear)
+  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -686,7 +682,7 @@ func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear-1)
+  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -704,7 +700,7 @@ func (c *DashboardController) GetYearChangeInFlow(k *knot.WebContext) interface{
 	return c.SetResultOK(diff)
 }
 
-func (c *DashboardController) GetYearChangeOutFlow(k *knot.WebContext) interface{} {
+func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -716,14 +712,13 @@ func (c *DashboardController) GetYearChangeOutFlow(k *knot.WebContext) interface
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	transactionYear := 2016
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear)
+  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -742,7 +737,7 @@ func (c *DashboardController) GetYearChangeOutFlow(k *knot.WebContext) interface
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(transactionYear-1)
+  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {

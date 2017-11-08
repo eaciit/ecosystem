@@ -48,7 +48,7 @@
           <span>
             Q
             <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.etbYearChange() > 0, 'red-text fa-caret-down': widget.etbYearChange() < 0}"></i>
-            <span data-bind="text: widget.etbYearChange"></span>
+            <span data-bind="text: widget.etbQuarterChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -76,7 +76,7 @@
           <span>
             Q
             <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.buyerYearChange() > 0, 'red-text fa-caret-down': widget.buyerYearChange() < 0}"></i>
-            <span data-bind="text: widget.buyerYearChange"></span>
+            <span data-bind="text: widget.buyerQuarterChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -104,7 +104,7 @@
           <span>
             Q
             <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.sellerYearChange() > 0, 'red-text fa-caret-down': widget.sellerYearChange() < 0}"></i>
-            <span data-bind="text: widget.sellerYearChange"></span>
+            <span data-bind="text: widget.sellerQuarterChange"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -132,7 +132,7 @@
           <span>
             Q
             <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.inFlowYearChange() > 0, 'red-text fa-caret-down': widget.inFlowYearChange() < 0}"></i>
-            <span data-bind="text: kendo.toString(widget.inFlowYearChange() / 1000000000, 'n2')"></span>
+            <span data-bind="text: kendo.toString(widget.inFlowQuarterChange() / 1000000000, 'n2')"></span>
           </span>
         </div>
         <div class="widget-right">
@@ -160,7 +160,7 @@
           <span>
             Q
             <i class="fa fa-fw fa-minus" data-bind="css: {'green-text fa-caret-up': widget.outFlowYearChange() > 0, 'red-text fa-caret-down': widget.outFlowYearChange() < 0}"></i>
-            <span data-bind="text: kendo.toString(widget.outFlowYearChange() / 1000000000, 'n2')"></span>
+            <span data-bind="text: kendo.toString(widget.outFlowQuarterChange() / 1000000000, 'n2')"></span>
           </span>
         </div>
         <div class="widget-right">

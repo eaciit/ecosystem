@@ -34,6 +34,15 @@ filter.payload = ko.computed(function () {
   }
 })
 
+filter.payloadQuarter = function () {
+  return {
+    fromYearMonth: parseInt(moment().subtract(3, "months").format("YYYYMM")),
+    toYearMonth: parseInt(moment().format("YYYYMM")),
+    year: moment(filter.selectedYear()).format("YYYY"),
+    groupName: filter.selectedGroup()
+  }
+}
+
 filter.loadGroups = function () {
   viewModel.ajaxPostCallback("/main/master/getgroups", {}, function (data) {
     filter.groups(_.map(data, "value"))
@@ -445,6 +454,13 @@ widget.inFlow = ko.observable(0)
 widget.outFlow = ko.observable(0)
 widget.pipeline = ko.observable(4.01)
 
+widget.etbQuarterChange = ko.observable(0)
+widget.buyerQuarterChange = ko.observable(0)
+widget.sellerQuarterChange = ko.observable(0)
+widget.inFlowQuarterChange = ko.observable(0)
+widget.outFlowQuarterChange = ko.observable(0)
+widget.pipelineQuarterChange = ko.observable(1.54)
+
 widget.etbYearChange = ko.observable(0)
 widget.buyerYearChange = ko.observable(0)
 widget.sellerYearChange = ko.observable(0)
@@ -582,24 +598,45 @@ widget.loadData = function () {
     widget.outFlow(data)
   })
 
+  // Loading quarter change data
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeetb", filter.payloadQuarter(), function (data) {
+    widget.etbQuarterChange(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangebuyer", filter.payloadQuarter(), function (data) {
+    widget.buyerQuarterChange(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeseller", filter.payloadQuarter(), function (data) {
+    widget.sellerQuarterChange(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeinflow", filter.payloadQuarter(), function (data) {
+    widget.inFlowQuarterChange(data)
+  })
+
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeoutflow", filter.payloadQuarter(), function (data) {
+    widget.outFlowQuarterChange(data)
+  })
+
   // Loading annualy change data
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeetb", filter.payload(), function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeetb", filter.payload(), function (data) {
     widget.etbYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangebuyer", filter.payload(), function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangebuyer", filter.payload(), function (data) {
     widget.buyerYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeseller", filter.payload(), function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeseller", filter.payload(), function (data) {
     widget.sellerYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeinflow", filter.payload(), function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeinflow", filter.payload(), function (data) {
     widget.inFlowYearChange(data)
   })
 
-  viewModel.ajaxPostCallback("/main/dashboard/getyearchangeoutflow", filter.payload(), function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getperiodchangeoutflow", filter.payload(), function (data) {
     widget.outFlowYearChange(data)
   })
 
