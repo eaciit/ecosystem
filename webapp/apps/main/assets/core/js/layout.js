@@ -179,6 +179,10 @@ viewModel.registerSidebarToggle = function () {
   })
 }
 
+viewModel.globalFilter = {  
+    groupname : ko.observable("") 
+}
+
 viewModel.dataNavigationMenuTree = ko.observableArray([])
 
 viewModel.getNavigationMenu = function () {
@@ -193,7 +197,7 @@ viewModel.getNavigationMenu = function () {
   },{
     Icon: "random",
     Title: "Missed Flow Analysis",
-    Url: "/main/missedflow/index"
+    Url: "/main/missedflow/index"+"?entityName=ALL&entityGroup="+viewModel.globalFilter.groupname()
   },{
     Icon: "cog",
     Title: "Recommend Engine",

@@ -24,6 +24,9 @@ filter.selectedGroup = ko.observable("DOW CHEMICAL GROUP")
 filter.selectedYear = ko.observable(new Date())
 
 filter.payload = ko.computed(function () {
+  viewModel.globalFilter.groupname(filter.selectedGroup())
+  viewModel.getNavigationMenu()
+
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
@@ -206,8 +209,8 @@ dashboard.btnCash = function () {
     value: 'value2'
   };
 
-  var cashoutward_val = cashoutward.map(function(obj) {
-    return _.mapKeys(obj, function(value, key) {
+  var cashoutward_val = cashoutward.map(function (obj) {
+    return _.mapKeys(obj, function (value, key) {
       return keyMap[key];
     });
   });
@@ -320,13 +323,13 @@ dashboard.btnTrade = function () {
     value: 'value2'
   };
 
-  var tradeimport_val = tradeimport.map(function(obj) {
-    return _.mapKeys(obj, function(value, key) {
+  var tradeimport_val = tradeimport.map(function (obj) {
+    return _.mapKeys(obj, function (value, key) {
       return keyMap[key];
     });
   });
   var exportimport = _.merge(tradeexport, tradeimport_val)
- 
+
   dashboard.activeEntityDetail.dataProductMixA(exportimport)
   dashboard.activeEntityDetail.dataProductMixC(tradeother)
   dashboard.labelimport("Export")
