@@ -82,7 +82,7 @@ filter.selectedRole = ko.observable("")
 
 filter.group = [{
   "value": "",
-  "text": "Both"
+  "text": "ETB & NTB"
 }, {
   "value": "ETB",
   "text": "ETB"
@@ -94,7 +94,7 @@ filter.selectedGroup = ko.observable("")
 
 filter.productCategories = [{
   "value": "",
-  "text": "All"
+  "text": "All Products"
 }, {
   "value": "Cash",
   "text": "Cash"
@@ -124,7 +124,7 @@ filter.selectedLimit = ko.observable(5)
 
 filter.flow = [{
   "value": 0,
-  "text": "All"
+  "text": "All Flows"
 }, {
   "value": 30000000,
   "text": "Flows > $30M"
