@@ -41,7 +41,7 @@ filter.selectedGroup = ko.observable("ALL")
 
 filter.productCategories = [{
   "value": "",
-  "text": "All"
+  "text": "All Products"
 }, {
   "value": "Cash",
   "text": "Cash"
