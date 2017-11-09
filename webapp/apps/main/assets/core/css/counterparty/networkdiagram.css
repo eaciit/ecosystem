@@ -140,6 +140,18 @@ text.coi {
 /* End of Tooltip */
 
 
+/* Legend */
+
+.legend-bg {
+  fill: darkgrey;
+}
+
+.legend-title {
+  font-size: 1.5em;
+}
+
+/* End of Legend */
+
 /* Main HTML */
 
 .bottom-navigation {

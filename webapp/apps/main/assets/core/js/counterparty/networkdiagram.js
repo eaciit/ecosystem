@@ -464,15 +464,25 @@ network.processData = function (data) {
 
   // Define max and min of node radius and find the max and min of total amount of all nodes
   // used to calculate node radius
-  var minV = _.minBy(nodes, 'total').total
-  var maxV = _.maxBy(nodes, 'total').total
-  maxV = maxV == minV ? maxV + 1 : maxV
-  var minR = 20
-  var maxR = 80
+  var nodesExcludeCenter = _.filter(nodes, function (e) {
+    return e.class != "center"
+  })
+
+  if (nodesExcludeCenter.length > 0) {
+    var minV = _.minBy(nodesExcludeCenter, 'total').total
+    var maxV = _.maxBy(nodesExcludeCenter, 'total').total
+    maxV = maxV == minV ? maxV + 1 : maxV
+    var minR = 20
+    var maxR = 80
+  }
 
   // Calculate the radius for each nodes based on the total amount
   nodes = _.map(nodes, function (n) {
-    n.r = parseInt(minR + (n.total - minV) / (maxV - minV) * (maxR - minR))
+    if (n.class == "center") {
+      n.r = 90
+    } else {
+      n.r = parseInt(minR + (n.total - minV) / (maxV - minV) * (maxR - minR))
+    }
 
     return n
   })
@@ -491,15 +501,24 @@ network.processData = function (data) {
 }
 
 network.generateLegend = function (parent) {
+  var w = parent.attr("width")
   var g = parent.append("svg:g")
   var texts = ["Anchor Entity", "ETB Node", "NTB Node"]
   var classes1 = ["center", "etb", "ntb"]
+  var pad = 0
 
-  var y = 15
+  var title = g.append("text")
+    .attr("class", "legend-title")
+    .attr("text-anchor", "end")
+    .attr("x", w - 40)
+    .attr("y", 20)
+    .text("Legend")
+
+  var y = 40
   _.each(texts, function (t, i) {
     g.append("svg:circle")
-      .attr("r", 8)
-      .attr("cx", 30)
+      .attr("r", 10)
+      .attr("cx", w - 30 - pad)
       .attr("cy", y)
       .attr("class", classes1[i])
       .on("mouseover", function () {
@@ -510,7 +529,8 @@ network.generateLegend = function (parent) {
       })
 
     g.append("svg:text")
-      .attr("x", 65)
+      .attr("text-anchor", "end")
+      .attr("x", w - 65 - pad)
       .attr("y", y + 4)
       .text(t)
 
@@ -523,7 +543,7 @@ network.generateLegend = function (parent) {
   _.each(texts, function (t, i) {
     g.append("svg:circle")
       .attr("r", 10)
-      .attr("cx", 15)
+      .attr("cx", w - 15 - pad)
       .attr("cy", y)
       .attr("class", "legend-circle etb " + classes2[i])
       .on("mouseover", function () {
@@ -535,7 +555,7 @@ network.generateLegend = function (parent) {
 
     g.append("svg:circle")
       .attr("r", 10 - i)
-      .attr("cx", 45)
+      .attr("cx", w - 45 - pad)
       .attr("cy", y)
       .attr("class", "legend-circle ntb " + classes2[i])
       .on("mouseover", function () {
@@ -546,44 +566,45 @@ network.generateLegend = function (parent) {
       })
 
     g.append("svg:text")
-      .attr("x", 65)
+      .attr("text-anchor", "end")
+      .attr("x", w - 65 - pad)
       .attr("y", y + 4)
       .text(t)
 
     y += 30
   })
 
-  texts = ["Missed Flow", "SCB Flow", "Intragroup Flow"]
+  texts = ["SCB Flow", "Missed Flow", "Intragroup Flow"]
   var indicators = ["M", "S", "I"]
 
   _.each(texts, function (t, i) {
     g.append("svg:line")
-      .attr("x1", 5)
-      .attr("x2", 55)
+      .attr("x1", w - 5 - pad)
+      .attr("x2", w - 55 - pad)
       .attr("y1", y)
       .attr("y2", y)
       .attr("class", "link missed")
 
     g.append("svg:circle")
       .attr("r", 10)
-      .attr("cx", 30)
+      .attr("cx", w - 30 - pad)
       .attr("cy", y)
       .attr("class", "missed")
 
     g.append("svg:text")
-      .attr("x", 30)
+      .attr("x", w - 30 - pad)
       .attr("y", y + 4)
       .attr("text-anchor", "middle")
       .text(indicators[i])
 
     g.append("svg:text")
-      .attr("x", 65)
+      .attr("text-anchor", "end")
+      .attr("x", w - 65 - pad)
       .attr("y", y + 4)
       .text(t)
 
     y += 30
   })
-
 }
 
 network.generate = function () {
@@ -597,14 +618,14 @@ network.generate = function () {
   d3.select("#graph").selectAll("*").remove()
 
   /* Initialize tooltip */
-  var tipLinks = d3.tip()
+  var tips = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0]);
 
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
     .attr("height", h)
-    .call(tipLinks)
+    .call(tips)
 
   network.generateLegend(svg)
 
@@ -800,7 +821,7 @@ network.generate = function () {
       return c
     })
     .on("mouseover", function (d) {
-      tipLinks.show(d)
+      tips.show(d)
       highlightLink(d.name)
     })
     .on("mouseout", unhighlightLink)
@@ -944,7 +965,9 @@ network.generate = function () {
 
   function unhighlightLink() {
     d3.selectAll(".link.selected").classed("selected", false)
-    setTimeout(function(){tipLinks.hide(); }, 3000);
+    setTimeout(function () {
+      tips.hide();
+    }, 3000);
   }
 
   function expand(d) {
@@ -976,7 +999,7 @@ network.generate = function () {
     }).remove()
   }
 
-   tipLinks.html(function (d) {
+  tips.html(function (d) {
     var displayName = d.name
     var name = d.name
 
@@ -988,31 +1011,31 @@ network.generate = function () {
         } else if (e.t.name == d.name) {
           counterparties.push(e.s.name)
         }
-    })
+      })
 
-    name = counterparties.join("|"), d.name
+      name = counterparties.join("|"), d.name
     }
-    var html = '<table class="tooltip-table">'+
-        '<tr>'+
-          '<td><b>Name</b></td>'+
-          '<td>: '+ d.name + '</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td><b>COI</b></td>'+
-          '<td>: '+ d.coi +'</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td><b>Total Flow</b></td>'+
-          '<td>: $ ' + d.amountText + '</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td><b>Bank</b></td>'+
-          '<td>: '+ d.banks.join(", ") + '</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td></td>'+
-          '<td><a onclick="network.loadDetail(' + name + ', '+ displayName + ')">Show Detail</a></td>'+
-        '</tr>'+
+    var html = '<table class="tooltip-table">' +
+      '<tr>' +
+      '<td><b>Name</b></td>' +
+      '<td>: ' + d.name + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td><b>COI</b></td>' +
+      '<td>: ' + d.coi + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td><b>Total Flow</b></td>' +
+      '<td>: $ ' + d.amountText + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td><b>Bank</b></td>' +
+      '<td>: ' + d.banks.join(", ") + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td></td>' +
+      '<td><a onclick="network.loadDetail(' + name + ', ' + displayName + ')">Show Detail</a></td>' +
+      '</tr>' +
       '</table>'
     return html;
   });
@@ -1043,14 +1066,14 @@ network.bubble.generate = function () {
   })
 
   /* Initialize tooltip */
-  var tipLinks = d3.tip()
+  var tips = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0]);
 
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
     .attr("height", h)
-    .call(tipLinks)
+    .call(tips)
 
 
   network.generateLegend(svg)
@@ -1080,7 +1103,7 @@ network.bubble.generate = function () {
 
       return c
     })
-    .on("mouseover", function (d) {  
+    .on("mouseover", function (d) {
       d3.select(this)
         .select(".inner-bubble")
         .transition()
@@ -1098,9 +1121,9 @@ network.bubble.generate = function () {
         .attr("r", function (d) {
           return d.r * 1.1 + 10
         })
-      tipLinks.show(d)
+      tips.show(d)
     })
-    .on("mouseout", function (d) { 
+    .on("mouseout", function (d) {
       d3.select(this)
         .select(".inner-bubble")
         .transition()
@@ -1119,7 +1142,7 @@ network.bubble.generate = function () {
           return d.r
         })
 
-      // setTimeout(function(){tipLinks.hide(); }, 3000);
+      // setTimeout(function(){tips.hide(); }, 3000);
     })
 
   bubbles.append("svg:circle")
@@ -1165,7 +1188,7 @@ network.bubble.generate = function () {
     })
   }
 
-   tipLinks.html(function (d) {
+  tips.html(function (d) {
     var displayName = d.name
     var name = d.name
 
@@ -1177,31 +1200,31 @@ network.bubble.generate = function () {
         } else if (e.t.name == d.name) {
           counterparties.push(e.s.name)
         }
-    })
+      })
 
-    name = counterparties.join("|"), d.name
+      name = counterparties.join("|"), d.name
     }
-    var html = '<table class="tooltip-table">'+
-        '<tr>'+
-          '<td><b>Name</b></td>'+
-          '<td>: '+ d.name + '</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td><b>COI</b></td>'+
-          '<td>: '+ d.coi +'</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td><b>Total Flow</b></td>'+
-          '<td>: $ ' + d.amountText + '</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td><b>Bank</b></td>'+
-          '<td>: '+ d.banks.join(", ") + '</td>'+
-        '</tr>'+
-        '<tr>'+
-          '<td></td>'+
-          '<td><a onclick="network.loadDetail(' + name + ', '+ displayName + ')">Show Detail</a></td>'+
-        '</tr>'+
+    var html = '<table class="tooltip-table">' +
+      '<tr>' +
+      '<td><b>Name</b></td>' +
+      '<td>: ' + d.name + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td><b>COI</b></td>' +
+      '<td>: ' + d.coi + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td><b>Total Flow</b></td>' +
+      '<td>: $ ' + d.amountText + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td><b>Bank</b></td>' +
+      '<td>: ' + d.banks.join(", ") + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td></td>' +
+      '<td><a onclick="network.loadDetail(' + name + ', ' + displayName + ')">Show Detail</a></td>' +
+      '</tr>' +
       '</table>'
     return html;
   });

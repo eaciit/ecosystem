@@ -21,7 +21,7 @@ dashboard.activeEntityDetail = {
 var filter = {}
 filter.groups = ko.observableArray([])
 filter.selectedGroup = ko.observable("")
-filter.selectedYear = ko.observable(new Date())
+filter.selectedYear = ko.observable(moment().subtract(1, "years").toDate())
 
 filter.role = ko.observableArray([{
   "value": "",
