@@ -96,9 +96,9 @@ th.dash_act {
 }
 
 .filtergroup .k-dropdown .k-state-default {
-	background: #22313F;
-	border-color: #22313F;
-	color: white;
+  background: #22313F;
+  border-color: #22313F;
+  color: white;
 }
 
 .filtergroup .k-state-default .k-input {
@@ -107,13 +107,13 @@ th.dash_act {
 }
 
 .filtergroup .k-picker-wrap {
-	background: #22313F;
-	border-color: #22313F;
-	color: white;
+  background: #22313F;
+  border-color: #22313F;
+  color: white;
 }
 
 .filtergroup .k-picker-wrap.k-state-default>.k-select {
-	border-color: #22313F;
+  border-color: #22313F;
 }
 
 #maps .k-i-marker-pin-target:before {
@@ -235,11 +235,11 @@ th.dash_act {
 }
 
 .table {
-    margin-bottom: 9px;
+  margin-bottom: 9px;
 }
 
-.modal-content{
- border : none;
+.modal-content {
+  border: none;
 }
 
 .modal-title {
