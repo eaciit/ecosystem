@@ -310,6 +310,24 @@ dashboard.getEntityDetail = function (entityName, changetradeorcash) {
   })
 }
 
+dashboard.bmnots = function (databm, sts) {
+  if (typeof databm != 'undefined'){
+    if (databm < 1000000000) {
+      var databmr = databm / 1000000
+      databmr = currencynum(databmr)
+      databmr = '$'+ databmr + " M"
+      return databmr
+    } else if (databm >= 1000000000) {
+      var databmr = databm / 1000000000
+      databmr = currencynum(databmr)
+      databmr = '$'+ databmr + " B"
+      return databmr
+    }
+  }else{
+    return ''
+  }
+}
+
 dashboard.bm = function (databm, sts) {
   if (databm < 1000000000) {
     var databmr = databm / 1000000
