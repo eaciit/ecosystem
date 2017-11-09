@@ -192,7 +192,7 @@ viewModel.getNavigationMenu = function () {
   viewModel.dataNavigationMenuTree([{
     Icon: "bar-chart",
     Title: "Dashboard",
-    Url: "/main/dashboard/index"
+    Url: "/main/dashboard/index"+ "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
   }, {
     Icon: "sitemap",
     Title: "Counter Party View",

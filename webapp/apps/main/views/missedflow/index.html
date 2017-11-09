@@ -13,9 +13,8 @@
   <div class="col-lg-12 breadcrumb-container">
     <span data-bind="text: missedflow.activeGroupName"></span>
     <i class="fa fa-fw fa-caret-right"></i>
-    <span>
-      <a href="/main/dashboard/index">Dashboard</a>
-    </span>
+     <span>
+     <a data-bind="attr:{href: '/main/dashboard/index?entityGroup='+filter.selectedGroupName()}">Dashboard</a></span>
     <i class="fa fa-fw fa-caret-right"></i>
     <span data-bind="text: missedflow.activeEntityName"></span>
   </div>
