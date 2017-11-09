@@ -28,15 +28,42 @@
 </div>
 
 <div class="row">
-  <div class="col-lg-12">
+  <div class="col-lg-12 dashboardfilter">
     <div class="filter-container">
       <div class="filtergroup"> 
         <select name="Site" style="width:200px" data-bind="kendoDropDownList: { data: filter.groups, value: filter.selectedGroup, filter: 'contains' }"></select>
       </div>
       <div class="filtergroup">
-        <input type="text" id="date" data-bind="kendoDatePicker:{ value: filter.selectedYear,format:'yyyy', start: 'decade' }">
+      <select name="Site" style="width:200px" data-bind="kendoDropDownList: { data: filter.entities, value: filter.selectedEntity, filter: 'contains'}"></select>
       </div>
-    </div>
+      <div class="filtergroup">
+        <select name="Site" style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      </div>
+      <div class="filtergroup">
+        <select name="Site" style="width:60px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      </div>
+      <div class="filtergroup">
+        <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      </div>
+      <div class="filtergroup">
+        <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      </div>
+      <div class="filtergroup">
+        <select name="Site" style="width:100px" data-bind="kendoDropDownList: { data: filter.flow, value: filter.selectedFlow, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      </div>
+      <div class="filtergroup">
+        <div class="btn-group">
+          <button class="btn btn-primary btn-sm switch active" data-target="#year" data-bind="click: filter.switchDateType">Y</button>
+          <button class="btn btn-primary btn-sm switch" data-target="#month" data-bind="click: ''">M</button>
+        </div>
+      </div>
+      <div class="filtergroup">
+        <input type="text" id="datePicker" data-bind="kendoDatePicker:{ value:new Date(), format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedYear }" class="filter-space">
+      </div>
+      <div class="filtergroup">
+        <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:filter.loadAll">Go</div>
+      </div>
+      </div>
   </div>
 </div>
 
@@ -240,9 +267,9 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <div class="modal-title">
-          <span data-bind="text:dashboard.activeEntity().country"></span>
+          <span data-bind="text:dashboard.country"></span>
           <i class="fa fa-caret-right" aria-hidden="true"></i>
-          <span id="titleName" data-bind="text: dashboard.activeEntity().name,click:dashboard.btnBack"></span>
+          <span id="titleName" data-bind="text: dashboard.name,click:dashboard.btnBack"></span>
           <i class="fa fa-caret-right" aria-hidden="true"></i>
           <span data-bind="text: dashboard.activeEntityDetail.noteHeaderModal"></span>
         </div>
@@ -260,7 +287,7 @@
             </button>
           </div>
           <div class="col-sm-12 align-center top-margin">
-            <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + filter.selectedGroup() + '&entityName=' + dashboard.activeEntity().name + '&entityCOI=' + dashboard.activeEntities().country }" class="btn btn-flat">Network Diagram
+            <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + filter.selectedGroup() + '&entityName=' + dashboard.name()+ '&entityCOI=' + dashboard.activeEntities().country }" class="btn btn-flat">Network Diagram
               <i class="fa fa-play-circle-o" aria-hidden="true"></i>
             </a>
           </div>
@@ -331,9 +358,9 @@
               <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixA" >
                 <tr>
                   <td data-bind="text: product"></td>
-                  <td align="right" data-bind="text: '$'+dashboard.bm(value, '')"></td>
+                  <td width="15%" align="right" data-bind="text: '$'+dashboard.bm(value, '')"></td>
                    <td data-bind="text:product2"></td>
-                  <td align="right" data-bind="text: '$'+dashboard.bm(value2, '')"></td>
+                  <td width="15%" align="right" data-bind="text: '$'+dashboard.bm(value2, '')"></td>
                 </tr>
               </tbody>
             </table>

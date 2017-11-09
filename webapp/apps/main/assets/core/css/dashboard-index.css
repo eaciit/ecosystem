@@ -30,6 +30,7 @@ th.dash_act {
 }
 
 .widget-body .widget-left {
+  margin-top: 6px;
   width: 40%;
   float: left;
 }
@@ -90,7 +91,7 @@ th.dash_act {
 }
 
 .filter-container {
-  padding-bottom: 10px;
+  padding-bottom: 1px;
   overflow: hidden;
 }
 
@@ -190,8 +191,11 @@ th.dash_act {
 }
 
 .filtergroup {
-  float: left;
-  margin-right: 10px;
+  display: inline-block;
+  font-size: 11px;
+  margin-bottom: 6px;
+  /*float: left;*/
+  margin-right: 1px;
 }
 
 .black-color {
@@ -354,4 +358,10 @@ div.cssnowrap:hover {
 
 .othertable>tbody>tr>td {
   border-top: 2px solid #ddd;
+}
+
+.switch {
+  color: #3276b1;
+  background-color: #fff;
+  height: 27px;
 }
