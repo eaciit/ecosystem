@@ -413,7 +413,7 @@ missedflow.generateGraph = function (data) {
     .sort(function (a, b) {
       return b.dy - a.dy
     })
-    .on('mouseover', function(d){
+    .on('mouseover', function (d) {
       tipLinks.show(d)
 
       missedflow.highlightedNode(d.source)
@@ -425,7 +425,8 @@ missedflow.generateGraph = function (data) {
   var gradientLink = svg.append("g")
     .selectAll(".gradient-link")
     .data(graph.links)
-    .enter().append("path")
+    .enter()
+    .append("path")
     .attr("class", "gradient-link")
     .attr("d", path)
     .style("stroke-width", function (d) {
@@ -466,27 +467,14 @@ missedflow.generateGraph = function (data) {
 
   node.append("text")
     .attr("class", "shadow")
-    .attr("x", -6)
     .attr("y", function (d) {
       return d.dy / 2
     })
-    .attr("dy", ".35em")
-    .attr("text-anchor", "end")
-    .attr("transform", null)
+    .attr("transform", function (d) {
+      return filter.selectedGroup() == "ALL" && d.as == "target" ? "rotate(90, -6, " + (d.dy / 2 + 12) + ")" : ""
+    })
     .tspans(function (d) {
       var name = d.name;
-      var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
-      if (matches) {
-        return [name.substring(0, 4) + "..."]
-      }
-
-      if (d.r <= 40) {
-        matches = name.match(/\b(\w)/g)
-        if (matches) {
-          return [matches.join("")]
-        }
-      }
-
       return d3.wordwrap(name, name.length / 2);
     })
     .attr("x", function (d) {
@@ -503,27 +491,14 @@ missedflow.generateGraph = function (data) {
     })
 
   node.append("text")
-    .attr("x", -6)
     .attr("y", function (d) {
       return d.dy / 2
     })
-    .attr("dy", ".35em")
-    .attr("text-anchor", "end")
-    .attr("transform", null)
+    .attr("transform", function (d) {
+      return filter.selectedGroup() == "ALL" && d.as == "target" ? "rotate(90, -6, " + (d.dy / 2 + 12) + ")" : ""
+    })
     .tspans(function (d) {
       var name = d.name;
-      var matches = name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
-      if (matches) {
-        return [name.substring(0, 4) + "..."]
-      }
-
-      if (d.r <= 40) {
-        matches = name.match(/\b(\w)/g)
-        if (matches) {
-          return [matches.join("")]
-        }
-      }
-
       return d3.wordwrap(name, name.length / 2);
     })
     .attr("x", function (d) {
@@ -538,6 +513,39 @@ missedflow.generateGraph = function (data) {
       }
       return "end"
     })
+
+  if (filter.selectedGroup() == "ALL") {
+    var linkText = svg.append("g")
+      .selectAll(".link-text")
+      .data(graph.links)
+      .enter()
+      .append("g")
+
+    linkText.append("text")
+      .attr("class", "shadow")
+      .attr("text-anchor", "end")
+      .text(function (d) {
+        return d.targetName
+      })
+      .attr("y", function (d) {
+        return d.target.y + d.ty + d.dy / 2
+      })
+      .attr("x", function (d) {
+        return d.target.x - 10
+      })
+
+    linkText.append("text")
+      .attr("text-anchor", "end")
+      .text(function (d) {
+        return d.targetName
+      })
+      .attr("y", function (d) {
+        return d.target.y + d.ty + d.dy / 2
+      })
+      .attr("x", function (d) {
+        return d.target.x - 10
+      })
+  }
 
   function setDash(d) {
     var d3this = d3.select(this);
