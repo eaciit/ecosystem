@@ -3,7 +3,6 @@ counterparty.detail = ko.observableArray([])
 counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
-counterparty.activeDisplayName = ko.observable()
 counterparty.activeGroupName = ko.observable("DOW CHEMICAL GROUP")
 // Graph indicator R = Relationship, B = Buyer only (bubble), S = Supplier only (bubble)
 counterparty.activeGraphIndicator = ko.observable("R")
@@ -255,12 +254,31 @@ network.loadData = function () {
   })
 }
 
-network.loadDetail = function (name, displayName) {
+network.loadDetail = function (name) {
+  var relations = []
+  _.each(network.links, function (l) {
+    if (l.t.name == name) {
+      if (l.t.class == "center" && l.s.class == "center") {
+        relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
+      } else if (l.t.class == "center") {
+        relations.push([l.t.name, l.s.name])
+      } else {
+        relations.push([l.s.name, l.t.name])
+      }
+    } else if (l.s.name == name) {
+      if (l.s.class == "center" && l.t.class == "center") {
+        relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
+      } else if (l.s.class == "center") {
+        relations.push([l.s.name, l.t.name])
+      } else {
+        relations.push([l.t.name, l.s.name])
+      }
+    }
+  })
+
   viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", {
-    entityName: counterparty.activeEntityName(),
-    counterpartyName: name
+    relations: relations
   }, function (data) {
-    counterparty.activeDisplayName(displayName)
     counterparty.activeName(name)
     counterparty.detail(data)
     $('#modalDetail').modal('show')
@@ -268,11 +286,33 @@ network.loadDetail = function (name, displayName) {
 }
 
 network.loadDetailCSV = function () {
+  var name = counterparty.activeName()
+  var relations = []
+  _.each(network.links, function (l) {
+    if (l.t.name == name) {
+      if (l.t.class == "center" && l.s.class == "center") {
+        relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
+      } else if (l.t.class == "center") {
+        relations.push([l.t.name, l.s.name])
+      } else {
+        relations.push([l.s.name, l.t.name])
+      }
+    } else if (l.s.name == name) {
+      if (l.s.class == "center" && l.t.class == "center") {
+        relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
+      } else if (l.s.class == "center") {
+        relations.push([l.s.name, l.t.name])
+      } else {
+        relations.push([l.t.name, l.s.name])
+      }
+    }
+  })
+
   // Manual XHR based on stackoverflow jquery does not support responseType params
   var data = {
-    entityName: counterparty.activeEntityName(),
-    counterpartyName: counterparty.activeName()
+    relations: relations
   }
+
   var xhr = new XMLHttpRequest()
   xhr.open("POST", "/main/counterparty/getdetailnetworkdiagramcsv", true)
   xhr.setRequestHeader("Content-type", "application/json")
@@ -341,14 +381,21 @@ network.processData = function (data) {
     rawLinks.push(link)
   })
 
-  // Adding the new center node (customer)
+  // Remove duplicate parent node in current nodes
   _.remove(nodes, function (e) {
     return e.name == parent
   })
 
+  // Get previous banks of the node that now become center
+  var prevNodeThatNowBecomeCenter = _.find(network.nodes, {
+    name: parent
+  })
+  var prevNodeThatNowBecomeCenterBanks = prevNodeThatNowBecomeCenter ? prevNodeThatNowBecomeCenter.banks : []
+
+  // Adding the new center node (customer) also add the prev banks if exist
   nodes = _.concat(nodes, {
     name: parent,
-    banks: _.uniq(_.map(data[parent], "cust_bank")),
+    banks: _.uniq(_.map(data[parent], "cust_bank").concat(prevNodeThatNowBecomeCenterBanks)),
     coi: counterparty.activeEntityCOI(),
     groupName: counterparty.activeGroupName(),
     class: "center",
@@ -1066,22 +1113,6 @@ network.bubble.generate = function () {
 }
 
 network.tooltip = function (elem, d) {
-  var displayName = d.name
-  var name = d.name
-
-  if (d.class == "center") {
-    var counterparties = []
-    var connectedLinks = _.each(network.links, function (e) {
-      if (e.s.name == d.name) {
-        counterparties.push(e.t.name)
-      } else if (e.t.name == d.name) {
-        counterparties.push(e.s.name)
-      }
-    })
-
-    name = counterparties.join("|"), d.name
-  }
-
   $(elem).popover({
       placement: "top",
       container: "body",
@@ -1107,7 +1138,7 @@ network.tooltip = function (elem, d) {
         </tr>
         <tr>
           <td></td>
-          <td><a onclick="network.loadDetail('` + name + `', '` + displayName + `')">Show Detail</a></td>
+          <td><a onclick="network.loadDetail('` + d.name + `')">Show Detail</a></td>
         </tr>
       </tabl>
     `

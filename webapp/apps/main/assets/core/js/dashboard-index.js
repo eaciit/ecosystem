@@ -169,17 +169,29 @@ dashboard.generateMapbox = function () {
   generate()
 }
 
+var ifload = 0
+var entities_i
+var country_i
+dashboard.country = ko.observable("")
+dashboard.name = ko.observable("")
+var varactiveentity = []
 dashboard.showMapDetails = function (i) {
+  ifload = 0
   dashboard.activeEntityDetail.noteHeaderModal("")
   $("#groupbuttondetail").show()
   $("#tradetabs").hide()
-  dashboard.getEntityDetail(dashboard.activeEntities().entities[i])
-
+  entities_i = $(event.target).text()
+  country_i = $(event.target).parents("div").find(".head").text()
+  var arr = country_i.split(" ")
+  var get_country = arr[11]
+  $("#mapDetailModal").modal("show")
+  dashboard.country(get_country)
+  dashboard.name(entities_i)
   popup.close()
   popup.element.kendoStop(true, true)
 }
 
-dashboard.getEntityDetail = function (entityName) {
+dashboard.getEntityDetail = function (entityName, changetradeorcash) {
   viewModel.ajaxPostCallback("/main/dashboard/getentitydetail", {
     entityName: entityName
   }, function (data) {
@@ -188,15 +200,25 @@ dashboard.getEntityDetail = function (entityName) {
       .mapValues(function (items) {
         return _.groupBy(items, "flow")
       }).value()
-
+    dashboard.activeEntity([])
     dashboard.activeEntity({
       name: entityName,
       bank: bank,
       product: data.product,
       country: dashboard.activeEntities().name
     })
+    varactiveentity = []
+    varactiveentity.push(dashboard.activeEntity())
+    if (changetradeorcash == "CASH") {
+      dashboard.btnTrade(dashboard.activeEntity())
+      dashboard.btnCash(dashboard.activeEntity())
+      $(".tab-content").show()
+    } else {
+      dashboard.btnCash(dashboard.activeEntity())
+      dashboard.btnTrade(dashboard.activeEntity())
+      $(".tab-content").show()
+    }
 
-    $("#mapDetailModal").modal("show")
   })
 }
 
@@ -215,230 +237,243 @@ dashboard.bm = function (databm, sts) {
 }
 
 dashboard.btnCash = function () {
-  dashboard.activeEntityDetail.noteHeaderModal(" Cash")
-  dashboard.activeEntityDetail.dataInFlow([])
-  dashboard.activeEntityDetail.dataOutFlow([])
-  dashboard.activeEntityDetail.sumInFlow(0)
-  dashboard.activeEntityDetail.sumOutFlow(0)
-  dashboard.other(false)
-  var cashinward = []
-  cashinward = dashboard.activeEntity().product.Cash.inward;
-  var cashoutward = []
-  cashoutward = dashboard.activeEntity().product.Cash.outward;
-
-  var keyMap = {
-    product: 'product2',
-    value: 'value2'
-  };
-
-  var cashoutward_val = cashoutward.map(function (obj) {
-    return _.mapKeys(obj, function (value, key) {
-      return keyMap[key];
-    });
-  });
-  var inwardoutward = _.merge(cashinward, cashoutward_val)
-
-  dashboard.activeEntityDetail.dataProductMixA(inwardoutward)
-  dashboard.activeEntityDetail.dataProductMixC("")
-  dashboard.labelimport("Inward")
-  dashboard.labelexport("Outward")
-  // for flow
-  if (dashboard.activeEntity().bank.Cash != undefined) {
-    var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
-    var dataoutflow = dashboard.activeEntity().bank.Cash.BUYER
+  if (ifload == 0) {
+    ifload = 1
+    dashboard.getEntityDetail(entities_i, "CASH")
+    $(".tab-content").hide()
   }
-  var suminflow = _.sumBy(datainflow, 'value')
-  var sumoutflow = _.sumBy(dataoutflow, 'value')
-  var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
-  if (suminflow == 0) {
-    dashboard.inflow(false)
-  } else {
-    dashboard.inflow(true)
-  }
-  if (sumoutflow == 0) {
-    dashboard.outflow(false)
-  } else {
-    dashboard.outflow(true)
-  }
+  if (varactiveentity.length > 0) {
+    dashboard.activeEntityDetail.noteHeaderModal(" Cash")
+    dashboard.activeEntityDetail.dataInFlow([])
+    dashboard.activeEntityDetail.dataOutFlow([])
+    dashboard.activeEntityDetail.sumInFlow(0)
+    dashboard.activeEntityDetail.sumOutFlow(0)
+    dashboard.other(false)
+    var cashinward = []
+    cashinward = dashboard.activeEntity().product.Cash.inward;
+    var cashoutward = []
+    cashoutward = dashboard.activeEntity().product.Cash.outward;
 
-  if (datainflow != undefined) {
-    var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
-    var summaxthreein = _.sumBy(maxthreein, 'value')
-    tempdatain = [];
+    var keyMap = {
+      product: 'product2',
+      value: 'value2'
+    };
 
-    _.each(maxthreein, function (v, i) {
-      tempdatain.push({
-        text: v.bank,
-        value: Math.round((v.value / suminflow) * 100),
-        color: colorval[i],
-        tooltip: dashboard.bm(v.value, "")
+    var cashoutward_val = cashoutward.map(function (obj) {
+      return _.mapKeys(obj, function (value, key) {
+        return keyMap[key];
       });
     });
-    var sumtin = _.sumBy(tempdatain, 'value')
-    if (datainflow.length > 3) {
-      tempdatain.push({
-        text: "Other",
-        value: (100 - sumtin),
-        color: colorval[3],
-        tooltip: dashboard.bm(suminflow - summaxthreein, "")
-      });
+    var inwardoutward = _.merge(cashinward, cashoutward_val)
+
+    dashboard.activeEntityDetail.dataProductMixA(inwardoutward)
+    dashboard.activeEntityDetail.dataProductMixC("")
+    dashboard.labelimport("Inward")
+    dashboard.labelexport("Outward")
+    // for flow
+    if (dashboard.activeEntity().bank.Cash != undefined) {
+      var datainflow = dashboard.activeEntity().bank.Cash.PAYEE
+      var dataoutflow = dashboard.activeEntity().bank.Cash.BUYER
+    }
+    var suminflow = _.sumBy(datainflow, 'value')
+    var sumoutflow = _.sumBy(dataoutflow, 'value')
+    var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+    if (suminflow == 0) {
+      dashboard.inflow(false)
+    } else {
+      dashboard.inflow(true)
+    }
+    if (sumoutflow == 0) {
+      dashboard.outflow(false)
+    } else {
+      dashboard.outflow(true)
     }
 
-    dashboard.activeEntityDetail.dataInFlow(tempdatain)
-    var suminflowr = dashboard.bm(suminflow, "inflow")
-    dashboard.activeEntityDetail.sumInFlow(suminflowr)
+    if (datainflow != undefined) {
+      var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
+      var summaxthreein = _.sumBy(maxthreein, 'value')
+      tempdatain = [];
+
+      _.each(maxthreein, function (v, i) {
+        tempdatain.push({
+          text: v.bank,
+          value: Math.round((v.value / suminflow) * 100),
+          color: colorval[i],
+          tooltip: dashboard.bm(v.value, "")
+        });
+      });
+      var sumtin = _.sumBy(tempdatain, 'value')
+      if (datainflow.length > 3) {
+        tempdatain.push({
+          text: "Other",
+          value: (100 - sumtin),
+          color: colorval[3],
+          tooltip: dashboard.bm(suminflow - summaxthreein, "")
+        });
+      }
+
+      dashboard.activeEntityDetail.dataInFlow(tempdatain)
+      var suminflowr = dashboard.bm(suminflow, "inflow")
+      dashboard.activeEntityDetail.sumInFlow(suminflowr)
+    }
+
+    if (dataoutflow != undefined) {
+      var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
+      var summaxthreeout = _.sumBy(maxthreeout, 'value')
+      tempdataout = [];
+      _.each(maxthreeout, function (v, i) {
+        tempdataout.push({
+          text: v.bank,
+          value: Math.round((v.value / sumoutflow) * 100),
+          color: colorval[i],
+          tooltip: dashboard.bm(v.value, "")
+        });
+      });
+      var sumtout = _.sumBy(tempdataout, 'value')
+      if (dataoutflow.length > 3) {
+        tempdataout.push({
+          text: "Other",
+          value: (100 - sumtout),
+          color: colorval[3],
+          tooltip: dashboard.bm(sumoutflow - summaxthreeout, "")
+        });
+      }
+      dashboard.activeEntityDetail.dataOutFlow(tempdataout)
+      var sumoutflowr = dashboard.bm(sumoutflow, "outflow")
+      dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
+    }
+    $("#groupbuttondetail").hide()
+    $("#tradetabs").show()
+    $(".some").kendoTooltip({
+      animation: false,
+      width: 180,
+      position: "top"
+    })
   }
 
-  if (dataoutflow != undefined) {
-    var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
-    var summaxthreeout = _.sumBy(maxthreeout, 'value')
-    tempdataout = [];
-    _.each(maxthreeout, function (v, i) {
-      tempdataout.push({
-        text: v.bank,
-        value: Math.round((v.value / sumoutflow) * 100),
-        color: colorval[i],
-        tooltip: dashboard.bm(v.value, "")
-      });
-    });
-    var sumtout = _.sumBy(tempdataout, 'value')
-    if (dataoutflow.length > 3) {
-      tempdataout.push({
-        text: "Other",
-        value: (100 - sumtout),
-        color: colorval[3],
-        tooltip: dashboard.bm(sumoutflow - summaxthreeout, "")
-      });
-    }
-    dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-    var sumoutflowr = dashboard.bm(sumoutflow, "outflow")
-    dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
-  }
-  $("#groupbuttondetail").hide()
-  $("#tradetabs").show()
-  $(".some").kendoTooltip({
-    animation: false,
-    width: 180,
-    position: "top"
-  })
 }
 
 dashboard.btnTrade = function () {
-  dashboard.activeEntityDetail.noteHeaderModal(" Trade")
-  dashboard.activeEntityDetail.dataProductMix([])
-  dashboard.activeEntityDetail.dataInFlow([])
-  dashboard.activeEntityDetail.dataOutFlow([])
-  dashboard.activeEntityDetail.sumInFlow(0)
-  dashboard.activeEntityDetail.sumOutFlow(0)
-  dashboard.other(true)
-  // for trade  
-
-  var tradeexport = []
-  tradeexport = dashboard.activeEntity().product.Trade.export;
-  var tradeimport = []
-  tradeimport = dashboard.activeEntity().product.Trade.import;
-  var tradeother = []
-  tradeother = dashboard.activeEntity().product.Trade.other;
-
-  var keyMap = {
-    product: 'product2',
-    value: 'value2'
-  };
-
-  var tradeimport_val = tradeimport.map(function (obj) {
-    return _.mapKeys(obj, function (value, key) {
-      return keyMap[key];
-    });
-  });
-  var exportimport = _.merge(tradeexport, tradeimport_val)
-
-  dashboard.activeEntityDetail.dataProductMixA(exportimport)
-  dashboard.activeEntityDetail.dataProductMixC(tradeother)
-  dashboard.labelimport("Export")
-  dashboard.labelexport("Import")
-
-  var data = dashboard.activeEntity().product.Trade
-  var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
-  dashboard.activeEntityDetail.dataProductMix(maxthree)
-  // for flow
-  if (dashboard.activeEntity().bank.Trade != undefined) {
-    var datainflow = dashboard.activeEntity().bank.Trade.PAYEE
-    var dataoutflow = dashboard.activeEntity().bank.Trade.BUYER
+  if (ifload == 0) {
+    ifload = 1
+    dashboard.getEntityDetail(entities_i, "TRADE")
+    $(".tab-content").hide()
   }
-  var suminflow = _.sumBy(datainflow, 'value')
-  var sumoutflow = _.sumBy(dataoutflow, 'value')
-  var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
-  if (suminflow == 0) {
-    dashboard.inflow(false)
-  } else {
-    dashboard.inflow(true)
-  }
-  if (sumoutflow == 0) {
-    dashboard.outflow(false)
-  } else {
-    dashboard.outflow(true)
-  }
+  if (varactiveentity.length > 0) {
+    dashboard.activeEntityDetail.noteHeaderModal(" Trade")
+    dashboard.activeEntityDetail.dataProductMix([])
+    dashboard.activeEntityDetail.dataInFlow([])
+    dashboard.activeEntityDetail.dataOutFlow([])
+    dashboard.activeEntityDetail.sumInFlow(0)
+    dashboard.activeEntityDetail.sumOutFlow(0)
+    dashboard.other(true)
+    // for trade  
 
+    var tradeexport = []
+    tradeexport = dashboard.activeEntity().product.Trade.export;
+    var tradeimport = []
+    tradeimport = dashboard.activeEntity().product.Trade.import;
+    var tradeother = []
+    tradeother = dashboard.activeEntity().product.Trade.other;
 
+    var keyMap = {
+      product: 'product2',
+      value: 'value2'
+    };
 
-  if (datainflow != undefined) {
-    var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
-    var summaxthreein = _.sumBy(maxthreein, 'value')
-    tempdatain = [];
-    _.each(maxthreein, function (v, i) {
-      tempdatain.push({
-        text: v.bank,
-        value: Math.round((v.value / suminflow) * 100),
-        color: colorval[i],
-        tooltip: dashboard.bm(v.value, "")
+    var tradeimport_val = tradeimport.map(function (obj) {
+      return _.mapKeys(obj, function (value, key) {
+        return keyMap[key];
       });
     });
-    var sumtin = _.sumBy(tempdatain, 'value')
-    if (datainflow.length > 3) {
-      tempdatain.push({
-        text: "Other",
-        value: (100 - sumtin),
-        color: colorval[3],
-        tooltip: dashboard.bm(suminflow - summaxthreein, "")
-      });
+    var exportimport = _.merge(tradeexport, tradeimport_val)
+
+    dashboard.activeEntityDetail.dataProductMixA(exportimport)
+    dashboard.activeEntityDetail.dataProductMixC(tradeother)
+    dashboard.labelimport("Export")
+    dashboard.labelexport("Import")
+
+    var data = dashboard.activeEntity().product.Trade
+    var maxthree = _.sortBy(data, 'value').reverse().splice(0, 3);
+    dashboard.activeEntityDetail.dataProductMix(maxthree)
+    // for flow
+    if (dashboard.activeEntity().bank.Trade != undefined) {
+      var datainflow = dashboard.activeEntity().bank.Trade.PAYEE
+      var dataoutflow = dashboard.activeEntity().bank.Trade.BUYER
     }
-    dashboard.activeEntityDetail.dataInFlow(tempdatain)
-    var suminflowr = dashboard.bm(suminflow, "inflow")
-    dashboard.activeEntityDetail.sumInFlow(suminflowr)
-  }
-
-  if (dataoutflow != undefined) {
-    var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
-    var summaxthreeout = _.sumBy(maxthreeout, 'value')
-    tempdataout = [];
-    _.each(maxthreeout, function (v, i) {
-      tempdataout.push({
-        text: v.bank,
-        value: Math.round((v.value / sumoutflow) * 100),
-        color: colorval[i],
-        tooltip: dashboard.bm(v.value, "")
-      });
-    });
-    var sumtout = _.sumBy(tempdataout, 'value')
-    if (dataoutflow.length > 3) {
-      tempdataout.push({
-        text: "Other",
-        value: (100 - sumtout),
-        color: colorval[3],
-        tooltip: dashboard.bm(sumoutflow - summaxthreeout, "")
-      });
+    var suminflow = _.sumBy(datainflow, 'value')
+    var sumoutflow = _.sumBy(dataoutflow, 'value')
+    var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+    if (suminflow == 0) {
+      dashboard.inflow(false)
+    } else {
+      dashboard.inflow(true)
     }
-    dashboard.activeEntityDetail.dataOutFlow(tempdataout)
-    var sumoutflowr = dashboard.bm(sumoutflow, "outflow")
-    dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
+    if (sumoutflow == 0) {
+      dashboard.outflow(false)
+    } else {
+      dashboard.outflow(true)
+    }
+
+    if (datainflow != undefined) {
+      var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
+      var summaxthreein = _.sumBy(maxthreein, 'value')
+      tempdatain = [];
+      _.each(maxthreein, function (v, i) {
+        tempdatain.push({
+          text: v.bank,
+          value: Math.round((v.value / suminflow) * 100),
+          color: colorval[i],
+          tooltip: dashboard.bm(v.value, "")
+        });
+      });
+      var sumtin = _.sumBy(tempdatain, 'value')
+      if (datainflow.length > 3) {
+        tempdatain.push({
+          text: "Other",
+          value: (100 - sumtin),
+          color: colorval[3],
+          tooltip: dashboard.bm(suminflow - summaxthreein, "")
+        });
+      }
+      dashboard.activeEntityDetail.dataInFlow(tempdatain)
+      var suminflowr = dashboard.bm(suminflow, "inflow")
+      dashboard.activeEntityDetail.sumInFlow(suminflowr)
+    }
+
+    if (dataoutflow != undefined) {
+      var maxthreeout = _.sortBy(dataoutflow, 'value').reverse().splice(0, 3);
+      var summaxthreeout = _.sumBy(maxthreeout, 'value')
+      tempdataout = [];
+      _.each(maxthreeout, function (v, i) {
+        tempdataout.push({
+          text: v.bank,
+          value: Math.round((v.value / sumoutflow) * 100),
+          color: colorval[i],
+          tooltip: dashboard.bm(v.value, "")
+        });
+      });
+      var sumtout = _.sumBy(tempdataout, 'value')
+      if (dataoutflow.length > 3) {
+        tempdataout.push({
+          text: "Other",
+          value: (100 - sumtout),
+          color: colorval[3],
+          tooltip: dashboard.bm(sumoutflow - summaxthreeout, "")
+        });
+      }
+      dashboard.activeEntityDetail.dataOutFlow(tempdataout)
+      var sumoutflowr = dashboard.bm(sumoutflow, "outflow")
+      dashboard.activeEntityDetail.sumOutFlow(sumoutflowr)
+    }
+    $("#groupbuttondetail").hide()
+    $("#tradetabs").show()
+    $(".some").kendoTooltip({
+      animation: false,
+      width: 180,
+      position: "top"
+    });
   }
-  $("#groupbuttondetail").hide()
-  $("#tradetabs").show()
-  $(".some").kendoTooltip({
-    animation: false,
-    width: 180,
-    position: "top"
-  });
 }
 
 dashboard.btnBack = function () {

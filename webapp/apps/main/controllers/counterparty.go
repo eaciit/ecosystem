@@ -20,6 +20,7 @@ type CounterPartyPayload struct {
 	GroupName        string
 	EntityName       string
 	CounterpartyName string
+	Relations        [][]string
 	Role             string
 	ProductCategory  string
 	Limit            int
@@ -180,17 +181,18 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	counterparties := []string{}
-	for _, v := range strings.Split(payload.CounterpartyName, "|") {
-		counterparties = append(counterparties, "cpty_long_name='"+v+"'")
+	relations := []string{}
+	for _, v := range payload.Relations {
+		relations = append(relations, "(cust_long_name='"+v[0]+"' AND cpty_long_name='"+v[1]+"')")
 	}
 
 	sql := `SELECT cpty_long_name, LEFT(customer_bank, 4) AS cust_bank, LEFT(counterparty_bank, 4) AS cpty_bank, 
   product_category, SUM(amount * rate) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + ` 
-	WHERE cust_long_name='` + payload.EntityName + `' AND (` + strings.Join(counterparties, " OR ") + `) AND transaction_year=2016 
+	WHERE (` + strings.Join(relations, " OR ") + `) AND transaction_year=2016 
 	AND ` + c.commonWhereClause() + `
-  GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category`
+	GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
+	ORDER BY total DESC`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -220,15 +222,16 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	keys := []string{"cust_long_name", "cpty_long_name", "cust_role", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount"}
 	selectKeys := []string{"cust_long_name", "cpty_long_name", c.customerRoleClause() + " AS cust_role", "customer_bank", "counterparty_bank", "product_code", "product_desc", "amount * rate AS amount"}
 
-	counterparties := []string{}
-	for _, v := range strings.Split(payload.CounterpartyName, "|") {
-		counterparties = append(counterparties, "cpty_long_name='"+v+"'")
+	relations := []string{}
+	for _, v := range payload.Relations {
+		relations = append(relations, "(cust_long_name='"+v[0]+"' AND cpty_long_name='"+v[1]+"')")
 	}
 
 	sql := `SELECT ` + strings.Join(selectKeys, ", ") + `
   FROM ` + c.tableName() + ` 
-	WHERE cust_long_name='` + payload.EntityName + `' AND (` + strings.Join(counterparties, " OR ") + `) AND transaction_year=2016 
-	AND ` + c.commonWhereClause()
+	WHERE (` + strings.Join(relations, " OR ") + `) AND transaction_year=2016 
+	AND ` + c.commonWhereClause() + `
+	ORDER BY amount DESC`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
