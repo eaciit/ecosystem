@@ -12,6 +12,7 @@ counterparty.switchGraph = function (element, event) {
 
   if (e.attr("name") != counterparty.activeGraphIndicator()) {
     counterparty.activeGraphIndicator(e.attr("name"))
+    network.loadData()
   }
 }
 
@@ -1003,21 +1004,7 @@ network.generate = function () {
   }
 
   tips.html(function (d) {
-    var displayName = d.name
     var name = d.name
-
-    if (d.class == "center") {
-      var counterparties = []
-      var connectedLinks = _.each(network.links, function (e) {
-        if (e.s.name == d.name) {
-          counterparties.push(e.t.name)
-        } else if (e.t.name == d.name) {
-          counterparties.push(e.s.name)
-        }
-      })
-
-      name = counterparties.join("|"), d.name
-    }
     var html = '<table class="tooltip-table">' +
       '<tr>' +
       '<td><b>Name</b></td>' +
@@ -1037,7 +1024,7 @@ network.generate = function () {
       '</tr>' +
       '<tr>' +
       '<td></td>' +
-      '<td><a onclick="network.loadDetail(' + name + ', ' + displayName + ')">Show Detail</a></td>' +
+      '<td><a onclick="network.loadDetail(\'' + name + '\')">Show Detail</a></td>' +
       '</tr>' +
       '</table>'
     return html;
@@ -1192,21 +1179,7 @@ network.bubble.generate = function () {
   }
 
   tips.html(function (d) {
-    var displayName = d.name
     var name = d.name
-
-    if (d.class == "center") {
-      var counterparties = []
-      var connectedLinks = _.each(network.links, function (e) {
-        if (e.s.name == d.name) {
-          counterparties.push(e.t.name)
-        } else if (e.t.name == d.name) {
-          counterparties.push(e.s.name)
-        }
-      })
-
-      name = counterparties.join("|"), d.name
-    }
     var html = '<table class="tooltip-table">' +
       '<tr>' +
       '<td><b>Name</b></td>' +
@@ -1226,7 +1199,7 @@ network.bubble.generate = function () {
       '</tr>' +
       '<tr>' +
       '<td></td>' +
-      '<td><a onclick="network.loadDetail(' + name + ', ' + displayName + ')">Show Detail</a></td>' +
+      '<td><a onclick="network.loadDetail(\'' + name + '\')">Show Detail</a></td>' +
       '</tr>' +
       '</table>'
     return html;

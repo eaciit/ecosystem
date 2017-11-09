@@ -154,7 +154,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  GROUP BY cust_coi, cust_long_name`
+  GROUP BY cust_coi, cust_long_name SORT BY cust_long_name`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
