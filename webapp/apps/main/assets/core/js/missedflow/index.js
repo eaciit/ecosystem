@@ -7,8 +7,13 @@ missedflow.highlightedNode = ko.observable("")
 missedflow.highlightedLinks = ko.observableArray([])
 missedflow.highlightedSum = ko.observable()
 
+missedflow.resetHighlight = function () {
+  missedflow.highlightedNode("")
+  missedflow.highlightedLinks([])
+  missedflow.highlightedSum()
+}
+
 missedflow.loadAll = function () {
-  $("#headtablehighlightedLinks").hide()
   missedflow.activeGroupName($.urlParam("entityGroup"))
   missedflow.activeEntityCOI($.urlParam("entityCOI"))
 }
@@ -163,6 +168,8 @@ filter.loadAll = function () {
 }
 
 missedflow.loadGraphData = function () {
+  missedflow.resetHighlight()
+
   viewModel.ajaxPostCallback("/main/missedflow/getmissedflowdata", filter.selectedFilters(), function (data) {
     var links = []
     var nodes = []
@@ -175,7 +182,8 @@ missedflow.loadGraphData = function () {
         var newNodes = []
 
         _.each(data, function (e) {
-          var isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
+          var isReversed = false
+          isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
           var push = false
 
           if (g == "ETB" && e.is_ntb == "N") {
@@ -315,8 +323,6 @@ missedflow.loadGraphData = function () {
       })
     }
 
-    console.log(nodes, JSON.parse(JSON.stringify(links)))
-
     missedflow.generateGraph({
       "nodes": nodes,
       "links": links
@@ -407,7 +413,13 @@ missedflow.generateGraph = function (data) {
     .sort(function (a, b) {
       return b.dy - a.dy
     })
-    .on('mouseover', tipLinks.show)
+    .on('mouseover', function(d){
+      tipLinks.show(d)
+
+      missedflow.highlightedNode(d.source)
+      missedflow.highlightedLinks([d])
+      missedflow.highlightedSum("Total Flow : $ " + setbm(d.value))
+    })
     .on('mouseout', tipLinks.hide)
 
   var gradientLink = svg.append("g")
@@ -426,8 +438,6 @@ missedflow.generateGraph = function (data) {
       return b.dy - a.dy
     })
     .each(setDash)
-    .on('mouseover', tipLinks.show)
-    .on('mouseout', tipLinks.hide)
 
   // add in the nodes
   var node = svg.append("g").selectAll(".node")
@@ -540,7 +550,6 @@ missedflow.generateGraph = function (data) {
   }
 
   function highlightLink(n) {
-    $("#headtablehighlightedLinks").show()
     var highlightedLinks = []
 
     d3.selectAll(".gradient-link").each(function () {

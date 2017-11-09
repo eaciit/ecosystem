@@ -60,15 +60,15 @@
   <div class="col-md-6 bottom-margin">
     <div id="missedflowchart" class="col-md-12"></div>
   </div>
-  <div class="col-md-6 bottom-margin">
+  <div class="col-md-6 bottom-margin" data-bind="visible: missedflow.highlightedLinks().length > 0">
     <div class="row">
       <h2 data-bind="text: missedflow.highlightedNode().name"></h2>
-      <span data-bind="text:missedflow.highlightedSum"></span>
+      <span data-bind="text: missedflow.highlightedSum"></span>
     </div>
     <br>
     <div class="row">
       <table class="detail-table">
-        <thead id="headtablehighlightedLinks">
+        <thead>
           <tr>
             <td class="bold">Anchor Entity - BANK</td>
             <td class="bold">Cpty - BANK</td>
