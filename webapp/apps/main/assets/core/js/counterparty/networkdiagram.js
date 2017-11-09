@@ -549,9 +549,15 @@ network.generate = function () {
 
   d3.select("#graph").selectAll("*").remove()
 
+  /* Initialize tooltip */
+  var tipLinks = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0]);
+
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
     .attr("height", h)
+    .call(tipLinks)
 
   network.generateLegend(svg)
 
@@ -746,10 +752,8 @@ network.generate = function () {
 
       return c
     })
-    .each(function (d) {
-      network.tooltip(this, d)
-    })
     .on("mouseover", function (d) {
+      tipLinks.show(d)
       highlightLink(d.name)
     })
     .on("mouseout", unhighlightLink)
@@ -893,6 +897,7 @@ network.generate = function () {
 
   function unhighlightLink() {
     d3.selectAll(".link.selected").classed("selected", false)
+    setTimeout(function(){tipLinks.hide(); }, 3000);
   }
 
   function expand(d) {
@@ -923,6 +928,47 @@ network.generate = function () {
       return e.t.name == d.name || e.s.name == d.name
     }).remove()
   }
+
+   tipLinks.html(function (d) {
+    var displayName = d.name
+    var name = d.name
+
+    if (d.class == "center") {
+      var counterparties = []
+      var connectedLinks = _.each(network.links, function (e) {
+        if (e.s.name == d.name) {
+          counterparties.push(e.t.name)
+        } else if (e.t.name == d.name) {
+          counterparties.push(e.s.name)
+        }
+    })
+
+    name = counterparties.join("|"), d.name
+    }
+    var html = '<table class="tooltip-table">'+
+        '<tr>'+
+          '<td><b>Name</b></td>'+
+          '<td>: '+ d.name + '</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td><b>COI</b></td>'+
+          '<td>: '+ d.coi +'</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td><b>Total Flow</b></td>'+
+          '<td>: $ ' + d.amountText + '</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td><b>Bank</b></td>'+
+          '<td>: '+ d.banks.join(", ") + '</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td></td>'+
+          '<td><a onclick="network.loadDetail(' + name + ', '+ displayName + ')">Show Detail</a></td>'+
+        '</tr>'+
+      '</table>'
+    return html;
+  });
 }
 
 network.bubble = {}
@@ -949,9 +995,16 @@ network.bubble.generate = function () {
     return d
   })
 
+  /* Initialize tooltip */
+  var tipLinks = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0]);
+
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
     .attr("height", h)
+    .call(tipLinks)
+
 
   network.generateLegend(svg)
 
@@ -980,10 +1033,7 @@ network.bubble.generate = function () {
 
       return c
     })
-    .each(function (d) {
-      network.tooltip(this, d)
-    })
-    .on("mouseover", function (d) {
+    .on("mouseover", function (d) {  
       d3.select(this)
         .select(".inner-bubble")
         .transition()
@@ -1001,8 +1051,9 @@ network.bubble.generate = function () {
         .attr("r", function (d) {
           return d.r * 1.1 + 10
         })
+      tipLinks.show(d)
     })
-    .on("mouseout", function (d) {
+    .on("mouseout", function (d) { 
       d3.select(this)
         .select(".inner-bubble")
         .transition()
@@ -1020,6 +1071,8 @@ network.bubble.generate = function () {
         .attr("r", function (d) {
           return d.r
         })
+
+      // setTimeout(function(){tipLinks.hide(); }, 3000);
     })
 
   bubbles.append("svg:circle")
@@ -1064,69 +1117,47 @@ network.bubble.generate = function () {
       return "translate(" + d.x + ", " + d.y + ")"
     })
   }
-}
 
-network.tooltip = function (elem, d) {
-  var displayName = d.name
-  var name = d.name
+   tipLinks.html(function (d) {
+    var displayName = d.name
+    var name = d.name
 
-  if (d.class == "center") {
-    var counterparties = []
-    var connectedLinks = _.each(network.links, function (e) {
-      if (e.s.name == d.name) {
-        counterparties.push(e.t.name)
-      } else if (e.t.name == d.name) {
-        counterparties.push(e.s.name)
-      }
+    if (d.class == "center") {
+      var counterparties = []
+      var connectedLinks = _.each(network.links, function (e) {
+        if (e.s.name == d.name) {
+          counterparties.push(e.t.name)
+        } else if (e.t.name == d.name) {
+          counterparties.push(e.s.name)
+        }
     })
 
     name = counterparties.join("|"), d.name
-  }
-
-  $(elem).popover({
-      placement: "top",
-      container: "body",
-      trigger: "manual",
-      html: true,
-      content: `
-      <table class="tooltip-table">
-        <tr>
-          <td><b>Name</b></td>
-          <td>` + d.name + `</td>
-        </tr>
-        <tr>
-          <td><b>COI</b></td>
-          <td>` + d.coi + `</td>
-        </tr>
-        <tr>
-          <td><b>Total Flow</b></td>
-          <td>$ ` + d.amountText + `</td>
-        </tr>
-        <tr>
-          <td><b>Bank</b></td>
-          <td>` + d.banks.join(", ") + `</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><a onclick="network.loadDetail('` + name + `', '` + displayName + `')">Show Detail</a></td>
-        </tr>
-      </tabl>
-    `
-    })
-    .on("mouseenter", function () {
-      var _this = this
-      $(this).popover("show")
-      $(".popover").on("mouseleave", function () {
-        $(_this).popover('hide')
-      })
-    }).on("mouseleave", function () {
-      var _this = this
-      setTimeout(function () {
-        if (!$(".popover:hover").length) {
-          $(_this).popover("hide")
-        }
-      }, 300)
-    })
+    }
+    var html = '<table class="tooltip-table">'+
+        '<tr>'+
+          '<td><b>Name</b></td>'+
+          '<td>: '+ d.name + '</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td><b>COI</b></td>'+
+          '<td>: '+ d.coi +'</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td><b>Total Flow</b></td>'+
+          '<td>: $ ' + d.amountText + '</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td><b>Bank</b></td>'+
+          '<td>: '+ d.banks.join(", ") + '</td>'+
+        '</tr>'+
+        '<tr>'+
+          '<td></td>'+
+          '<td><a onclick="network.loadDetail(' + name + ', '+ displayName + ')">Show Detail</a></td>'+
+        '</tr>'+
+      '</table>'
+    return html;
+  });
 }
 
 network.highlight = function (c) {
