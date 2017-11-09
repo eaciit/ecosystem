@@ -40,10 +40,10 @@
         <select name="Site" style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
-        <select name="Site" style="width:60px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+        <select name="Site" style="width:80px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
-        <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+        <select name="Site" style="width:100px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
         <select name="Site" style="width:70px" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
@@ -304,6 +304,7 @@
           <div class="tab-content">
             <!--panel list-->
             <div role="tabpanel" class="tab-pane active" id="Flows">
+            <div class="notransaction" data-bind="text : dashboard.noinflow"></div>
               <div class="row align-center top-padding inflow" data-bind="visible : dashboard.inflow">
                 IN $
                 <span data-bind="text:dashboard.activeEntityDetail.sumInFlow"></span>
@@ -322,6 +323,7 @@
                 </div>
                 <i class="fa fa-play fa-in fa-hide" aria-hidden="true"></i>
               </div>
+              <div class="notransaction" data-bind="text : dashboard.nooutflow"></div>
               <div data-bind="visible : dashboard.outflow" class="row align-center top-padding outflow">
                 OUT $
                 <span data-bind="text:dashboard.activeEntityDetail.sumOutFlow"></span>
@@ -346,9 +348,9 @@
               </div>
              
              <div class="row">
-
              <div class="col-sm-12">
-             <table class="table" style="color:  #fff; background-color:  #4F5F79">
+              <div class="notransaction" data-bind="text: dashboard.labeltableno"></div>
+             <table data-bind="visible: dashboard.tablenoinflowoutflow"  class="table" style="color:  #fff; background-color:  #4F5F79">
               <thead>
                 <tr>
                   <th width="50%" class="dash_act" align="center" colspan="2" data-bind="text:dashboard.labelimport"></th>
