@@ -220,6 +220,7 @@ filter.loadAll = function () {
   filter.selectedEntity($.urlParam("entityName"))
 
   filter.selectedGroupName.subscribe(function (nv) {
+    counterparty.activeGroupName(nv)
     viewModel.globalFilter.groupname(nv)
     filter.loadEntities()
   })
@@ -1099,7 +1100,7 @@ network.tooltip = function (elem, d) {
         </tr>
         <tr>
           <td><b>Total Flow</b></td>
-          <td>` + d.amountText + `</td>
+          <td>$ ` + d.amountText + `</td>
         </tr>
         <tr>
           <td><b>Bank</b></td>

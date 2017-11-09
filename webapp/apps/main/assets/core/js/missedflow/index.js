@@ -604,7 +604,7 @@ missedflow.generateGraph = function (data) {
       '</tr>' +
       '<tr>' +
       '<td class="col-left">Total Flow</td>' +
-      '<td class="col-left">: $ ' + currencynum(d.value) + '</td>' +
+      '<td class="col-left">: $ ' + setbm(d.value) + '</td>' +
       '</tr>' +
       '</table>' +
       '</div>';

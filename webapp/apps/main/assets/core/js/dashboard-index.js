@@ -50,7 +50,11 @@ filter.loadGroups = function () {
   })
 }
 
-filter.loadAll = function () {
+filter.loadAll = function () { 
+  if(getParameterByName("entityGroup") != null){
+    filter.selectedGroup(getParameterByName("entityGroup")) 
+  }
+
   filter.payload.subscribe(function (nv) {
     if (nv.groupName != "") {
       widget.loadData()
@@ -378,8 +382,6 @@ dashboard.btnTrade = function () {
   } else {
     dashboard.outflow(true)
   }
-
-
 
   if (datainflow != undefined) {
     var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
