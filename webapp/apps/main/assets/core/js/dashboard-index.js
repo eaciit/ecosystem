@@ -324,6 +324,21 @@ dashboard.bm = function (databm, sts) {
   }
 }
 
+dashboard.tradecash = function (dataimport, valimport) {
+  var keyMap = {
+      product: 'product2',
+      value: 'value2'
+    };
+
+  var tradeimport_val = dataimport.map(function(obj) {
+    return _.mapKeys(obj, function(value, key) {
+      return keyMap[key];
+    });
+  });
+  var aftertradecash = _.merge(valimport, tradeimport_val)
+  return aftertradecash
+}
+
 dashboard.btnCash = function () {
   if (ifload == 0) {
     ifload = 1
@@ -341,20 +356,7 @@ dashboard.btnCash = function () {
     cashinward = dashboard.activeEntity().product.Cash.inward;
     var cashoutward = []
     cashoutward = dashboard.activeEntity().product.Cash.outward;
-
-    var keyMap = {
-      product: 'product2',
-      value: 'value2'
-    };
-
-    var cashoutward_val = cashoutward.map(function (obj) {
-      return _.mapKeys(obj, function (value, key) {
-        return keyMap[key];
-      });
-    });
-    var inwardoutward = _.merge(cashinward, cashoutward_val)
-
-    dashboard.activeEntityDetail.dataProductMixA(inwardoutward)
+    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(cashinward,cashoutward))
     dashboard.activeEntityDetail.dataProductMixC("")
     dashboard.labelimport("Inward")
     dashboard.labelexport("Outward")
@@ -478,20 +480,7 @@ dashboard.btnTrade = function () {
     tradeimport = dashboard.activeEntity().product.Trade.import;
     var tradeother = []
     tradeother = dashboard.activeEntity().product.Trade.other;
-
-    var keyMap = {
-      product: 'product2',
-      value: 'value2'
-    };
-
-    var tradeimport_val = tradeimport.map(function (obj) {
-      return _.mapKeys(obj, function (value, key) {
-        return keyMap[key];
-      });
-    });
-    var exportimport = _.merge(tradeexport, tradeimport_val)
-
-    dashboard.activeEntityDetail.dataProductMixA(exportimport)
+    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(tradeexport,tradeimport))
     dashboard.activeEntityDetail.dataProductMixC(tradeother)
     dashboard.labelimport("Export")
     dashboard.labelexport("Import")
