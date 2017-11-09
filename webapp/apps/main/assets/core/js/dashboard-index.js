@@ -20,7 +20,7 @@ dashboard.activeEntityDetail = {
 
 var filter = {}
 filter.groups = ko.observableArray([])
-filter.selectedGroup = ko.observable("DOW CHEMICAL GROUP")
+filter.selectedGroup = ko.observable("")
 filter.selectedYear = ko.observable(new Date())
 
 filter.payload = ko.computed(function () {
@@ -51,9 +51,11 @@ filter.loadGroups = function () {
 }
 
 filter.loadAll = function () {
-  filter.payload.subscribe(function () {
-    widget.loadData()
-    dashboard.loadDataIntoMap()
+  filter.payload.subscribe(function (nv) {
+    if (nv.groupName != "") {
+      widget.loadData()
+      dashboard.loadDataIntoMap()
+    }
   })
 
   filter.loadGroups()
@@ -452,21 +454,21 @@ widget.buyer = ko.observable(0)
 widget.seller = ko.observable(0)
 widget.inFlow = ko.observable(0)
 widget.outFlow = ko.observable(0)
-widget.pipeline = ko.observable(4.01)
+widget.pipeline = ko.observable(0)
 
 widget.etbQuarterChange = ko.observable(0)
 widget.buyerQuarterChange = ko.observable(0)
 widget.sellerQuarterChange = ko.observable(0)
 widget.inFlowQuarterChange = ko.observable(0)
 widget.outFlowQuarterChange = ko.observable(0)
-widget.pipelineQuarterChange = ko.observable(1.54)
+widget.pipelineQuarterChange = ko.observable(0)
 
 widget.etbYearChange = ko.observable(0)
 widget.buyerYearChange = ko.observable(0)
 widget.sellerYearChange = ko.observable(0)
 widget.inFlowYearChange = ko.observable(0)
 widget.outFlowYearChange = ko.observable(0)
-widget.pipelineYearChange = ko.observable(1.54)
+widget.pipelineYearChange = ko.observable(0)
 
 widget.buildChart = function (id, data, unit) {
   var chartParam = {
@@ -561,19 +563,17 @@ widget.generateChart5 = function () {
 
 
 widget.generateChart6 = function () {
-  var data = [6, 1, 10, 1, 10]
+  var data = []
   widget.buildChart("#widgetChart6", data)
 }
 
 widget.loadCharts = function () {
-  // $("#hiden").hide()
   widget.generateChart1()
   widget.generateChart2()
   widget.generateChart3()
   widget.generateChart4()
   widget.generateChart5()
   widget.generateChart6()
-
 }
 
 widget.loadData = function () {
