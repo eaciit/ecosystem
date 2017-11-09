@@ -597,19 +597,19 @@ missedflow.generateGraph = function (data) {
     var html = '<div class="table-wrapper">' +
       '<table>' +
       '<tr>' +
-      '<td class="col-left">Customer Name</td>' +
+      '<td class="col-left">Anchor Entity</td>' +
       '<td class="col-left">: ' + d.sourceName + '</td>' +
       '</tr>' +
       '<tr>' +
-      '<td class="col-left">Customer Bank</td>' +
+      '<td class="col-left">Anchor Entity Bank</td>' +
       '<td class="col-left">: ' + d.sourceBank + '</td>' +
       '</tr>' +
       '<tr>' +
-      '<td class="col-left">Counterparty Name</td>' +
+      '<td class="col-left">Cpty</td>' +
       '<td class="col-left">: ' + d.targetName + '</td>' +
       '</tr>' +
       '<tr>' +
-      '<td class="col-left">Counterparty Bank</td>' +
+      '<td class="col-left">Cpty Bank</td>' +
       '<td class="col-left">: ' + d.targetBank + '</td>' +
       '</tr>' +
       '<tr>' +
