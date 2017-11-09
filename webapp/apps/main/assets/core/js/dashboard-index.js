@@ -138,6 +138,10 @@ filter.loadGroups = function () {
 }
 
 filter.loadAll = function () {
+  if (getParameterByName("entityGroup") != null) {
+    filter.selectedGroup(getParameterByName("entityGroup"))
+  }
+
   filter.payload.subscribe(function (nv) {
     if (nv.groupName != "") {
       widget.loadData()

@@ -196,7 +196,7 @@ viewModel.getNavigationMenu = function () {
   }, {
     Icon: "sitemap",
     Title: "Counter Party View",
-    Url: "/main/counterparty/index"
+    Url: "/main/counterparty/networkdiagram"+ "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
   }, {
     Icon: "random",
     Title: "Missed Flow Analysis",
