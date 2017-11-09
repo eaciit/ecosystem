@@ -281,7 +281,6 @@ dashboard.getEntityDetail = function (entityName, changetradeorcash) {
       .mapValues(function (items) {
         return _.groupBy(items, "flow")
       }).value()
-    dashboard.activeEntity([])
     dashboard.activeEntity({
       name: entityName,
       bank: bank,
