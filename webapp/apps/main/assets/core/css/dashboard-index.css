@@ -365,3 +365,9 @@ div.cssnowrap:hover {
   background-color: #fff;
   height: 27px;
 }
+
+.notransaction{
+  font-size: 13px;
+  text-align: center;
+  margin :10px;
+}

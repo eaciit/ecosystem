@@ -6,6 +6,10 @@ dashboard.outflow = ko.observable(true)
 dashboard.other = ko.observable(true)
 dashboard.labelimport = ko.observable()
 dashboard.labelexport = ko.observable()
+dashboard.noinflow = ko.observable()
+dashboard.nooutflow = ko.observable()
+dashboard.tablenoinflowoutflow = ko.observable(true)
+dashboard.labeltableno = ko.observable()
 dashboard.activeEntityDetail = {
   noteHeaderModal: ko.observable(),
   dataProductMix: ko.observableArray([]),
@@ -37,7 +41,7 @@ filter.selectedRole = ko.observable("")
 
 filter.group = [{
   "value": "",
-  "text": "Both"
+  "text": "ETB & NTB"
 }, {
   "value": "ETB",
   "text": "ETB"
@@ -49,7 +53,7 @@ filter.selectedGroup = ko.observable("")
 
 filter.productCategories = [{
   "value": "",
-  "text": "All"
+  "text": "All Product"
 }, {
   "value": "Cash",
   "text": "Cash"
@@ -79,7 +83,7 @@ filter.selectedLimit = ko.observable(5)
 
 filter.flow = [{
   "value": 0,
-  "text": "All"
+  "text": "All Flows"
 }, {
   "value": 30000000,
   "text": "Flows > $30M"
@@ -362,16 +366,31 @@ dashboard.btnCash = function () {
     var suminflow = _.sumBy(datainflow, 'value')
     var sumoutflow = _.sumBy(dataoutflow, 'value')
     var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
+    
     if (suminflow == 0) {
+      dashboard.noinflow("No IN Transaction")
       dashboard.inflow(false)
     } else {
+      dashboard.noinflow("")
       dashboard.inflow(true)
     }
     if (sumoutflow == 0) {
+      dashboard.nooutflow("No OUT Transaction")
       dashboard.outflow(false)
     } else {
+      dashboard.nooutflow("")
       dashboard.outflow(true)
     }
+    if(suminflow == 0 && sumoutflow == 0) {
+      dashboard.tablenoinflowoutflow(false)
+      dashboard.nooutflow("")
+      dashboard.noinflow("No IN, OUT Transaction")
+      dashboard.labeltableno("No Transaction")
+    }else{
+      dashboard.tablenoinflowoutflow(true)
+      dashboard.labeltableno("")
+    }
+
 
     if (datainflow != undefined) {
       var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
@@ -489,15 +508,29 @@ dashboard.btnTrade = function () {
     var sumoutflow = _.sumBy(dataoutflow, 'value')
     var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
     if (suminflow == 0) {
+      dashboard.noinflow("No IN Transaction")
       dashboard.inflow(false)
     } else {
+      dashboard.noinflow("")
       dashboard.inflow(true)
     }
     if (sumoutflow == 0) {
+      dashboard.nooutflow("No OUT Transaction")
       dashboard.outflow(false)
     } else {
+      dashboard.nooutflow("")
       dashboard.outflow(true)
     }
+    if(suminflow == 0 && sumoutflow == 0) {
+      dashboard.tablenoinflowoutflow(false)
+      dashboard.nooutflow("")
+      dashboard.noinflow("No IN, OUT Transaction")
+      dashboard.labeltableno("No Transaction")
+    }else{
+      dashboard.tablenoinflowoutflow(true)
+      dashboard.labeltableno("")
+    }
+
 
     if (datainflow != undefined) {
       var maxthreein = _.sortBy(datainflow, 'value').reverse().splice(0, 3);
