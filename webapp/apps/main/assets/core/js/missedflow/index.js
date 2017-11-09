@@ -154,6 +154,7 @@ filter.loadAll = function () {
   })
 
   filter.selectedGroupName.subscribe(function () {
+    viewModel.globalFilter.groupname(filter.selectedGroupName())
     filter.loadEntities()
   })
 
