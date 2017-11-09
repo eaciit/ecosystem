@@ -240,9 +240,9 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <div class="modal-title">
-          <span data-bind="text:dashboard.activeEntity().country"></span>
+          <span data-bind="text:dashboard.country"></span>
           <i class="fa fa-caret-right" aria-hidden="true"></i>
-          <span id="titleName" data-bind="text: dashboard.activeEntity().name,click:dashboard.btnBack"></span>
+          <span id="titleName" data-bind="text: dashboard.name,click:dashboard.btnBack"></span>
           <i class="fa fa-caret-right" aria-hidden="true"></i>
           <span data-bind="text: dashboard.activeEntityDetail.noteHeaderModal"></span>
         </div>
@@ -331,9 +331,9 @@
               <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixA" >
                 <tr>
                   <td data-bind="text: product"></td>
-                  <td align="right" data-bind="text: '$'+dashboard.bm(value, '')"></td>
+                  <td width="15%" align="right" data-bind="text: '$'+dashboard.bm(value, '')"></td>
                    <td data-bind="text:product2"></td>
-                  <td align="right" data-bind="text: '$'+dashboard.bm(value2, '')"></td>
+                  <td width="15%" align="right" data-bind="text: '$'+dashboard.bm(value2, '')"></td>
                 </tr>
               </tbody>
             </table>
