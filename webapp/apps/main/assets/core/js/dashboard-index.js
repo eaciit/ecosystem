@@ -23,6 +23,93 @@ filter.groups = ko.observableArray([])
 filter.selectedGroup = ko.observable("")
 filter.selectedYear = ko.observable(new Date())
 
+filter.role = ko.observableArray([{
+  "value": "",
+  "text": "Buyer & Supplier"
+}, {
+  "value": "BUYER",
+  "text": "Buyer"
+}, {
+  "value": "PAYEE",
+  "text": "Supplier"
+}])
+filter.selectedRole = ko.observable("")
+
+filter.group = [{
+  "value": "",
+  "text": "Both"
+}, {
+  "value": "ETB",
+  "text": "ETB"
+}, {
+  "value": "NTB",
+  "text": "NTB"
+}]
+filter.selectedGroup = ko.observable("")
+
+filter.productCategories = [{
+  "value": "",
+  "text": "All"
+}, {
+  "value": "Cash",
+  "text": "Cash"
+}, {
+  "value": "Trade",
+  "text": "Trade"
+}]
+filter.selectedProductCategory = ko.observable("")
+
+filter.limit = [{
+  "value": 5,
+  "text": "Top 5"
+}, {
+  "value": 10,
+  "text": "Top 10"
+}, {
+  "value": 50,
+  "text": "Top 50"
+}, {
+  "value": 100,
+  "text": "Top 100"
+}, {
+  "value": 0,
+  "text": "All"
+}]
+filter.selectedLimit = ko.observable(5)
+
+filter.flow = [{
+  "value": 0,
+  "text": "All"
+}, {
+  "value": 30000000,
+  "text": "Flows > $30M"
+}, {
+  "value": 100000000,
+  "text": "Flows > $100M"
+}]
+
+filter.switchDateType = function (data, event) {
+  $(event.target).siblings().removeClass("active")
+  $(event.target).addClass("active")
+
+  filter.selectedDateType = $(event.target).text()
+
+  if (filter.selectedDateType == "M") {
+    $("#datePicker").data("kendoDatePicker").setOptions({
+      start: "year",
+      depth: "year",
+      format: "MMM yyyy"
+    })
+  } else {
+    $("#datePicker").data("kendoDatePicker").setOptions({
+      start: "decade",
+      depth: "decade",
+      format: "yyyy"
+    })
+  }
+}
+
+
 filter.payload = ko.computed(function () {
   viewModel.globalFilter.groupname(filter.selectedGroup())
 
@@ -170,8 +257,6 @@ dashboard.generateMapbox = function () {
 }
 
 var ifload = 0
-var entities_i
-var country_i
 dashboard.country = ko.observable("")
 dashboard.name = ko.observable("")
 var varactiveentity = []
@@ -180,13 +265,9 @@ dashboard.showMapDetails = function (i) {
   dashboard.activeEntityDetail.noteHeaderModal("")
   $("#groupbuttondetail").show()
   $("#tradetabs").hide()
-  entities_i = $(event.target).text()
-  country_i = $(event.target).parents("div").find(".head").text()
-  var arr = country_i.split(" ")
-  var get_country = arr[11]
+  dashboard.country(dashboard.activeEntities().name)
+  dashboard.name(dashboard.activeEntities().entities[i])
   $("#mapDetailModal").modal("show")
-  dashboard.country(get_country)
-  dashboard.name(entities_i)
   popup.close()
   popup.element.kendoStop(true, true)
 }
@@ -239,7 +320,7 @@ dashboard.bm = function (databm, sts) {
 dashboard.btnCash = function () {
   if (ifload == 0) {
     ifload = 1
-    dashboard.getEntityDetail(entities_i, "CASH")
+    dashboard.getEntityDetail(dashboard.name(), "CASH")
     $(".tab-content").hide()
   }
   if (varactiveentity.length > 0) {
@@ -356,7 +437,7 @@ dashboard.btnCash = function () {
 dashboard.btnTrade = function () {
   if (ifload == 0) {
     ifload = 1
-    dashboard.getEntityDetail(entities_i, "TRADE")
+    dashboard.getEntityDetail(dashboard.name(), "TRADE")
     $(".tab-content").hide()
   }
   if (varactiveentity.length > 0) {
