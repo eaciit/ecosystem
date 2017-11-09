@@ -310,6 +310,24 @@ dashboard.getEntityDetail = function (entityName, changetradeorcash) {
   })
 }
 
+dashboard.bmnots = function (databm, sts) {
+  if (typeof databm != 'undefined'){
+    if (databm < 1000000000) {
+      var databmr = databm / 1000000
+      databmr = currencynum(databmr)
+      databmr = '$'+ databmr + " M"
+      return databmr
+    } else if (databm >= 1000000000) {
+      var databmr = databm / 1000000000
+      databmr = currencynum(databmr)
+      databmr = '$'+ databmr + " B"
+      return databmr
+    }
+  }else{
+    return ''
+  }
+}
+
 dashboard.bm = function (databm, sts) {
   if (databm < 1000000000) {
     var databmr = databm / 1000000
@@ -322,6 +340,21 @@ dashboard.bm = function (databm, sts) {
     databmr = databmr + " B"
     return databmr
   }
+}
+
+dashboard.tradecash = function (dataimport, valimport) {
+  var keyMap = {
+      product: 'product2',
+      value: 'value2'
+    };
+
+  var tradeimport_val = dataimport.map(function(obj) {
+    return _.mapKeys(obj, function(value, key) {
+      return keyMap[key];
+    });
+  });
+  var aftertradecash = _.merge(valimport, tradeimport_val)
+  return aftertradecash
 }
 
 dashboard.btnCash = function () {
@@ -341,20 +374,7 @@ dashboard.btnCash = function () {
     cashinward = dashboard.activeEntity().product.Cash.inward;
     var cashoutward = []
     cashoutward = dashboard.activeEntity().product.Cash.outward;
-
-    var keyMap = {
-      product: 'product2',
-      value: 'value2'
-    };
-
-    var cashoutward_val = cashoutward.map(function (obj) {
-      return _.mapKeys(obj, function (value, key) {
-        return keyMap[key];
-      });
-    });
-    var inwardoutward = _.merge(cashinward, cashoutward_val)
-
-    dashboard.activeEntityDetail.dataProductMixA(inwardoutward)
+    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(cashinward,cashoutward))
     dashboard.activeEntityDetail.dataProductMixC("")
     dashboard.labelimport("Inward")
     dashboard.labelexport("Outward")
@@ -478,20 +498,7 @@ dashboard.btnTrade = function () {
     tradeimport = dashboard.activeEntity().product.Trade.import;
     var tradeother = []
     tradeother = dashboard.activeEntity().product.Trade.other;
-
-    var keyMap = {
-      product: 'product2',
-      value: 'value2'
-    };
-
-    var tradeimport_val = tradeimport.map(function (obj) {
-      return _.mapKeys(obj, function (value, key) {
-        return keyMap[key];
-      });
-    });
-    var exportimport = _.merge(tradeexport, tradeimport_val)
-
-    dashboard.activeEntityDetail.dataProductMixA(exportimport)
+    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(tradeexport,tradeimport))
     dashboard.activeEntityDetail.dataProductMixC(tradeother)
     dashboard.labelimport("Export")
     dashboard.labelexport("Import")
