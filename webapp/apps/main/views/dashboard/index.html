@@ -359,10 +359,10 @@
               </thead>
               <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixA" >
                 <tr>
-                  <td data-bind="text: product"></td>
-                  <td width="15%" align="right" data-bind="text: '$'+dashboard.bm(value, '')"></td>
-                   <td data-bind="text:product2"></td>
-                  <td width="15%" align="right" data-bind="text: '$'+dashboard.bm(value2, '')"></td>
+                  <td data-bind="text: $data.product"></td>
+                  <td width="15%" align="right" data-bind="text: dashboard.bmnots($data.value, '')"></td>
+                   <td data-bind="text: $data.product2"></td>
+                  <td width="15%" align="right" data-bind="text: dashboard.bmnots($data.value2, '')"></td>
                 </tr>
               </tbody>
             </table>
@@ -373,7 +373,7 @@
               <tbody data-bind="foreach: dashboard.activeEntityDetail.dataProductMixC">
                 <tr>
                   <td data-bind="text: product"></td>
-                  <td align="right" data-bind="text:  '$'+dashboard.bm(value, '')"></td>   
+                  <td align="right" data-bind="text:  dashboard.bm(value, '')"></td>   
                 </tr>
               </tbody>
             </table>
