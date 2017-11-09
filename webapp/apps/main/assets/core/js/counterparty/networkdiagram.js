@@ -227,12 +227,10 @@ filter.loadAll = function () {
   filter.loadGroupNames()
 
   filter.selectedFilters.subscribe(function () {
-    if (!network.isExpanding) {
-      network.clean()
+    // Remove if clause if you want the filter to be realtime data update
+    if (network.isExpanding) {
+      network.loadData()
     }
-
-    network.isExpanding = false
-    network.loadData()
   })
 }
 
@@ -251,6 +249,11 @@ network.clean = function () {
 
 network.loadData = function () {
   viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", filter.selectedFilters(), function (data) {
+    if (!network.isExpanding) {
+      network.clean()
+      network.isExpanding = false
+    }
+
     network.processData(data)
   })
 }

@@ -31,7 +31,7 @@
       <select name="Site" style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
-      <select name="Site" style="width:60px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      <select name="Site" style="width:95px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
       <select name="Site" style="width:95px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
@@ -52,7 +52,7 @@
       <input type="text" id="datePicker" data-bind="kendoDatePicker:{ value:new Date(), format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedDate }" class="filter-space">
     </div>
     <div class="menu-counterparty">
-      <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:filter.loadAll">Go</div>
+      <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:network.loadData">Go</div>
     </div>
     <div class="menu-counterparty">
       <img width="20px" src="/main/static/3rdparty/img/pdf.png" alt="pdf" onclick="counterparty.getPDF('#setarea')">

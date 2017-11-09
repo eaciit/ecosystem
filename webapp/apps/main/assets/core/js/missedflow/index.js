@@ -162,9 +162,10 @@ filter.loadAll = function () {
   filter.loadGroupNames()
   missedflow.loadGraphData()
 
-  filter.selectedFilters.subscribe(function () {
-    missedflow.loadGraphData()
-  })
+  // Enable this if you want the filter to be realtime load
+  // filter.selectedFilters.subscribe(function () {
+  //   missedflow.loadGraphData()
+  // })
 }
 
 missedflow.loadGraphData = function () {
