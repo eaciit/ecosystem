@@ -578,37 +578,40 @@ network.generateLegend = function (parent) {
     y += 30
   })
 
-  texts = ["SCB Flow", "Missed Flow", "Intragroup Flow"]
-  var indicators = ["M", "S", "I"]
-
-  _.each(texts, function (t, i) {
-    g.append("svg:line")
-      .attr("x1", w - 5 - pad)
-      .attr("x2", w - 55 - pad)
-      .attr("y1", y)
-      .attr("y2", y)
-      .attr("class", "link missed")
-
-    g.append("svg:circle")
-      .attr("r", 10)
-      .attr("cx", w - 30 - pad)
-      .attr("cy", y)
-      .attr("class", "missed")
-
-    g.append("svg:text")
-      .attr("x", w - 30 - pad)
-      .attr("y", y + 4)
-      .attr("text-anchor", "middle")
-      .text(indicators[i])
-
-    g.append("svg:text")
-      .attr("text-anchor", "end")
-      .attr("x", w - 65 - pad)
-      .attr("y", y + 4)
-      .text(t)
-
-    y += 30
-  })
+  // Don't show flow legend if R -> Relationship Diagram
+  if (counterparty.activeGraphIndicator() == "R") {
+    texts = ["SCB Flow", "Missed Flow", "Intragroup Flow"]
+    var indicators = ["M", "S", "I"]
+  
+    _.each(texts, function (t, i) {
+      g.append("svg:line")
+        .attr("x1", w - 5 - pad)
+        .attr("x2", w - 55 - pad)
+        .attr("y1", y)
+        .attr("y2", y)
+        .attr("class", "link missed")
+  
+      g.append("svg:circle")
+        .attr("r", 10)
+        .attr("cx", w - 30 - pad)
+        .attr("cy", y)
+        .attr("class", "missed")
+  
+      g.append("svg:text")
+        .attr("x", w - 30 - pad)
+        .attr("y", y + 4)
+        .attr("text-anchor", "middle")
+        .text(indicators[i])
+  
+      g.append("svg:text")
+        .attr("text-anchor", "end")
+        .attr("x", w - 65 - pad)
+        .attr("y", y + 4)
+        .text(t)
+  
+      y += 30
+    })
+  }
 }
 
 network.generate = function () {
