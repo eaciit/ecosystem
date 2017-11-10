@@ -1,7 +1,7 @@
 var missedflow = {}
 missedflow.data = ko.observableArray([])
 missedflow.activeEntityName = ko.observable("")
-missedflow.activeGroupName = ko.observable("DOW CHEMICAL GROUP")
+missedflow.activeGroupName = ko.observable("")
 missedflow.activeEntityCOI = ko.observable("")
 missedflow.highlightedNode = ko.observable("")
 missedflow.highlightedLinks = ko.observableArray([])
