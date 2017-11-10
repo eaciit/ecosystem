@@ -310,36 +310,34 @@ dashboard.getEntityDetail = function (entityName, changetradeorcash) {
   })
 }
 
-dashboard.bmnots = function (databm, sts) {
-  if (typeof databm != 'undefined'){
-    if (databm < 1000000000) {
-      var databmr = databm / 1000000
-      databmr = currencynum(databmr)
-      databmr = '$'+ databmr + " M"
-      return databmr
-    } else if (databm >= 1000000000) {
-      var databmr = databm / 1000000000
-      databmr = currencynum(databmr)
-      databmr = '$'+ databmr + " B"
-      return databmr
-    }
+dashboard.bmnots = function (num, sts) {
+  if (typeof num != 'undefined'){
+    if (num >= 1000000000) {
+        return '$'+ currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
+     }
+     if (num >= 1000000) {
+        return '$'+ currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
+     }
+     if (num >= 1000) {
+        return '$'+ currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
+     }
+     return '$'+ currencynum(num.toFixed(2));
   }else{
     return ''
   }
 }
 
-dashboard.bm = function (databm, sts) {
-  if (databm < 1000000000) {
-    var databmr = databm / 1000000
-    databmr = currencynum(databmr)
-    databmr = databmr + " M"
-    return databmr
-  } else if (databm >= 1000000000) {
-    var databmr = databm / 1000000000
-    databmr = currencynum(databmr)
-    databmr = databmr + " B"
-    return databmr
-  }
+dashboard.bm = function (num, sts) {
+   if (num >= 1000000000) {
+        return currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
+     }
+     if (num >= 1000000) {
+        return currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
+     }
+     if (num >= 1000) {
+        return currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
+     }
+     return currencynum(num.toFixed(2));
 }
 
 dashboard.tradecash = function (dataimport, valimport) {
