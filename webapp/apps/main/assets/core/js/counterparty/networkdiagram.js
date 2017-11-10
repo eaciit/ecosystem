@@ -789,6 +789,7 @@ network.generate = function () {
     .attr("class", "pathText")
     .attr("dy", 3)
 
+
   pathText1.append("textPath")
     .attr("xlink:href", function (d, i) {
       return "#linkId_" + i
@@ -850,8 +851,8 @@ network.generate = function () {
       return c
     })
     .on("mouseover", function (d) {
-      tips.show(d)
       highlightLink(d.name)
+      tips.show(d)
     })
     .on("mouseout", unhighlightLink)
 
@@ -994,9 +995,6 @@ network.generate = function () {
 
   function unhighlightLink() {
     d3.selectAll(".link.selected").classed("selected", false)
-    setTimeout(function () {
-      tips.hide();
-    }, 3000);
   }
 
   function expand(d) {
@@ -1028,6 +1026,7 @@ network.generate = function () {
     }).remove()
   }
 
+
   tips.html(function (d) {
     var name = d.name
     var html = '<table class="tooltip-table">' +
@@ -1053,8 +1052,22 @@ network.generate = function () {
       '</tr>' +
       '</table>'
     return html;
-  });
+  }); 
+
+    d3.select(".d3-tip")
+    .on("mouseleave",function(){
+      d3.select(".d3-tip")
+      .transition()
+      .delay(100)
+      .duration(600)
+      .style("opacity",0)
+      .style('pointer-events', 'none') 
+    })
+
 }
+
+
+
 
 network.bubble = {}
 network.bubble.nodes = []
@@ -1157,8 +1170,6 @@ network.bubble.generate = function () {
         .attr("r", function (d) {
           return d.r
         })
-
-      // setTimeout(function(){tips.hide(); }, 3000);
     })
 
   bubbles.append("svg:circle")
