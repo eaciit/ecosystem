@@ -647,6 +647,7 @@ network.generate = function () {
   d3.select("#graph").selectAll("*").remove()
 
   /* Initialize tooltip */
+  var tipsDismiss = false
   var tips = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0]);
@@ -852,7 +853,6 @@ network.generate = function () {
     })
     .on("mouseover", function (d) {
       highlightLink(d.name)
-      tips.show(d)
     })
     .on("mouseout", unhighlightLink)
 
@@ -865,6 +865,17 @@ network.generate = function () {
       var c = d.class
       c += d.role == "BUYER" ? " buyer" : ""
       return c
+    })
+    .on("mouseover", function (d) {
+      tips.show(d)
+    })
+    .on("mouseout", function () {
+      tipsDismiss = true
+      setTimeout(function () {
+        if (tipsDismiss) {
+          tips.hide()
+        }
+      }, 300);
     })
 
   circle.append("svg:text")
@@ -1052,16 +1063,19 @@ network.generate = function () {
       '</tr>' +
       '</table>'
     return html;
-  }); 
+  });
 
-    d3.select(".d3-tip")
-    .on("mouseleave",function(){
-      d3.select(".d3-tip")
-      .transition()
-      .delay(100)
-      .duration(600)
-      .style("opacity",0)
-      .style('pointer-events', 'none') 
+  d3.select(".d3-tip")
+    .on("mouseover", function () {
+      tipsDismiss = false
+    })
+    .on("mouseout", function () {
+      tipsDismiss = true
+      setTimeout(function () {
+        if (tipsDismiss) {
+          tips.hide()
+        }
+      }, 300);
     })
 
 }
@@ -1095,9 +1109,10 @@ network.bubble.generate = function () {
   })
 
   /* Initialize tooltip */
+  var tipsDismiss = false
   var tips = d3.tip()
     .attr('class', 'd3-tip')
-    .offset([-10, 0]);
+    .offset([0, 0]);
 
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
@@ -1150,7 +1165,8 @@ network.bubble.generate = function () {
         .attr("r", function (d) {
           return d.r * 1.1 + 10
         })
-      tips.show(d)
+
+      tipsDismiss = false
     })
     .on("mouseout", function (d) {
       d3.select(this)
@@ -1187,6 +1203,16 @@ network.bubble.generate = function () {
       return d.r
     })
     .attr("class", "outer-bubble")
+    .on("mouseover", function (d) {
+      tips.show(d)
+    })
+    .on("mouseout", function () {
+      setTimeout(function () {
+        if (tipsDismiss) {
+          tips.hide()
+        }
+      }, 300);
+    })
 
   bubbles.append("svg:text")
     .attr("y", "-1em")
@@ -1241,6 +1267,20 @@ network.bubble.generate = function () {
       '</table>'
     return html;
   });
+
+  d3.select(".d3-tip")
+    .on("mouseover", function () {
+      tipsDismiss = false
+    })
+    .on("mouseout", function () {
+      tipsDismiss = true
+      setTimeout(function () {
+        if (tipsDismiss) {
+          tips.hide()
+        }
+      }, 300);
+    })
+
 }
 
 network.highlight = function (c) {
