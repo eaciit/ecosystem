@@ -12,7 +12,15 @@ counterparty.switchGraph = function (element, event) {
 
   if (e.attr("name") != counterparty.activeGraphIndicator()) {
     counterparty.activeGraphIndicator(e.attr("name"))
-    network.loadData()
+
+    // If there is a data in replationship network do not load new data
+    // Instead just generate the graph from existing data
+    // else clean and reload all
+    if (e.attr("name") == "R" && network.nodes.length > 0) {
+      network.generate()
+    } else {
+      network.loadData()
+    }
   }
 }
 
@@ -243,9 +251,13 @@ network.level = 0
 network.isExpanding = false
 
 network.clean = function () {
-  network.rawLinks = []
-  network.links = []
-  network.nodes = []
+  if (counterparty.activeGraphIndicator() == "R") {
+    network.rawLinks = []
+    network.links = []
+    network.nodes = []
+  } else {
+    network.bubble.nodes = []
+  }
 }
 
 network.loadData = function () {
@@ -335,6 +347,9 @@ network.loadDetailCSV = function () {
 }
 
 network.processData = function (data) {
+  var existingNodes = counterparty.activeGraphIndicator() == "R" ? network.nodes : network.bubble.nodes
+  var existingRawLinks = counterparty.activeGraphIndicator() == "R" ? network.rawLinks : []
+
   var parent = _.keys(data)[0]
   // Group the node based on the counterparty node, so the multiple link will be merged into 1 link only
   var nodes = _(data[parent])
@@ -392,7 +407,7 @@ network.processData = function (data) {
   })
 
   // Get previous banks of the node that now become center
-  var prevNodeThatNowBecomeCenter = _.find(network.nodes, {
+  var prevNodeThatNowBecomeCenter = _.find(existingNodes, {
     name: parent
   })
   var prevNodeThatNowBecomeCenterBanks = prevNodeThatNowBecomeCenter ? prevNodeThatNowBecomeCenter.banks : []
@@ -408,7 +423,7 @@ network.processData = function (data) {
   })
 
   // Get the previous nodes if exist and remove the duplicate nodes
-  var prevNodes = _(network.nodes).filter(function (e) {
+  var prevNodes = _(existingNodes).filter(function (e) {
     return (_.findIndex(nodes, {
       name: e.name
     }) == -1)
@@ -419,8 +434,8 @@ network.processData = function (data) {
 
   // Merge the rawLinks
   // RawLinks is used because the links that used by d3 is modified, so we need to keep the original version
-  var links = rawLinks.concat(network.rawLinks)
-  network.rawLinks = JSON.parse(JSON.stringify(links))
+  var links = rawLinks.concat(existingRawLinks)
+  existingRawLinks = JSON.parse(JSON.stringify(links))
 
   // Sort links by source, then target
   links.sort(function (a, b) {
@@ -491,15 +506,19 @@ network.processData = function (data) {
     return n
   })
 
-  // Keep track of network levels
-  network.level += 1
-  network.nodes = nodes
-  network.links = links
-
   // R for Relationship
   if (counterparty.activeGraphIndicator() == "R") {
+    // Keep track of network levels
+    network.level += 1
+    network.nodes = nodes
+    network.links = links
+    network.rawLinks = existingRawLinks
+
     network.generate()
   } else {
+    // Only save nodes if a bubble
+    // Not so efficient code but will do right now
+    network.bubble.nodes = nodes
     network.bubble.generate()
   }
 }
@@ -582,7 +601,7 @@ network.generateLegend = function (parent) {
   if (counterparty.activeGraphIndicator() == "R") {
     texts = ["SCB Flow", "Missed Flow", "Intragroup Flow"]
     var indicators = ["M", "S", "I"]
-  
+
     _.each(texts, function (t, i) {
       g.append("svg:line")
         .attr("x1", w - 5 - pad)
@@ -590,25 +609,25 @@ network.generateLegend = function (parent) {
         .attr("y1", y)
         .attr("y2", y)
         .attr("class", "link missed")
-  
+
       g.append("svg:circle")
         .attr("r", 10)
         .attr("cx", w - 30 - pad)
         .attr("cy", y)
         .attr("class", "missed")
-  
+
       g.append("svg:text")
         .attr("x", w - 30 - pad)
         .attr("y", y + 4)
         .attr("text-anchor", "middle")
         .text(indicators[i])
-  
+
       g.append("svg:text")
         .attr("text-anchor", "end")
         .attr("x", w - 65 - pad)
         .attr("y", y + 4)
         .text(t)
-  
+
       y += 30
     })
   }
@@ -1035,6 +1054,7 @@ network.generate = function () {
 }
 
 network.bubble = {}
+network.bubble.nodes = []
 network.bubble.force = d3.forceSimulation()
 
 network.bubble.generate = function () {
@@ -1043,7 +1063,7 @@ network.bubble.generate = function () {
 
   d3.select("#graph").selectAll("*").remove()
 
-  var nodes = network.nodes
+  var nodes = network.bubble.nodes
   // Readjust the node raidus for Bubble Diagram
   var min = 25
   var max = 100
