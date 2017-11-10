@@ -170,6 +170,43 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 	return c.SetResultOK(results)
 }
 
+func (c *DashboardController) GetDomicileData(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	payload := DashboardPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	sql := `SELECT DISTINCT cust_group_domicile AS country
+  FROM ` + c.tableName() + ` 
+  WHERE ` + c.isNTBClause() + ` <> "NA" 
+  AND cust_group_name = "` + payload.GroupName + `" 
+  AND ` + c.commonWhereClause()
+
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err = qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	returnData := []string{}
+	for _, v := range results {
+		returnData = append(returnData, v.GetString("country"))
+	}
+
+	return c.SetResultOK(returnData)
+}
+
 func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {

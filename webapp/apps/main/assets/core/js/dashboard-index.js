@@ -149,7 +149,8 @@ filter.loadAll = function () {
   filter.payload.subscribe(function (nv) {
     if (nv.groupName != "") {
       widget.loadData()
-      dashboard.loadDataIntoMap()
+      dashboard.loadEntitiesDataIntoMap()
+      dashboard.loadDomicileDataIntoMap()
     }
   })
 
@@ -203,19 +204,50 @@ dashboard.getMapData = function (callback) {
   })
 }
 
-var activeShape
+dashboard.getDomicileData = function (callback) {
+  viewModel.ajaxPostCallback("/main/dashboard/getdomiciledata", filter.payload(), function (data) {
+    $.getJSON("/main/static/core/js/countries.json", function (countries) {
+      var result = _(data)
+        .map(function (e) {
+          var c = _.find(countries, {
+            "country_code": e
+          })
+          
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: c.latlng.reverse(),
+            },
+            properties: {
+              country: e,
+              name: c.name,
+            }
+          }
+        })
+        .value()
+
+      callback({
+        type: "FeatureCollection",
+        features: result
+      })
+    })
+  })
+}
 
 dashboard.generateMapbox = function () {
   var map = undefined
-  var circles = undefined
-  var texts = undefined
+  var entitiesCircles = undefined
+  var entitiesTexts = undefined
+  var domicileCircles = undefined
+  var domicileTexts = undefined
 
   function generate() {
     L.mapbox.accessToken = 'pk.eyJ1IjoiYmFndXNjYWh5b25vIiwiYSI6ImNqOWpqbzBjYjByNXEzM2xnZ2ppcDBpN2EifQ.pFc9EQsAK5vd4ZWgCcAPJg'
     map = L.mapbox.map('map', 'mapbox.light')
       .setView([1.3, 103.8], 3)
 
-    circles = L.geoJson(null, {
+    entitiesCircles = L.geoJson(null, {
       pointToLayer: function (feature, ll) {
         return L.circle(ll, feature.properties.radius, {
           color: "white",
@@ -226,7 +258,30 @@ dashboard.generateMapbox = function () {
       }
     }).addTo(map)
 
-    texts = L.geoJson(null, {
+    entitiesTexts = L.geoJson(null, {
+      pointToLayer: function (feature, ll) {
+        return L.marker(ll, {
+          icon: L.divIcon({
+            className: 'label',
+            html: feature.properties.country,
+            iconSize: [30, 12]
+          })
+        })
+      }
+    }).addTo(map)
+
+    domicileCircles = L.geoJson(null, {
+      pointToLayer: function (feature, ll) {
+        return L.circle(ll, 1200000, {
+          color: "white",
+          weight: 0,
+          fillColor: "#e15613",
+          fillOpacity: 0.5
+        })
+      }
+    }).addTo(map)
+
+    domicileTexts = L.geoJson(null, {
       pointToLayer: function (feature, ll) {
         return L.marker(ll, {
           icon: L.divIcon({
@@ -239,15 +294,37 @@ dashboard.generateMapbox = function () {
     }).addTo(map)
   }
 
-  dashboard.loadDataIntoMap = function () {
+  dashboard.loadEntitiesDataIntoMap = function () {
     dashboard.getMapData(function (data) {
-      circles.clearLayers()
-      texts.clearLayers()
+      entitiesCircles.clearLayers()
+      entitiesTexts.clearLayers()
 
-      circles.addData(data)
-      texts.addData(data)
+      entitiesCircles.addData(data)
+      entitiesTexts.addData(data)
 
-      circles.eachLayer(function (layer) {
+      entitiesCircles.eachLayer(function (layer) {
+        var prop = layer.feature.properties
+        var template = kendo.template($("#tooltip-template").html())
+
+        layer.bindPopup(template(prop))
+
+        layer.on("mouseover", function (e) {
+          dashboard.activeEntities(prop)
+          this.openPopup()
+        })
+      })
+    })
+  }
+
+  dashboard.loadDomicileDataIntoMap = function () {
+    dashboard.getDomicileData(function (data) {
+      domicileCircles.clearLayers()
+      domicileTexts.clearLayers()
+
+      domicileCircles.addData(data)
+      domicileTexts.addData(data)
+
+      domicileCircles.eachLayer(function (layer) {
         var prop = layer.feature.properties
         var template = kendo.template($("#tooltip-template").html())
 
