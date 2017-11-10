@@ -2,6 +2,7 @@ var missedflow = {}
 missedflow.data = ko.observableArray([])
 missedflow.activeEntityName = ko.observable("")
 missedflow.activeGroupName = ko.observable("")
+missedflow.initialGroupName = ko.observable("")
 missedflow.activeEntityCOI = ko.observable("")
 missedflow.highlightedNode = ko.observable("")
 missedflow.highlightedLinks = ko.observableArray([])
@@ -15,7 +16,11 @@ missedflow.resetHighlight = function () {
 
 missedflow.loadAll = function () {
   missedflow.activeGroupName($.urlParam("entityGroup"))
+  missedflow.initialGroupName($.urlParam("entityGroup"))
   missedflow.activeEntityCOI($.urlParam("entityCOI"))
+
+  // Update the view model global filter
+  viewModel.globalFilter.groupname($.urlParam("entityGroup"))
 }
 
 var filter = {}
@@ -154,7 +159,6 @@ filter.loadAll = function () {
   })
 
   filter.selectedGroupName.subscribe(function () {
-    viewModel.globalFilter.groupname(filter.selectedGroupName())
     filter.loadEntities()
   })
 

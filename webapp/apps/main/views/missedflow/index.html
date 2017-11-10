@@ -95,13 +95,13 @@
 </div>
 <div class="container-fluid bottom-navigation">
   <ul>
-    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + missedflow.activeGroupName() + '&entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=R' }">
+    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + missedflow.initialGroupName() + '&entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=R' }">
       <li>Relationship</li>
     </a>
-    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + missedflow.activeGroupName() + '&entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=B' }">
+    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + missedflow.initialGroupName() + '&entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=B' }">
       <li>Buyers</li>
     </a>
-    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + missedflow.activeGroupName() + '&entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=S' }">
+    <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + missedflow.initialGroupName() + '&entityName=' + missedflow.activeEntityName() + '&entityCOI=' + missedflow.activeEntityCOI() + '&activeGraphIndicator=S' }">
       <li>Suppliers</li>
     </a>
     <li class="active">Sankey Diagram</li>

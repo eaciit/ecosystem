@@ -3,7 +3,8 @@ counterparty.detail = ko.observableArray([])
 counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
-counterparty.activeGroupName = ko.observable("DOW CHEMICAL GROUP")
+counterparty.activeGroupName = ko.observable("")
+counterparty.initialGroupName = ko.observable("")
 // Graph indicator R = Relationship, B = Buyer only (bubble), S = Supplier only (bubble)
 counterparty.activeGraphIndicator = ko.observable("R")
 
@@ -61,14 +62,17 @@ counterparty.loadAll = function () {
         filter.selectedRole("PAYEE")
       }
     } else {
-      window.location.href = "/main/missedflow/index?entityName=" + counterparty.activeEntityName() + "&entityGroup=" + counterparty.activeGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
+      window.location.href = "/main/missedflow/index?entityName=" + counterparty.activeEntityName() + "&entityGroup=" + counterparty.initialGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
     }
   })
 
-  // TODO: Enable this later
   counterparty.activeGroupName($.urlParam("entityGroup"))
+  counterparty.initialGroupName($.urlParam("entityGroup"))
   counterparty.activeEntityCOI($.urlParam("entityCOI"))
   counterparty.activeGraphIndicator($.urlParam("activeGraphIndicator") ? $.urlParam("activeGraphIndicator") : "R")
+
+  // Update the viewModel global fitler
+  viewModel.globalFilter.groupname($.urlParam("entityGroup"))
 }
 
 var filter = {}
@@ -229,7 +233,6 @@ filter.loadAll = function () {
 
   filter.selectedGroupName.subscribe(function (nv) {
     counterparty.activeGroupName(nv)
-    viewModel.globalFilter.groupname(nv)
     filter.loadEntities()
   })
 
