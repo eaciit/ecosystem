@@ -530,6 +530,7 @@ dashboard.btnTrade = function () {
     }
     if(suminflow == 0 && sumoutflow == 0) {
       dashboard.tablenoinflowoutflow(false)
+      dashboard.other(false)
       dashboard.nooutflow("")
       dashboard.noinflow("No IN, OUT Transaction")
       dashboard.labeltableno("No Transaction")
