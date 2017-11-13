@@ -533,18 +533,11 @@ network.generateLegend = function (parent) {
   var classes1 = ["center", "etb", "ntb"]
   var pad = 0
 
-  var title = g.append("text")
-    .attr("class", "legend-title")
-    .attr("text-anchor", "end")
-    .attr("x", w - 40)
-    .attr("y", 20)
-    .text("Legend")
-
-  var y = 40
+  var y = 10
   _.each(texts, function (t, i) {
     g.append("svg:circle")
       .attr("r", 10)
-      .attr("cx", w - 30 - pad)
+      .attr("cx", 30)
       .attr("cy", y)
       .attr("class", classes1[i])
       .on("mouseover", function () {
@@ -555,8 +548,7 @@ network.generateLegend = function (parent) {
       })
 
     g.append("svg:text")
-      .attr("text-anchor", "end")
-      .attr("x", w - 65 - pad)
+      .attr("x", 65)
       .attr("y", y + 4)
       .text(t)
 
@@ -569,7 +561,7 @@ network.generateLegend = function (parent) {
   _.each(texts, function (t, i) {
     g.append("svg:circle")
       .attr("r", 10)
-      .attr("cx", w - 15 - pad)
+      .attr("cx", 15)
       .attr("cy", y)
       .attr("class", "legend-circle etb " + classes2[i])
       .on("mouseover", function () {
@@ -581,7 +573,7 @@ network.generateLegend = function (parent) {
 
     g.append("svg:circle")
       .attr("r", 10 - i)
-      .attr("cx", w - 45 - pad)
+      .attr("cx", 45)
       .attr("cy", y)
       .attr("class", "legend-circle ntb " + classes2[i])
       .on("mouseover", function () {
@@ -592,8 +584,7 @@ network.generateLegend = function (parent) {
       })
 
     g.append("svg:text")
-      .attr("text-anchor", "end")
-      .attr("x", w - 65 - pad)
+      .attr("x", 65)
       .attr("y", y + 4)
       .text(t)
 
@@ -603,31 +594,30 @@ network.generateLegend = function (parent) {
   // Don't show flow legend if R -> Relationship Diagram
   if (counterparty.activeGraphIndicator() == "R") {
     texts = ["SCB Flow", "Missed Flow", "Intragroup Flow"]
-    var indicators = ["M", "S", "I"]
+    var indicators = ["S", "M", "I"]
 
     _.each(texts, function (t, i) {
       g.append("svg:line")
-        .attr("x1", w - 5 - pad)
-        .attr("x2", w - 55 - pad)
+        .attr("x1", 5)
+        .attr("x2", 55)
         .attr("y1", y)
         .attr("y2", y)
         .attr("class", "link missed")
 
       g.append("svg:circle")
         .attr("r", 10)
-        .attr("cx", w - 30 - pad)
+        .attr("cx", 30)
         .attr("cy", y)
         .attr("class", "missed")
 
       g.append("svg:text")
-        .attr("x", w - 30 - pad)
+        .attr("x", 30)
         .attr("y", y + 4)
         .attr("text-anchor", "middle")
         .text(indicators[i])
 
       g.append("svg:text")
-        .attr("text-anchor", "end")
-        .attr("x", w - 65 - pad)
+        .attr("x", 65)
         .attr("y", y + 4)
         .text(t)
 
