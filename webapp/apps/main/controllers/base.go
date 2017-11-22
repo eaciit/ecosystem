@@ -46,7 +46,6 @@ func (c *BaseController) isOpportunityClause() string {
 
 func (c *BaseController) isNTBClause() string {
 	return `(CASE WHEN ` + c.isOpportunityClause() + ` = "N" THEN "N"
-	WHEN ` + c.isOpportunityClause() + ` = "NA" THEN "NA"
 	WHEN ISNULL(cpty_sci_leid) || cpty_sci_leid = "null" || cpty_sci_leid = "Null" || cpty_sci_leid = "" THEN "Y"
 	ELSE "N" END)`
 }
