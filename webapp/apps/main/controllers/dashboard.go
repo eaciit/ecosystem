@@ -10,6 +10,7 @@ import (
 )
 
 type DashboardPayload struct {
+	Year          int
 	FromYearMonth int
 	ToYearMonth   int
 	EntityName    string
@@ -219,7 +220,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT LEFT(customer_bank, 4) AS bank, IFNULL(SUM(amount * rate),0) AS value,
+	sql := `SELECT LEFT(counterparty_bank, 4) AS bank, IFNULL(SUM(amount * rate),0) AS value,
   product_category, ` + c.customerRoleClause() + ` AS flow 
   FROM ` + c.tableName() + `
   WHERE cust_long_name = "` + payload.EntityName + `"
@@ -367,7 +368,7 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016`
+  AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -401,7 +402,7 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "BUYER" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016`
+  AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -435,7 +436,7 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016`
+  AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -469,7 +470,7 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016`
+  AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -503,7 +504,7 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "BUYER" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016`
+  AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -809,7 +810,7 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016 
+  AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -844,7 +845,7 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "BUYER" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016 
+  AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -879,7 +880,7 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016 
+  AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -914,7 +915,7 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016
+  AND transaction_year = ` + strconv.Itoa(payload.Year) + `
   GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -949,7 +950,7 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
   AND ` + c.customerRoleClause() + ` = "BUYER" 
   AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = 2016
+  AND transaction_year = ` + strconv.Itoa(payload.Year) + `
   GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)

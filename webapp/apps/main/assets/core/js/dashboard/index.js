@@ -120,7 +120,7 @@ filter.payload = ko.computed(function () {
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
-    year: moment(filter.selectedYear()).format("YYYY"),
+    year: parseInt(moment(filter.selectedYear()).format("YYYY")),
     groupName: filter.selectedGroup()
   }
 })
@@ -129,7 +129,7 @@ filter.payloadQuarter = function () {
   return {
     fromYearMonth: parseInt(moment().subtract(3, "months").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
-    year: moment(filter.selectedYear()).format("YYYY"),
+    year: parseInt(moment(filter.selectedYear()).format("YYYY")),
     groupName: filter.selectedGroup()
   }
 }

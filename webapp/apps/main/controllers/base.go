@@ -35,13 +35,20 @@ func (c *BaseController) commonWhereClause() string {
   AND source_system <> "HOGAN-IDS"`
 }
 
-func (c *BaseController) isNTBClause() string {
+func (c *BaseController) isOpportunityClause() string {
 	return `(CASE WHEN LEFT(counterparty_bank, 4) = "SCBL" THEN "N" 
 	WHEN source_system = "DTP" && ISNULL(counterparty_bank) THEN "N" 
 	WHEN source_system = "DTP" THEN "Y"
 	WHEN source_system = "OTP" && LENGTH(counterparty_bank) > 0 THEN "Y"
 	WHEN source_system = "OTP" THEN "NA"
 	ELSE "Y" END)`
+}
+
+func (c *BaseController) isNTBClause() string {
+	return `(CASE WHEN ` + c.isOpportunityClause() + ` = "N" THEN "N"
+	WHEN ` + c.isOpportunityClause() + ` = "NA" THEN "NA"
+	WHEN ISNULL(cpty_sci_leid) || cpty_sci_leid = "null" || cpty_sci_leid = "Null" || cpty_sci_leid = "" THEN "Y"
+	ELSE "N" END)`
 }
 
 func (c *BaseController) customerRoleClause() string {

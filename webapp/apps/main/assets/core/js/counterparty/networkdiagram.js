@@ -296,9 +296,10 @@ network.loadDetail = function (name) {
     }
   })
 
-  viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", {
-    relations: relations
-  }, function (data) {
+  var params = filter.selectedFilters()
+  params.relations = relations
+
+  viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", params, function (data) {
     counterparty.activeName(name)
     counterparty.detail(data)
     $('#modalDetail').modal('show')
@@ -329,9 +330,8 @@ network.loadDetailCSV = function () {
   })
 
   // Manual XHR based on stackoverflow jquery does not support responseType params
-  var data = {
-    relations: relations
-  }
+  var params = filter.selectedFilters()
+  params.relations = relations
 
   var xhr = new XMLHttpRequest()
   xhr.open("POST", "/main/counterparty/getdetailnetworkdiagramcsv", true)
@@ -346,7 +346,7 @@ network.loadDetailCSV = function () {
     }
   }
   xhr.responseType = "arraybuffer"
-  xhr.send(JSON.stringify(data))
+  xhr.send(JSON.stringify(params))
 }
 
 network.processData = function (data) {

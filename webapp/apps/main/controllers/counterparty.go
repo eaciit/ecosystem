@@ -67,8 +67,6 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 		} else {
 			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
 		}
-	} else {
-		sql += " AND transaction_year = 2016 "
 	}
 
 	// Filters for Role
@@ -274,7 +272,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	return nil
 }
 
-// Old Code / Probably never use it again
+// ================ Old Code / Probably never use it again
 func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
@@ -308,8 +306,6 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
 		} else {
 			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
 		}
-	} else {
-		sql += " AND transaction_year = 2016 "
 	}
 
 	// Filters for NTB/ETB

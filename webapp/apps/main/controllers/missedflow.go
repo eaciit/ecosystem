@@ -70,8 +70,6 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		} else {
 			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
 		}
-	} else {
-		sql += " AND transaction_year = 2016 "
 	}
 
 	// Filters for Role
