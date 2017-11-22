@@ -53,8 +53,7 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 	` + c.isNTBClause() + ` AS is_ntb,
   SUM(amount * rate) AS total
   FROM ` + c.tableName() + `
-  WHERE (LEFT(counterparty_bank, 4) <> 'SCBL' OR LEFT(customer_bank, 4) <> 'SCBL')
-	AND ` + c.commonWhereClause()
+  WHERE ` + c.commonWhereClause()
 
 	// Filters for Entity Name
 	if strings.ToUpper(payload.EntityName) != "ALL" {
