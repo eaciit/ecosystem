@@ -170,9 +170,10 @@ dashboard.getMapData = function (callback) {
             "country_code": e
           })
           var entities = _.map(items, 'entity')
+          var total = _.sum(_.map(items, 'total'))
 
-          maxVal = entities.length > maxVal ? entities.length : maxVal
-          minVal = entities.length < minVal ? entities.length : minVal
+          maxVal = total > maxVal ? total : maxVal
+          minVal = total < minVal ? total : minVal
 
           return {
             type: "Feature",
@@ -184,7 +185,7 @@ dashboard.getMapData = function (callback) {
               country: e,
               name: c.name,
               entities: entities,
-              value: entities.length
+              value: total
             }
           }
         })
@@ -212,7 +213,7 @@ dashboard.getDomicileData = function (callback) {
           var c = _.find(countries, {
             "country_code": e
           })
-          
+
           return {
             type: "Feature",
             geometry: {
@@ -272,7 +273,7 @@ dashboard.generateMapbox = function () {
 
     domicileCircles = L.geoJson(null, {
       pointToLayer: function (feature, ll) {
-        return L.circle(ll, 1200000, {
+        return L.circle(ll, 600000, {
           color: "white",
           weight: 0,
           fillColor: "#e15613",
@@ -323,18 +324,6 @@ dashboard.generateMapbox = function () {
 
       domicileCircles.addData(data)
       domicileTexts.addData(data)
-
-      domicileCircles.eachLayer(function (layer) {
-        var prop = layer.feature.properties
-        var template = kendo.template($("#tooltip-template").html())
-
-        layer.bindPopup(template(prop))
-
-        layer.on("mouseover", function (e) {
-          dashboard.activeEntities(prop)
-          this.openPopup()
-        })
-      })
     })
   }
 
@@ -388,43 +377,43 @@ dashboard.getEntityDetail = function (entityName, changetradeorcash) {
 }
 
 dashboard.bmnots = function (num, sts) {
-  if (typeof num != 'undefined'){
+  if (typeof num != 'undefined') {
     if (num >= 1000000000) {
-        return '$'+ currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
-     }
-     if (num >= 1000000) {
-        return '$'+ currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
-     }
-     if (num >= 1000) {
-        return '$'+ currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
-     }
-     return '$'+ currencynum(num.toFixed(2));
-  }else{
+      return '$' + currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
+    }
+    if (num >= 1000000) {
+      return '$' + currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
+    }
+    if (num >= 1000) {
+      return '$' + currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
+    }
+    return '$' + currencynum(num.toFixed(2));
+  } else {
     return ''
   }
 }
 
 dashboard.bm = function (num, sts) {
-   if (num >= 1000000000) {
-        return currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
-     }
-     if (num >= 1000000) {
-        return currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
-     }
-     if (num >= 1000) {
-        return currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
-     }
-     return currencynum(num.toFixed(2));
+  if (num >= 1000000000) {
+    return currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
+  }
+  if (num >= 1000000) {
+    return currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
+  }
+  if (num >= 1000) {
+    return currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
+  }
+  return currencynum(num.toFixed(2));
 }
 
 dashboard.tradecash = function (dataimport, valimport) {
   var keyMap = {
-      product: 'product2',
-      value: 'value2'
-    };
+    product: 'product2',
+    value: 'value2'
+  };
 
-  var tradeimport_val = dataimport.map(function(obj) {
-    return _.mapKeys(obj, function(value, key) {
+  var tradeimport_val = dataimport.map(function (obj) {
+    return _.mapKeys(obj, function (value, key) {
       return keyMap[key];
     });
   });
@@ -449,7 +438,7 @@ dashboard.btnCash = function () {
     cashinward = dashboard.activeEntity().product.Cash.inward;
     var cashoutward = []
     cashoutward = dashboard.activeEntity().product.Cash.outward;
-    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(cashinward,cashoutward))
+    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(cashinward, cashoutward))
     dashboard.activeEntityDetail.dataProductMixC("")
     dashboard.labelimport("Inward")
     dashboard.labelexport("Outward")
@@ -461,7 +450,7 @@ dashboard.btnCash = function () {
     var suminflow = _.sumBy(datainflow, 'value')
     var sumoutflow = _.sumBy(dataoutflow, 'value')
     var colorval = ["#000000", "#0070c0", "#60d5a8", "#8faadc"]
-    
+
     if (suminflow == 0) {
       dashboard.noinflow("No IN Transaction")
       dashboard.inflow(false)
@@ -476,12 +465,12 @@ dashboard.btnCash = function () {
       dashboard.nooutflow("")
       dashboard.outflow(true)
     }
-    if(suminflow == 0 && sumoutflow == 0) {
+    if (suminflow == 0 && sumoutflow == 0) {
       dashboard.tablenoinflowoutflow(false)
       dashboard.nooutflow("")
       dashboard.noinflow("No IN, OUT Transaction")
       dashboard.labeltableno("No Transaction")
-    }else{
+    } else {
       dashboard.tablenoinflowoutflow(true)
       dashboard.labeltableno("")
     }
@@ -573,7 +562,7 @@ dashboard.btnTrade = function () {
     tradeimport = dashboard.activeEntity().product.Trade.import;
     var tradeother = []
     tradeother = dashboard.activeEntity().product.Trade.other;
-    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(tradeexport,tradeimport))
+    dashboard.activeEntityDetail.dataProductMixA(dashboard.tradecash(tradeexport, tradeimport))
     dashboard.activeEntityDetail.dataProductMixC(tradeother)
     dashboard.labelimport("Export")
     dashboard.labelexport("Import")
@@ -603,13 +592,13 @@ dashboard.btnTrade = function () {
       dashboard.nooutflow("")
       dashboard.outflow(true)
     }
-    if(suminflow == 0 && sumoutflow == 0) {
+    if (suminflow == 0 && sumoutflow == 0) {
       dashboard.tablenoinflowoutflow(false)
       dashboard.other(false)
       dashboard.nooutflow("")
       dashboard.noinflow("No IN, OUT Transaction")
       dashboard.labeltableno("No Transaction")
-    }else{
+    } else {
       dashboard.tablenoinflowoutflow(true)
       dashboard.labeltableno("")
     }
