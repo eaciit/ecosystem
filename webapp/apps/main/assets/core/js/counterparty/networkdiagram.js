@@ -870,6 +870,9 @@ network.generate = function () {
     })
 
   circle.append("svg:text")
+    .attr("class", function (d) {
+      return "middle " + d.class
+    })
     .attr("y", "-1em")
     .tspans(function (d) {
       var matches = d.name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
@@ -1155,7 +1158,7 @@ network.bubble.generate = function () {
           return d.r * 1.1 + 10
         })
 
-        tipsDismiss = false
+      tipsDismiss = false
     })
     .on("mouseout", function (d) {
       d3.select(this)

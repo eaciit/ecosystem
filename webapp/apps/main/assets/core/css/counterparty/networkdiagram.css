@@ -95,11 +95,17 @@ circle.ntb {
 }
 
 circle.center {
-  fill: #f1963d;
+  fill: #000f46;
 }
 
 text {
   font: 10px sans-serif;
+}
+
+text.middle.center {
+  fill: white;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 text.shadow {
