@@ -1209,6 +1209,9 @@ network.bubble.generate = function () {
 
   bubbles.append("svg:text")
     .attr("y", "-1em")
+    .attr("class", function (d) {
+      return "middle " + d.class
+    })
     .tspans(function (d) {
       var matches = d.name.match(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]/)
       if (matches) {

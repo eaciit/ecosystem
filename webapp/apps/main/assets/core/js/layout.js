@@ -1,5 +1,5 @@
-viewModel.appName = ko.observable('Ecosystem')
-viewModel.title = ko.observable('Ecosystem')
+viewModel.appName = ko.observable('Banking the Ecosystem')
+viewModel.title = ko.observable('Banking the Ecosystem')
 viewModel.title.subscribe(function (value) {
   var text = viewModel.appName() + (value != '' ? (' | ' + value) : '')
   jQuery('title').text(text)

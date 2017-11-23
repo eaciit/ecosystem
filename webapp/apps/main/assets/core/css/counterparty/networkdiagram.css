@@ -54,8 +54,8 @@ marker.missed {
 }
 
 .wrapper.bubble:hover>circle.inner-bubble {
-  fill: #fad749;
-  stroke: #fad749;
+  fill: #BDC3C7;
+  stroke: #BDC3C7;
 }
 
 circle.outer-bubble {
