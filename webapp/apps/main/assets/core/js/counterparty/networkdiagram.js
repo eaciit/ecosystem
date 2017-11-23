@@ -640,6 +640,7 @@ network.generate = function () {
   var tipsDismiss = false
   var tips = d3.tip()
     .attr('class', 'd3-tip')
+    .attr('id', 'd3-tip-network')
     .offset([-10, 0]);
 
   var svg = d3.select("#graph").append("svg:svg")
@@ -1055,7 +1056,7 @@ network.generate = function () {
     return html;
   });
 
-  d3.select(".d3-tip")
+  d3.select("#d3-tip-network")
     .on("mouseover", function () {
       tipsDismiss = false
     })
@@ -1069,9 +1070,6 @@ network.generate = function () {
     })
 
 }
-
-
-
 
 network.bubble = {}
 network.bubble.nodes = []
@@ -1102,6 +1100,7 @@ network.bubble.generate = function () {
   var tipsDismiss = false
   var tips = d3.tip()
     .attr('class', 'd3-tip')
+    .attr('id', 'd3-tip-bubble')
     .offset([0, 0]);
 
   var svg = d3.select("#graph").append("svg:svg")
@@ -1156,7 +1155,7 @@ network.bubble.generate = function () {
           return d.r * 1.1 + 10
         })
 
-      tipsDismiss = false
+        tipsDismiss = false
     })
     .on("mouseout", function (d) {
       d3.select(this)
@@ -1197,6 +1196,7 @@ network.bubble.generate = function () {
       tips.show(d)
     })
     .on("mouseout", function () {
+      tipsDismiss = true
       setTimeout(function () {
         if (tipsDismiss) {
           tips.hide()
@@ -1258,7 +1258,7 @@ network.bubble.generate = function () {
     return html;
   });
 
-  d3.select(".d3-tip")
+  d3.select("#d3-tip-bubble")
     .on("mouseover", function () {
       tipsDismiss = false
     })
@@ -1274,7 +1274,6 @@ network.bubble.generate = function () {
 }
 
 network.highlight = function (c) {
-  console.log(c)
   d3.select("#graph").selectAll(".wrapper").classed("fade", true)
   d3.select("#graph").selectAll(".wrapper." + c).classed("fade", false)
 }

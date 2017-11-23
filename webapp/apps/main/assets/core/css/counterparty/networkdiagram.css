@@ -84,12 +84,12 @@ circle.supplier {
   fill: #000f46;
 }
 
-circle.ntb {
+circle.etb {
   stroke: #4689bb;
   fill: #4689bb;
 }
 
-circle.etb {
+circle.ntb {
   stroke: #5ba84e;
   fill: #5ba84e;
 }
