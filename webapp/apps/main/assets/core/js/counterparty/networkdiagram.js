@@ -636,12 +636,11 @@ network.generate = function () {
 
   d3.select("#graph").selectAll("*").remove()
 
-  /* Initialize tooltip */
-  var tipsDismiss = false
+  // Initialize tip and remove previous tip
+  $(".d3-tip").remove()
   var tips = d3.tip()
     .attr('class', 'd3-tip')
-    .attr('id', 'd3-tip-network')
-    .offset([-10, 0]);
+    .offset([0, 0]);
 
   var svg = d3.select("#graph").append("svg:svg")
     .attr("width", w)
@@ -858,16 +857,8 @@ network.generate = function () {
       return c 
     })
     .on("mouseover", function (d) {
-      $("#d3-tip-network").show()
+      $(".d3-tip").show()
       tips.show(d)
-    })
-    .on("mouseout", function () {
-      tipsDismiss = true
-      setTimeout(function () {
-        if (tipsDismiss) {
-          tips.hide()
-        }
-      }, 300);
     })
 
   circle.append("svg:text")
@@ -1064,23 +1055,10 @@ network.generate = function () {
       '</table>'
     return html;
   });
-
-  d3.select("#d3-tip-network")
-    .on("mouseover", function () {
-      tipsDismiss = false
-    })
-    .on("mouseout", function () {
-      tipsDismiss = true
-      setTimeout(function () {
-        if (tipsDismiss) {
-          tips.hide()
-        }
-      }, 300);
-    })
 }
 
 network.closeTooltip = function(){
-  $("#d3-tip-network").hide()
+  $(".d3-tip").hide()
 }
 
 network.bubble = {}
@@ -1108,11 +1086,10 @@ network.bubble.generate = function () {
     return d
   })
 
-  /* Initialize tooltip */
-  var tipsDismiss = false
+  // Initialize tooltip and remove previous tip
+  $(".d3-tip").remove()
   var tips = d3.tip()
     .attr('class', 'd3-tip')
-    .attr('id', 'd3-tip-bubble')
     .offset([0, 0]);
 
   var svg = d3.select("#graph").append("svg:svg")
@@ -1166,8 +1143,6 @@ network.bubble.generate = function () {
         .attr("r", function (d) {
           return d.r * 1.1 + 10
         })
-
-      tipsDismiss = false
     })
     .on("mouseout", function (d) {
       d3.select(this)
@@ -1205,16 +1180,8 @@ network.bubble.generate = function () {
     })
     .attr("class", "outer-bubble")
     .on("mouseover", function (d) {
-      $("#d3-tip-bubble").show()
+      $(".d3-tip").show()
       tips.show(d)
-    })
-    .on("mouseout", function () {
-      tipsDismiss = true
-      setTimeout(function () {
-        if (tipsDismiss) {
-          tips.hide()
-        }
-      }, 300);
     })
 
   bubbles.append("svg:text")
@@ -1252,7 +1219,7 @@ network.bubble.generate = function () {
     var html = '<table class="tooltip-table">' +
       '<tr>' +
       '<td></td>' +
-      '<td class="closebutton"><a href="#" onclick="network.closeTooltipBubble()">x</a>' +
+      '<td class="closebutton"><a href="#" onclick="network.closeTooltip()">x</a>' +
       '</tr>' +
       '<tr>' +
       '<td><b>Name</b></td>' +
@@ -1278,24 +1245,8 @@ network.bubble.generate = function () {
     return html;
   });
 
-  d3.select("#d3-tip-bubble")
-    .on("mouseover", function () {
-      tipsDismiss = false
-    })
-    .on("mouseout", function () {
-      tipsDismiss = true
-      setTimeout(function () {
-        if (tipsDismiss) {
-          tips.hide()
-        }
-      }, 300);
-    })
-
 }
 
-network.closeTooltipBubble = function(){
-  $("#d3-tip-bubble").hide()
-}
 network.highlight = function (c) {
   d3.select("#graph").selectAll(".wrapper").classed("fade", true)
   d3.select("#graph").selectAll(".wrapper." + c).classed("fade", false)
