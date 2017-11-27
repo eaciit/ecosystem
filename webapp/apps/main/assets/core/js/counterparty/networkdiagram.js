@@ -848,16 +848,17 @@ network.generate = function () {
     .on("mouseout", unhighlightLink)
 
   circle.append("svg:circle")
-    .on("click", expand)
+    // .on("click", expand)
     .attr("r", function (d) {
       return d.role == "BUYER" ? d.r - 3 : d.r
     })
     .attr("class", function (d) {
       var c = d.class
       c += d.role == "BUYER" ? " buyer" : ""
-      return c
+      return c 
     })
     .on("mouseover", function (d) {
+      $("#d3-tip-network").show()
       tips.show(d)
     })
     .on("mouseout", function () {
@@ -870,6 +871,7 @@ network.generate = function () {
     })
 
   circle.append("svg:text")
+    .on("click", expand)
     .attr("class", function (d) {
       return "middle " + d.class
     })
@@ -891,7 +893,8 @@ network.generate = function () {
     })
     .attr("text-anchor", "middle")
     .attr("x", 0)
-    .attr("dy", "1.2em")
+    .attr("dy", "1.2em")    
+    
 
   var text = svg.append("svg:g").selectAll("g")
     .data(nodes)
@@ -1031,10 +1034,13 @@ network.generate = function () {
     }).remove()
   }
 
-
   tips.html(function (d) {
     var name = d.name
     var html = '<table class="tooltip-table">' +
+      '<tr>' +
+      '<td></td>' +
+      '<td class="closebutton"><a href="#" onclick="network.closeTooltip()">x</a>' +
+      '</tr>' +
       '<tr>' +
       '<td><b>Name</b></td>' +
       '<td>: ' + d.name + '</td>' +
@@ -1071,7 +1077,10 @@ network.generate = function () {
         }
       }, 300);
     })
+}
 
+network.closeTooltip = function(){
+  $("#d3-tip-network").hide()
 }
 
 network.bubble = {}
@@ -1196,6 +1205,7 @@ network.bubble.generate = function () {
     })
     .attr("class", "outer-bubble")
     .on("mouseover", function (d) {
+      $("#d3-tip-bubble").show()
       tips.show(d)
     })
     .on("mouseout", function () {
@@ -1241,6 +1251,10 @@ network.bubble.generate = function () {
     var name = d.name
     var html = '<table class="tooltip-table">' +
       '<tr>' +
+      '<td></td>' +
+      '<td class="closebutton"><a href="#" onclick="network.closeTooltipBubble()">x</a>' +
+      '</tr>' +
+      '<tr>' +
       '<td><b>Name</b></td>' +
       '<td>: ' + d.name + '</td>' +
       '</tr>' +
@@ -1279,6 +1293,9 @@ network.bubble.generate = function () {
 
 }
 
+network.closeTooltipBubble = function(){
+  $("#d3-tip-bubble").hide()
+}
 network.highlight = function (c) {
   d3.select("#graph").selectAll(".wrapper").classed("fade", true)
   d3.select("#graph").selectAll(".wrapper." + c).classed("fade", false)
