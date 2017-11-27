@@ -445,3 +445,17 @@ text.coi {
   box-shadow: 1px 1px 4px grey;
   z-index: 1000;
 }
+
+.closebutton{
+  float: right;
+  color: #000 !important;
+  font-weight: bold;
+}
+
+.middle {
+  cursor: pointer;  
+}
+
+.middle:hover {
+  text-decoration: underline;
+}
