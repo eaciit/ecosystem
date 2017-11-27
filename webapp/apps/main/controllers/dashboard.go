@@ -150,7 +150,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT cust_coi AS country, cust_long_name AS entity, SUM(amount) as total
+	sql := `SELECT cust_coi AS country, cust_long_name AS entity, SUM(amount * rate) as total
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND cust_group_name = "` + payload.GroupName + `" 
