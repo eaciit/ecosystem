@@ -164,6 +164,7 @@ filter.selectedFilters = ko.computed(function () {
   }
 
   return {
+    groupName: filter.selectedGroupName(),
     entityName: counterparty.activeEntityName(),
     role: filter.selectedRole(),
     group: filter.selectedGroup(),
@@ -276,7 +277,10 @@ network.loadData = function () {
 
 network.loadDetail = function (name) {
   var relations = []
-  _.each(network.links, function (l) {
+  // R for Relationship
+  var links = counterparty.activeGraphIndicator() == "R" ? network.links : network.bubble.links
+
+  _.each(links, function (l) {
     if (l.t.name == name) {
       if (l.t.class == "center" && l.s.class == "center") {
         relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
@@ -353,9 +357,11 @@ network.processData = function (data) {
   var existingNodes = counterparty.activeGraphIndicator() == "R" ? network.nodes : network.bubble.nodes
   var existingRawLinks = counterparty.activeGraphIndicator() == "R" ? network.rawLinks : []
 
-  var parent = _.keys(data)[0]
+  var parentKey = _.keys(data)[0]
+  var parent = parentKey.toUpperCase() == "ALL" ? counterparty.activeGroupName() : parentKey
+
   // Group the node based on the counterparty node, so the multiple link will be merged into 1 link only
-  var nodes = _(data[parent])
+  var nodes = _(data[parentKey])
     .map(function (e) {
       var flow = e.cpty_bank == "SCBL" && e.cust_bank == "SCBL" ? true : false
 
@@ -418,7 +424,7 @@ network.processData = function (data) {
   // Adding the new center node (customer) also add the prev banks if exist
   nodes = _.concat(nodes, {
     name: parent,
-    banks: _.uniq(_.map(data[parent], "cust_bank").concat(prevNodeThatNowBecomeCenterBanks)),
+    banks: _.uniq(_.map(data[parentKey], "cust_bank").concat(prevNodeThatNowBecomeCenterBanks)),
     coi: counterparty.activeEntityCOI(),
     groupName: counterparty.activeGroupName(),
     class: "center",
@@ -522,6 +528,8 @@ network.processData = function (data) {
     // Only save nodes if a bubble
     // Not so efficient code but will do right now
     network.bubble.nodes = nodes
+    network.bubble.links = links
+    network.bubble.rawLinks = existingRawLinks
     network.bubble.generate()
   }
 }
@@ -854,7 +862,7 @@ network.generate = function () {
     .attr("class", function (d) {
       var c = d.class
       c += d.role == "BUYER" ? " buyer" : ""
-      return c 
+      return c
     })
     .on("mouseover", function (d) {
       $(".d3-tip").show()
@@ -884,8 +892,8 @@ network.generate = function () {
     })
     .attr("text-anchor", "middle")
     .attr("x", 0)
-    .attr("dy", "1.2em")    
-    
+    .attr("dy", "1.2em")
+
 
   var text = svg.append("svg:g").selectAll("g")
     .data(nodes)
@@ -1027,11 +1035,8 @@ network.generate = function () {
 
   tips.html(function (d) {
     var name = d.name
-    var html = '<table class="tooltip-table">' +
-      '<tr>' +
-      '<td></td>' +
-      '<td class="closebutton"><a href="#" onclick="network.closeTooltip()">x</a>' +
-      '</tr>' +
+    var html = '<div class="close-button"><a class="fa fa-fw fa-times" href="#" onclick="network.closeTooltip()"></a></div>' +
+      '<table class="tooltip-table">' +
       '<tr>' +
       '<td><b>Name</b></td>' +
       '<td>: ' + d.name + '</td>' +
@@ -1057,12 +1062,14 @@ network.generate = function () {
   });
 }
 
-network.closeTooltip = function(){
+network.closeTooltip = function () {
   $(".d3-tip").hide()
 }
 
 network.bubble = {}
 network.bubble.nodes = []
+network.bubble.links = []
+network.bubble.rawLinks = []
 network.bubble.force = d3.forceSimulation()
 
 network.bubble.generate = function () {
@@ -1216,11 +1223,8 @@ network.bubble.generate = function () {
 
   tips.html(function (d) {
     var name = d.name
-    var html = '<table class="tooltip-table">' +
-      '<tr>' +
-      '<td></td>' +
-      '<td class="closebutton"><a href="#" onclick="network.closeTooltip()">x</a>' +
-      '</tr>' +
+    var html = '<div class="close-button"><a class="fa fa-fw fa-times" href="#" onclick="network.closeTooltip()"></a></div>' +
+      '<table class="tooltip-table">' +
       '<tr>' +
       '<td><b>Name</b></td>' +
       '<td>: ' + d.name + '</td>' +

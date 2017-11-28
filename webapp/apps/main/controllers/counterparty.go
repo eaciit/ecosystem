@@ -56,9 +56,14 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
   SUM(amount * rate) AS total,
   ` + c.isNTBClause() + ` AS is_ntb
   FROM ` + c.tableName() + `
-  WHERE cust_long_name="` + payload.EntityName + `"
-	AND ` + c.commonWhereClause() + `
-	AND ` + c.eitherBuyerSupplierClause()
+	WHERE ` + c.commonWhereClause()
+
+	// Check the entity name
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += ` AND cust_long_name = "` + payload.EntityName + `"`
+	} else {
+		sql += ` AND cust_group_name = "` + payload.GroupName + `"`
+	}
 
 	// Filters for YearMonth
 	if payload.YearMonth > 0 {
@@ -74,6 +79,8 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
 	} else if strings.ToUpper(payload.Role) == "PAYEE" {
 		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
+	} else {
+		sql += " AND " + c.eitherBuyerSupplierClause()
 	}
 
 	// Filters for NTB/ETB
@@ -103,6 +110,7 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
 
+	println(sql)
 	return sql
 }
 
@@ -191,6 +199,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	AND ` + c.commonWhereClause() + `
 	GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
 	ORDER BY total DESC`
+	println(sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
