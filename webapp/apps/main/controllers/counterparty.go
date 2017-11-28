@@ -194,8 +194,18 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	sql := `SELECT cpty_long_name, LEFT(customer_bank, 4) AS cust_bank, LEFT(counterparty_bank, 4) AS cpty_bank, 
   product_category, SUM(amount * rate) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + ` 
-	WHERE (` + strings.Join(relations, " OR ") + `) AND transaction_year=2016 
-	AND ` + c.commonWhereClause() + `
+	WHERE (` + strings.Join(relations, " OR ") + `)`
+
+	// Filters for YearMonth
+	if payload.YearMonth > 0 {
+		if strings.ToUpper(payload.DateType) == "MONTH" {
+			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+		} else {
+			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+		}
+	}
+
+	sql += `AND ` + c.commonWhereClause() + `
 	GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
 	ORDER BY total DESC`
 
@@ -235,8 +245,18 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 
 	sql := `SELECT ` + strings.Join(selectKeys, ", ") + `
   FROM ` + c.tableName() + ` 
-	WHERE (` + strings.Join(relations, " OR ") + `) AND transaction_year=2016 
-	AND ` + c.commonWhereClause() + `
+	WHERE (` + strings.Join(relations, " OR ") + `)`
+
+	// Filters for YearMonth
+	if payload.YearMonth > 0 {
+		if strings.ToUpper(payload.DateType) == "MONTH" {
+			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+		} else {
+			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+		}
+	}
+
+	sql += `AND ` + c.commonWhereClause() + `
 	ORDER BY amount DESC`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
