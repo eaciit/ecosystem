@@ -153,8 +153,13 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 	sql := `SELECT cust_coi AS country, cust_long_name AS entity, SUM(amount * rate) as total
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+  AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   GROUP BY cust_coi, cust_long_name ORDER BY cust_long_name`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -366,8 +371,13 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -400,8 +410,13 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -434,8 +449,13 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -468,8 +488,13 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -502,8 +527,13 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += `AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -535,8 +565,13 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -553,8 +588,13 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 	sql = `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -589,8 +629,13 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += `AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -608,8 +653,13 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -644,8 +694,13 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -663,8 +718,13 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += `AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -699,8 +759,13 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -718,8 +783,13 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -754,8 +824,13 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -773,8 +848,13 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -808,8 +888,13 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += `AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -843,8 +928,13 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -878,8 +968,13 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -913,8 +1008,13 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "PAYEE" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + `
   GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -948,8 +1048,13 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
   AND ` + c.customerRoleClause() + ` = "BUYER" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause() + ` 
+	AND cust_group_name = "` + payload.GroupName + `"`
+
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + `
   GROUP BY transaction_month ORDER BY transaction_month`
 

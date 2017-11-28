@@ -201,7 +201,7 @@ filter.loadEntities = function () {
   viewModel.ajaxPostCallback("/main/master/getentities", {
     groupName: filter.selectedGroupName()
   }, function (data) {
-    filter.entities(_.map(data, "value"))
+    filter.entities(["All"].concat(_.map(data, "value")))
     filter.selectedEntity.valueHasMutated()
   })
 }

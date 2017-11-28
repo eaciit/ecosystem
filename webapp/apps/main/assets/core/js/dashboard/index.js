@@ -23,9 +23,12 @@ dashboard.activeEntityDetail = {
 }
 
 var filter = {}
-filter.groups = ko.observableArray([])
-filter.selectedGroup = ko.observable("")
+filter.groupNames = ko.observableArray([])
+filter.selectedGroupName = ko.observable("")
 filter.selectedYear = ko.observable(moment().subtract(1, "years").toDate())
+
+filter.entities = ko.observableArray(["All"])
+filter.selectedEntity = ko.observable("All")
 
 filter.role = ko.observableArray([{
   "value": "",
@@ -115,13 +118,14 @@ filter.switchDateType = function (data, event) {
 
 
 filter.payload = ko.computed(function () {
-  viewModel.globalFilter.groupname(filter.selectedGroup())
+  viewModel.globalFilter.groupname(filter.selectedGroupName())
 
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
     year: parseInt(moment(filter.selectedYear()).format("YYYY")),
-    groupName: filter.selectedGroup()
+    groupName: filter.selectedGroupName(),
+    entityName: filter.selectedEntity()
   }
 })
 
@@ -130,20 +134,29 @@ filter.payloadQuarter = function () {
     fromYearMonth: parseInt(moment().subtract(3, "months").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
     year: parseInt(moment(filter.selectedYear()).format("YYYY")),
-    groupName: filter.selectedGroup()
+    groupName: filter.selectedGroupName()
   }
 }
 
 filter.loadGroups = function () {
   viewModel.ajaxPostCallback("/main/master/getgroups", {}, function (data) {
-    filter.groups(_.map(data, "value"))
-    filter.selectedGroup.valueHasMutated()
+    filter.groupNames(_.map(data, "value"))
+    filter.selectedGroupName.valueHasMutated()
+  })
+}
+
+filter.loadEntities = function () {
+  viewModel.ajaxPostCallback("/main/master/getentities", {
+    groupName: filter.selectedGroupName()
+  }, function (data) {
+    filter.entities(["All"].concat(_.map(data, "value")))
+    filter.selectedEntity.valueHasMutated()
   })
 }
 
 filter.loadAll = function () {
   if (getParameterByName("entityGroup") != null) {
-    filter.selectedGroup(getParameterByName("entityGroup"))
+    filter.selectedGroupName(getParameterByName("entityGroup"))
   }
 
   filter.payload.subscribe(function (nv) {
@@ -155,6 +168,10 @@ filter.loadAll = function () {
   })
 
   filter.loadGroups()
+
+  filter.selectedGroupName.subscribe(function (nv) {
+    filter.loadEntities()
+  })
 }
 
 dashboard.getMapData = function (callback) {
