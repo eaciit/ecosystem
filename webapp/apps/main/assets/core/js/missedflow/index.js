@@ -345,7 +345,7 @@ missedflow.generateGraph = function (data) {
       left: 20
     },
     width = $("#missedflowchart").width() - margin.left - margin.right,
-    height = Math.log2(data.links.length) * 180
+    height = data.links.length * 50
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
   colorsource = d3.scaleOrdinal().range(["#005c84", "#0075b0", "#009fda", "#2890c0", "#6ba8d0", "#a1c5e0"])
