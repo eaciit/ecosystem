@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -19,6 +20,23 @@ type MissedFlowPayload struct {
 	FlowAbove        int
 	DateType         string // Either MONTH or YEAR
 	YearMonth        int
+}
+
+func (p *MissedFlowPayload) Escape() {
+	valuePointer := reflect.ValueOf(p)
+	value := valuePointer.Elem()
+
+	for i := 0; i < value.NumField(); i++ {
+		field := value.Field(i)
+
+		if field.Type() != reflect.TypeOf("") {
+			continue
+		}
+
+		str := field.Interface().(string)
+		str = strings.Replace(str, "'", "''", -1)
+		field.SetString(str)
+	}
 }
 
 type MissedFlowController struct {
@@ -45,6 +63,8 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
 	}
+
+	payload.Escape()
 
 	sql := `SELECT cpty_long_name, cpty_coi, cpty_group_name, cust_long_name, cust_coi, cust_group_name, 
   LEFT(counterparty_bank, 4) AS cpty_bank, 
