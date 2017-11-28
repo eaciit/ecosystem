@@ -110,7 +110,6 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
 
-	println(sql)
 	return sql
 }
 
@@ -199,7 +198,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	AND ` + c.commonWhereClause() + `
 	GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
 	ORDER BY total DESC`
-	println(sql)
+
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
