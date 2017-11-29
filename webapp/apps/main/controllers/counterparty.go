@@ -48,13 +48,9 @@ func (c *CounterPartyController) NetworkDiagram(k *knot.WebContext) interface{} 
 	return c.SetViewData(nil)
 }
 
-func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload) string {
-	sql := `SELECT cpty_group_name, cpty_long_name, cpty_coi,
-  LEFT(counterparty_bank, 4) AS cpty_bank, 
-  LEFT(customer_bank, 4) AS cust_bank, 
-  ` + c.customerRoleClause() + `AS cust_role, 
-  SUM(amount * rate) AS total,
-  ` + c.isNTBClause() + ` AS is_ntb
+func (c *CounterPartyController) GetTopEntities(key string, payload *CounterPartyPayload) ([]string, error) {
+	sql := `SELECT ` + key + `,
+  SUM(amount * rate) AS total
   FROM ` + c.tableName() + `
 	WHERE ` + c.commonWhereClause()
 
@@ -97,7 +93,7 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 		sql += " AND product_category = 'Trade'"
 	}
 
-	sql += " GROUP BY cpty_group_name, cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank, is_ntb "
+	sql += " GROUP BY " + key
 
 	// Filters for Flows
 	if payload.FlowAbove > 0 {
@@ -109,6 +105,102 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 	if payload.Limit > 0 {
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
+
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		return []string{}, err
+	}
+
+	returnData := []string{}
+	for _, v := range results {
+		returnData = append(returnData, v.GetString(key))
+	}
+
+	return returnData, nil
+}
+
+func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload) string {
+	entityKey := "cust_long_name"
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		entityKey = "cpty_long_name"
+	}
+
+	entities, err := c.GetTopEntities(entityKey, payload)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	entitiesEscaped := []string{}
+	for _, v := range entities {
+		entitiesEscaped = append(entitiesEscaped, "'"+v+"'")
+	}
+
+	entitiesClause := "(" + strings.Join(entitiesEscaped, ", ") + ")"
+
+	sql := `SELECT cpty_group_name, cpty_long_name, cpty_coi,
+  LEFT(counterparty_bank, 4) AS cpty_bank, 
+  LEFT(customer_bank, 4) AS cust_bank, 
+  ` + c.customerRoleClause() + `AS cust_role, 
+  SUM(amount * rate) AS total,
+  ` + c.isNTBClause() + ` AS is_ntb
+  FROM ` + c.tableName() + `
+	WHERE ` + c.commonWhereClause()
+
+	// Check the entity name
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += ` AND cust_long_name = "` + payload.EntityName + `"
+		AND cpty_long_name IN ` + entitiesClause
+	} else {
+		sql += ` AND cust_group_name = "` + payload.GroupName + `"
+		AND cust_long_name IN ` + entitiesClause
+	}
+
+	// Filters for YearMonth
+	if payload.YearMonth > 0 {
+		if strings.ToUpper(payload.DateType) == "MONTH" {
+			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+		} else {
+			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+		}
+	}
+
+	// Filters for Role
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
+	} else if strings.ToUpper(payload.Role) == "PAYEE" {
+		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
+	} else {
+		sql += " AND " + c.eitherBuyerSupplierClause()
+	}
+
+	// Filters for NTB/ETB
+	if strings.ToUpper(payload.Group) == "NTB" {
+		sql += " AND " + c.isNTBClause() + " = 'Y'"
+	} else if strings.ToUpper(payload.Group) == "ETB" {
+		sql += " AND " + c.isNTBClause() + " = 'N'"
+	}
+
+	// Filters for Cast/Trade
+	if strings.ToUpper(payload.ProductCategory) == "CASH" {
+		sql += " AND product_category = 'Cash'"
+	} else if strings.ToUpper(payload.ProductCategory) == "TRADE" {
+		sql += " AND product_category = 'Trade'"
+	}
+
+	sql += " GROUP BY cpty_group_name, cpty_coi, cpty_long_name, cpty_bank, customer_role, cust_bank, is_ntb "
+
+	// Filters for Flows
+	if payload.FlowAbove > 0 {
+		sql += " HAVING total > " + strconv.Itoa(payload.FlowAbove)
+	}
+
+	sql += " ORDER BY total DESC"
 
 	return sql
 }
