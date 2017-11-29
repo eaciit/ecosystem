@@ -126,12 +126,7 @@ func (c *CounterPartyController) GetTopEntities(key string, payload *CounterPart
 }
 
 func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload) string {
-	entityKey := "cust_long_name"
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		entityKey = "cpty_long_name"
-	}
-
-	entities, err := c.GetTopEntities(entityKey, payload)
+	entities, err := c.GetTopEntities("cpty_long_name", payload)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -150,15 +145,14 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
   SUM(amount * rate) AS total,
   ` + c.isNTBClause() + ` AS is_ntb
   FROM ` + c.tableName() + `
-	WHERE ` + c.commonWhereClause()
+	WHERE ` + c.commonWhereClause() + `
+	AND cpty_long_name IN ` + entitiesClause
 
 	// Check the entity name
 	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += ` AND cust_long_name = "` + payload.EntityName + `"
-		AND cpty_long_name IN ` + entitiesClause
+		sql += ` AND cust_long_name = "` + payload.EntityName + `"`
 	} else {
-		sql += ` AND cust_group_name = "` + payload.GroupName + `"
-		AND cust_long_name IN ` + entitiesClause
+		sql += ` AND cust_group_name = "` + payload.GroupName + `"`
 	}
 
 	// Filters for YearMonth
