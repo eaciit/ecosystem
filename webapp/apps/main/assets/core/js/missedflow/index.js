@@ -192,7 +192,7 @@ missedflow.loadGraphData = function () {
           isReversed = e.cust_role == "PAYEE" ? !isReversed : isReversed
           var push = false
 
-          if (g == "ETB" && e.is_ntb == "N") {
+          if (g == "ETB" && e.is_ntb == "N" && e.cust_group_name != e.cpty_group_name) {
             push = true
           } else if (g == "NTB" && e.is_ntb == "Y") {
             push = true
@@ -345,7 +345,7 @@ missedflow.generateGraph = function (data) {
       left: 20
     },
     width = $("#missedflowchart").width() - margin.left - margin.right,
-    height = data.links.length * 50
+    height = Math.log2(data.links.length) * 200
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
   colorsource = d3.scaleOrdinal().range(["#005c84", "#0075b0", "#009fda", "#2890c0", "#6ba8d0", "#a1c5e0"])
