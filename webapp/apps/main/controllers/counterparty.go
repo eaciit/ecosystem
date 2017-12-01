@@ -125,7 +125,7 @@ func (c *CounterPartyController) GetTopEntities(key string, payload *CounterPart
 	return returnData, nil
 }
 
-func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload) string {
+func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload) (string, int) {
 	entities, err := c.GetTopEntities("cpty_long_name", payload)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
@@ -196,7 +196,7 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 
 	sql += " ORDER BY total DESC"
 
-	return sql
+	return sql, len(entities)
 }
 
 func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) interface{} {
@@ -212,16 +212,19 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 	}
 
 	if strings.ToUpper(payload.Role) == "BUYER" || strings.ToUpper(payload.Role) == "PAYEE" {
-		sql := c.NetworkDiagramSQL(&payload)
-		qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-		if qr.Error() != nil {
-			c.SetResultError(qr.Error().Error(), nil)
-		}
+		sql, numEntities := c.NetworkDiagramSQL(&payload)
 
 		results := []tk.M{}
-		err = qr.Fetch(&results, 0)
-		if err != nil {
-			c.SetResultError(err.Error(), nil)
+		if numEntities > 0 {
+			qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+			if qr.Error() != nil {
+				c.SetResultError(qr.Error().Error(), nil)
+			}
+
+			err = qr.Fetch(&results, 0)
+			if err != nil {
+				c.SetResultError(err.Error(), nil)
+			}
 		}
 
 		return c.SetResultOK(tk.M{
@@ -230,29 +233,35 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 	}
 
 	payload.Role = "BUYER"
-	sql := c.NetworkDiagramSQL(&payload)
-	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-	if qr.Error() != nil {
-		c.SetResultError(qr.Error().Error(), nil)
-	}
-
+	sql, numEntities := c.NetworkDiagramSQL(&payload)
 	resultsB := []tk.M{}
-	err = qr.Fetch(&resultsB, 0)
-	if err != nil {
-		c.SetResultError(err.Error(), nil)
+
+	if numEntities > 0 {
+		qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		err = qr.Fetch(&resultsB, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
 	}
 
 	payload.Role = "PAYEE"
-	sql = c.NetworkDiagramSQL(&payload)
-	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-	if qr.Error() != nil {
-		c.SetResultError(qr.Error().Error(), nil)
-	}
-
+	sql, numEntities = c.NetworkDiagramSQL(&payload)
 	resultsP := []tk.M{}
-	err = qr.Fetch(&resultsP, 0)
-	if err != nil {
-		c.SetResultError(err.Error(), nil)
+
+	if numEntities > 0 {
+		qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		err = qr.Fetch(&resultsP, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
 	}
 
 	return c.SetResultOK(tk.M{
