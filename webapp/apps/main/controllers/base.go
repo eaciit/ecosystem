@@ -32,7 +32,8 @@ func (c *BaseController) tableName() string {
 
 func (c *BaseController) commonWhereClause() string {
 	return `NOT ISNULL(product_category)
-  AND source_system <> "HOGAN-IDS"`
+	AND source_system <> "HOGAN-IDS"
+	AND ` + c.eitherBuyerSupplierClause()
 }
 
 func (c *BaseController) isOpportunityClause() string {

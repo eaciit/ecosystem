@@ -83,8 +83,6 @@ func (c *MissedFlowController) GetMissedFlowSQL(payload *MissedFlowPayload) stri
 		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
 	} else if strings.ToUpper(payload.Role) == "PAYEE" {
 		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
-	} else {
-		sql += " AND " + c.customerRoleClause() + " IN ('BUYER', 'PAYEE')"
 	}
 
 	// Filters for NTB/ETB
