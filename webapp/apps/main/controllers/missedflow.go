@@ -52,20 +52,7 @@ func (c *MissedFlowController) Index(k *knot.WebContext) interface{} {
 	return c.SetViewData(nil)
 }
 
-func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{} {
-	c.SetResponseTypeAJAX(k)
-	if !c.ValidateAccessOfRequestedURL(k) {
-		return nil
-	}
-
-	payload := MissedFlowPayload{}
-	err := k.GetPayload(&payload)
-	if err != nil {
-		return c.SetResultError(err.Error(), nil)
-	}
-
-	payload.Escape()
-
+func (c *MissedFlowController) GetMissedFlowSQL(payload *MissedFlowPayload) string {
 	sql := `SELECT cpty_long_name, cpty_coi, cpty_group_name, cust_long_name, cust_coi, cust_group_name, 
   LEFT(counterparty_bank, 4) AS cpty_bank, 
 	LEFT(customer_bank, 4) AS cust_bank, 
@@ -122,6 +109,70 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
 
+	return sql
+}
+
+func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	payload := MissedFlowPayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	payload.Escape()
+
+	if strings.ToUpper(payload.Group) == "ALL" {
+		payload.Group = "NTB"
+		sql := c.GetMissedFlowSQL(&payload)
+		qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		results1 := []tk.M{}
+		err = qr.Fetch(&results1, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
+
+		payload.Group = "ETB"
+		sql = c.GetMissedFlowSQL(&payload)
+		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		results2 := []tk.M{}
+		err = qr.Fetch(&results2, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
+
+		payload.Group = "INTRA-GROUP"
+		sql = c.GetMissedFlowSQL(&payload)
+		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		results3 := []tk.M{}
+		err = qr.Fetch(&results3, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
+
+		results := append(results1, results2...)
+		results = append(results, results3...)
+
+		return c.SetResultOK(results)
+	}
+
+	sql := c.GetMissedFlowSQL(&payload)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)

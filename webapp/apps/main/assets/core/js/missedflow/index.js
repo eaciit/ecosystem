@@ -329,6 +329,18 @@ missedflow.loadGraphData = function () {
       })
     }
 
+    // Escape null
+    nodes = _.map(nodes, function (e) {
+      e.name = String(e.name)
+      return e
+    })
+
+    links = _.map(links, function (e) {
+      e.sourceName = String(e.sourceName)
+      e.targetName = String(e.targetName)
+      return e
+    })
+
     missedflow.generateGraph({
       "nodes": nodes,
       "links": links
