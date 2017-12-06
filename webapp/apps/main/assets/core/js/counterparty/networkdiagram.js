@@ -4,7 +4,6 @@ counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
 counterparty.activeGroupName = ko.observable("")
-counterparty.initialGroupName = ko.observable("")
 // Graph indicator R = Relationship, B = Buyer only (bubble), S = Supplier only (bubble)
 counterparty.activeGraphIndicator = ko.observable("R")
 
@@ -67,7 +66,6 @@ counterparty.loadAll = function () {
   })
 
   counterparty.activeGroupName($.urlParam("entityGroup"))
-  counterparty.initialGroupName($.urlParam("entityGroup"))
   counterparty.activeEntityCOI($.urlParam("entityCOI"))
   counterparty.activeGraphIndicator($.urlParam("activeGraphIndicator") ? $.urlParam("activeGraphIndicator") : "R")
 
