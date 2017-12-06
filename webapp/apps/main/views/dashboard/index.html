@@ -61,7 +61,7 @@
         <input type="text" id="datePicker" data-bind="kendoDatePicker:{ value:new Date(), format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedDate }" class="filter-space">
       </div>
       <div class="filtergroup">
-        <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:filter.loadAll">Go</div>
+        <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px" data-bind="click:filter.loadAllData">Go</div>
       </div>
       </div>
   </div>
@@ -247,7 +247,7 @@
             Domicile
             <br/>Group
           </div>
-          <div class="box bluebox">
+          <div class="box greenbox">
             <span data-bind="text: widget.etb"></span>
             <br/>Group Entities
           </div>

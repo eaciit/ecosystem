@@ -10,12 +10,19 @@ import (
 )
 
 type DashboardPayload struct {
-	Year             int
 	FromYearMonth    int
 	ToYearMonth      int
-	EntityName       string
-	GroupName        string
 	BookingCountries []string
+	GroupName        string
+	EntityName       string
+	CounterpartyName string
+	Role             string
+	Limit            int
+	Group            string
+	ProductCategory  string
+	FlowAbove        int
+	DateType         string // Either MONTH or YEAR
+	YearMonth        int
 }
 
 type DashboardController struct {
@@ -130,6 +137,62 @@ func (c *DashboardController) OtherTrade() []string {
 	return quotedTexts
 }
 
+func (c *DashboardController) FilterClause(payload DashboardPayload, isPeriod bool) string {
+	// Filters for Group Name
+	sql := ` AND cust_group_name = "` + payload.GroupName + `"`
+
+	// Filters for Entity Name
+	if strings.ToUpper(payload.EntityName) != "ALL" {
+		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
+	// Filters for YearMonth
+	if !isPeriod {
+		if payload.YearMonth > 0 {
+			if strings.ToUpper(payload.DateType) == "MONTH" {
+				sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+			} else {
+				sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+			}
+		}
+	}
+
+	// Filters for Role
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
+	} else if strings.ToUpper(payload.Role) == "PAYEE" {
+		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
+	}
+
+	// Filters for NTB/ETB
+	if strings.ToUpper(payload.Group) == "NTB" {
+		sql += " AND " + c.isNTBClause() + " = 'Y'"
+	} else if strings.ToUpper(payload.Group) == "ETB" {
+		sql += " AND " + c.isNTBClause() + " = 'N'"
+	} else if strings.ToUpper(payload.Group) == "INTRA-GROUP" {
+		sql += " AND cust_group_name = cpty_group_name"
+	}
+
+	// Filters for Cast/Trade
+	if strings.ToUpper(payload.ProductCategory) == "CASH" {
+		sql += " AND product_category = 'Cash'"
+	} else if strings.ToUpper(payload.ProductCategory) == "TRADE" {
+		sql += " AND product_category = 'Trade'"
+	}
+
+	return sql
+}
+
 func (c *DashboardController) Index(k *knot.WebContext) interface{} {
 	c.SetResponseTypeHTML(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
@@ -153,25 +216,12 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 
 	sql := `SELECT cust_coi AS country, cust_long_name AS entity, SUM(amount * rate) as total
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `"`
+	WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, false)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  GROUP BY cust_coi, cust_long_name ORDER BY cust_long_name`
+	sql += `GROUP BY cust_coi, cust_long_name ORDER BY cust_long_name`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -381,25 +431,10 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+	WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
-
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year)
+	sql += c.FilterClause(payload, false)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -429,26 +464,10 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "BUYER" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
-
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year)
+	sql += c.FilterClause(payload, false)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -478,26 +497,10 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
-
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year)
+	sql += c.FilterClause(payload, false)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -527,26 +530,10 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
-
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year)
+	sql += c.FilterClause(payload, false)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -575,27 +562,11 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 	}
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
-  FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "BUYER" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+	FROM ` + c.tableName() + ` 
+	WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
-
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += `AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year)
+	sql += c.FilterClause(payload, false)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -625,25 +596,12 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -658,25 +616,12 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 
 	sql = `SELECT COUNT(DISTINCT cust_sci_leid) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -708,26 +653,12 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "BUYER" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += `AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -742,26 +673,12 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 
 	sql = `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "BUYER" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -793,26 +710,12 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -827,26 +730,12 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 
 	sql = `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+	WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += `AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -878,26 +767,12 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -912,26 +787,12 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 
 	sql = `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -963,26 +824,12 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -997,26 +844,12 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 
 	sql = `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, true)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1048,26 +881,12 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 
 	sql := `SELECT COUNT(DISTINCT cust_sci_leid) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, false)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += `AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
-  GROUP BY transaction_month ORDER BY transaction_month`
+	sql += `GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1097,27 +916,12 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "BUYER" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, false)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
-  GROUP BY transaction_month ORDER BY transaction_month`
+	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1147,27 +951,12 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, false)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
-  GROUP BY transaction_month ORDER BY transaction_month`
+	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1197,27 +986,12 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "PAYEE" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, false)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year) + `
-  GROUP BY transaction_month ORDER BY transaction_month`
+	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1247,27 +1021,12 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.customerRoleClause() + ` = "BUYER" 
-	AND cust_group_name = "` + payload.GroupName + `"`
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	if strings.ToUpper(payload.EntityName) != "ALL" {
-		sql += " AND cust_long_name = '" + payload.EntityName + "'"
-	}
+	sql += c.FilterClause(payload, false)
 
-	// Filters for Booking Country
-	if len(payload.BookingCountries) > 0 {
-		quotedBookingCountries := []string{}
-		for _, v := range payload.BookingCountries {
-			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
-		}
-
-		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
-	}
-
-	sql += ` AND ` + c.commonWhereClause() + ` 
-  AND transaction_year = ` + strconv.Itoa(payload.Year) + `
-  GROUP BY transaction_month ORDER BY transaction_month`
+	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {

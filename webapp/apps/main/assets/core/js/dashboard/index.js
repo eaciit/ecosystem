@@ -25,7 +25,6 @@ dashboard.activeEntityDetail = {
 var filter = {}
 filter.groupNames = ko.observableArray([])
 filter.selectedGroupName = ko.observable("")
-filter.selectedYear = ko.observable(moment().subtract(1, "years").toDate())
 
 filter.entities = ko.observableArray(["All"])
 filter.selectedEntity = ko.observable("All")
@@ -136,7 +135,6 @@ filter.payload = ko.computed(function () {
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
-    year: parseInt(moment(filter.selectedYear()).format("YYYY")),
     groupName: filter.selectedGroupName(),
     entityName: filter.selectedEntity(),
     role: filter.selectedRole(),
@@ -150,12 +148,10 @@ filter.payload = ko.computed(function () {
 })
 
 filter.payloadQuarter = function () {
-  return {
-    fromYearMonth: parseInt(moment().subtract(3, "months").format("YYYYMM")),
-    toYearMonth: parseInt(moment().format("YYYYMM")),
-    year: parseInt(moment(filter.selectedYear()).format("YYYY")),
-    groupName: filter.selectedGroupName()
-  }
+  var payload = JSON.parse(JSON.stringify(filter.payload()))
+  payload.fromYearMonth = parseInt(moment().subtract(3, "months").format("YYYYMM"))
+
+  return payload
 }
 
 filter.loadGroups = function () {
@@ -170,7 +166,6 @@ filter.loadEntities = function () {
     groupName: filter.selectedGroupName()
   }, function (data) {
     filter.entities(["All"].concat(_.map(data, "value")))
-    filter.selectedEntity.valueHasMutated()
   })
 }
 
@@ -179,19 +174,24 @@ filter.loadAll = function () {
     filter.selectedGroupName(getParameterByName("entityGroup"))
   }
 
-  filter.payload.subscribe(function (nv) {
-    if (nv.groupName != "") {
-      widget.loadData()
-      dashboard.loadEntitiesDataIntoMap()
-      dashboard.loadDomicileDataIntoMap()
-    }
-  })
+  // Enable this if you want the filter to be realtime
+  // filter.payload.subscribe(function () {
+  //   dashboard.loadAllData()
+  // })
 
   filter.loadGroups()
 
   filter.selectedGroupName.subscribe(function (nv) {
     filter.loadEntities()
   })
+}
+
+dashboard.loadAllData = function () {
+  if (filter.payload.groupName != "") {
+    widget.loadData()
+    dashboard.loadEntitiesDataIntoMap()
+    dashboard.loadDomicileDataIntoMap()
+  }
 }
 
 dashboard.getMapData = function (callback) {
@@ -290,8 +290,8 @@ dashboard.generateMapbox = function () {
         return L.circle(ll, feature.properties.radius, {
           color: "white",
           weight: 0,
-          fillColor: "#428bca",
-          fillOpacity: 0.5
+          fillColor: "#69be28",
+          fillOpacity: 0.4
         })
       }
     }).addTo(map)
