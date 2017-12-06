@@ -462,6 +462,12 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
+	if strings.ToUpper(payload.Role) == "PAYEE" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "BUYER" {
+		payload.Role = "BUYER"
+	}
+
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `
@@ -493,6 +499,12 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
+	}
+
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "PAYEE" {
+		payload.Role = "PAYEE"
 	}
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
@@ -528,6 +540,12 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "PAYEE" {
+		payload.Role = "PAYEE"
+	}
+
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `
@@ -559,6 +577,12 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
+	}
+
+	if strings.ToUpper(payload.Role) == "PAYEE" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "BUYER" {
+		payload.Role = "BUYER"
 	}
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
@@ -651,6 +675,12 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 		return c.SetResultError(err.Error(), nil)
 	}
 
+	if strings.ToUpper(payload.Role) == "PAYEE" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "BUYER" {
+		payload.Role = "BUYER"
+	}
+
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `
@@ -706,6 +736,12 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
+	}
+
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "PAYEE" {
+		payload.Role = "PAYEE"
 	}
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value 
@@ -765,6 +801,12 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 		return c.SetResultError(err.Error(), nil)
 	}
 
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "PAYEE" {
+		payload.Role = "PAYEE"
+	}
+
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `
@@ -820,6 +862,12 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
+	}
+
+	if strings.ToUpper(payload.Role) == "PAYEE" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "BUYER" {
+		payload.Role = "BUYER"
 	}
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value
@@ -914,6 +962,12 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
+	if strings.ToUpper(payload.Role) == "PAYEE" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "BUYER" {
+		payload.Role = "BUYER"
+	}
+
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `
@@ -947,6 +1001,12 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
+	}
+
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "PAYEE" {
+		payload.Role = "PAYEE"
 	}
 
 	sql := `SELECT COUNT(DISTINCT cpty_long_name) AS value, transaction_month AS category
@@ -984,6 +1044,12 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "PAYEE" {
+		payload.Role = "PAYEE"
+	}
+
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value, transaction_month AS category
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `
@@ -1017,6 +1083,12 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
+	}
+
+	if strings.ToUpper(payload.Role) == "PAYEE" {
+		return c.SetResultOK(0)
+	} else if strings.ToUpper(payload.Role) != "BUYER" {
+		payload.Role = "BUYER"
 	}
 
 	sql := `SELECT IFNULL(SUM(amount * rate),0) AS value, transaction_month AS category
