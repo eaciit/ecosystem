@@ -18,6 +18,7 @@ type MissedFlowPayload struct {
 	Role             string
 	Limit            int
 	Group            string
+	ProductCategory  string
 	FlowAbove        int
 	DateType         string // Either MONTH or YEAR
 	YearMonth        int
@@ -103,6 +104,13 @@ func (c *MissedFlowController) GetMissedFlowSQL(payload *MissedFlowPayload) stri
 		sql += " AND " + c.isNTBClause() + " = 'N'"
 	} else if strings.ToUpper(payload.Group) == "INTRA-GROUP" {
 		sql += " AND cust_group_name = cpty_group_name"
+	}
+
+	// Filters for Cast/Trade
+	if strings.ToUpper(payload.ProductCategory) == "CASH" {
+		sql += " AND product_category = 'Cash'"
+	} else if strings.ToUpper(payload.ProductCategory) == "TRADE" {
+		sql += " AND product_category = 'Trade'"
 	}
 
 	sql += " GROUP BY cpty_coi, cpty_long_name, cpty_group_name, cust_coi, cust_long_name, cust_group_name, cpty_bank, cust_bank, cust_role, is_ntb "
