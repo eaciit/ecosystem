@@ -93,12 +93,6 @@ func (c *MasterController) GetBookingCountries(k *knot.WebContext) interface{} {
 		return nil
 	}
 
-	payload := MasterPayload{}
-	err := k.GetPayload(&payload)
-	if err != nil {
-		return c.SetResultError(err.Error(), nil)
-	}
-
 	sql := `SELECT DISTINCT booking_country
   FROM ` + c.tableName() + ` 
   AND ` + c.commonWhereClause() + `ORDER BY booking_country`
@@ -109,7 +103,7 @@ func (c *MasterController) GetBookingCountries(k *knot.WebContext) interface{} {
 	}
 
 	results := []tk.M{}
-	err = qr.Fetch(&results, 0)
+	err := qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
