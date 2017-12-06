@@ -32,13 +32,13 @@ filter.selectedEntity = ko.observable("All")
 
 filter.role = ko.observableArray([{
   "value": "",
-  "text": "Buyer & Supplier"
+  "text": "In & Out"
 }, {
   "value": "BUYER",
-  "text": "Buyer"
+  "text": "Out"
 }, {
   "value": "PAYEE",
-  "text": "Supplier"
+  "text": "In"
 }])
 filter.selectedRole = ko.observable("")
 
@@ -94,6 +94,7 @@ filter.flow = [{
   "value": 100000000,
   "text": "Flows > $100M"
 }]
+filter.selectedFlow = ko.observable(0)
 
 filter.switchDateType = function (data, event) {
   $(event.target).siblings().removeClass("active")
@@ -116,16 +117,35 @@ filter.switchDateType = function (data, event) {
   }
 }
 
+filter.selectedDateType = "Y"
+filter.selectedDate = ko.observable("")
 
 filter.payload = ko.computed(function () {
   viewModel.globalFilter.groupname(filter.selectedGroupName())
+  var yearMonth = 0
+  var dateType = ""
+  var d = moment(filter.selectedDate())
 
+  if (filter.selectedDateType == "Y") {
+    dateType = "YEAR"
+    yearMonth = d.isValid() ? parseInt(d.format("YYYY")) : 0
+  } else {
+    dateType = "MONTH"
+    yearMonth = d.isValid() ? parseInt(d.format("YYYYMM")) : 0
+  }
   return {
     fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
     toYearMonth: parseInt(moment().format("YYYYMM")),
     year: parseInt(moment(filter.selectedYear()).format("YYYY")),
     groupName: filter.selectedGroupName(),
-    entityName: filter.selectedEntity()
+    entityName: filter.selectedEntity(),
+    role: filter.selectedRole(),
+    group: filter.selectedGroup(),
+    productCategory: filter.selectedProductCategory(),
+    limit: parseInt(filter.selectedLimit()),
+    flowAbove: parseInt(filter.selectedFlow()),
+    datetype: dateType,
+    yearMonth: yearMonth
   }
 })
 
