@@ -255,6 +255,9 @@ missedflow.loadGraphData = function () {
         }
       })
     } else {
+      var largestAmount = _.maxBy(data, "total").total
+      var othersMultiplier = 0.1
+
       _.each(data, function (e) {
         var sourceName = e.cust_long_name
         var targetName = e.cpty_long_name
@@ -288,6 +291,15 @@ missedflow.loadGraphData = function () {
 
         var sourceIndex = undefined
         var targetIndex = undefined
+
+        if (e.total < largestAmount * othersMultiplier) {
+          source = {
+            node: -1
+          }
+          target = {
+            node: -1
+          }
+        }
 
         if (source) {
           sourceIndex = source.node
@@ -330,6 +342,27 @@ missedflow.loadGraphData = function () {
       })
     }
 
+    // Check if any flows categorized as others
+    var otherLinks = _.filter(links, {
+      source: -1
+    })
+
+    if (otherLinks.length > 0) {
+      nodes.push({
+        as: "source",
+        node: nodes.length,
+        name: "Others",
+        country: "Global"
+      })
+
+      nodes.push({
+        as: "target",
+        node: nodes.length,
+        name: "Others",
+        country: "Global"
+      })
+    }
+
     // Escape null
     nodes = _.map(nodes, function (e) {
       e.name = String(e.name)
@@ -337,6 +370,10 @@ missedflow.loadGraphData = function () {
     })
 
     links = _.map(links, function (e) {
+      // Check if any flows categorized as others
+      e.source = e.source < 0 ? nodes.length - 2 : e.source
+      e.target = e.target < 0 ? nodes.length - 1 : e.target
+
       e.sourceName = String(e.sourceName)
       e.targetName = String(e.targetName)
       return e
@@ -490,11 +527,10 @@ missedflow.generateGraph = function (data) {
       return d.dy / 2
     })
     .attr("transform", function (d) {
-      return filter.selectedGroup() == "ALL" && d.as == "target" ? "rotate(90, -6, " + (d.dy / 2 + 12) + ")" : ""
+      return filter.selectedGroup() == "ALL" && d.as == "target" ? "rotate(90, -6, " + (d.dy / 2 + 12) + ") translate(" + d.name.length * 2 + ", 0)" : ""
     })
     .tspans(function (d) {
-      var name = d.name;
-      return d3.wordwrap(name, name.length / 2);
+      return filter.selectedGroup() == "ALL" ? [d.name] : d3.wordwrap(d.name, d.name.length / 2);
     })
     .attr("x", function (d) {
       if (d.parent.as == "source") {
@@ -514,11 +550,10 @@ missedflow.generateGraph = function (data) {
       return d.dy / 2
     })
     .attr("transform", function (d) {
-      return filter.selectedGroup() == "ALL" && d.as == "target" ? "rotate(90, -6, " + (d.dy / 2 + 12) + ")" : ""
+      return filter.selectedGroup() == "ALL" && d.as == "target" ? "rotate(90, -6, " + (d.dy / 2 + 12) + ") translate(" + d.name.length * 2 + ", 0)" : ""
     })
     .tspans(function (d) {
-      var name = d.name;
-      return d3.wordwrap(name, name.length / 2);
+      return filter.selectedGroup() == "ALL" ? [d.name] : d3.wordwrap(d.name, d.name.length / 2);
     })
     .attr("x", function (d) {
       if (d.parent.as == "source") {
