@@ -29,6 +29,9 @@ filter.selectedGroupName = ko.observable("")
 filter.entities = ko.observableArray(["All"])
 filter.selectedEntity = ko.observable("All")
 
+filter.bookingCountries = ko.observableArray([])
+filter.selectedBookingCountry = ko.observableArray([])
+
 filter.role = ko.observableArray([{
   "value": "",
   "text": "In & Out"
@@ -142,6 +145,7 @@ filter.payload = ko.computed(function () {
     productCategory: filter.selectedProductCategory(),
     limit: parseInt(filter.selectedLimit()),
     flowAbove: parseInt(filter.selectedFlow()),
+    bookingCountries: filter.selectedBookingCountry(),
     datetype: dateType,
     yearMonth: yearMonth
   }
@@ -169,6 +173,12 @@ filter.loadEntities = function () {
   })
 }
 
+filter.loadBookingCountries = function() {
+  viewModel.ajaxPostCallback("/main/master/getbookingcountries", {}, function(data) {
+    filter.bookingCountries(_.map(data, "value"))
+  })
+}
+
 filter.loadAll = function () {
   if (getParameterByName("entityGroup") != null) {
     filter.selectedGroupName(getParameterByName("entityGroup"))
@@ -180,10 +190,13 @@ filter.loadAll = function () {
   // })
 
   filter.loadGroups()
+  filter.loadBookingCountries()
 
   filter.selectedGroupName.subscribe(function (nv) {
     filter.loadEntities()
   })
+
+  dashboard.loadAllData()
 }
 
 dashboard.loadAllData = function () {
@@ -906,6 +919,6 @@ widget.loadData = function () {
 }
 
 $(window).load(function () {
-  filter.loadAll()
   dashboard.generateMapbox()
+  filter.loadAll()
 })

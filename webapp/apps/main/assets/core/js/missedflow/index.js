@@ -24,8 +24,12 @@ missedflow.loadAll = function () {
 var filter = {}
 filter.groupNames = ko.observableArray([])
 filter.selectedGroupName = ko.observable("")
-filter.entities = ko.observableArray([])
-filter.selectedEntity = ko.observable("")
+
+filter.entities = ko.observableArray()
+filter.selectedEntity = ko.observable()
+
+filter.bookingCountries = ko.observableArray([])
+filter.selectedBookingCountry = ko.observableArray([])
 
 filter.group = [{
   "value": "ALL",
@@ -84,6 +88,18 @@ filter.flow = [{
 }]
 filter.selectedFlow = ko.observable(0)
 
+filter.role = [{
+  "value": "",
+  "text": "In & Out"
+}, {
+  "value": "BUYER",
+  "text": "Out"
+}, {
+  "value": "PAYEE",
+  "text": "In"
+}]
+filter.selectedRole = ko.observable("")
+
 filter.selectedDateType = "Y"
 filter.selectedDate = ko.observable("")
 
@@ -103,10 +119,12 @@ filter.selectedFilters = ko.computed(function () {
   return {
     groupName: missedflow.activeGroupName(),
     entityName: missedflow.activeEntityName(),
+    role: filter.selectedRole(),
     group: filter.selectedGroup(),
     productCategory: filter.selectedProductCategory(),
     limit: parseInt(filter.selectedLimit()),
     flowAbove: parseInt(filter.selectedFlow()),
+    bookingCountries: filter.selectedBookingCountry(),
     datetype: dateType,
     yearMonth: yearMonth
   }
@@ -149,6 +167,12 @@ filter.loadGroupNames = function () {
   })
 }
 
+filter.loadBookingCountries = function() {
+  viewModel.ajaxPostCallback("/main/master/getbookingcountries", {}, function(data) {
+    filter.bookingCountries(_.map(data, "value"))
+  })
+}
+
 filter.loadAll = function () {
   filter.selectedGroupName(missedflow.activeGroupName())
   filter.selectedEntity.subscribe(function (nv) {
@@ -166,6 +190,7 @@ filter.loadAll = function () {
   filter.selectedEntity($.urlParam("entityName"))
 
   filter.loadGroupNames()
+  filter.loadBookingCountries()
   missedflow.loadGraphData()
 
   // Enable this if you want the filter to be realtime load
@@ -398,8 +423,8 @@ missedflow.generateGraph = function (data) {
     height = Math.log2(data.links.length) * 200
 
   color = d3.scaleOrdinal().range(["#1e88e5", "#1e88e5", "#8893a6", "#8893a6", "#44546a", "#44546a"])
-  colorsource = d3.scaleOrdinal().range(["#005c84", "#0075b0", "#009fda", "#2890c0", "#6ba8d0", "#a1c5e0"])
-  colortarget = d3.scaleOrdinal().range(["#019875", "#03A678", "#3f9c35", "#69be28", "#6ac17b", "#9fd18b", "#c3e2c1"])
+  colortarget = d3.scaleOrdinal().range(["#005c84", "#0075b0", "#009fda", "#2890c0", "#6ba8d0", "#a1c5e0"])
+  colorsource = d3.scaleOrdinal().range(["#019875", "#03A678", "#3f9c35", "#69be28", "#6ac17b", "#9fd18b", "#c3e2c1"])
   /* Initialize tooltip */
   var tipLinks = d3.tip()
     .attr('class', 'd3-tip')

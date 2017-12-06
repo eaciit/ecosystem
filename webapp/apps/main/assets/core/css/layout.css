@@ -74,7 +74,7 @@ a:hover {
 
 .btn {
   background-image: none;
-  box-shadow: none; // border-radius: 0px;
+  box-shadow: none;
   transition: 100ms ease-in-out background-color, border-color;
   color: white;
 }
@@ -286,4 +286,32 @@ body:not(.page-login) .layout-container .layout-content {
   padding-left: 8px;
   padding-bottom: 8px;
   float: left;
+}
+
+.menu-missedflow.multiselect,
+.filtergroup.multiselect,
+.menu-counterparty.multiselect {
+  float: left;
+  margin-right: 3px;
+}
+
+.menu-missedflow.disable,
+.filtergroup.disable {
+  opacity: 0.5;
+}
+
+.filter-container .k-multiselect,
+.filter-container .k-multiselect select {
+  border: none !important;
+}
+
+.filter-container .k-multiselect .k-input {
+  background: none;
+}
+
+.filter-container .k-multiselect-wrap {
+  min-height: 27px !important;
+  color: #ffffff;
+  background-color: #22313F !important;
+  min-height: 2.22em;
 }

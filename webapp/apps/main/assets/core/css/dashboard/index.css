@@ -198,6 +198,10 @@ th.dash_act {
   margin-right: 1px;
 }
 
+.filter-button {
+  cursor: pointer;
+}
+
 .black-color {
   background: #000000;
   border-color: #000000;
@@ -366,8 +370,8 @@ div.cssnowrap:hover {
   height: 27px;
 }
 
-.notransaction{
+.notransaction {
   font-size: 13px;
   text-align: center;
-  margin :10px;
+  margin: 10px;
 }

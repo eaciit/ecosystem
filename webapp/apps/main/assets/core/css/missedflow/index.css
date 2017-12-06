@@ -143,24 +143,24 @@ text.shadow {
 	height: 27px;
 }
 
-#filter .k-dropdown .k-state-default {
-	background: #22313F;
+.filter-container .k-dropdown .k-state-default {
+	background: #22313F !important;
 	border-color: #22313F;
 	color: #ffffff;
 }
 
-#filter .k-input {
+.filter-container .k-input {
 	color: #ffffff;
-	background: #22313F;
+	background: #22313F !important;
 }
 
-#filter .k-picker-wrap {
-	background: #22313F;
+.filter-container .k-picker-wrap {
+	background: #22313F !important;
 	border-color: #22313F;
 	color: #ffffff;
 }
 
-#filter .k-picker-wrap.k-state-default>.k-select {
+.filter-container .k-picker-wrap.k-state-default>.k-select {
 	border-color: #22313F;
 }
 
