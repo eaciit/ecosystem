@@ -167,8 +167,8 @@ filter.loadGroupNames = function () {
   })
 }
 
-filter.loadBookingCountries = function() {
-  viewModel.ajaxPostCallback("/main/master/getbookingcountries", {}, function(data) {
+filter.loadBookingCountries = function () {
+  viewModel.ajaxPostCallback("/main/master/getbookingcountries", {}, function (data) {
     filter.bookingCountries(_.map(data, "value"))
   })
 }
@@ -792,61 +792,62 @@ missedflow.getPDF = function (selector) {
   }
 }
 
-missedflow.loadDetailCSV = function(){
-  console.log(missedflow.highlightedLinks())
-  var mapped = _.map(missedflow.highlightedLinks(), _.partialRight(_.pick, ['sourceBank', 'sourceName','targetName','targetBank','value','isReversed']));
-    function convertArrayOfObjectsToCSV(args) {
-        var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+missedflow.loadDetailCSV = function () {
+  var mapped = _.map(missedflow.highlightedLinks(), _.partialRight(_.pick, ['sourceName', 'sourceBank', 'targetName', 'targetBank', 'value', 'isReversed']));
+  mapped = _.map(mapped, function(e) {
+    e.isReversed = e.isReversed ? "IN" : "OUT"
+    return e
+  })
 
-        data = args.data || null;
-        if (data == null || !data.length) {
-            return null;
-        }
+  function convertArrayOfObjectsToCSV(args) {
+    var result, ctr, keys, columnDelimiter, lineDelimiter, data;
 
-        columnDelimiter = args.columnDelimiter || ',';
-        lineDelimiter = args.lineDelimiter || '\n';
-
-        keys = Object.keys(data[0]);
-
-        result = '';
-        result += keys.join(columnDelimiter);
-        result += lineDelimiter;
-
-        data.forEach(function(item) {
-            ctr = 0;
-            keys.forEach(function(key) {
-                if (ctr > 0) result += columnDelimiter;
-
-                result += item[key];
-                ctr++;
-            });
-            result += lineDelimiter;
-        });
-
-        return result;
+    data = args.data || null;
+    if (data == null || !data.length) {
+      return null;
     }
 
+    columnDelimiter = args.columnDelimiter || ',';
+    lineDelimiter = args.lineDelimiter || '\n';
 
+    keys = Object.keys(data[0]);
 
-        var args = { filename: "stock-data.csv" };
-        var data, filename, link;
+    result = '';
+    result += ["Customer Name", "Customer Bank", "Counterparty Name", "Counterparty Bank", "Amount", "Flow"].join(columnDelimiter);
+    result += lineDelimiter;
 
-        var csv = convertArrayOfObjectsToCSV({
-            data: mapped
-        });
-        if (csv == null) return;
+    data.forEach(function (item) {
+      ctr = 0;
+      keys.forEach(function (key) {
+        if (ctr > 0) result += columnDelimiter;
 
-        filename = args.filename || 'export.csv';
+        result += item[key];
+        ctr++;
+      });
+      result += lineDelimiter;
+    });
 
-        if (!csv.match(/^data:text\/csv/i)) {
-            csv = 'data:text/csv;charset=utf-8,' + csv;
-        }
-        data = encodeURI(csv);
+    return result;
+  }
 
-        link = document.createElement('a');
-        link.setAttribute('href', data);
-        link.setAttribute('download', filename);
-        link.click();
+  var data, filename, link;
+
+  var csv = convertArrayOfObjectsToCSV({
+    data: mapped
+  });
+  if (csv == null) return;
+
+  filename = 'export.csv';
+
+  if (!csv.match(/^data:text\/csv/i)) {
+    csv = 'data:text/csv;charset=utf-8,' + csv;
+  }
+  data = encodeURI(csv);
+
+  link = document.createElement('a');
+  link.setAttribute('href', data);
+  link.setAttribute('download', filename);
+  link.click();
 }
 
 $(window).load(function () {

@@ -223,18 +223,18 @@ text.coi {
 .filter-container .k-dropdown .k-state-default {
   background: #22313F !important;
   border-color: #22313F;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .filter-container .k-input {
-  color: #ffffff;
+  color: #ffffff !important;
   background: #22313F !important;
 }
 
 .filter-container .k-picker-wrap {
   background: #22313F !important;
   border-color: #22313F;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .filter-container .k-picker-wrap.k-state-default>.k-select {
