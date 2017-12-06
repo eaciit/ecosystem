@@ -792,6 +792,63 @@ missedflow.getPDF = function (selector) {
   }
 }
 
+missedflow.loadDetailCSV = function(){
+  console.log(missedflow.highlightedLinks())
+  var mapped = _.map(missedflow.highlightedLinks(), _.partialRight(_.pick, ['sourceBank', 'sourceName','targetName','targetBank','value','isReversed']));
+    function convertArrayOfObjectsToCSV(args) {
+        var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+        data = args.data || null;
+        if (data == null || !data.length) {
+            return null;
+        }
+
+        columnDelimiter = args.columnDelimiter || ',';
+        lineDelimiter = args.lineDelimiter || '\n';
+
+        keys = Object.keys(data[0]);
+
+        result = '';
+        result += keys.join(columnDelimiter);
+        result += lineDelimiter;
+
+        data.forEach(function(item) {
+            ctr = 0;
+            keys.forEach(function(key) {
+                if (ctr > 0) result += columnDelimiter;
+
+                result += item[key];
+                ctr++;
+            });
+            result += lineDelimiter;
+        });
+
+        return result;
+    }
+
+
+
+        var args = { filename: "stock-data.csv" };
+        var data, filename, link;
+
+        var csv = convertArrayOfObjectsToCSV({
+            data: mapped
+        });
+        if (csv == null) return;
+
+        filename = args.filename || 'export.csv';
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+}
+
 $(window).load(function () {
   missedflow.loadAll()
   filter.loadAll()

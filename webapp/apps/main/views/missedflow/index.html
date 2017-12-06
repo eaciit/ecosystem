@@ -67,7 +67,7 @@
   </div>
   <div class="col-md-6 bottom-margin" data-bind="visible: missedflow.highlightedLinks().length > 0">
     <div class="row">
-      <h2 data-bind="text: missedflow.highlightedNode().name"></h2>
+      <div style="margin-top: 20px"><span style="font-size: 25px" data-bind="text: missedflow.highlightedNode().name"></span><span style="float: right; padding-right: 43px"><img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel" data-bind="click: missedflow.loadDetailCSV"></span></div>
       <span data-bind="text: missedflow.highlightedSum"></span>
     </div>
     <br>
