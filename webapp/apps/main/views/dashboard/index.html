@@ -30,7 +30,7 @@
 <div class="row">
   <div class="col-lg-12 dashboardfilter">
     <div class="filter-container">
-      <div class="filtergroup multiselect">
+      <div class="filtergroup multiselect" style="display: none;">
         <select style="width:120px;" data-bind="kendoMultiSelect: { data: filter.bookingCountries, value: filter.selectedBookingCountry, filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
@@ -38,9 +38,6 @@
       </div>
       <div class="filtergroup">
         <select style="width:200px" data-bind="kendoDropDownList: { data: filter.entities, value: filter.selectedEntity, filter: 'contains'}"></select>
-      </div>
-      <div class="filtergroup">
-        <select style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
         <select style="width:90px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
@@ -53,6 +50,9 @@
       </div>
       <div class="filtergroup">
         <select style="width:100px" data-bind="kendoDropDownList: { data: filter.flow, value: filter.selectedFlow, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      </div>
+      <div class="filtergroup">
+        <select style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
         <div class="btn-group">

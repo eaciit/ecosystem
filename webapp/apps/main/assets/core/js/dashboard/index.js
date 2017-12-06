@@ -326,7 +326,7 @@ dashboard.generateMapbox = function () {
         return L.circle(ll, 600000, {
           color: "white",
           weight: 0,
-          fillColor: "#000f46",
+          fillColor: "#1f4e1a",
           fillOpacity: 0.5
         })
       }

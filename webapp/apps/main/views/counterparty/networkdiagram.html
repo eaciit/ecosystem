@@ -21,7 +21,7 @@
 <div id="setarea">
 <div class="row">
   <div class="col-lg-12 filter-container">
-    <div class="menu-counterparty multiselect">
+    <div class="menu-counterparty multiselect" style="display: none;">
       <select style="width:120px;" data-bind="kendoMultiSelect: { data: [], enabled: false}"></select>
     </div>
     <div class="menu-counterparty">
@@ -31,9 +31,6 @@
       <select style="width:200px" data-bind="kendoDropDownList: { data: filter.entities, value: filter.selectedEntity, filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
-      <select style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
-    </div>
-    <div class="menu-counterparty">
       <select style="width:95px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
@@ -41,6 +38,9 @@
     </div>
     <div class="menu-counterparty">
       <select style="width:70px" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+    </div>
+    <div class="menu-counterparty">
+      <select style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
       <select style="width:100px" data-bind="kendoDropDownList: { data: filter.flow, value: filter.selectedFlow, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
