@@ -68,9 +68,6 @@ counterparty.loadAll = function () {
   counterparty.activeGroupName($.urlParam("entityGroup"))
   counterparty.activeEntityCOI($.urlParam("entityCOI"))
   counterparty.activeGraphIndicator($.urlParam("activeGraphIndicator") ? $.urlParam("activeGraphIndicator") : "R")
-
-  // Update the viewModel global fitler
-  viewModel.globalFilter.groupname($.urlParam("entityGroup"))
 }
 
 var filter = {}
@@ -218,6 +215,9 @@ filter.loadAll = function () {
 
   counterparty.activeGroupName.subscribe(function (nv) {
     filter.selectedGroupName(nv)
+    
+    // Update the viewModel global fitler
+    viewModel.globalFilter.groupname(nv)
   })
 
   filter.selectedEntity.subscribe(function (nv) {

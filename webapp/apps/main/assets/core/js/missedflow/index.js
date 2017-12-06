@@ -154,6 +154,9 @@ filter.loadAll = function () {
   filter.selectedEntity.subscribe(function (nv) {
     missedflow.activeGroupName(filter.selectedGroupName())
     missedflow.activeEntityName(nv)
+
+    // Update the viewModel global fitler
+    viewModel.globalFilter.groupname(filter.selectedGroupName())
   })
 
   filter.selectedGroupName.subscribe(function () {
