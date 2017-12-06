@@ -10,11 +10,12 @@ import (
 )
 
 type DashboardPayload struct {
-	Year          int
-	FromYearMonth int
-	ToYearMonth   int
-	EntityName    string
-	GroupName     string
+	Year             int
+	FromYearMonth    int
+	ToYearMonth      int
+	EntityName       string
+	GroupName        string
+	BookingCountries []string
 }
 
 type DashboardController struct {
@@ -157,6 +158,16 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -377,6 +388,16 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
@@ -414,6 +435,16 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -455,6 +486,16 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
@@ -492,6 +533,16 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -533,6 +584,16 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += `AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year)
 
@@ -571,6 +632,16 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
@@ -592,6 +663,16 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -635,6 +716,16 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += `AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
@@ -657,6 +748,16 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -700,6 +801,16 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
@@ -722,6 +833,16 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += `AND ` + c.commonWhereClause() + ` 
@@ -765,6 +886,16 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
@@ -787,6 +918,16 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -830,6 +971,16 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
 
@@ -852,6 +1003,16 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -894,6 +1055,16 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += `AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
@@ -932,6 +1103,16 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 
@@ -974,6 +1155,16 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + ` 
   GROUP BY transaction_month ORDER BY transaction_month`
@@ -1014,6 +1205,16 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
 	}
 
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
+
 	sql += ` AND ` + c.commonWhereClause() + ` 
   AND transaction_year = ` + strconv.Itoa(payload.Year) + `
   GROUP BY transaction_month ORDER BY transaction_month`
@@ -1052,6 +1253,16 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 
 	if strings.ToUpper(payload.EntityName) != "ALL" {
 		sql += " AND cust_long_name = '" + payload.EntityName + "'"
+	}
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
 	}
 
 	sql += ` AND ` + c.commonWhereClause() + ` 

@@ -11,6 +11,7 @@ import (
 )
 
 type MissedFlowPayload struct {
+	BookingCountries []string
 	GroupName        string
 	EntityName       string
 	CounterpartyName string
@@ -60,7 +61,17 @@ func (c *MissedFlowController) GetMissedFlowSQL(payload *MissedFlowPayload) stri
 	` + c.isNTBClause() + ` AS is_ntb,
   SUM(amount * rate) AS total
   FROM ` + c.tableName() + `
-  WHERE ` + c.commonWhereClause()
+	WHERE ` + c.commonWhereClause()
+
+	// Filters for Booking Country
+	if len(payload.BookingCountries) > 0 {
+		quotedBookingCountries := []string{}
+		for _, v := range payload.BookingCountries {
+			quotedBookingCountries = append(quotedBookingCountries, "'"+v+"'")
+		}
+
+		sql += " AND booking_country IN (" + strings.Join(quotedBookingCountries, ",") + ")"
+	}
 
 	// Filters for Entity Name
 	if strings.ToUpper(payload.EntityName) != "ALL" {

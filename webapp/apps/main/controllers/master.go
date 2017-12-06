@@ -87,7 +87,7 @@ func (c *MasterController) GetEntities(k *knot.WebContext) interface{} {
 	return c.SetResultOK(returnDatas)
 }
 
-func (c *MasterController) GetCountries(k *knot.WebContext) interface{} {
+func (c *MasterController) GetBookingCountries(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -99,11 +99,9 @@ func (c *MasterController) GetCountries(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT DISTINCT cust_coi
+	sql := `SELECT DISTINCT booking_country
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause()
+  AND ` + c.commonWhereClause() + `ORDER BY booking_country`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -119,8 +117,8 @@ func (c *MasterController) GetCountries(k *knot.WebContext) interface{} {
 	returnDatas := []tk.M{}
 	for _, v := range results {
 		returnDatas = append(returnDatas, tk.M{
-			"value": v.GetString("cust_coi"),
-			"text":  v.GetString("cust_coi"),
+			"value": v.GetString("booking_country"),
+			"text":  v.GetString("booking_country"),
 		})
 	}
 
