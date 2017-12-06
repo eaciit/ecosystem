@@ -95,7 +95,7 @@ func (c *MasterController) GetBookingCountries(k *knot.WebContext) interface{} {
 
 	sql := `SELECT DISTINCT booking_country
   FROM ` + c.tableName() + ` 
-  AND ` + c.commonWhereClause() + `ORDER BY booking_country`
+  WHERE ` + c.commonWhereClause() + `ORDER BY booking_country`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
