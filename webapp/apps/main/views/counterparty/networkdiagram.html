@@ -21,11 +21,11 @@
 <div id="setarea">
 <div class="row">
   <div class="col-lg-12 filter-container">
-    <div class="menu-counterparty multiselect" style="display: none;">
+    <div class="menu-counterparty multiselect">
       <select style="width:120px;" data-bind="kendoMultiSelect: { data: [], enabled: false}"></select>
     </div>
     <div class="menu-counterparty">
-      <select style="width:200px" data-bind="kendoDropDownList: { data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
+      <select style="width:200px" data-bind="kendoDropDownList: { optionLabel : 'Group Name', data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
     </div>
     <div class="menu-counterparty">
       <select style="width:200px" data-bind="kendoDropDownList: { data: filter.entities, value: filter.selectedEntity, filter: 'contains'}"></select>

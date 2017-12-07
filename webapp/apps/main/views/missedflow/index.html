@@ -38,13 +38,13 @@
         </div>
       </div>
       <div class="menu-missedflow">
-        <select style="width:200px" data-bind="kendoDropDownList: { data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
+        <select style="width:200px" data-bind="kendoDropDownList: { optionLabel : 'Group Name', data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
       </div>
       <div class="menu-missedflow">
         <select style="width:200px" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
       </div>
       <div class="menu-missedflow">
-        <select style="width:60px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+        <select style="width:100px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
       <div class="menu-missedflow">
         <select style="width:95px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
@@ -52,7 +52,7 @@
       <div class="menu-missedflow">
         <select style="width:70px" data-bind="kendoDropDownList: { data: filter.limit, value: filter.selectedLimit, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
-      <div class="menu-missedflow" style="display: none;" >
+      <div class="menu-missedflow"  >
         <select style="width:120px" data-bind="kendoDropDownList: { data: filter.role, value: filter.selectedRole, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>  
       <div class="menu-missedflow">
@@ -79,7 +79,7 @@
   </div>
   <div class="col-md-6 bottom-margin" data-bind="visible: missedflow.highlightedLinks().length > 0">
     <div class="row">
-      <div style="margin-top: 20px"><span style="font-size: 25px" data-bind="text: missedflow.highlightedNode().name"></span><span style="float: right; padding-right: 43px"><img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel" data-bind="click: missedflow.loadDetailCSV"></span></div>
+      <div style="margin-top: 20px;"><div style="font-size: 25px; display: inline-block;" data-bind="text: missedflow.highlightedNode().name"></div><div style="display: inline-block; margin-left: 10px; "><img style="margin-bottom: 11px;" src="/main/static/3rdparty/img/excel.png" width="20px" height="25px" alt="export excel" data-bind="click: missedflow.loadDetailCSV"></div></div>
       <span data-bind="text: missedflow.highlightedSum"></span>
     </div>
     <br>
