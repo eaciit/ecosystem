@@ -218,7 +218,7 @@ filter.loadAll = function () {
 
   counterparty.activeGroupName.subscribe(function (nv) {
     filter.selectedGroupName(nv)
-    
+
     // Update the viewModel global fitler
     viewModel.globalFilter.groupname(nv)
   })
@@ -253,6 +253,7 @@ network.rawLinks = []
 network.links = []
 network.nodes = []
 network.level = 0
+network.levelsNodeCount = []
 network.isExpanding = false
 
 network.clean = function () {
@@ -260,6 +261,8 @@ network.clean = function () {
     network.rawLinks = []
     network.links = []
     network.nodes = []
+    network.level = 0
+    network.levelsNodeCount = []
   } else {
     network.bubble.nodes = []
   }
@@ -390,6 +393,9 @@ network.processData = function (data) {
       return d
     })
     .value()
+
+  // Update level node count
+  network.levelsNodeCount.push(nodes.length)
 
   // Generate links based on merged nodes
   var rawLinks = []
@@ -639,9 +645,14 @@ network.generate = function () {
   var links = network.links
   var nodes = network.nodes
 
+  var overLimit = 20
+  var over = _.filter(network.levelsNodeCount, function (e) {
+    return e > overLimit
+  })
+  
   var levelHeight = 300
   var w = $("#graph").width(),
-    h = (network.level + 1) * levelHeight
+    h = (network.level + 1) * levelHeight + (over.length * levelHeight)
 
   d3.select("#graph").selectAll("*").remove()
 
@@ -699,7 +710,7 @@ network.generate = function () {
       }
     }).strength(0.1))
     .force("y", d3.forceY(function (d) {
-      return levelHeight + (network.level - d.level - 1) * levelHeight
+      return (network.level - d.level) * levelHeight + (network.levelsNodeCount[d.level] > overLimit ? levelHeight / 2 : 0)
     }).strength(0.1))
     .force("collision", d3.forceCollide().radius(function (d) {
       return d.r + 10
