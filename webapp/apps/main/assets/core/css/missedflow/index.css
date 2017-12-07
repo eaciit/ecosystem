@@ -227,7 +227,6 @@ text.shadow {
 .mainList {
 	padding: 5px;
 	font-weight: bold;
-	background-color: lightgray;
 }
 
 .mainList:hover {

@@ -192,11 +192,11 @@ viewModel.getNavigationMenu = function () {
   viewModel.dataNavigationMenuTree([{
     Icon: "bar-chart",
     Title: "Dashboard",
-    Url: "/main/dashboard/index"+ "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
+    Url: "/main/dashboard/index" + "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
   }, {
     Icon: "sitemap",
     Title: "Counter Party View",
-    Url: "/main/counterparty/networkdiagram"+ "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
+    Url: "/main/counterparty/networkdiagram" + "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
   }, {
     Icon: "random",
     Title: "Missed Flow Analysis",
@@ -224,6 +224,32 @@ viewModel.checkLoadedPageAccess = function () {
 viewModel.checkActiveMenu = function (path) {
   window.location.pathname == path
 }
+
+viewModel.bookingCountries = [{
+  region: "AFRICA",
+  countries: ["AO", "BI", "BJ", "BF", "BW", "CF", "CI", "CM", "CD", "CG", "KM", "CV", "DJ", "DZ", "EG", "ER", "EH", "ET", "GA", "GH", "GN", "GM", "GW", "GQ", "IO", "KE", "LR", "LY", "LS", "MA", "MG", "ML", "MZ", "MR", "MU", "MW", "YT", "NA", "NE", "NG", "RE", "RW", "SD", "SN", "SL", "SO", "SS", "ST", "SZ", "SC", "TD", "TG", "TN", "TZ", "UG", "ZA", "ZM", "ZW", "AW"]
+}, {
+  region: "AMERICAS",
+  countries: ["AI", "AR", "AG", "BS", "BL", "BZ", "BM", "BO", "BR", "BB", "CA", "CL", "CO", "CR", "CU", "CW", "KY", "DM", "DO", "EC", "FK", "GP", "GD", "GL", "GT", "GF", "GY", "HN", "HT", "JM", "KN", "LC", "MF", "MX", "MS", "MQ", "NI", "PA", "PE", "PR", "PY", "GS", "SV", "PM", "SR", "SX", "TC", "TT", "UM", "UY", "US", "VC", "VE", "VG", "VI"]
+}, {
+  region: "ASEAN",
+  countries: ["AU", "BN", "CK", "FJ", "ID", "KH", "LA", "MM", "MY", "NZ", "PH", "SB", "SG", "TH", "TL", "TV", "VN", "VU"]
+}, {
+  region: "EUROPE",
+  countries: ["AX", "AL", "AD", "AT", "BE", "BG", "BA", "BY", "CH", "CY", "CZ", "DE", "DK", "ES", "EE", "FI", "FR", "FO", "GB", "GG", "GI", "GR", "HR", "HU", "IM", "IE", "IS", "IT", "JE", "XK", "LI", "LT", "LU", "LV", "MC", "MD", "MK", "MT", "ME", "NL", "NO", "PL", "PT", "RO", "RU", "SJ", "SM", "RS", "SK", "SI", "SE", "UA", "VA"]
+}, {
+  region: "GREATER CHINA",
+  countries: ["CN", "HK", "MH", "MO", "TW", "WS"]
+}, {
+  region: "MENAP",
+  countries: ["AE", "BH", "EG", "IQ", "JO", "LI", "MA", "OM", "PK", "QA", "SA", "TN"]
+}, {
+  region: "NORTH EAST ASIA",
+  countries: ["JP", "KR", "MN"]
+}, {
+  region: "SOUTH ASIA",
+  countries: ["AF", "BD", "BT", "IN", "LK", "NP"]
+}]
 
 $(function () {
   viewModel.getNavigationMenu()

@@ -31,15 +31,9 @@ filter.selectedEntity = ko.observable()
 filter.bookingCountry = {}
 filter.bookingCountry.selecteds = ko.observableArray([])
 
-filter.bookingCountry.data = ko.observableArray([{
-  region: "GCNA",
-  countries: ["HK", "CN", "TW", "KR", "JP"]
-}, {
-  region: "ASA",
-  countries: ["US", "CA", "PR", "BZ"]
-}])
+filter.bookingCountry.data = ko.observableArray(viewModel.bookingCountries)
 
-filter.bookingCountry.displaySelected = ko.computed(function() {
+filter.bookingCountry.displaySelected = ko.computed(function () {
   if (filter.bookingCountry.selecteds().length == 0) {
     return ""
   }
@@ -76,7 +70,7 @@ filter.bookingCountry.toggleList = function (data, event) {
   }
 }
 
-filter.bookingCountry.select = function(data, event) {
+filter.bookingCountry.select = function (data, event) {
   var selecteds = filter.bookingCountry.selecteds()
   var index = selecteds.indexOf(data)
   var input = $(event.currentTarget.children[0])
