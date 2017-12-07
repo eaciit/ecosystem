@@ -221,7 +221,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 
 	sql += c.FilterClause(payload, false)
 
-	sql += `GROUP BY cust_coi, cust_long_name ORDER BY cust_long_name`
+	sql += ` GROUP BY cust_coi, cust_long_name ORDER BY cust_long_name`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -934,7 +934,7 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 
 	sql += c.FilterClause(payload, false)
 
-	sql += `GROUP BY transaction_month ORDER BY transaction_month`
+	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {

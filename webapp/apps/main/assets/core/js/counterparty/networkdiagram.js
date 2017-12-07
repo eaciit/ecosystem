@@ -4,6 +4,7 @@ counterparty.activeEntityName = ko.observable()
 counterparty.activeEntityCOI = ko.observable()
 counterparty.activeName = ko.observable()
 counterparty.activeGroupName = ko.observable("")
+counterparty.availableActiveGroupName = ko.observable("")
 // Graph indicator R = Relationship, B = Buyer only (bubble), S = Supplier only (bubble)
 counterparty.activeGraphIndicator = ko.observable("R")
 
@@ -61,7 +62,15 @@ counterparty.loadAll = function () {
         filter.selectedRole("PAYEE")
       }
     } else {
-      window.location.href = "/main/missedflow/index?entityName=" + counterparty.activeEntityName() + "&entityGroup=" + counterparty.initialGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
+      window.location.href = "/main/missedflow/index?entityName=" + counterparty.activeEntityName() + "&entityGroup=" + counterparty.availableActiveGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
+    }
+  })
+
+  counterparty.activeGroupName.subscribe(function (nv) {
+    if (nv != "") {
+      counterparty.availableActiveGroupName(nv)
+      // Update the viewModel global fitler
+      viewModel.globalFilter.groupname(nv)
     }
   })
 
@@ -146,7 +155,7 @@ filter.flow = [{
 filter.selectedFlow = ko.observable(0)
 
 filter.selectedDateType = "Y"
-filter.selectedDate = ko.observable("")
+filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
 
 filter.selectedFilters = ko.computed(function () {
   var yearMonth = 0
@@ -218,9 +227,6 @@ filter.loadAll = function () {
 
   counterparty.activeGroupName.subscribe(function (nv) {
     filter.selectedGroupName(nv)
-
-    // Update the viewModel global fitler
-    viewModel.globalFilter.groupname(nv)
   })
 
   filter.selectedEntity.subscribe(function (nv) {
@@ -649,7 +655,7 @@ network.generate = function () {
   var over = _.filter(network.levelsNodeCount, function (e) {
     return e > overLimit
   })
-  
+
   var levelHeight = 300
   var w = $("#graph").width(),
     h = (network.level + 1) * levelHeight + (over.length * levelHeight)

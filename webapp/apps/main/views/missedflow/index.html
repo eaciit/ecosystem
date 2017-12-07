@@ -22,21 +22,6 @@
 <div class="row" id="setarea">
   <div class="row">
     <div class="col-lg-12 filter-container">
-      <div class="menu-missedflow multiselect">
-        <div class="sugab-multiselect-dropdown" id="bookingCountry" type="text" style="width:100px;" target="bookingCountryDropdown" data-bind="click: filter.bookingCountry.toggleList">
-          <span class="input" data-bind="text: filter.bookingCountry.displaySelected"></span>
-          <span class="k-icon k-i-arrow-60-down"></span>
-        </div>
-        <div id="bookingCountryDropdown" data-bind="foreach: filter.bookingCountry.data">
-          <div class="mainList" data-bind="text: region, click: filter.bookingCountry.expand"></div>
-          <ul class="subList" data-bind="foreach: countries, attr: {'id': region}">
-            <li data-bind="click: filter.bookingCountry.select">
-              <input type="checkbox" data-bind="attr: {'value': $data, 'name': $parent.region}">
-              <span data-bind="text: $data"></span>
-            </li>
-          </ul>
-        </div>
-      </div>
       <div class="menu-missedflow">
         <select style="width:200px" data-bind="kendoDropDownList: { optionLabel : 'Group Name', data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
       </div>
@@ -45,6 +30,21 @@
       </div>
       <div class="menu-missedflow">
         <select style="width:100px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
+      </div>
+      <div class="menu-missedflow multiselect">
+        <div class="sugab-multiselect-dropdown" id="bookingCountry" type="text" style="width:120px;" target="bookingCountryDropdown" data-bind="click: filter.bookingCountry.toggleList">
+          <span class="input" data-bind="text: filter.bookingCountry.displaySelected"></span>
+          <span class="k-icon k-i-arrow-60-down"></span>
+        </div>
+        <div id="bookingCountryDropdown" data-bind="foreach: filter.bookingCountry.data">
+          <div class="mainList" data-bind="text: region, click: filter.bookingCountry.expand"></div>
+          <ul class="subList" data-bind="foreach: countries, attr: {'id': id}">
+            <li data-bind="click: filter.bookingCountry.select">
+              <input type="checkbox" data-bind="attr: {'value': $data, 'name': $parent.region}">
+              <span data-bind="text: $data"></span>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="menu-missedflow">
         <select style="width:95px" data-bind="kendoDropDownList: { data: filter.productCategories, value: filter.selectedProductCategory, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>

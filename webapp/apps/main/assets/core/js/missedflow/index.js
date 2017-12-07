@@ -14,11 +14,13 @@ missedflow.resetHighlight = function () {
 }
 
 missedflow.loadAll = function () {
+  missedflow.activeGroupName.subscribe(function(nv) {
+    // Update the viewModel global fitler
+    viewModel.globalFilter.groupname(filter.selectedGroupName())
+  })
+
   missedflow.activeGroupName($.urlParam("entityGroup"))
   missedflow.activeEntityCOI($.urlParam("entityCOI"))
-
-  // Update the view model global filter
-  viewModel.globalFilter.groupname($.urlParam("entityGroup"))
 }
 
 var filter = {}
@@ -98,7 +100,7 @@ filter.role = [{
 filter.selectedRole = ko.observable("")
 
 filter.selectedDateType = "Y"
-filter.selectedDate = ko.observable("")
+filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
 
 // Filter booking country
 filter.bookingCountry = {}
@@ -108,14 +110,14 @@ filter.bookingCountry.data = ko.observableArray(viewModel.bookingCountries)
 
 filter.bookingCountry.displaySelected = ko.computed(function () {
   if (filter.bookingCountry.selecteds().length == 0) {
-    return ""
+    return "Region/Country"
   }
 
   return filter.bookingCountry.selecteds().length > 1 ? "Multiple" : filter.bookingCountry.selecteds()[0]
 })
 
 filter.bookingCountry.expand = function (data, event) {
-  var list = $("#bookingCountryDropdown #" + data.region)
+  var list = $("#bookingCountryDropdown #" + data.id)
   list.css("display", list.css("display") == "none" ? "block" : "none")
 }
 
@@ -229,9 +231,6 @@ filter.loadAll = function () {
   filter.selectedEntity.subscribe(function (nv) {
     missedflow.activeGroupName(filter.selectedGroupName())
     missedflow.activeEntityName(nv)
-
-    // Update the viewModel global fitler
-    viewModel.globalFilter.groupname(filter.selectedGroupName())
   })
 
   filter.selectedGroupName.subscribe(function () {

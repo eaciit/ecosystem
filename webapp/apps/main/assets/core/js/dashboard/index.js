@@ -99,7 +99,7 @@ filter.flow = [{
 filter.selectedFlow = ko.observable(0)
 
 filter.selectedDateType = "Y"
-filter.selectedDate = ko.observable("")
+filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
 
 // Filter booking country
 filter.bookingCountry = {}
@@ -109,14 +109,14 @@ filter.bookingCountry.data = ko.observableArray(viewModel.bookingCountries)
 
 filter.bookingCountry.displaySelected = ko.computed(function () {
   if (filter.bookingCountry.selecteds().length == 0) {
-    return ""
+    return "Region/Country"
   }
 
   return filter.bookingCountry.selecteds().length > 1 ? "Multiple" : filter.bookingCountry.selecteds()[0]
 })
 
 filter.bookingCountry.expand = function (data, event) {
-  var list = $("#bookingCountryDropdown #" + data.region)
+  var list = $("#bookingCountryDropdown #" + data.id)
   list.css("display", list.css("display") == "none" ? "block" : "none")
 }
 
@@ -253,7 +253,7 @@ filter.loadAll = function () {
 }
 
 dashboard.loadAllData = function () {
-  if (filter.payload.groupName != "") {
+  if (filter.payload().groupName != "") {
     widget.loadData()
     dashboard.loadEntitiesDataIntoMap()
     dashboard.loadDomicileDataIntoMap()
