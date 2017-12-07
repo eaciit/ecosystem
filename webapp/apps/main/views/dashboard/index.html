@@ -30,14 +30,14 @@
 <div class="row">
   <div class="col-lg-12 dashboardfilter">
     <div class="filter-container">
-      <div class="filtergroup multiselect" style="display: none;">
+      <div class="filtergroup multiselect">
         <select style="width:120px;" data-bind="kendoMultiSelect: { data: filter.bookingCountries, value: filter.selectedBookingCountry, filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
-        <select style="width:200px" data-bind="kendoDropDownList: { data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains' }"></select>
+        <select id="groupname" style="width:200px" data-bind="kendoDropDownList: {optionLabel : 'Group Name', data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
       </div>
       <div class="filtergroup">
-        <select style="width:200px" data-bind="kendoDropDownList: { data: filter.entities, value: filter.selectedEntity, filter: 'contains'}"></select>
+        <select style="width:200px" data-bind="kendoDropDownList: { data: filter.entities, value: filter.selectedEntity, filter: 'contains',  placeholder:'dfff'}"></select>
       </div>
       <div class="filtergroup">
         <select style="width:90px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
