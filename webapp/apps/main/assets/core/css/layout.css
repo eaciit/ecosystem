@@ -288,11 +288,9 @@ body:not(.page-login) .layout-container .layout-content {
   float: left;
 }
 
-.menu-missedflow.multiselect,
-.filtergroup.multiselect,
-.menu-counterparty.multiselect {
+.filter-container > div {
   float: left;
-  margin-right: 3px;
+  margin-right: 5px;
 }
 
 .menu-missedflow.disable,

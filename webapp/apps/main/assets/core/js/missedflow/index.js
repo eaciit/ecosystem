@@ -28,8 +28,68 @@ filter.selectedGroupName = ko.observable("")
 filter.entities = ko.observableArray()
 filter.selectedEntity = ko.observable()
 
-filter.bookingCountries = ko.observableArray([])
-filter.selectedBookingCountry = ko.observableArray([])
+filter.bookingCountry = {}
+filter.bookingCountry.selecteds = ko.observableArray([])
+
+filter.bookingCountry.data = ko.observableArray([{
+  region: "GCNA",
+  countries: ["HK", "CN", "TW", "KR", "JP"]
+}, {
+  region: "ASA",
+  countries: ["US", "CA", "PR", "BZ"]
+}])
+
+filter.bookingCountry.displaySelected = ko.computed(function() {
+  if (filter.bookingCountry.selecteds().length == 0) {
+    return ""
+  }
+
+  return filter.bookingCountry.selecteds().length > 1 ? "Multiple" : filter.bookingCountry.selecteds()[0]
+})
+
+filter.bookingCountry.expand = function (data, event) {
+  var list = $("#bookingCountryDropdown #" + data.region)
+  list.css("display", list.css("display") == "none" ? "block" : "none")
+}
+
+filter.bookingCountry.toggleList = function (data, event) {
+  var elem = $(event.currentTarget)
+  var target = $("#" + elem.attr("target"))
+
+  if (elem.hasClass("active")) {
+    elem.removeClass("active")
+    var oriHeight = target.height()
+    target.animate({
+      height: 0
+    }, 200, function () {
+      target.css("visibility", "hidden")
+      target.height(oriHeight)
+    })
+  } else {
+    elem.addClass("active")
+    var oriHeight = target.height()
+    target.height(0)
+    target.css("visibility", "visible")
+    target.animate({
+      height: oriHeight
+    }, 200)
+  }
+}
+
+filter.bookingCountry.select = function(data, event) {
+  var selecteds = filter.bookingCountry.selecteds()
+  var index = selecteds.indexOf(data)
+  var input = $(event.currentTarget.children[0])
+
+  if (index == -1) {
+    filter.bookingCountry.selecteds(selecteds.concat([data]))
+    input.attr("checked", true)
+  } else {
+    selecteds.splice(index, 1)
+    filter.bookingCountry.selecteds(selecteds)
+    input.attr("checked", false)
+  }
+}
 
 filter.group = [{
   "value": "ALL",
@@ -124,7 +184,7 @@ filter.selectedFilters = ko.computed(function () {
     productCategory: filter.selectedProductCategory(),
     limit: parseInt(filter.selectedLimit()),
     flowAbove: parseInt(filter.selectedFlow()),
-    bookingCountries: filter.selectedBookingCountry(),
+    bookingCountries: filter.bookingCountry.selecteds(),
     datetype: dateType,
     yearMonth: yearMonth
   }
@@ -167,12 +227,6 @@ filter.loadGroupNames = function () {
   })
 }
 
-filter.loadBookingCountries = function () {
-  viewModel.ajaxPostCallback("/main/master/getbookingcountries", {}, function (data) {
-    filter.bookingCountries(_.map(data, "value"))
-  })
-}
-
 filter.loadAll = function () {
   filter.selectedGroupName(missedflow.activeGroupName())
   filter.selectedEntity.subscribe(function (nv) {
@@ -190,7 +244,6 @@ filter.loadAll = function () {
   filter.selectedEntity($.urlParam("entityName"))
 
   filter.loadGroupNames()
-  filter.loadBookingCountries()
   missedflow.loadGraphData()
 
   // Enable this if you want the filter to be realtime load
@@ -794,7 +847,7 @@ missedflow.getPDF = function (selector) {
 
 missedflow.loadDetailCSV = function () {
   var mapped = _.map(missedflow.highlightedLinks(), _.partialRight(_.pick, ['sourceName', 'sourceBank', 'targetName', 'targetBank', 'value', 'isReversed']));
-  mapped = _.map(mapped, function(e) {
+  mapped = _.map(mapped, function (e) {
     e.isReversed = e.isReversed ? "IN" : "OUT"
     return e
   })
