@@ -89,16 +89,19 @@ filter.role = ko.observableArray([{
 filter.selectedRole = ko.observable("")
 
 filter.group = [{
-  "value": "",
-  "text": "ETB & NTB"
+  "value": "ALL",
+  "text": "All"
 }, {
   "value": "ETB",
   "text": "ETB"
 }, {
   "value": "NTB",
   "text": "NTB"
+}, {
+  "value": "Intra-Group",
+  "text": "Intra-Group"
 }]
-filter.selectedGroup = ko.observable("")
+filter.selectedGroup = ko.observable("ALL")
 
 filter.productCategories = [{
   "value": "",

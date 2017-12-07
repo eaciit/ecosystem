@@ -173,6 +173,14 @@ filter.loadBookingCountries = function () {
   })
 }
 
+// $(document).click(".k-multiselect-wrap",function(){
+//   alert(88)
+//   if($(this).text() == "oooo"){
+//      $(".k-multiselect-wrap").text("")
+//   }
+ 
+// })
+
 filter.loadAll = function () {
   filter.selectedGroupName(missedflow.activeGroupName())
   filter.selectedEntity.subscribe(function (nv) {
