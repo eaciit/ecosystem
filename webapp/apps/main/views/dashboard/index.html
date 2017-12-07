@@ -30,8 +30,20 @@
 <div class="row">
   <div class="col-lg-12 dashboardfilter">
     <div class="filter-container">
-      <div class="filtergroup multiselect">
-        <select style="width:120px;" data-bind="kendoMultiSelect: { data: filter.bookingCountries, value: filter.selectedBookingCountry, filter: 'contains'}"></select>
+      <div class="filter-group multiselect">
+        <div class="sugab-multiselect-dropdown" id="bookingCountry" type="text" style="width:100px;" target="bookingCountryDropdown" data-bind="click: filter.bookingCountry.toggleList">
+          <span class="input" data-bind="text: filter.bookingCountry.displaySelected"></span>
+          <span class="k-icon k-i-arrow-60-down"></span>
+        </div>
+        <div id="bookingCountryDropdown" data-bind="foreach: filter.bookingCountry.data">
+          <div class="mainList" data-bind="text: region, click: filter.bookingCountry.expand"></div>
+          <ul class="subList" data-bind="foreach: countries, attr: {'id': region}">
+            <li data-bind="click: filter.bookingCountry.select">
+              <input type="checkbox" data-bind="attr: {'value': $data, 'name': $parent.region}">
+              <span data-bind="text: $data"></span>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="filtergroup">
         <select id="groupname" style="width:200px" data-bind="kendoDropDownList: {optionLabel : 'Group Name', data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>

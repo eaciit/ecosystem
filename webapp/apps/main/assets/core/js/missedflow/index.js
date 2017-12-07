@@ -28,63 +28,6 @@ filter.selectedGroupName = ko.observable("")
 filter.entities = ko.observableArray()
 filter.selectedEntity = ko.observable()
 
-filter.bookingCountry = {}
-filter.bookingCountry.selecteds = ko.observableArray([])
-
-filter.bookingCountry.data = ko.observableArray(viewModel.bookingCountries)
-
-filter.bookingCountry.displaySelected = ko.computed(function () {
-  if (filter.bookingCountry.selecteds().length == 0) {
-    return ""
-  }
-
-  return filter.bookingCountry.selecteds().length > 1 ? "Multiple" : filter.bookingCountry.selecteds()[0]
-})
-
-filter.bookingCountry.expand = function (data, event) {
-  var list = $("#bookingCountryDropdown #" + data.region)
-  list.css("display", list.css("display") == "none" ? "block" : "none")
-}
-
-filter.bookingCountry.toggleList = function (data, event) {
-  var elem = $(event.currentTarget)
-  var target = $("#" + elem.attr("target"))
-
-  if (elem.hasClass("active")) {
-    elem.removeClass("active")
-    var oriHeight = target.height()
-    target.animate({
-      height: 0
-    }, 200, function () {
-      target.css("visibility", "hidden")
-      target.height(oriHeight)
-    })
-  } else {
-    elem.addClass("active")
-    var oriHeight = target.height()
-    target.height(0)
-    target.css("visibility", "visible")
-    target.animate({
-      height: oriHeight
-    }, 200)
-  }
-}
-
-filter.bookingCountry.select = function (data, event) {
-  var selecteds = filter.bookingCountry.selecteds()
-  var index = selecteds.indexOf(data)
-  var input = $(event.currentTarget.children[0])
-
-  if (index == -1) {
-    filter.bookingCountry.selecteds(selecteds.concat([data]))
-    input.attr("checked", true)
-  } else {
-    selecteds.splice(index, 1)
-    filter.bookingCountry.selecteds(selecteds)
-    input.attr("checked", false)
-  }
-}
-
 filter.group = [{
   "value": "ALL",
   "text": "All"
@@ -156,6 +99,66 @@ filter.selectedRole = ko.observable("")
 
 filter.selectedDateType = "Y"
 filter.selectedDate = ko.observable("")
+
+// Filter booking country
+filter.bookingCountry = {}
+filter.bookingCountry.selecteds = ko.observableArray([])
+
+filter.bookingCountry.data = ko.observableArray(viewModel.bookingCountries)
+
+filter.bookingCountry.displaySelected = ko.computed(function () {
+  if (filter.bookingCountry.selecteds().length == 0) {
+    return ""
+  }
+
+  return filter.bookingCountry.selecteds().length > 1 ? "Multiple" : filter.bookingCountry.selecteds()[0]
+})
+
+filter.bookingCountry.expand = function (data, event) {
+  var list = $("#bookingCountryDropdown #" + data.region)
+  list.css("display", list.css("display") == "none" ? "block" : "none")
+}
+
+filter.bookingCountry.toggleList = function (data, event) {
+  var elem = $(event.currentTarget)
+  var target = $("#" + elem.attr("target"))
+
+  if (elem.hasClass("active")) {
+    elem.removeClass("active")
+    var oriHeight = target.height()
+    target.animate({
+      height: 0
+    }, 200, function () {
+      target.css("visibility", "hidden")
+      target.height(oriHeight)
+    })
+  } else {
+    elem.addClass("active")
+    var oriHeight = target.height()
+    target.height(0)
+    target.css("visibility", "visible")
+    target.animate({
+      height: oriHeight
+    }, 200)
+  }
+}
+
+filter.bookingCountry.select = function (data, event) {
+  var selecteds = filter.bookingCountry.selecteds()
+  var index = selecteds.indexOf(data)
+  var input = $(event.currentTarget.children[0])
+
+  if (index == -1) {
+    filter.bookingCountry.selecteds(selecteds.concat([data]))
+    input.attr("checked", true)
+  } else {
+    selecteds.splice(index, 1)
+    filter.bookingCountry.selecteds(selecteds)
+    input.attr("checked", false)
+  }
+}
+
+// End of Filter booking country
 
 filter.selectedFilters = ko.computed(function () {
   var yearMonth = 0
