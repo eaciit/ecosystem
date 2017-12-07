@@ -257,6 +257,8 @@ missedflow.loadGraphData = function () {
     var nodes = []
 
     if (filter.selectedGroup() == "ALL" && data.length > 0) {
+      var largestAmount = _.maxBy(data, "total").total
+      var othersMultiplier = 0.1
       var groups = ["ETB", "NTB", "Intra-Group"]
 
       _.each(groups, function (g, i) {
@@ -313,7 +315,8 @@ missedflow.loadGraphData = function () {
               sourceName: e.cust_long_name,
               targetBank: e.cpty_bank,
               targetName: e.cpty_long_name,
-              isReversed: isReversed
+              isReversed: isReversed,
+              isOther: e.total < (largestAmount * othersMultiplier)
             })
           }
         })
@@ -654,7 +657,7 @@ missedflow.generateGraph = function (data) {
       .attr("class", "shadow")
       .attr("text-anchor", "end")
       .text(function (d) {
-        return d.targetName
+        return d.isOther ? "" : d.targetName
       })
       .attr("y", function (d) {
         return d.target.y + d.ty + d.dy / 2
@@ -666,7 +669,7 @@ missedflow.generateGraph = function (data) {
     linkText.append("text")
       .attr("text-anchor", "end")
       .text(function (d) {
-        return d.targetName
+        return d.isOther ? "" : d.targetName
       })
       .attr("y", function (d) {
         return d.target.y + d.ty + d.dy / 2

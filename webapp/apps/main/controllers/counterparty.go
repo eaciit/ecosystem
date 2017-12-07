@@ -84,6 +84,8 @@ func (c *CounterPartyController) GetTopEntities(key string, payload *CounterPart
 		sql += " AND " + c.isNTBClause() + " = 'Y'"
 	} else if strings.ToUpper(payload.Group) == "ETB" {
 		sql += " AND " + c.isNTBClause() + " = 'N'"
+	} else if strings.ToUpper(payload.Group) == "INTRA-GROUP" {
+		sql += " AND cust_group_name = cpty_group_name"
 	}
 
 	// Filters for Cast/Trade
