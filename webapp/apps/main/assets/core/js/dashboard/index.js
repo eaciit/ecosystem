@@ -304,7 +304,7 @@ dashboard.generateMapbox = function () {
           color: "white",
           weight: 0,
           fillColor: "#69be28",
-          fillOpacity: 0.4
+          fillOpacity: 0.85
         })
       }
     }).addTo(map)
@@ -327,7 +327,7 @@ dashboard.generateMapbox = function () {
           color: "white",
           weight: 0,
           fillColor: "#1f4e1a",
-          fillOpacity: 0.5
+          fillOpacity: 0.85
         })
       }
     }).addTo(map)
