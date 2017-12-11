@@ -183,21 +183,35 @@ filter.switchDateType = function (data, event) {
 }
 
 filter.payload = ko.computed(function () {
-  viewModel.globalFilter.groupname(filter.selectedGroupName())
   var yearMonth = 0
+  var fromYearMonth = 0
+  var toYearMonth = 0
   var dateType = ""
   var d = moment(filter.selectedDate())
 
   if (filter.selectedDateType == "Y") {
     dateType = "YEAR"
-    yearMonth = d.isValid() ? parseInt(d.format("YYYY")) : 0
+
+    if (d.isValid()) {
+      yearMonth = parseInt(d.format("YYYY"))
+      // Subtract 1 year
+      fromYearMonth = (yearMonth - 1) * 100 + 12
+      toYearMonth = yearMonth * 100 + 12
+    }
   } else {
     dateType = "MONTH"
-    yearMonth = d.isValid() ? parseInt(d.format("YYYYMM")) : 0
+
+    if (d.isValid()) {
+      yearMonth = parseInt(d.format("YYYYMM"))
+      // 100 = 1 Year
+      fromYearMonth = (yearMonth - 100)
+      toYearMonth = yearMonth
+    }
   }
+
   return {
-    fromYearMonth: parseInt(moment().subtract(1, "years").format("YYYYMM")),
-    toYearMonth: parseInt(moment().format("YYYYMM")),
+    fromYearMonth: fromYearMonth,
+    toYearMonth: toYearMonth,
     groupName: filter.selectedGroupName(),
     entityName: filter.selectedEntity(),
     role: filter.selectedRole(),
@@ -213,7 +227,27 @@ filter.payload = ko.computed(function () {
 
 filter.payloadQuarter = function () {
   var payload = JSON.parse(JSON.stringify(filter.payload()))
-  payload.fromYearMonth = parseInt(moment().subtract(3, "months").format("YYYYMM"))
+
+  var fromYearMonth = 0
+  var toYearMonth = 0
+  var d = moment(filter.selectedDate())
+
+  if (filter.selectedDateType == "Y") {
+    if (d.isValid()) {
+      yearMonth = parseInt(d.format("YYYY"))
+      // 3 month difference
+      fromYearMonth = (yearMonth) * 100 + 9
+      toYearMonth = yearMonth * 100 + 12
+    }
+  } else {
+    if (d.isValid()) {
+      fromYearMonth = parseInt(d.subtract(3, "months").format("YYYYMM"))
+      toYearMonth = parseInt(d.format("YYYYMM"))
+    }
+  }
+
+  payload.fromYearMonth = fromYearMonth
+  payload.toYearMonth = toYearMonth
 
   return payload
 }
@@ -247,6 +281,9 @@ filter.loadAll = function () {
 
   filter.selectedGroupName.subscribe(function (nv) {
     filter.loadEntities()
+
+    // Update the global filter groupName
+    viewModel.globalFilter.groupname(filter.selectedGroupName())
   })
 
   dashboard.loadAllData()
@@ -450,9 +487,7 @@ dashboard.showMapDetails = function (i) {
 }
 
 dashboard.getEntityDetail = function (entityName, changetradeorcash) {
-  viewModel.ajaxPostCallback("/main/dashboard/getentitydetail", {
-    entityName: entityName
-  }, function (data) {
+  viewModel.ajaxPostCallback("/main/dashboard/getentitydetail", filter.payload(), function (data) {
     var bank = _(data.bank)
       .groupBy("product_category")
       .mapValues(function (items) {

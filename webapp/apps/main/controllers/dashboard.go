@@ -137,7 +137,7 @@ func (c *DashboardController) OtherTrade() []string {
 	return quotedTexts
 }
 
-func (c *DashboardController) FilterClause(payload DashboardPayload, isPeriod bool) string {
+func (c *DashboardController) FilterClause(payload DashboardPayload, excludeDate bool) string {
 	// Filters for Group Name
 	sql := ` AND cust_group_name = "` + payload.GroupName + `"`
 
@@ -157,7 +157,7 @@ func (c *DashboardController) FilterClause(payload DashboardPayload, isPeriod bo
 	}
 
 	// Filters for YearMonth
-	if !isPeriod {
+	if !excludeDate {
 		if payload.YearMonth > 0 {
 			if strings.ToUpper(payload.DateType) == "MONTH" {
 				sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
@@ -193,6 +193,10 @@ func (c *DashboardController) FilterClause(payload DashboardPayload, isPeriod bo
 	return sql
 }
 
+func (c *DashboardController) FilterClauseDefault(payload DashboardPayload) string {
+	return c.FilterClause(payload, false)
+}
+
 func (c *DashboardController) Index(k *knot.WebContext) interface{} {
 	c.SetResponseTypeHTML(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
@@ -219,7 +223,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 	WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY cust_coi, cust_long_name ORDER BY cust_long_name`
 
@@ -251,9 +255,10 @@ func (c *DashboardController) GetDomicileData(k *knot.WebContext) interface{} {
 
 	sql := `SELECT DISTINCT cust_group_domicile AS country
   FROM ` + c.tableName() + ` 
-  WHERE ` + c.isNTBClause() + ` <> "NA" 
-  AND cust_group_name = "` + payload.GroupName + `" 
-  AND ` + c.commonWhereClause()
+  WHERE ` + c.commonWhereClause() + `
+	AND ` + c.isNTBClause() + ` <> "NA"`
+
+	sql += c.FilterClauseDefault(payload)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -286,13 +291,19 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
+	// Save original productCategory
+	originalProductCategory := payload.ProductCategory
+
+	// Get in out flow based on banks
 	sql := `SELECT LEFT(counterparty_bank, 4) AS bank, IFNULL(SUM(amount * rate),0) AS value,
   product_category, ` + c.customerRoleClause() + ` AS flow 
   FROM ` + c.tableName() + `
-  WHERE cust_long_name = "` + payload.EntityName + `"
-  AND ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY product_category, flow, bank`
+  WHERE ` + c.isNTBClause() + ` <> "NA" 
+	AND ` + c.commonWhereClause()
+
+	sql += c.FilterClauseDefault(payload)
+
+	sql += ` GROUP BY product_category, flow, bank`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -304,99 +315,122 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
-  FROM ` + c.tableName() + `
-	WHERE cust_long_name = "` + payload.EntityName + `"
-	AND product_category = "Cash"
-	AND product_desc IN (` + strings.Join(c.InCash(), ", ") + `)
-  AND ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY product ORDER BY value DESC LIMIT 3`
-	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-	if qr.Error() != nil {
-		c.SetResultError(qr.Error().Error(), nil)
-	}
-
 	resultInward := []tk.M{}
-	err = qr.Fetch(&resultInward, 0)
-	if err != nil {
-		c.SetResultError(err.Error(), nil)
-	}
-
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
-  FROM ` + c.tableName() + `
-	WHERE cust_long_name = "` + payload.EntityName + `"
-	AND product_category = "Cash"
-	AND product_desc IN (` + strings.Join(c.OutCash(), ", ") + `)
-  AND ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY product ORDER BY value DESC LIMIT 3`
-	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-	if qr.Error() != nil {
-		c.SetResultError(qr.Error().Error(), nil)
-	}
-
 	resultOutward := []tk.M{}
-	err = qr.Fetch(&resultOutward, 0)
-	if err != nil {
-		c.SetResultError(err.Error(), nil)
-	}
 
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
-  FROM ` + c.tableName() + `
-	WHERE cust_long_name = "` + payload.EntityName + `"
-	AND product_category = "Trade"
-	AND product_desc IN (` + strings.Join(c.ExportTrade(), ", ") + `)
-  AND ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY product ORDER BY value DESC LIMIT 3`
-	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-	if qr.Error() != nil {
-		c.SetResultError(qr.Error().Error(), nil)
+	// Get inward and outward product (CASH)
+	if strings.ToUpper(originalProductCategory) != "TRADE" {
+		// Explicitly set the productCategory as CASH
+		payload.ProductCategory = "CASH"
+
+		sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
+		FROM ` + c.tableName() + `
+		WHERE product_desc IN (` + strings.Join(c.InCash(), ", ") + `)
+		AND ` + c.isNTBClause() + ` <> "NA" 
+		AND ` + c.commonWhereClause()
+
+		sql += c.FilterClauseDefault(payload)
+
+		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
+
+		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		err = qr.Fetch(&resultInward, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
+
+		sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
+		FROM ` + c.tableName() + `
+		WHERE product_desc IN (` + strings.Join(c.OutCash(), ", ") + `)
+		AND ` + c.isNTBClause() + ` <> "NA" 
+		AND ` + c.commonWhereClause()
+
+		sql += c.FilterClauseDefault(payload)
+
+		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
+
+		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		err = qr.Fetch(&resultOutward, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
 	}
 
 	resultExport := []tk.M{}
-	err = qr.Fetch(&resultExport, 0)
-	if err != nil {
-		c.SetResultError(err.Error(), nil)
-	}
-
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
-  FROM ` + c.tableName() + `
-	WHERE cust_long_name = "` + payload.EntityName + `"
-	AND product_category = "Trade"
-	AND product_desc IN (` + strings.Join(c.ImportTrade(), ", ") + `)
-  AND ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY product ORDER BY value DESC LIMIT 3`
-	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-	if qr.Error() != nil {
-		c.SetResultError(qr.Error().Error(), nil)
-	}
-
 	resultImport := []tk.M{}
-	err = qr.Fetch(&resultImport, 0)
-	if err != nil {
-		c.SetResultError(err.Error(), nil)
-	}
-
-	sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
-  FROM ` + c.tableName() + `
-	WHERE cust_long_name = "` + payload.EntityName + `"
-	AND product_category = "Trade"
-	AND product_desc IN (` + strings.Join(c.OtherTrade(), ", ") + `)
-  AND ` + c.isNTBClause() + ` <> "NA" 
-  AND ` + c.commonWhereClause() + ` 
-  GROUP BY product`
-	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
-	if qr.Error() != nil {
-		c.SetResultError(qr.Error().Error(), nil)
-	}
-
 	resultOther := []tk.M{}
-	err = qr.Fetch(&resultOther, 0)
-	if err != nil {
-		c.SetResultError(err.Error(), nil)
+
+	if strings.ToUpper(originalProductCategory) != "CASH" {
+		// Explicitly set the productCategory as TRADE
+		payload.ProductCategory = "TRADE"
+
+		sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
+		FROM ` + c.tableName() + `
+		WHERE product_desc IN (` + strings.Join(c.ExportTrade(), ", ") + `)
+		AND ` + c.isNTBClause() + ` <> "NA" 
+		AND ` + c.commonWhereClause()
+
+		sql += c.FilterClauseDefault(payload)
+
+		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
+
+		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		err = qr.Fetch(&resultExport, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
+
+		sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
+		FROM ` + c.tableName() + ` 
+		WHERE product_desc IN (` + strings.Join(c.ImportTrade(), ", ") + `)
+		AND ` + c.isNTBClause() + ` <> "NA" 
+		AND ` + c.commonWhereClause()
+
+		sql += c.FilterClauseDefault(payload)
+
+		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
+
+		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		err = qr.Fetch(&resultImport, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
+
+		sql = `SELECT product_desc AS product, IFNULL(SUM(amount * rate),0) AS value
+		FROM ` + c.tableName() + `
+		WHERE product_desc IN (` + strings.Join(c.OtherTrade(), ", ") + `)
+		AND ` + c.isNTBClause() + ` <> "NA" 
+		AND ` + c.commonWhereClause()
+
+		sql += c.FilterClauseDefault(payload)
+
+		sql += ` GROUP BY product ORDER BY value`
+
+		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			c.SetResultError(qr.Error().Error(), nil)
+		}
+
+		err = qr.Fetch(&resultOther, 0)
+		if err != nil {
+			c.SetResultError(err.Error(), nil)
+		}
 	}
 
 	returnData := tk.M{
@@ -434,7 +468,7 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 	WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -473,7 +507,7 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -512,7 +546,7 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -551,7 +585,7 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -590,7 +624,7 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 	WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -932,7 +966,7 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -973,7 +1007,7 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -1014,7 +1048,7 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -1055,7 +1089,7 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
@@ -1096,7 +1130,7 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
-	sql += c.FilterClause(payload, false)
+	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
 
