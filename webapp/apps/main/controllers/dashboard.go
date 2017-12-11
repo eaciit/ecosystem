@@ -157,13 +157,11 @@ func (c *DashboardController) FilterClause(payload DashboardPayload, excludeDate
 	}
 
 	// Filters for YearMonth
-	if !excludeDate {
-		if payload.YearMonth > 0 {
-			if strings.ToUpper(payload.DateType) == "MONTH" {
-				sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
-			} else {
-				sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
-			}
+	if !excludeDate && payload.YearMonth > 0 {
+		if strings.ToUpper(payload.DateType) == "MONTH" {
+			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+		} else {
+			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
 		}
 	}
 
