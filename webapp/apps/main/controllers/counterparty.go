@@ -302,7 +302,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 		}
 	}
 
-	sql += `AND ` + c.commonWhereClause() + `
+	sql += ` AND ` + c.commonWhereClause() + `
 	GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
 	ORDER BY total DESC`
 
@@ -353,7 +353,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 		}
 	}
 
-	sql += `AND ` + c.commonWhereClause() + `
+	sql += ` AND ` + c.commonWhereClause() + `
 	ORDER BY amount DESC`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
