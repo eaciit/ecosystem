@@ -45,10 +45,13 @@
           <span class="k-icon k-i-arrow-60-down"></span>
         </div>
         <div id="bookingCountryDropdown" data-bind="foreach: filter.bookingCountry.data">
-          <div class="mainList" data-bind="text: region, click: filter.bookingCountry.expand"></div>
+          <div class="mainList">
+            <input type="checkbox" data-bind="checked: filter.bookingCountry.selectedRegions, click: filter.bookingCountry.regionClick, attr: {'value': region}">
+            <span data-bind="click: filter.bookingCountry.expand, text: region"></span>
+          </div>
           <ul class="subList" data-bind="foreach: countries, attr: {'id': id}">
-            <li data-bind="click: filter.bookingCountry.select">
-              <input type="checkbox" data-bind="attr: {'value': $data, 'name': $parent.region}">
+            <li>
+              <input type="checkbox" data-bind="checked: filter.bookingCountry.selecteds, attr: {'value': $data, 'name': $parent.region}">
               <span data-bind="text: $data"></span>
             </li>
           </ul>

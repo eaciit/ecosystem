@@ -338,7 +338,7 @@ body:not(.page-login) .layout-container .layout-content {
   font-weight: bold;
 }
 
-.mainList:hover {
+.mainList > span:hover {
   cursor: pointer;
 }
 
@@ -355,7 +355,6 @@ body:not(.page-login) .layout-container .layout-content {
 .subList li {
   position: relative;
   padding: 0 4px;
-  cursor: pointer;
 }
 
 .subList li input {
