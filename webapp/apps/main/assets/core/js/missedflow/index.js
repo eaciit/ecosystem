@@ -16,7 +16,7 @@ missedflow.resetHighlight = function () {
 missedflow.loadAll = function () {
   missedflow.activeGroupName.subscribe(function(nv) {
     // Update the viewModel global fitler
-    viewModel.globalFilter.groupname(filter.selectedGroupName())
+    viewModel.globalFilter.groupname(nv)
   })
 
   missedflow.activeGroupName($.urlParam("entityGroup"))

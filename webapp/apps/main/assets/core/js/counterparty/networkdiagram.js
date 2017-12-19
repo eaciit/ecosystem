@@ -62,7 +62,7 @@ counterparty.loadAll = function () {
         filter.selectedRole("PAYEE")
       }
     } else {
-      window.location.href = "/main/missedflow/index?entityName=" + counterparty.activeEntityName() + "&entityGroup=" + counterparty.availableActiveGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
+      window.location.href = "/main/missedflow/index?entityName=" + encodeURIComponent(counterparty.activeEntityName()) + "&entityGroup=" + counterparty.availableActiveGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
     }
   })
 
@@ -276,7 +276,10 @@ network.clean = function () {
 
 network.loadData = function () {
   viewModel.ajaxPostCallback("/main/counterparty/getnetworkdiagramdata", filter.selectedFilters(), function (data) {
-    if (!network.isExpanding) {
+    if (counterparty.activeGraphIndicator() != "R") {
+      // Always clean if it's not Relationship
+      network.clean()
+    } else if (!network.isExpanding) {
       network.clean()
       network.isExpanding = false
     }

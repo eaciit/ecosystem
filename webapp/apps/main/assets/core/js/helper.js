@@ -50,7 +50,7 @@ _.mixin({
 $.urlParam = function (name) {
   var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
   if (results !== null) {
-    return decodeURI(results[1]);
+    return decodeURIComponent(results[1]);
   } else {
     return null;
   }
@@ -67,26 +67,26 @@ function currencynum(angka) {
 }
 
 function setbm(num) {
-     if (num >= 1000000000) {
-        return currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
-     }
-     if (num >= 1000000) {
-        return currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
-     }
-     if (num >= 1000) {
-        return currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
-     }
-     return currencynum(num.toFixed(2));
+  if (num >= 1000000000) {
+    return currencynum((num / 1000000000).toFixed(2).replace(/\.0$/, '')) + 'B';
+  }
+  if (num >= 1000000) {
+    return currencynum((num / 1000000).toFixed(2).replace(/\.0$/, '')) + 'M';
+  }
+  if (num >= 1000) {
+    return currencynum((num / 1000).toFixed(2).replace(/\.0$/, '')) + 'K';
+  }
+  return currencynum(num.toFixed(2));
 }
 
 function getParameterByName(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 // KO Sneaky Update
@@ -110,18 +110,18 @@ ko.observable.fn.sneaky = function () {
 ko.subscribable.fn.subscribeChanged = function (callback) {
   var oldValue;
   this.subscribe(function (_oldValue) {
-      oldValue = _oldValue;
+    oldValue = _oldValue;
   }, this, 'beforeChange');
 
   this.subscribe(function (newValue) {
-      callback(newValue, oldValue);
+    callback(newValue, oldValue);
   });
 };
 
 // KO trisate (indeterminate state) checkbox
 ko.bindingHandlers.indeterminateValue = {
   update: function (element, valueAccessor) {
-      var value = ko.utils.unwrapObservable(valueAccessor());
-      element.indeterminate = value;
+    var value = ko.utils.unwrapObservable(valueAccessor());
+    element.indeterminate = value;
   }
 };
