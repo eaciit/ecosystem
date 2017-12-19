@@ -79,7 +79,11 @@ func PrepareConnection(anything interface{}) (*sql.DB, error) {
 }
 
 func ReadConfig(anything interface{}) tk.M {
-	if len(cacheConfig) > 0 {
+	return ReadConfigFromCache(anything, true)
+}
+
+func ReadConfigFromCache(anything interface{}, fromCache bool) tk.M {
+	if len(cacheConfig) > 0 && fromCache {
 		Println("Reading configuration file from cache")
 		return cacheConfig
 	}

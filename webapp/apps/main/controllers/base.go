@@ -27,7 +27,9 @@ const (
 )
 
 func (c *BaseController) tableName() string {
-	return "vw_sc_model_for_tblau_20170830"
+	type ForgetMe struct{}
+	config := helper.ReadConfigFromCache(ForgetMe{}, false)
+	return config.GetString("tablename")
 }
 
 func (c *BaseController) commonWhereClause() string {
