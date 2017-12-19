@@ -322,7 +322,7 @@ body:not(.page-login) .layout-container .layout-content {
   position: absolute;
   background-color: white;
   height: 212px;
-  width: 120px;
+  width: 140px;
   border: 1px solid #22313F;
   border-top: 3px solid #22313F;
   margin-top: -2px;
@@ -379,4 +379,8 @@ body:not(.page-login) .layout-container .layout-content {
   float: right;
   vertical-align: center;
   height: 100%;
+}
+
+.filter-group.multiselect {
+  outline: none;
 }

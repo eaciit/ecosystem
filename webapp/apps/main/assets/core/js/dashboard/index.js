@@ -104,13 +104,54 @@ filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
 // Filter booking country
 filter.bookingCountry = {}
 filter.bookingCountry.selecteds = ko.observableArray([])
-filter.bookingCountry.selectedRegions = ko.observableArray([])
 
+filter.bookingCountry.selectedRegions = ko.pureComputed({
+  read: function () {
+    var selecteds = filter.bookingCountry.selecteds()
+    var selectedRegions = []
+    _.each(filter.bookingCountry.data(), function (region) {
+      var countryInSelecteds = _.filter(region.countries, function (e) {
+        return selecteds.indexOf(e) != -1
+      })
+
+      if (countryInSelecteds.length == region.countries.length) {
+        selectedRegions.push(region.id)
+      }
+    })
+
+    return selectedRegions
+  },
+  owner: filter.bookingCountry
+})
+
+filter.bookingCountry.selectedAll = ko.pureComputed({
+  read: function () {
+    var allCountries = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+    return allCountries.length == filter.bookingCountry.selecteds().length;
+  },
+  write: function (value) {
+    var selecteds = []
+
+    if (value) {
+      selecteds = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+    }
+
+    filter.bookingCountry.selecteds(selecteds)
+  },
+  owner: filter.bookingCountry
+})
+
+filter.bookingCountry.focused = ko.observable(false)
 filter.bookingCountry.data = ko.observableArray(viewModel.bookingCountries)
 
-filter.bookingCountry.displaySelected = ko.computed(function () {
+filter.bookingCountry.displaySelected = ko.pureComputed(function () {
   if (filter.bookingCountry.selecteds().length == 0) {
     return "Region/Country"
+  }
+
+  var allCountries = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+  if (allCountries.length == filter.bookingCountry.selecteds().length) {
+    return "All"
   }
 
   return filter.bookingCountry.selecteds().length > 1 ? "Multiple" : filter.bookingCountry.selecteds()[0]
@@ -127,8 +168,30 @@ filter.bookingCountry.regionClick = function (data, event) {
   }
 
   filter.bookingCountry.selecteds(selecteds)
-  
+
   return true
+}
+
+filter.bookingCountry.regionIsIndeterminate = function (regionId) {
+  return ko.computed(function () {
+    var data = _.filter(filter.bookingCountry.data(), {
+      id: regionId
+    })[0]
+
+    var countryInSelecteds = _.filter(filter.bookingCountry.selecteds(), function (e) {
+      return data.countries.indexOf(e) != -1
+    })
+
+    return countryInSelecteds.length < data.countries.length && countryInSelecteds.length > 0
+  })
+}
+
+filter.bookingCountry.allIsIndeterminate = function () {
+  return ko.computed(function () {
+    var data = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+
+    return filter.bookingCountry.selecteds().length < data.length && filter.bookingCountry.selecteds().length > 0
+  })
 }
 
 filter.bookingCountry.expand = function (data, event) {
@@ -136,13 +199,11 @@ filter.bookingCountry.expand = function (data, event) {
   list.css("display", list.css("display") == "none" ? "block" : "none")
 }
 
-filter.bookingCountry.toggleList = function (data, event) {
-  var elem = $(event.currentTarget)
-  var target = $("#" + elem.attr("target"))
+filter.bookingCountry.focused.subscribe(function (nv) {
+  var target = $("#bookingCountryDropdown")
+  var oriHeight = 212
 
-  if (elem.hasClass("active")) {
-    elem.removeClass("active")
-    var oriHeight = target.height()
+  if (nv == false) {
     target.animate({
       height: 0
     }, 200, function () {
@@ -150,15 +211,13 @@ filter.bookingCountry.toggleList = function (data, event) {
       target.height(oriHeight)
     })
   } else {
-    elem.addClass("active")
-    var oriHeight = target.height()
     target.height(0)
     target.css("visibility", "visible")
     target.animate({
       height: oriHeight
     }, 200)
   }
-}
+})
 
 // End of Filter booking country
 

@@ -117,3 +117,11 @@ ko.subscribable.fn.subscribeChanged = function (callback) {
       callback(newValue, oldValue);
   });
 };
+
+// KO trisate (indeterminate state) checkbox
+ko.bindingHandlers.indeterminateValue = {
+  update: function (element, valueAccessor) {
+      var value = ko.utils.unwrapObservable(valueAccessor());
+      element.indeterminate = value;
+  }
+};
