@@ -173,7 +173,7 @@ filter.selectedFilters = ko.computed(function () {
   return {
     groupName: filter.selectedGroupName(),
     entityName: counterparty.activeEntityName(),
-    role: filter.selectedRole(),
+    role: filter.selectedRole() != "" ? (filter.selectedRole() == "BUYER" ? "PAYEE" : "BUYER") : "",
     group: filter.selectedGroup(),
     productCategory: filter.selectedProductCategory(),
     limit: parseInt(filter.selectedLimit()),
@@ -385,7 +385,7 @@ network.processData = function (data) {
         groupName: e.cpty_group_name,
         total: e.total,
         class: e.is_ntb == "Y" ? "ntb" : "etb",
-        role: e.cust_role,
+        role: e.cust_role == "BUYER" ? "PAYEE" : "BUYER", // Flip the buyer supplier (becuase we need the counterparty role which is opposite of customer role)
         isFlow: flow,
         isMissed: !flow,
         level: network.level
@@ -876,7 +876,6 @@ network.generate = function () {
     .on("mouseout", unhighlightLink)
 
   circle.append("svg:circle")
-    // .on("click", expand)
     .attr("r", function (d) {
       return d.role == "BUYER" ? d.r - 3 : d.r
     })
