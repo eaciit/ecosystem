@@ -70,7 +70,7 @@ counterparty.loadAll = function () {
     if (nv != "") {
       counterparty.availableActiveGroupName(nv)
       // Update the viewModel global fitler
-      viewModel.globalFilter.groupname(nv)
+      viewModel.globalFilter.groupName(nv)
     }
   })
 
@@ -292,6 +292,7 @@ network.loadDetail = function (name) {
   var relations = []
   // R for Relationship
   var links = counterparty.activeGraphIndicator() == "R" ? network.links : network.bubble.links
+  var linkRoles = []
 
   _.each(links, function (l) {
     if (l.t.name == name) {
@@ -302,6 +303,9 @@ network.loadDetail = function (name) {
       } else {
         relations.push([l.s.name, l.t.name])
       }
+
+      // It's should be Suplier but flipped 
+      linkRoles.push("BUYER")
     } else if (l.s.name == name) {
       if (l.s.class == "center" && l.t.class == "center") {
         relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
@@ -310,11 +314,19 @@ network.loadDetail = function (name) {
       } else {
         relations.push([l.t.name, l.s.name])
       }
+
+      // It's should be Buyer but flipped
+      linkRoles.push("PAYEE")
     }
   })
 
-  var params = filter.selectedFilters()
+  linkRoles = _.uniq(linkRoles)
+  var params = JSON.parse(JSON.stringify(filter.selectedFilters()))
   params.relations = relations
+
+  if (linkRoles.length == 1) {
+    params.role = linkRoles[0]
+  }
 
   viewModel.ajaxPostCallback("/main/counterparty/getdetailnetworkdiagramdata", params, function (data) {
     counterparty.activeName(name)
@@ -326,7 +338,11 @@ network.loadDetail = function (name) {
 network.loadDetailCSV = function () {
   var name = counterparty.activeName()
   var relations = []
-  _.each(network.links, function (l) {
+  // R for Relationship
+  var links = counterparty.activeGraphIndicator() == "R" ? network.links : network.bubble.links
+  var linkRoles = []
+  
+  _.each(links, function (l) {
     if (l.t.name == name) {
       if (l.t.class == "center" && l.s.class == "center") {
         relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
@@ -335,6 +351,9 @@ network.loadDetailCSV = function () {
       } else {
         relations.push([l.s.name, l.t.name])
       }
+
+      // It's should be Suplier but flipped 
+      linkRoles.push("BUYER")
     } else if (l.s.name == name) {
       if (l.s.class == "center" && l.t.class == "center") {
         relations.push(l.t.level < l.s.level ? [l.t.name, l.s.name] : [l.s.name, l.t.name])
@@ -343,13 +362,21 @@ network.loadDetailCSV = function () {
       } else {
         relations.push([l.t.name, l.s.name])
       }
+
+      // It's should be Buyer but flipped
+      linkRoles.push("PAYEE")
     }
   })
 
-  // Manual XHR based on stackoverflow jquery does not support responseType params
-  var params = filter.selectedFilters()
+  linkRoles = _.uniq(linkRoles)
+  var params = JSON.parse(JSON.stringify(filter.selectedFilters()))
   params.relations = relations
 
+  if (linkRoles.length == 1) {
+    params.role = linkRoles[0]
+  }
+
+  // Manual XHR based on stackoverflow jquery does not support responseType params
   var xhr = new XMLHttpRequest()
   xhr.open("POST", "/main/counterparty/getdetailnetworkdiagramcsv", true)
   xhr.setRequestHeader("Content-type", "application/json")

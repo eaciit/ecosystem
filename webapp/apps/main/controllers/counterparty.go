@@ -291,7 +291,8 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	sql := `SELECT cpty_long_name, LEFT(customer_bank, 4) AS cust_bank, LEFT(counterparty_bank, 4) AS cpty_bank, 
   product_category, SUM(amount * rate) AS total, COUNT(1) AS number_transaction
   FROM ` + c.tableName() + ` 
-	WHERE (` + strings.Join(relations, " OR ") + `)`
+	WHERE ` + c.commonWhereClause() + ` 
+	AND (` + strings.Join(relations, " OR ") + `)`
 
 	// Filters for YearMonth
 	if payload.YearMonth > 0 {
@@ -302,8 +303,30 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 		}
 	}
 
-	sql += ` AND ` + c.commonWhereClause() + `
-	GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
+	// Filters for Role
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
+	} else if strings.ToUpper(payload.Role) == "PAYEE" {
+		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
+	} else {
+		sql += " AND " + c.eitherBuyerSupplierClause()
+	}
+
+	// Filters for NTB/ETB
+	if strings.ToUpper(payload.Group) == "NTB" {
+		sql += " AND " + c.isNTBClause() + " = 'Y'"
+	} else if strings.ToUpper(payload.Group) == "ETB" {
+		sql += " AND " + c.isNTBClause() + " = 'N'"
+	}
+
+	// Filters for Cast/Trade
+	if strings.ToUpper(payload.ProductCategory) == "CASH" {
+		sql += " AND product_category = 'Cash'"
+	} else if strings.ToUpper(payload.ProductCategory) == "TRADE" {
+		sql += " AND product_category = 'Trade'"
+	}
+
+	sql += ` GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
 	ORDER BY total DESC`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
@@ -342,7 +365,8 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 
 	sql := `SELECT ` + strings.Join(selectKeys, ", ") + `
   FROM ` + c.tableName() + ` 
-	WHERE (` + strings.Join(relations, " OR ") + `)`
+	WHERE ` + c.commonWhereClause() + `
+	AND (` + strings.Join(relations, " OR ") + `)`
 
 	// Filters for YearMonth
 	if payload.YearMonth > 0 {
@@ -353,8 +377,30 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 		}
 	}
 
-	sql += ` AND ` + c.commonWhereClause() + `
-	ORDER BY amount DESC`
+	// Filters for Role
+	if strings.ToUpper(payload.Role) == "BUYER" {
+		sql += " AND " + c.customerRoleClause() + " = 'BUYER'"
+	} else if strings.ToUpper(payload.Role) == "PAYEE" {
+		sql += " AND " + c.customerRoleClause() + " = 'PAYEE'"
+	} else {
+		sql += " AND " + c.eitherBuyerSupplierClause()
+	}
+
+	// Filters for NTB/ETB
+	if strings.ToUpper(payload.Group) == "NTB" {
+		sql += " AND " + c.isNTBClause() + " = 'Y'"
+	} else if strings.ToUpper(payload.Group) == "ETB" {
+		sql += " AND " + c.isNTBClause() + " = 'N'"
+	}
+
+	// Filters for Cast/Trade
+	if strings.ToUpper(payload.ProductCategory) == "CASH" {
+		sql += " AND product_category = 'Cash'"
+	} else if strings.ToUpper(payload.ProductCategory) == "TRADE" {
+		sql += " AND product_category = 'Trade'"
+	}
+
+	sql += ` ORDER BY amount DESC`
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
