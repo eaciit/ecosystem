@@ -411,7 +411,7 @@ missedflow.loadGraphData = function () {
         }
       })
     } else {
-      var largestAmount = _.maxBy(data, "total").total
+      var largestAmount = data.length == 0 ? 0 : _.maxBy(data, "total").total
       var othersMultiplier = 0.1
 
       _.each(data, function (e) {
