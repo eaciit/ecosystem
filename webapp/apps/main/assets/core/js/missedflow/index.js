@@ -131,14 +131,14 @@ filter.bookingCountry.selectedRegions = ko.pureComputed({
 
 filter.bookingCountry.selectedAll = ko.pureComputed({
   read: function () {
-    var allCountries = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+    var allCountries = _.uniq(_.flatten(_.map(filter.bookingCountry.data(), "countries")))
     return allCountries.length == filter.bookingCountry.selecteds().length;
   },
   write: function (value) {
     var selecteds = []
 
     if (value) {
-      selecteds = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+      selecteds = _.uniq(_.flatten(_.map(filter.bookingCountry.data(), "countries")))
     }
 
     filter.bookingCountry.selecteds(selecteds)
@@ -153,7 +153,7 @@ filter.bookingCountry.displaySelected = ko.pureComputed(function () {
     return "Region/Country"
   }
 
-  var allCountries = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+  var allCountries = _.uniq(_.flatten(_.map(filter.bookingCountry.data(), "countries")))
   if (allCountries.length == filter.bookingCountry.selecteds().length) {
     return "All"
   }
@@ -192,7 +192,7 @@ filter.bookingCountry.regionIsIndeterminate = function (regionId) {
 
 filter.bookingCountry.allIsIndeterminate = function () {
   return ko.computed(function () {
-    var data = _.flatten(_.map(filter.bookingCountry.data(), "countries"))
+    var data = _.uniq(_.flatten(_.map(filter.bookingCountry.data(), "countries")))
 
     return filter.bookingCountry.selecteds().length < data.length && filter.bookingCountry.selecteds().length > 0
   })
