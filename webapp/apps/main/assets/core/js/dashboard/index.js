@@ -141,7 +141,6 @@ filter.bookingCountry.selectedAll = ko.pureComputed({
   owner: filter.bookingCountry
 })
 
-filter.bookingCountry.focused = ko.observable(false)
 filter.bookingCountry.data = ko.observableArray(viewModel.bookingCountries)
 
 filter.bookingCountry.displaySelected = ko.pureComputed(function () {
@@ -199,25 +198,41 @@ filter.bookingCountry.expand = function (data, event) {
   list.css("display", list.css("display") == "none" ? "block" : "none")
 }
 
-filter.bookingCountry.focused.subscribe(function (nv) {
+filter.bookingCountry.toggle = function () {
   var target = $("#bookingCountryDropdown")
   var oriHeight = 212
 
-  if (nv == false) {
+  if (target.css("visibility") != "visible") {
+    target.height(0)
+    target.css("visibility", "visible")
+    target.animate({
+      height: oriHeight
+    }, 200)
+  } else {
     target.animate({
       height: 0
     }, 200, function () {
       target.css("visibility", "hidden")
       target.height(oriHeight)
     })
-  } else {
-    target.height(0)
-    target.css("visibility", "visible")
-    target.animate({
-      height: oriHeight
-    }, 200)
   }
-})
+}
+
+filter.bookingCountry.initListener = function () {
+  $(document).click(function (e) {
+    var target = $("#bookingCountryDropdown")
+    var oriHeight = 212
+
+    if ($(e.target).parents('.filter-group.multiselect').length === 0 && target.css("visibility") == "visible") {
+      target.animate({
+        height: 0
+      }, 200, function () {
+        target.css("visibility", "hidden")
+        target.height(oriHeight)
+      })
+    }
+  })
+}
 
 // End of Filter booking country
 
@@ -1079,4 +1094,5 @@ widget.loadData = function () {
 $(window).load(function () {
   dashboard.generateMapbox()
   filter.loadAll()
+  filter.bookingCountry.initListener()
 })

@@ -39,8 +39,8 @@
       <div class="filtergroup">
         <select style="width:90px" data-bind="kendoDropDownList: { data: filter.group, value: filter.selectedGroup, dataValueField: 'value', dataTextField: 'text', filter: 'contains'}"></select>
       </div>
-      <div class="filter-group multiselect" tabindex="-1" data-bind="hasFocus: filter.bookingCountry.focused">
-        <div class="sugab-multiselect-dropdown" id="bookingCountry" type="text" style="width:140px;" target="bookingCountryDropdown">
+      <div class="filter-group multiselect" tabindex="-1">
+        <div class="sugab-multiselect-dropdown" id="bookingCountry" type="text" style="width:140px;"  data-bind="click: filter.bookingCountry.toggle">
           <span class="input" data-bind="text: filter.bookingCountry.displaySelected"></span>
           <span class="k-icon k-i-arrow-60-down"></span>
         </div>
