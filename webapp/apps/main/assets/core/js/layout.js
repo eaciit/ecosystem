@@ -180,9 +180,14 @@ viewModel.registerSidebarToggle = function () {
 }
 
 viewModel.globalFilter = {
-  groupname: ko.observable("")
+  groupName: ko.observable(""),
+  entityName: ko.observable("")
 }
-viewModel.globalFilter.groupname.subscribe(function () {
+viewModel.globalFilter.groupName.subscribe(function () {
+  viewModel.getNavigationMenu()
+})
+
+viewModel.globalFilter.entityName.subscribe(function () {
   viewModel.getNavigationMenu()
 })
 
@@ -192,15 +197,15 @@ viewModel.getNavigationMenu = function () {
   viewModel.dataNavigationMenuTree([{
     Icon: "bar-chart",
     Title: "Dashboard",
-    Url: "/main/dashboard/index" + "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
+    Url: "/main/dashboard/index" + "?entityName=" + encodeURIComponent(viewModel.globalFilter.entityName()) + "&entityGroup=" + viewModel.globalFilter.groupName()
   }, {
     Icon: "sitemap",
     Title: "Counter Party View",
-    Url: "/main/counterparty/networkdiagram" + "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
+    Url: "/main/counterparty/networkdiagram" + "?entityName=" + encodeURIComponent(viewModel.globalFilter.entityName()) + "&entityGroup=" + viewModel.globalFilter.groupName()
   }, {
     Icon: "random",
     Title: "Missed Flow Analysis",
-    Url: "/main/missedflow/index" + "?entityName=All&entityGroup=" + viewModel.globalFilter.groupname()
+    Url: "/main/missedflow/index" + "?entityName=" + encodeURIComponent(viewModel.globalFilter.entityName()) + "&entityGroup=" + viewModel.globalFilter.groupName()
   }, {
     Icon: "cog",
     Title: "Recommend Engine",

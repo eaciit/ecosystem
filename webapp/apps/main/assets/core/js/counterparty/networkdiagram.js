@@ -74,6 +74,10 @@ counterparty.loadAll = function () {
     }
   })
 
+  counterparty.activeEntityName.subscribe(function (nv) {
+    viewModel.globalFilter.entityName(nv)
+  })
+
   counterparty.activeGroupName($.urlParam("entityGroup"))
   counterparty.activeEntityCOI($.urlParam("entityCOI"))
   counterparty.activeGraphIndicator($.urlParam("activeGraphIndicator") ? $.urlParam("activeGraphIndicator") : "R")

@@ -324,6 +324,7 @@ filter.loadEntities = function () {
     groupName: filter.selectedGroupName()
   }, function (data) {
     filter.entities(["All"].concat(_.map(data, "value")))
+    filter.selectedEntity.valueHasMutated()
   })
 }
 
@@ -332,19 +333,28 @@ filter.loadAll = function () {
     filter.selectedGroupName(getParameterByName("entityGroup"))
   }
 
+  if (getParameterByName("entityName") != null) {
+    filter.selectedEntity(getParameterByName("entityName"))
+  }
+
   // Enable this if you want the filter to be realtime
   // filter.payload.subscribe(function () {
   //   dashboard.loadAllData()
   // })
 
-  filter.loadGroups()
-
   filter.selectedGroupName.subscribe(function (nv) {
     filter.loadEntities()
 
     // Update the global filter groupName
-    viewModel.globalFilter.groupname(filter.selectedGroupName())
+    viewModel.globalFilter.groupName(nv)
   })
+
+  filter.selectedEntity.subscribe(function (nv) {
+    // Update the global filter entityName
+    viewModel.globalFilter.entityName(nv)
+  })
+
+  filter.loadGroups()
 
   dashboard.loadAllData()
 }
