@@ -14,16 +14,6 @@ missedflow.resetHighlight = function () {
 }
 
 missedflow.loadAll = function () {
-  missedflow.activeGroupName.subscribe(function(nv) {
-    // Update the viewModel global fitler
-    viewModel.globalFilter.groupName(nv)
-  })
-
-  missedflow.activeEntityName.subscribe(function(nv) {
-    viewModel.globalFilter.entityName(nv)
-  })
-
-  missedflow.activeGroupName($.urlParam("entityGroup"))
   missedflow.activeEntityCOI($.urlParam("entityCOI"))
 }
 
@@ -305,6 +295,26 @@ filter.loadGroupNames = function () {
   })
 }
 
+filter.loadFromURI = function () {
+  var uriFilter = viewModel.globalFilter.fromURI()
+
+  filter.selectedGroupName(uriFilter.groupName)
+  filter.selectedEntity(uriFilter.entityName)
+  filter.selectedRole(uriFilter.role)
+  filter.selectedGroup(uriFilter.group)
+  filter.selectedProductCategory(uriFilter.productCategory)
+  filter.selectedLimit(uriFilter.limit)
+  filter.selectedFlow(uriFilter.flow)
+  filter.bookingCountry.selecteds(uriFilter.bookingCountries)
+  filter.selectedDate(moment(uriFilter.yearMonth, uriFilter.dateType == "YEAR" ? "YYYY" : "YYYYMM").toDate())
+
+  if (uriFilter.dateType == "YEAR") {
+    $("button[data-target='#year']").click()
+  } else {
+    $("button[data-target='#month']").click()
+  }
+}
+
 filter.loadAll = function () {
   filter.selectedGroupName(missedflow.activeGroupName())
   filter.selectedEntity.subscribe(function (nv) {
@@ -316,15 +326,18 @@ filter.loadAll = function () {
     filter.loadEntities()
   })
 
-  filter.selectedEntity($.urlParam("entityName"))
+  filter.selectedFilters.subscribe(function (nv) {
+    console.log("WARSAWA")
+    viewModel.globalFilter.allFilter(nv)
+
+    // Enable this if you want the filter to be realtime load
+    // missedflow.loadGraphData()
+  })
+
+  filter.loadFromURI()
 
   filter.loadGroupNames()
   missedflow.loadGraphData()
-
-  // Enable this if you want the filter to be realtime load
-  // filter.selectedFilters.subscribe(function () {
-  //   missedflow.loadGraphData()
-  // })
 }
 
 missedflow.loadGraphData = function () {

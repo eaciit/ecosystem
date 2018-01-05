@@ -179,17 +179,66 @@ viewModel.registerSidebarToggle = function () {
   })
 }
 
-viewModel.globalFilter = {
-  groupName: ko.observable(""),
-  entityName: ko.observable("")
+viewModel.globalFilter = {}
+// This will also define default value (maybe)
+viewModel.globalFilter.availableFilter = {
+  groupName: "",
+  entityName: "All",
+  role: "",
+  group: "ALL",
+  productCategory: "",
+  limit: 5,
+  flowAbove: 0,
+  bookingCountries: [],
+  dateType: "",
+  yearMonth: 0
 }
-viewModel.globalFilter.groupName.subscribe(function () {
-  viewModel.getNavigationMenu()
+
+viewModel.globalFilter.uriComponents = ko.observable("")
+
+viewModel.globalFilter.allFilter = ko.computed({
+  read: function () {
+    return viewModel.globalFilter.availableFilter
+  },
+  write: function (v) {
+    _.each(v, function (value, key) {
+      if (viewModel.globalFilter.availableFilter.hasOwnProperty(key)) {
+        viewModel.globalFilter.availableFilter[key] = value
+      }
+    })
+
+    viewModel.globalFilter.uriComponents(viewModel.globalFilter.generateURIComponents())
+    viewModel.getNavigationMenu()
+  }
 })
 
-viewModel.globalFilter.entityName.subscribe(function () {
-  viewModel.getNavigationMenu()
-})
+viewModel.globalFilter.generateURIComponents = function () {
+  var allFilter = viewModel.globalFilter.allFilter()
+  var uriComponents = []
+
+  _.each(allFilter, function (value, key) {
+    uriComponents.push(key + "=" + encodeURIComponent(String(value)))
+  })
+
+  return "?" + uriComponents.join("&")
+}
+
+viewModel.globalFilter.fromURI = function () {
+  var returnValue = JSON.parse(JSON.stringify(viewModel.globalFilter.availableFilter))
+
+  _.each(viewModel.globalFilter.allFilter(), function (value, key) {
+    var v = $.urlParam(key)
+    if (v) {
+      returnValue[key] = v
+    }
+  })
+
+  if (typeof returnValue.bookingCountries === "string" || returnValue.bookingCountries instanceof String) {
+    returnValue.bookingCountries = returnValue.bookingCountries.split(",")
+  }
+
+  return returnValue
+}
 
 viewModel.dataNavigationMenuTree = ko.observableArray([])
 
@@ -197,15 +246,15 @@ viewModel.getNavigationMenu = function () {
   viewModel.dataNavigationMenuTree([{
     Icon: "bar-chart",
     Title: "Dashboard",
-    Url: "/main/dashboard/index" + "?entityName=" + encodeURIComponent(viewModel.globalFilter.entityName()) + "&entityGroup=" + viewModel.globalFilter.groupName()
+    Url: "/main/dashboard/index" + viewModel.globalFilter.uriComponents()
   }, {
     Icon: "sitemap",
     Title: "Counter Party View",
-    Url: "/main/counterparty/networkdiagram" + "?entityName=" + encodeURIComponent(viewModel.globalFilter.entityName()) + "&entityGroup=" + viewModel.globalFilter.groupName()
+    Url: "/main/counterparty/networkdiagram" + viewModel.globalFilter.uriComponents()
   }, {
     Icon: "random",
     Title: "Missed Flow Analysis",
-    Url: "/main/missedflow/index" + "?entityName=" + encodeURIComponent(viewModel.globalFilter.entityName()) + "&entityGroup=" + viewModel.globalFilter.groupName()
+    Url: "/main/missedflow/index" + viewModel.globalFilter.uriComponents()
   }, {
     Icon: "cog",
     Title: "Recommend Engine",

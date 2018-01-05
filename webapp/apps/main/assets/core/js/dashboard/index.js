@@ -98,7 +98,7 @@ filter.flow = [{
 }]
 filter.selectedFlow = ko.observable(0)
 
-filter.selectedDateType = "Y"
+filter.selectedDateType = ko.observable("Y")
 filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
 
 // Filter booking country
@@ -240,9 +240,9 @@ filter.switchDateType = function (data, event) {
   $(event.target).siblings().removeClass("active")
   $(event.target).addClass("active")
 
-  filter.selectedDateType = $(event.target).text()
+  filter.selectedDateType($(event.target).text())
 
-  if (filter.selectedDateType == "M") {
+  if (filter.selectedDateType() == "M") {
     $("#datePicker").data("kendoDatePicker").setOptions({
       start: "year",
       depth: "year",
@@ -264,7 +264,7 @@ filter.payload = ko.computed(function () {
   var dateType = ""
   var d = moment(filter.selectedDate())
 
-  if (filter.selectedDateType == "Y") {
+  if (filter.selectedDateType() == "Y") {
     dateType = "YEAR"
 
     if (d.isValid()) {
@@ -295,7 +295,7 @@ filter.payload = ko.computed(function () {
     limit: parseInt(filter.selectedLimit()),
     flowAbove: parseInt(filter.selectedFlow()),
     bookingCountries: filter.bookingCountry.selecteds(),
-    datetype: dateType,
+    dateType: dateType,
     yearMonth: yearMonth
   }
 })
@@ -307,7 +307,7 @@ filter.payloadQuarter = function () {
   var toYearMonth = 0
   var d = moment(filter.selectedDate())
 
-  if (filter.selectedDateType == "Y") {
+  if (filter.selectedDateType() == "Y") {
     if (d.isValid()) {
       yearMonth = parseInt(d.format("YYYY"))
       // 3 month difference
@@ -343,33 +343,47 @@ filter.loadEntities = function () {
   })
 }
 
+filter.loadFromURI = function () {
+  var uriFilter = viewModel.globalFilter.fromURI()
+
+  filter.selectedGroupName(uriFilter.groupName)
+  filter.selectedEntity(uriFilter.entityName)
+  filter.selectedRole(uriFilter.role)
+  filter.selectedGroup(uriFilter.group)
+  filter.selectedProductCategory(uriFilter.productCategory)
+  filter.selectedLimit(uriFilter.limit)
+  filter.selectedFlow(uriFilter.flow)
+  filter.bookingCountry.selecteds(uriFilter.bookingCountries)
+  filter.selectedDate(moment(uriFilter.yearMonth, uriFilter.dateType == "YEAR" ? "YYYY" : "YYYYMM").toDate())
+
+  if (uriFilter.dateType == "YEAR") {
+    $("button[data-target='#year']").click()
+  } else {
+    $("button[data-target='#month']").click()
+  }
+}
+
 filter.loadAll = function () {
-  if (getParameterByName("entityGroup") != null) {
-    filter.selectedGroupName(getParameterByName("entityGroup"))
-  }
+  filter.loadFromURI()
 
-  if (getParameterByName("entityName") != null) {
-    filter.selectedEntity(getParameterByName("entityName"))
-  }
+  filter.payload.subscribe(function (nv) {
+    viewModel.globalFilter.allFilter(nv)
 
-  // Enable this if you want the filter to be realtime
-  // filter.payload.subscribe(function () {
-  //   dashboard.loadAllData()
-  // })
+    // Enable this if you want the filter to be realtime
+    // dashboard.loadAllData()
+  })
 
   filter.selectedGroupName.subscribe(function (nv) {
     filter.loadEntities()
-
-    // Update the global filter groupName
-    viewModel.globalFilter.groupName(nv)
-  })
-
-  filter.selectedEntity.subscribe(function (nv) {
-    // Update the global filter entityName
-    viewModel.globalFilter.entityName(nv)
   })
 
   filter.loadGroups()
+
+  dashboard.activeEntity.subscribe(function (nv) {
+    viewModel.globalFilter.allFilter({
+      entityName: nv
+    })
+  })
 
   dashboard.loadAllData()
 }

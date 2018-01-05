@@ -62,20 +62,8 @@ counterparty.loadAll = function () {
         filter.selectedRole("PAYEE")
       }
     } else {
-      window.location.href = "/main/missedflow/index?entityName=" + encodeURIComponent(counterparty.activeEntityName()) + "&entityGroup=" + counterparty.availableActiveGroupName() + "&entityCOI=" + counterparty.activeEntityCOI()
+      window.location.href = "/main/missedflow/index" + viewModel.globalFilter.uriComponents() + "&entityCOI=" + counterparty.activeEntityCOI()
     }
-  })
-
-  counterparty.activeGroupName.subscribe(function (nv) {
-    if (nv != "") {
-      counterparty.availableActiveGroupName(nv)
-      // Update the viewModel global fitler
-      viewModel.globalFilter.groupName(nv)
-    }
-  })
-
-  counterparty.activeEntityName.subscribe(function (nv) {
-    viewModel.globalFilter.entityName(nv)
   })
 
   counterparty.activeGroupName($.urlParam("entityGroup"))
@@ -224,6 +212,25 @@ filter.loadGroupNames = function () {
   })
 }
 
+filter.loadFromURI = function() {
+  var uriFilter = viewModel.globalFilter.fromURI()
+
+  filter.selectedGroupName(uriFilter.groupName)
+  filter.selectedEntity(uriFilter.entityName)
+  filter.selectedRole(uriFilter.role)
+  filter.selectedGroup(uriFilter.group)
+  filter.selectedProductCategory(uriFilter.productCategory)
+  filter.selectedLimit(uriFilter.limit)
+  filter.selectedFlow(uriFilter.flow)
+  filter.selectedDate(moment(uriFilter.yearMonth, uriFilter.dateType == "YEAR" ? "YYYY" : "YYYYMM").toDate())
+
+  if (uriFilter.dateType == "YEAR") {
+    $("button[data-target='#year']").click()
+  } else {
+    $("button[data-target='#month']").click()
+  }
+}
+
 filter.loadAll = function () {
   counterparty.activeEntityName.subscribe(function (nv) {
     filter.selectedEntity(nv)
@@ -240,8 +247,7 @@ filter.loadAll = function () {
     }
   })
 
-  filter.selectedGroupName(counterparty.activeGroupName())
-  filter.selectedEntity($.urlParam("entityName"))
+  filter.loadFromURI()
 
   filter.selectedGroupName.subscribe(function (nv) {
     counterparty.activeGroupName(nv)
@@ -255,6 +261,14 @@ filter.loadAll = function () {
     if (network.isExpanding) {
       network.loadData()
     }
+
+    // Update the global filter
+    var selectedFilters = filter.selectedFilters()
+    if (selectedFilters.groupName == "") {
+      delete selectedFilters.groupName
+    }
+
+    viewModel.globalFilter.allFilter(selectedFilters)
   })
 }
 
@@ -345,7 +359,7 @@ network.loadDetailCSV = function () {
   // R for Relationship
   var links = counterparty.activeGraphIndicator() == "R" ? network.links : network.bubble.links
   var linkRoles = []
-  
+
   _.each(links, function (l) {
     if (l.t.name == name) {
       if (l.t.class == "center" && l.s.class == "center") {

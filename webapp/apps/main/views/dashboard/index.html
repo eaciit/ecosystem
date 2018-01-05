@@ -313,7 +313,7 @@
             </button>
           </div>
           <div class="col-sm-12 align-center top-margin">
-            <a data-bind="attr: { href: '/main/counterparty/networkdiagram?entityGroup=' + filter.selectedGroupName() + '&entityName=' + encodeURIComponent(dashboard.name()) + '&entityCOI=' + dashboard.activeEntities().country }"
+            <a data-bind="attr: { href: '/main/counterparty/networkdiagram' + viewModel.globalFilter.uriComponents() + '&entityCOI=' + dashboard.activeEntities().country }"
               class="btn btn-flat">Network Diagram
               <i class="fa fa-play-circle-o" aria-hidden="true"></i>
             </a>
