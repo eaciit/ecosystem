@@ -2,7 +2,14 @@ package helper
 
 import (
 	"bufio"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 	"database/sql"
+	"encoding/base64"
+	"encoding/hex"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -19,6 +26,16 @@ import (
 var (
 	cacheConfig tk.M
 )
+
+// Generate unique session ID
+// source https://github.com/astaxie/build-web-application-with-golang/blob/master/en/06.2.md
+func GenerateSessionId() string {
+	b := make([]byte, 32)
+	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+		return ""
+	}
+	return base64.URLEncoding.EncodeToString(b)
+}
 
 // exac path location of file where this function is called
 // example /Users/novalagung/Documents/go/src/eaciit/scb-eco/webapp/apps/main/controllers
@@ -76,6 +93,52 @@ func PrepareConnection(anything interface{}) (*sql.DB, error) {
 	}
 
 	return conn, nil
+}
+
+func PrepareDefaultUser(db *sql.DB) error {
+	Println("Generating Default user into database...")
+
+	sql := `CREATE TABLE eaciit_user (
+		id int(11) NOT NULL AUTO_INCREMENT,
+		username varchar(100) NOT NULL,
+		password varchar(100) NOT NULL,
+		role varchar(100) NOT NULL,
+		PRIMARY KEY (id,username)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8`
+
+	qr := sqlh.Exec(db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		return qr.Error()
+	}
+
+	sql = `SELECT * FROM eaciit_user`
+	qr = sqlh.Exec(db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		return qr.Error()
+	}
+
+	results := []tk.M{}
+	err := qr.Fetch(&results, 0)
+	if err != nil {
+		return err
+	}
+
+	if len(results) == 0 {
+		hashedPassword, err := Encrypt("Password.1")
+		if err != nil {
+			return err
+		}
+
+		sql = `INSERT INTO eaciit_user VALUES (1, "eaciit", "` + hashedPassword + `", "admin")`
+		qr = sqlh.Exec(db, sqlh.ExecQuery, sql)
+		if qr.Error() != nil {
+			return qr.Error()
+		}
+
+		Println("Generating Default user into database [SUCCESS]")
+	}
+
+	return nil
 }
 
 func ReadConfig(anything interface{}) tk.M {
@@ -144,4 +207,59 @@ func IsTimeBefore(start, finish time.Time) bool {
 
 func IsTimeAfter(start, finish time.Time) bool {
 	return finish.Before(start)
+}
+
+// AES Encryption
+func Encrypt(text string) (string, error) {
+	plaintext := []byte(text)
+	key := []byte("*eaciit-standard-chartered-apps*")
+	c, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	gcm, err := cipher.NewGCM(c)
+	if err != nil {
+		return "", err
+	}
+
+	nonce := make([]byte, gcm.NonceSize())
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		return "", err
+	}
+
+	ciphertext := gcm.Seal(nonce, nonce, plaintext, nil)
+	result := fmt.Sprintf("%x", ciphertext)
+	return result, nil
+}
+
+func Decrypt(text string) (string, error) {
+	ciphertext, err := hex.DecodeString(text)
+	if err != nil {
+		return "", err
+	}
+	key := []byte("*eaciit-standard-chartered-apps*")
+	c, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	gcm, err := cipher.NewGCM(c)
+	if err != nil {
+		return "", err
+	}
+
+	nonceSize := gcm.NonceSize()
+	if len(ciphertext) < nonceSize {
+		return "", err
+	}
+
+	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
+	res, err := gcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return "", err
+	}
+
+	result := fmt.Sprintf("%s", res)
+	return result, nil
 }
