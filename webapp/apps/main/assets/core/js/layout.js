@@ -257,8 +257,8 @@ viewModel.getNavigationMenu = function () {
     Url: "/main/missedflow/index" + viewModel.globalFilter.uriComponents()
   }, {
     Icon: "cog",
-    Title: "Recommend Engine",
-    Url: "/main/recommendengine/index"
+    Title: "Filter Engine",
+    Url: "/main/filterengine/index"
   }])
 }
 

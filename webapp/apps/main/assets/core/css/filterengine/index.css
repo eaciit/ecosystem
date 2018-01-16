@@ -1,0 +1,39 @@
+.filter-item {
+  display: inline-block;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.switch {
+  color: #3276b1;
+  background-color: #fff;
+  height: 27px;
+}
+
+.filter-container .k-combobox .k-dropdown-wrap {
+  border-color: #22313F;
+  background: #22313F !important;
+}
+
+.filter-container .k-dropdown .k-state-default,
+.filter-container .k-combobox .k-select {
+  background: #22313F !important;
+  border-color: #22313F;
+  color: #ffffff !important;
+  padding: 0;
+}
+
+.filter-container .k-input {
+  color: #ffffff !important;
+  background: #22313F !important;
+}
+
+.filter-container .k-picker-wrap {
+  background: #22313F !important;
+  border-color: #22313F;
+  color: #ffffff !important;
+}
+
+.filter-container .k-picker-wrap.k-state-default>.k-select {
+  border-color: #22313F;
+}
