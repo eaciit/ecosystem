@@ -29,6 +29,7 @@ func (c *MasterController) GetGroups(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err := qr.Fetch(&results, 0)
@@ -69,6 +70,7 @@ func (c *MasterController) GetEntities(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -101,6 +103,7 @@ func (c *MasterController) GetBookingCountries(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err := qr.Fetch(&results, 0)

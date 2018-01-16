@@ -150,6 +150,7 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 		if qr.Error() != nil {
 			c.SetResultError(qr.Error().Error(), nil)
 		}
+		defer qr.Close()
 
 		results1 := []tk.M{}
 		err = qr.Fetch(&results1, 0)
@@ -194,6 +195,7 @@ func (c *MissedFlowController) GetMissedFlowData(k *knot.WebContext) interface{}
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)

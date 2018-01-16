@@ -112,6 +112,7 @@ func (c *CounterPartyController) GetTopEntities(key string, payload *CounterPart
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err := qr.Fetch(&results, 0)
@@ -222,6 +223,7 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 			if qr.Error() != nil {
 				c.SetResultError(qr.Error().Error(), nil)
 			}
+			defer qr.Close()
 
 			err = qr.Fetch(&results, 0)
 			if err != nil {
@@ -243,6 +245,7 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		if qr.Error() != nil {
 			c.SetResultError(qr.Error().Error(), nil)
 		}
+		defer qr.Close()
 
 		err = qr.Fetch(&resultsB, 0)
 		if err != nil {
@@ -259,6 +262,7 @@ func (c *CounterPartyController) GetNetworkDiagramData(k *knot.WebContext) inter
 		if qr.Error() != nil {
 			c.SetResultError(qr.Error().Error(), nil)
 		}
+		defer qr.Close()
 
 		err = qr.Fetch(&resultsP, 0)
 		if err != nil {
@@ -333,6 +337,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -405,6 +410,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -512,6 +518,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -548,6 +555,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierProducts(k *knot.WebCont
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	resultsProduct := []tk.M{}
 	err = qr.Fetch(&resultsProduct, 0)
@@ -620,6 +628,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierDetail(k *knot.WebContex
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)

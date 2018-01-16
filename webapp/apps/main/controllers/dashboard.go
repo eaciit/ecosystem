@@ -229,6 +229,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -262,6 +263,7 @@ func (c *DashboardController) GetDomicileData(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -306,6 +308,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -472,6 +475,7 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -511,6 +515,7 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -550,6 +555,7 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -589,6 +595,7 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -628,6 +635,7 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -663,6 +671,7 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	result1 := []tk.M{}
 	err = qr.Fetch(&result1, 0)
@@ -726,6 +735,7 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	result1 := []tk.M{}
 	err = qr.Fetch(&result1, 0)
@@ -789,6 +799,7 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	result1 := []tk.M{}
 	err = qr.Fetch(&result1, 0)
@@ -852,6 +863,7 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	result1 := []tk.M{}
 	err = qr.Fetch(&result1, 0)
@@ -915,6 +927,7 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	result1 := []tk.M{}
 	err = qr.Fetch(&result1, 0)
@@ -972,6 +985,7 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -1013,6 +1027,7 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -1054,6 +1069,7 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -1095,6 +1111,7 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
@@ -1136,6 +1153,7 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
+	defer qr.Close()
 
 	results := []tk.M{}
 	err = qr.Fetch(&results, 0)
