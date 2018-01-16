@@ -42,6 +42,30 @@ filter.creditRatings = ko.observableArray([
 ])
 filter.selectedCreditRating = ko.observable("> 5")
 
+filter.selectedDateType = "Y"
+filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
+
+filter.switchDateType = function (data, event) {
+  $(event.target).siblings().removeClass("active")
+  $(event.target).addClass("active")
+
+  filter.selectedDateType = $(event.target).text()
+
+  if (filter.selectedDateType == "M") {
+    $("#datePicker").data("kendoDatePicker").setOptions({
+      start: "year",
+      depth: "year",
+      format: "MMM yyyy"
+    })
+  } else {
+    $("#datePicker").data("kendoDatePicker").setOptions({
+      start: "decade",
+      depth: "decade",
+      format: "yyyy"
+    })
+  }
+}
+
 filter.loadGroupNames = function () {
   viewModel.ajaxPostCallback("/main/master/getgroups", {}, function (data) {
     filter.groups(_.map(data, "value"))
@@ -163,6 +187,17 @@ engine.load = function () {
   filter.selectedTotalFlow(selectedTotalFlow)
   filter.selectedCreditRating(selectedCreditRating)
 
+  var yearMonth = 0
+  var dateType = ""
+  var d = moment(filter.selectedDate())
+
+  if (filter.selectedDateType == "Y") {
+    dateType = "YEAR"
+    yearMonth = d.isValid() ? parseInt(d.format("YYYY")) : 0
+  } else {
+    dateType = "MONTH"
+    yearMonth = d.isValid() ? parseInt(d.format("YYYYMM")) : 0
+  }
 
   var param = {
     tradeProduct: filter.selectedTradeProduct(),
@@ -171,7 +206,9 @@ engine.load = function () {
     transactionNumber: selectedTransactionNumber,
     totalFlow: selectedTotalFlow,
     creditRating: selectedCreditRating,
-    limit: 20
+    limit: 20,
+    dateType: dateType,
+    yearMonth: yearMonth
   }
 
   viewModel.ajaxPostCallback("/main/filterengine/getresult", param, function (data) {

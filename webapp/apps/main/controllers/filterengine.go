@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/sqlh"
@@ -20,6 +21,8 @@ type FilterEnginePayload struct {
 	TotalFlow         string
 	CreditRating      string
 	Limit             int
+	DateType          string
+	YearMonth         int
 }
 
 func (c *FilterEngineController) Index(k *knot.WebContext) interface{} {
@@ -56,6 +59,22 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 	sql += ` 
 	AND customer_role IN ('BUYER', 'DRAWEE')
 	AND cust_credit_grade ` + payload.CreditRating
+
+	// Filters for ProductType
+	if strings.ToUpper(payload.TradeProduct) == "ALL" {
+		sql += " AND product_code IN ('VPrP', 'TPM')"
+	} else {
+		sql += " AND product_code = " + payload.TradeProduct
+	}
+
+	// Filters for YearMonth
+	if payload.YearMonth > 0 {
+		if strings.ToUpper(payload.DateType) == "MONTH" {
+			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+		} else {
+			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+		}
+	}
 
 	sql += " GROUP BY cust_group_name "
 
