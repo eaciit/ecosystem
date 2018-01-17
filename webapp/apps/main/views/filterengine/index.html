@@ -17,34 +17,43 @@
   <div class="row">
     <div class="col-lg-12 filter-container">
       <div class="filter-item">
+        <div class="filter-label">Trade Product Type</div>
         <select style="width:180px" data-bind="kendoDropDownList: { data: filter.tradeProducts, value: filter.selectedTradeProduct, filter: 'contains'}"></select>
       </div>
       <div class="filter-item">
+        <div class="filter-label">Group</div>
         <select style="width:180px" data-bind="kendoDropDownList: { data: filter.groups,value: filter.selectedGroup, filter: 'contains' }"></select>
       </div>
       <div class="filter-item">
+        <div class="filter-label">Number of Supplier</div>
         <select style="width:120px" data-bind="kendoComboBox: { data: filter.supplierNumbers, value: filter.selectedSupplierNumber }"></select>
       </div>
       <div class="filter-item">
+        <div class="filter-label">Transactions Number</div>
         <select style="width:120px" data-bind="kendoComboBox: { data: filter.transactionNumbers, value: filter.selectedTransactionNumber }"></select>
       </div>
       <div class="filter-item">
+        <div class="filter-label">Total Flows</div>
         <select style="width:120px" data-bind="kendoComboBox: { data: filter.totalFlows, value: filter.selectedTotalFlow }"></select>
       </div>
       <div class="filter-item"  >
+        <div class="filter-label">Credit Ratings</div>
         <select style="width:120px" data-bind="kendoComboBox: { data: filter.creditRatings, value: filter.selectedCreditRating }"></select>
       </div>  
       <div class="filter-item">
+        <div class="filter-label">&nbsp;</div>
         <div class="btn-group">
           <button class="btn btn-primary btn-sm switch active" data-target="#year" data-bind="click: filter.switchDateType">Y</button>
           <button class="btn btn-primary btn-sm switch" data-target="#month" data-bind="click: filter.switchDateType">M</button>
         </div>
       </div>
       <div class="filter-item">
+        <div class="filter-label">&nbsp;</div>
         <input type="text" id="datePicker" data-bind="kendoDatePicker:{ value:new Date(),format:'yyyy', start: 'decade', depth: 'decade', value: filter.selectedDate }"
           class="filter-space">
       </div>
       <div class="filter-item">
+        <div class="filter-label">&nbsp;</div>
         <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px"
           data-bind="click:engine.load">Go</div>
       </div>
@@ -52,7 +61,7 @@
   </div>
 
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12 grid-container">
       <div data-bind="kendoGrid: engine.gridConfig"></div>
     </div>
   </div>

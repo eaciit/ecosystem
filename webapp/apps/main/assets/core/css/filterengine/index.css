@@ -4,6 +4,10 @@
   margin-bottom: 6px;
 }
 
+.filter-label {
+  padding: 5px 0;
+}
+
 .switch {
   color: #3276b1;
   background-color: #fff;
@@ -36,4 +40,8 @@
 
 .filter-container .k-picker-wrap.k-state-default>.k-select {
   border-color: #22313F;
+}
+
+.grid-container {
+  margin-top: 10px;
 }
