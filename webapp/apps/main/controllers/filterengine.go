@@ -56,6 +56,13 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		}
 	}
 
+	groupClause := ""
+	if strings.ToUpper(payload.Group) == "INTRA-GROUP" {
+		groupClause = " AND cust_group_name = cpty_group_name"
+	} else if strings.ToUpper(payload.Group) == "" {
+		groupClause = " AND cust_group_name <> cpty_group_name"
+	}
+
 	nestedClause := `
 		SELECT
 		cust_group_name, 
@@ -70,11 +77,12 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		SUM(amount * rate) AS total_amount
 		FROM
 		` + c.tableName() + `
-		WHERE cust_group_name <> cpty_group_name
-		AND customer_role IN ('BUYER', 'DRAWEE')
+		WHERE 
+		customer_role IN ('BUYER', 'DRAWEE')
 		AND product_code IN ('VPrP', 'TPM')
 		AND cpty_credit_grade ` + payload.CreditRating + `
 		` + yearMonthClause + `
+		` + groupClause + `
 		GROUP BY 
 		cust_group_name, 
 		cust_long_name, 
