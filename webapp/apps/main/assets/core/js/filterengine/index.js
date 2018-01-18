@@ -6,8 +6,12 @@ filter.tradeProducts = ko.observableArray([
 ])
 filter.selectedTradeProduct = ko.observable("All")
 
-filter.groups = ko.observableArray([])
-filter.selectedGroup = ko.observable()
+filter.groups = ko.observableArray([
+  "All",
+  "Intra-Group",
+  "Exclude Intra-Group"
+])
+filter.selectedGroup = ko.observable("Exclude Intra-Group")
 
 filter.supplierNumbers = ko.observableArray([
   "> 5",
@@ -15,15 +19,15 @@ filter.supplierNumbers = ko.observableArray([
   "> 25",
   "> 50"
 ])
-filter.selectedSupplierNumber = ko.observable("> 5")
+filter.selectedSupplierNumber = ko.observable(">= 20")
 
 filter.transactionNumbers = ko.observableArray([
-  "> 50",
-  "> 100",
-  "> 250",
-  "> 500"
+  "> 5",
+  "> 10",
+  "> 25",
+  "> 50"
 ])
-filter.selectedTransactionNumber = ko.observable("> 50")
+filter.selectedTransactionNumber = ko.observable(">= 12")
 
 filter.totalFlows = ko.observableArray([
   "> 50M",
@@ -31,7 +35,7 @@ filter.totalFlows = ko.observableArray([
   "> 250M",
   "> 500M"
 ])
-filter.selectedTotalFlow = ko.observable("> 50M")
+filter.selectedTotalFlow = ko.observable(">= 50M")
 
 filter.creditRatings = ko.observableArray([
   "> 2",
@@ -40,7 +44,7 @@ filter.creditRatings = ko.observableArray([
   "> 8",
   "> 10"
 ])
-filter.selectedCreditRating = ko.observable("> 5")
+filter.selectedCreditRating = ko.observable("<= 8")
 
 filter.selectedDateType = "Y"
 filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
@@ -66,15 +70,8 @@ filter.switchDateType = function (data, event) {
   }
 }
 
-filter.loadGroupNames = function () {
-  viewModel.ajaxPostCallback("/main/master/getgroups", {}, function (data) {
-    filter.groups(_.map(data, "value"))
-    filter.selectedGroup.valueHasMutated()
-  })
-}
-
 filter.loadAll = function () {
-  filter.loadGroupNames()
+  
 }
 
 var engine = {}
@@ -103,13 +100,13 @@ engine.gridConfig = {
       width: 150
     },
     {
-      field: "transaction_number",
+      field: "total_transaction_number",
       title: "Number of Transaction",
       width: 150
     },
     {
-      template: '<div class="text-right"> #= kendo.toString(total, "n") # </div>',
-      field: "total",
+      template: '<div class="text-right"> #= kendo.toString(total_transaction_amount, "n") # </div>',
+      field: "total_transaction_amount",
       title: "USD Amount",
       width: 250
     }
@@ -155,11 +152,6 @@ engine.load = function () {
   var selectedTransactionNumber = engine.processFilter(filter.selectedTransactionNumber())
   var selectedTotalFlow = engine.processFilter(filter.selectedTotalFlow())
   var selectedCreditRating = engine.processFilter(filter.selectedCreditRating())
-
-  if (!selectedGroup) {
-    swal("Error!", "Please select group first", "error")
-    return
-  }
 
   if (!selectedSupplierNumber) {
     swal("Error!", "Please fill the correct format for number of supplier", "error")

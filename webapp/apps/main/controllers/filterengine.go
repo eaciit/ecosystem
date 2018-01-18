@@ -46,44 +46,89 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	sql := `SELECT 
-	cust_group_name, 
-	COUNT(DISTINCT cust_sci_leid) AS cust_number, 
-	COUNT(DISTINCT cust_coi) AS cust_coi_number,
-	COUNT(DISTINCT cpty_sci_leid) AS cpty_number,
-	COUNT(1) AS transaction_number,
-	SUM(amount * rate) AS total
-  FROM ` + c.tableName() + `
-	WHERE ` + c.commonWhereClause()
-
-	sql += ` 
-	AND customer_role IN ('BUYER', 'DRAWEE')
-	AND cust_credit_grade ` + payload.CreditRating
-
-	// Filters for ProductType
-	if strings.ToUpper(payload.TradeProduct) == "ALL" {
-		sql += " AND product_code IN ('VPrP', 'TPM')"
-	} else {
-		sql += " AND product_code = " + payload.TradeProduct
-	}
-
 	// Filters for YearMonth
+	yearMonthClause := ""
 	if payload.YearMonth > 0 {
 		if strings.ToUpper(payload.DateType) == "MONTH" {
-			sql += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
+			yearMonthClause += " AND transaction_month = " + strconv.Itoa(payload.YearMonth)
 		} else {
-			sql += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
+			yearMonthClause += " AND transaction_year = " + strconv.Itoa(payload.YearMonth)
 		}
 	}
 
-	sql += " GROUP BY cust_group_name "
+	nestedClause := `
+		SELECT
+		cust_group_name, 
+		cust_long_name, 
+		cust_coi,
+		cust_sci_leid,
+		cpty_group_name,
+		cpty_long_name,
+		cpty_coi,
+		cpty_sci_leid,
+		COUNT(1) AS transaction_number,
+		SUM(amount * rate) AS total_amount
+		FROM
+		` + c.tableName() + `
+		WHERE cust_group_name <> cpty_group_name
+		AND customer_role IN ('BUYER', 'DRAWEE')
+		AND product_code IN ('VPrP', 'TPM')
+		AND cpty_credit_grade ` + payload.CreditRating + `
+		` + yearMonthClause + `
+		GROUP BY 
+		cust_group_name, 
+		cust_long_name, 
+		cust_coi,
+		cust_sci_leid,
+		cpty_group_name,
+		cpty_long_name,
+		cpty_coi,
+		cpty_sci_leid
+		HAVING
+		transaction_number ` + payload.TransactionNumber + `
+	`
 
-	sql += ` 
-	HAVING total ` + payload.TotalFlow + `
-	AND cpty_number ` + payload.SupplierNumber + `
-	AND transaction_number ` + payload.TransactionNumber
+	groupKey := "cust_long_name"
+	fromClause := `
+		SELECT 
+		TB.*
+		FROM
+		(
+			SELECT 
+			` + groupKey + `,
+			COUNT(DISTINCT cpty_sci_leid) AS supplier_count
+			FROM 
+			(
+				` + nestedClause + `
+			) TA1
+			GROUP BY
+			cust_long_name
+			HAVING
+			supplier_count ` + payload.SupplierNumber + `
+		) TA
+		LEFT JOIN
+		(
+			` + nestedClause + `
+		) TB
+		ON TA.` + groupKey + ` = TB.` + groupKey + `
+		ORDER BY total_amount DESC
+	`
 
-	sql += " ORDER BY total DESC"
+	sql := `
+		SELECT
+		cust_group_name,
+		COUNT(DISTINCT cust_sci_leid) AS cust_number,
+		COUNT(DISTINCT cust_coi) AS cust_coi_number,
+		COUNT(DISTINCT cpty_sci_leid) AS cpty_number,
+		SUM(transaction_number) AS total_transaction_number,
+		SUM(total_amount) AS total_transaction_amount
+		FROM
+		(
+			` + fromClause + `
+		) TF
+		GROUP BY cust_group_name
+		ORDER BY total_transaction_amount DESC
+	`
 
 	if payload.Limit > 0 {
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
