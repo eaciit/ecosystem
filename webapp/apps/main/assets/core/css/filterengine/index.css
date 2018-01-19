@@ -60,3 +60,8 @@
 .k-grid-content tr:hover td {
   background-color: #6BB9F0 !important;
 }
+
+.alert.alert-info {
+  background-image: none !important;
+  background: #E4F1FE !important;
+}

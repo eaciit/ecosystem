@@ -71,11 +71,12 @@ filter.switchDateType = function (data, event) {
 }
 
 filter.loadAll = function () {
-  
+
 }
 
 var engine = {}
 engine.resultData = ko.observableArray()
+engine.savedParam = ko.observable({})
 
 engine.gridConfig = {
   data: engine.resultData,
@@ -146,7 +147,7 @@ engine.processFilter = function (text) {
   return finalText
 }
 
-engine.load = function () {
+engine.generateTable = function () {
   var selectedGroup = filter.selectedGroup()
   var selectedSupplierNumber = engine.processFilter(filter.selectedSupplierNumber())
   var selectedTransactionNumber = engine.processFilter(filter.selectedTransactionNumber())
@@ -198,18 +199,47 @@ engine.load = function () {
     transactionNumber: selectedTransactionNumber,
     totalFlow: selectedTotalFlow,
     creditRating: selectedCreditRating,
-    limit: 20,
     dateType: dateType,
     yearMonth: yearMonth
   }
 
-  viewModel.ajaxPostCallback("/main/filterengine/getresult", param, function (data) {
+  var savedParam = engine.savedParam()
+
+  if (savedParam.TradeProduct == param.tradeProduct && 
+    savedParam.Group == param.group && 
+    savedParam.SupplierNumber == param.supplierNumber &&
+    savedParam.TransactionNumber == param.transactionNumber && 
+    savedParam.TotalFlow == param.totalFlow &&
+    savedParam.CreditRating == param.creditRating) {
+      swal("Filter Not Changed", "Filter parameters is same with the existing filter parameter from current table!", "warning")
+      return
+  }
+
+  viewModel.ajaxPostCallback("/main/filterengine/generatetable", param, function (data) {
+    swal("Success", "Recomended engine filter parameter is saved.", "success")
+  })
+}
+
+engine.getSavedParameter = function() {
+  viewModel.ajaxPostCallback("/main/filterengine/getsavedparameter", {}, function (data) {
+    engine.savedParam(data)
+  })
+}
+
+engine.load = function () {
+  viewModel.ajaxPostCallback("/main/filterengine/getresult", {}, function (data) {
     engine.resultData(data)
   })
+}
+
+engine.loadAll = function () {
+  engine.load()
+  engine.getSavedParameter()
 }
 
 $(window).load(function () {
   kendo.culture("en-US")
 
   filter.loadAll()
+  engine.loadAll()
 })

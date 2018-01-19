@@ -1,6 +1,7 @@
 package app_main
 
 import (
+	"eaciit/scb-eco/consoleapp"
 	"eaciit/scb-eco/webapp/apps/main/controllers"
 	"eaciit/scb-eco/webapp/helper"
 	"os"
@@ -49,6 +50,10 @@ func init() {
 	app.Register(&(controllers.FilterEngineController{BaseController: baseCtrl}))
 	app.Register(&(controllers.RecommendEngineController{BaseController: baseCtrl}))
 	app.Static("static", filepath.Join(appFolderPath, "assets"))
+
+	// Scheduler for Recomended Engine
+	sc := consoleapp.ScheduleRun(appFolderPath + "/files/filterEngine.sql")
+	baseCtrl.Scheduler = sc
 
 	knot.RegisterApp(app)
 }

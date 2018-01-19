@@ -1,6 +1,10 @@
 package controllers
 
 import (
+	"eaciit/scb-eco/webapp/helper"
+	"encoding/gob"
+	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
@@ -25,6 +29,45 @@ type FilterEnginePayload struct {
 	YearMonth         int
 }
 
+func (c *FilterEngineController) SaveParameter(param *FilterEnginePayload) error {
+	type ForgetMe struct{}
+	filePath := helper.GetAppBasePath(ForgetMe{}) + "/files/filterEngine.param"
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := gob.NewEncoder(file)
+	err = encoder.Encode(param)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *FilterEngineController) LoadSavedParameter() (*FilterEnginePayload, error) {
+	type ForgetMe struct{}
+	filePath := helper.GetAppBasePath(ForgetMe{}) + "/files/filterEngine.param"
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	param := FilterEnginePayload{}
+	decoder := gob.NewDecoder(file)
+	err = decoder.Decode(&param)
+	if err != nil {
+		return nil, err
+	}
+
+	return &param, nil
+}
+
 func (c *FilterEngineController) Index(k *knot.WebContext) interface{} {
 	c.SetResponseTypeHTML(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
@@ -34,7 +77,21 @@ func (c *FilterEngineController) Index(k *knot.WebContext) interface{} {
 	return c.SetViewData(nil)
 }
 
-func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
+func (c *FilterEngineController) GetSavedParameter(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	param, err := c.LoadSavedParameter()
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(param)
+}
+
+func (c *FilterEngineController) GenerateTable(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
@@ -42,6 +99,12 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 
 	payload := FilterEnginePayload{}
 	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	// Save parameter
+	err = c.SaveParameter(&payload)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
 	}
@@ -80,7 +143,7 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		WHERE 
 		customer_role IN ('BUYER', 'DRAWEE')
 		AND product_code IN ('VPrP', 'TPM')
-		AND cpty_credit_grade ` + payload.CreditRating + `
+		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) ` + payload.CreditRating + `
 		` + yearMonthClause + `
 		` + groupClause + `
 		GROUP BY 
@@ -97,7 +160,7 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 	`
 
 	groupKey := "cust_long_name"
-	fromClause := `
+	sql := `
 		SELECT 
 		TB.*
 		FROM
@@ -119,9 +182,33 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 			` + nestedClause + `
 		) TB
 		ON TA.` + groupKey + ` = TB.` + groupKey + `
-		ORDER BY total_amount DESC
 	`
 
+	type ForgetMe struct{}
+	filePath := helper.GetAppBasePath(ForgetMe{}) + "/files/filterEngine.sql"
+
+	bytesSQL := []byte(sql)
+	err = ioutil.WriteFile(filePath, bytesSQL, 0644)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(tk.M{})
+}
+
+func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	payload := FilterEnginePayload{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	tableName := "re_ecosys_ready"
 	sql := `
 		SELECT
 		cust_group_name,
@@ -130,10 +217,7 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		COUNT(DISTINCT cpty_sci_leid) AS cpty_number,
 		SUM(transaction_number) AS total_transaction_number,
 		SUM(total_amount) AS total_transaction_amount
-		FROM
-		(
-			` + fromClause + `
-		) TF
+		FROM ` + tableName + `
 		GROUP BY cust_group_name
 		ORDER BY total_transaction_amount DESC
 	`
@@ -155,4 +239,15 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 	}
 
 	return c.SetResultOK(results)
+}
+
+func (c *FilterEngineController) GetSchedulerNextRun(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	_, t := c.Scheduler.GcScheduler.NextRun()
+
+	return c.SetResultOK(tk.M{"nexTime": t})
 }

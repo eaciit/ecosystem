@@ -13,6 +13,44 @@
     <span>Recommendation Engine</span>
   </div>
 </div>
+
+<div class="row">
+  <div class="alert alert-info alert-dismissible" role="alert" data-bind="visible: engine.savedParam().TradeProduct">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div class="info">
+      <div>
+        Existing recomended engine table already exist with the folowing parameters:
+      </div>
+      <div class="row">
+        <div class="col-sm-2">
+          <span>Trade Product: </span>
+          <b data-bind="text: engine.savedParam().TradeProduct"></b>
+        </div>
+        <div class="col-sm-2">
+          <span>Group: </span>
+          <b data-bind="text: engine.savedParam().Group"></b>
+        </div>
+        <div class="col-sm-2">
+          <span>Supplier Number: </span>
+          <b data-bind="text: engine.savedParam().SupplierNumber"></b>
+        </div>
+        <div class="col-sm-2">
+          <span>Transaction Number: </span>
+          <b data-bind="text: engine.savedParam().TransactionNumber"></b>
+        </div>
+        <div class="col-sm-2">
+          <span>Total Flow: </span>
+          <b data-bind="text: engine.savedParam().TotalFlow"></b>
+        </div>
+        <div class="col-sm-2">
+          <span>Credit Rating: </span>
+          <b data-bind="text: engine.savedParam().CreditRating"></b>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row" id="setarea">
   <div class="row">
     <div class="col-lg-12 filter-container">
@@ -55,7 +93,7 @@
       <div class="filter-item">
         <div class="filter-label">&nbsp;</div>
         <div class="filter-button" style="background-color: #33c766; color: #fff; padding: 4px 15px 4px 15px; border-radius:18px"
-          data-bind="click:engine.load">Go</div>
+          data-bind="click:engine.generateTable">Generate Table</div>
       </div>
     </div>
   </div>

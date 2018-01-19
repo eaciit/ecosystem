@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"eaciit/innov8/webapp/apps/main/controllers"
+	"eaciit/scb-eco/consoleapp"
 	"eaciit/scb-eco/webapp/helper"
 	"errors"
 	"net/http"
@@ -16,10 +17,11 @@ import (
 type IBaseController interface{}
 
 type BaseController struct {
-	base    IBaseController
-	Db      *sql.DB
-	AppName string
-	NoLogin bool
+	base      IBaseController
+	Db        *sql.DB
+	AppName   string
+	NoLogin   bool
+	Scheduler *consoleapp.Scheduler
 }
 
 const (
