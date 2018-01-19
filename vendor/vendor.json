@@ -7,6 +7,12 @@
 			"path": "github.com/eaciit/sqlh",
 			"revision": "5f4419ffc75c882b69c8981e3f1a38bfe16ebf5f",
 			"revisionTime": "2017-10-03T23:07:55Z"
+		},
+		{
+			"checksumSHA1": "A7SMz3IkSYwVdJdDZQYzM8wUnTg=",
+			"path": "github.com/jasonlvhit/gocron",
+			"revision": "3c914c8681c3998f1dd463d84a4d8c29345e47a4",
+			"revisionTime": "2017-12-26T19:12:23Z"
 		}
 	],
 	"rootPath": "eaciit/scb-eco"
