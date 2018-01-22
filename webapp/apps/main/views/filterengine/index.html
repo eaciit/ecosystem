@@ -100,13 +100,25 @@
 
   <div class="row">
     <div class="col-md-12 grid-container">
-        <h3 class="text-center">Anchor Table</h3>
+        <h3 class="text-center">
+          Anchor Table
+          <a href="/main/filterengine/downloadresult">
+            <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px">
+          </a>
+        </h3>
       <div data-bind="kendoGrid: engine.grid.config"></div>
       <div data-bind="kendoPager: { data: engine.grid.pagerData, change: engine.grid.pageChanged }"></div>
     </div>
 
     <div class="col-md-12 grid-container">
-      <h3 class="text-center">Detail Table</h3>
+      <span class="excel-download">
+          
+      <h3 class="text-center">
+        Detail Table
+        <a data-bind="attr: { href: '/main/filterengine/downloadresultdetail?group_name=' + engine.detail.groupName() }">
+          <img src="/main/static/3rdparty/img/excel.png" width="20px" height="25px">
+        </a>
+      </h3>
       <div data-bind="kendoGrid: engine.detail.config"></div>
       <div data-bind="kendoPager: { data: engine.detail.pagerData, change: engine.detail.pageChanged }"></div>
     </div>

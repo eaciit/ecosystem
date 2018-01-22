@@ -11,6 +11,7 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/sqlh"
 	tk "github.com/eaciit/toolkit"
+	"github.com/joho/sqltocsv"
 )
 
 type FilterEngineController struct {
@@ -29,6 +30,10 @@ type FilterEnginePayload struct {
 	DateType          string
 	YearMonth         int
 	ExecuteNow        bool
+}
+
+func (c *FilterEngineController) reTableName() string {
+	return "re_ecosys_ready"
 }
 
 func (c *FilterEngineController) SaveParameter(param *FilterEnginePayload) error {
@@ -216,11 +221,10 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	tableName := "re_ecosys_ready"
 	sqlMax := `
 		SELECT
 		COUNT(DISTINCT cust_group_name) AS max_row
-		FROM ` + tableName
+		FROM ` + c.reTableName()
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sqlMax)
 	if qr.Error() != nil {
@@ -242,7 +246,7 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		COUNT(DISTINCT cpty_sci_leid) AS cpty_number,
 		SUM(transaction_number) AS total_transaction_number,
 		SUM(total_amount) AS total_transaction_amount
-		FROM ` + tableName + `
+		FROM ` + c.reTableName() + `
 		GROUP BY cust_group_name
 		ORDER BY total_transaction_amount DESC
 	`
@@ -273,6 +277,38 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 	})
 }
 
+func (c *FilterEngineController) DownloadResult(k *knot.WebContext) interface{} {
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	k.Config.NoLog = true
+	k.Config.OutputType = knot.OutputNone
+
+	sql := `
+		SELECT
+		cust_group_name,
+		COUNT(DISTINCT cust_sci_leid) AS cust_number,
+		COUNT(DISTINCT cust_coi) AS cust_coi_number,
+		COUNT(DISTINCT cpty_sci_leid) AS cpty_number,
+		SUM(transaction_number) AS total_transaction_number,
+		SUM(total_amount) AS total_transaction_amount
+		FROM ` + c.reTableName() + `
+		GROUP BY cust_group_name
+		ORDER BY total_transaction_amount DESC
+	`
+
+	rows, _ := c.Db.Query(sql)
+
+	k.Writer.Header().Set("Content-type", "text/csv")
+	k.Writer.Header().Set("Content-Disposition", "attachment; filename=\"download.csv\"")
+
+	sqltocsv.Write(k.Writer, rows)
+	// println(k.Request.URL.Query().Get("group_name"))
+
+	return nil
+}
+
 func (c *FilterEngineController) GetResultDetail(k *knot.WebContext) interface{} {
 	c.SetResponseTypeAJAX(k)
 	if !c.ValidateAccessOfRequestedURL(k) {
@@ -290,11 +326,10 @@ func (c *FilterEngineController) GetResultDetail(k *knot.WebContext) interface{}
 		return c.SetResultError(err.Error(), nil)
 	}
 
-	tableName := "re_ecosys_ready"
 	sqlMax := `
 		SELECT
 		COUNT(1) AS max_row
-		FROM ` + tableName + `
+		FROM ` + c.reTableName() + `
 		WHERE cust_group_name = "` + payload.GroupName + `"`
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sqlMax)
@@ -311,7 +346,7 @@ func (c *FilterEngineController) GetResultDetail(k *knot.WebContext) interface{}
 
 	sql := `
 		SELECT *
-		FROM ` + tableName + `
+		FROM ` + c.reTableName() + `
 		WHERE cust_group_name = "` + payload.GroupName + `"
 		ORDER BY total_amount DESC
 	`
@@ -340,6 +375,33 @@ func (c *FilterEngineController) GetResultDetail(k *knot.WebContext) interface{}
 		"max":  resultsMax[0].Get("max_row"),
 		"rows": results,
 	})
+}
+
+func (c *FilterEngineController) DownloadResultDetail(k *knot.WebContext) interface{} {
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	k.Config.NoLog = true
+	k.Config.OutputType = knot.OutputNone
+
+	groupName := k.Request.URL.Query().Get("group_name")
+
+	sql := `
+		SELECT *
+		FROM ` + c.reTableName() + `
+		WHERE cust_group_name = "` + groupName + `"
+		ORDER BY total_amount DESC
+	`
+
+	rows, _ := c.Db.Query(sql)
+
+	k.Writer.Header().Set("Content-type", "text/csv")
+	k.Writer.Header().Set("Content-Disposition", "attachment; filename=\"download.csv\"")
+
+	sqltocsv.Write(k.Writer, rows)
+
+	return nil
 }
 
 func (c *FilterEngineController) GetSchedulerNextRun(k *knot.WebContext) interface{} {

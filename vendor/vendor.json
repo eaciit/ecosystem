@@ -13,6 +13,12 @@
 			"path": "github.com/jasonlvhit/gocron",
 			"revision": "3c914c8681c3998f1dd463d84a4d8c29345e47a4",
 			"revisionTime": "2017-12-26T19:12:23Z"
+		},
+		{
+			"checksumSHA1": "kA0VNnTagacY+7EoApklQ3FmyLw=",
+			"path": "github.com/joho/sqltocsv",
+			"revision": "f3fd116fddab4bb4a3a987deaa3d53d3f6f1aa77",
+			"revisionTime": "2017-12-22T23:41:10Z"
 		}
 	],
 	"rootPath": "eaciit/scb-eco"

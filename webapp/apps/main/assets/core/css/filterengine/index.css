@@ -65,3 +65,8 @@
   background-image: none !important;
   background: #E4F1FE !important;
 }
+
+.excel-download {
+  float: right;
+  margin-top: 20px;
+}
