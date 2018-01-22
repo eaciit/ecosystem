@@ -27,6 +27,7 @@ type FilterEnginePayload struct {
 	Limit             int
 	DateType          string
 	YearMonth         int
+	ExecuteNow        bool
 }
 
 func (c *FilterEngineController) SaveParameter(param *FilterEnginePayload) error {
@@ -191,6 +192,10 @@ func (c *FilterEngineController) GenerateTable(k *knot.WebContext) interface{} {
 	err = ioutil.WriteFile(filePath, bytesSQL, 0644)
 	if err != nil {
 		return c.SetResultError(err.Error(), nil)
+	}
+
+	if payload.ExecuteNow {
+		c.Scheduler.Run()
 	}
 
 	return c.SetResultOK(tk.M{})

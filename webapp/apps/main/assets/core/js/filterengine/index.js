@@ -77,6 +77,7 @@ filter.loadAll = function () {
 var engine = {}
 engine.resultData = ko.observableArray()
 engine.savedParam = ko.observable({})
+engine.nextRun = ko.observable({})
 
 engine.gridConfig = {
   data: engine.resultData,
@@ -205,24 +206,42 @@ engine.generateTable = function () {
 
   var savedParam = engine.savedParam()
 
-  if (savedParam.TradeProduct == param.tradeProduct && 
-    savedParam.Group == param.group && 
+  if (savedParam.TradeProduct == param.tradeProduct &&
+    savedParam.Group == param.group &&
     savedParam.SupplierNumber == param.supplierNumber &&
-    savedParam.TransactionNumber == param.transactionNumber && 
+    savedParam.TransactionNumber == param.transactionNumber &&
     savedParam.TotalFlow == param.totalFlow &&
     savedParam.CreditRating == param.creditRating) {
-      swal("Filter Not Changed", "Filter parameters is same with the existing filter parameter from current table!", "warning")
-      return
+    swal("Filter Not Changed", "Filter parameters is same with the existing filter parameter from current table!", "warning")
+    return
   }
 
-  viewModel.ajaxPostCallback("/main/filterengine/generatetable", param, function (data) {
-    swal("Success", "Recomended engine filter parameter is saved.", "success")
+  var a = swal({
+    html: true,
+    title: 'Execute time',
+    text: 'Next scheduler will run at <b>' + moment(engine.nextRun()).format("DD-MM-YYYY HH:mm ") + '</b>. Do you want to execute it right now?',
+    type: 'info',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, execute now',
+    cancelButtonText: 'No, execute later'
+  }, function(result) {
+    param.executeNow = result
+
+    viewModel.ajaxPostCallback("/main/filterengine/generatetable", param, function (data) {
+      swal("Success", "Recomended engine filter parameter is saved.", "success")
+    })
   })
 }
 
-engine.getSavedParameter = function() {
+engine.getSavedParameter = function () {
   viewModel.ajaxPostCallback("/main/filterengine/getsavedparameter", {}, function (data) {
     engine.savedParam(data)
+  })
+}
+
+engine.getNextRun = function () {
+  viewModel.ajaxPostCallback("/main/filterengine/getschedulernextrun", {}, function (data) {
+    engine.nextRun(data.nextTime)
   })
 }
 
@@ -235,6 +254,7 @@ engine.load = function () {
 engine.loadAll = function () {
   engine.load()
   engine.getSavedParameter()
+  engine.getNextRun()
 }
 
 $(window).load(function () {

@@ -67,7 +67,7 @@ func (sc *Scheduler) generate() error {
 		return qr.Error()
 	}
 
-	// Rename ready table to temp_2
+	// Rename temp_1 to ready table
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Rename temp_1 table to ready table")
 
 	sql = "RENAME TABLE " + temp1TableName + " TO " + readyTableName
@@ -78,10 +78,21 @@ func (sc *Scheduler) generate() error {
 
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: DONE!")
 
+	// Rename temp_2 to temp_1
+	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Rename temp_2 table to ready temp_1")
+
+	sql = "RENAME TABLE " + temp2TableName + " TO " + temp1TableName
+	qr = sqlh.Exec(sc.Db, sqlh.ExecNonScalar, sql)
+	if qr.Error() != nil {
+		return qr.Error()
+	}
+
+	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: DONE!")
+
 	return nil
 }
 
-func (sc *Scheduler) run() {
+func (sc *Scheduler) Run() {
 	err := sc.generate()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -96,10 +107,10 @@ func ScheduleRun(filePath string, db *sql.DB) *Scheduler {
 	sc.Db = db
 
 	s := gocron.NewScheduler()
-	s.Every(1).Day().At("23:00").Do(sc.run)
+	s.Every(1).Day().At("23:00").Do(sc.Run)
 
 	// For testing only
-	// s.Every(10).Seconds().Do(sc.run)
+	// s.Every(10).Seconds().Do(sc.Run)
 
 	go func() {
 		<-s.Start()

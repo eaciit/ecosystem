@@ -25,8 +25,8 @@
 		WHERE 
 		customer_role IN ('BUYER', 'DRAWEE')
 		AND product_code IN ('VPrP', 'TPM')
-		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 9
-		 AND transaction_year = 2017
+		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 8
+		 AND transaction_year = 2016
 		
 		GROUP BY 
 		cust_group_name, 
@@ -38,13 +38,13 @@
 		cpty_coi,
 		cpty_sci_leid
 		HAVING
-		transaction_number >= 12
+		transaction_number >= 1
 	
 			) TA1
 			GROUP BY
 			cust_long_name
 			HAVING
-			supplier_count >= 20
+			supplier_count >= 1
 		) TA
 		LEFT JOIN
 		(
@@ -65,8 +65,8 @@
 		WHERE 
 		customer_role IN ('BUYER', 'DRAWEE')
 		AND product_code IN ('VPrP', 'TPM')
-		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 9
-		 AND transaction_year = 2017
+		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 8
+		 AND transaction_year = 2016
 		
 		GROUP BY 
 		cust_group_name, 
@@ -78,7 +78,7 @@
 		cpty_coi,
 		cpty_sci_leid
 		HAVING
-		transaction_number >= 12
+		transaction_number >= 1
 	
 		) TB
 		ON TA.cust_long_name = TB.cust_long_name
