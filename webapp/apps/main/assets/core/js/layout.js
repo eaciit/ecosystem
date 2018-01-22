@@ -190,7 +190,7 @@ viewModel.globalFilter.availableFilter = {
   limit: 5,
   flowAbove: 0,
   bookingCountries: [],
-  dateType: "",
+  dateType: "Y",
   yearMonth: 0
 }
 
@@ -258,7 +258,7 @@ viewModel.getNavigationMenu = function () {
   }, {
     Icon: "cog",
     Title: "Recommendation Engine",
-    Url: "/main/filterengine/index"
+    Url: "/main/filterengine/index" + viewModel.globalFilter.uriComponents()
   }])
 }
 

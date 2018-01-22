@@ -212,7 +212,8 @@ filter.loadGroupNames = function () {
   })
 }
 
-filter.loadFromURI = function() {
+
+filter.loadFromURI = function () {
   var uriFilter = viewModel.globalFilter.fromURI()
 
   filter.selectedGroupName(uriFilter.groupName)
@@ -221,12 +222,15 @@ filter.loadFromURI = function() {
   filter.selectedGroup(uriFilter.group)
   filter.selectedProductCategory(uriFilter.productCategory)
   filter.selectedLimit(uriFilter.limit)
-  filter.selectedFlow(uriFilter.flow)
-  filter.selectedDate(moment(uriFilter.yearMonth, uriFilter.dateType == "YEAR" ? "YYYY" : "YYYYMM").toDate())
+  filter.selectedFlow(uriFilter.flowAbove)
+  
+  if (uriFilter.dateType == "YEAR" || uriFilter.dateType == "MONTH") {
+    filter.selectedDate(moment(uriFilter.yearMonth, uriFilter.dateType == "YEAR" ? "YYYY" : "YYYYMM").toDate())
+  }
 
   if (uriFilter.dateType == "YEAR") {
     $("button[data-target='#year']").click()
-  } else {
+  } else if (uriFilter.dateType == "MONTH") {
     $("button[data-target='#month']").click()
   }
 }

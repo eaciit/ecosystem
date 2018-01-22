@@ -9,8 +9,6 @@ import (
 	tk "github.com/eaciit/toolkit"
 )
 
-const port = 8051
-
 func main() {
 	tk.Println("===========> Starting application")
 

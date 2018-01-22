@@ -255,6 +255,9 @@ engine.loadAll = function () {
   engine.load()
   engine.getSavedParameter()
   engine.getNextRun()
+
+  var uriFilter = viewModel.globalFilter.fromURI()
+  viewModel.globalFilter.allFilter(uriFilter)
 }
 
 $(window).load(function () {
