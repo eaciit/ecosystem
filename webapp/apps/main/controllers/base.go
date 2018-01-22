@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"eaciit/scb-eco/consoleapp"
+	"eaciit/scb-eco/webapp/apps/main/controllers"
 	"eaciit/scb-eco/webapp/helper"
 	"errors"
 	"net/http"
@@ -88,14 +89,14 @@ func (b *BaseController) SetResponseTypeAJAX(k *knot.WebContext) {
 }
 
 func (b *BaseController) ValidateAccessOfRequestedURL(k *knot.WebContext) bool {
-	// if k.Session(controllers.SESSION_KEY, "") == "" {
-	// 	unauthorizedErrorMessage := GetUnauthorizedMessageAsQueryString(k)
-	// 	b.Redirect(k, "auth", "login"+unauthorizedErrorMessage)
+	if k.Session(controllers.SESSION_KEY, "") == "" {
+		unauthorizedErrorMessage := GetUnauthorizedMessageAsQueryString(k)
+		b.Redirect(k, "auth", "login"+unauthorizedErrorMessage)
 
-	// 	return false
-	// } else {
-	// 	return true
-	// }
+		return false
+	} else {
+		return true
+	}
 
 	return true
 }
