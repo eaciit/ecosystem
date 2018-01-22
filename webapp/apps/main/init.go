@@ -52,7 +52,7 @@ func init() {
 	app.Static("static", filepath.Join(appFolderPath, "assets"))
 
 	// Scheduler for Recomended Engine
-	sc := consoleapp.ScheduleRun(appFolderPath + "/files/filterEngine.sql")
+	sc := consoleapp.ScheduleRun(appFolderPath+"/files/filterEngine.sql", db)
 	baseCtrl.Scheduler = sc
 
 	knot.RegisterApp(app)

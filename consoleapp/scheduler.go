@@ -1,6 +1,7 @@
 package consoleapp
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 
@@ -12,6 +13,7 @@ import (
 type Scheduler struct {
 	FilePath    string
 	GcScheduler *gocron.Scheduler
+	Db          *sql.DB
 }
 
 func (sc *Scheduler) readSQLFromFile() (string, error) {
@@ -31,11 +33,6 @@ func (sc *Scheduler) generate() error {
 		return err
 	}
 
-	db, err := sqlh.Connect("mysql", "root:@tcp(localhost:3306)/eaciit_test")
-	if err != nil {
-		return err
-	}
-
 	temp1TableName := "re_ecosys_temp_1"
 	temp2TableName := "re_ecosys_temp_2"
 	readyTableName := "re_ecosys_ready"
@@ -44,7 +41,7 @@ func (sc *Scheduler) generate() error {
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Drop existing table")
 
 	sql := "DROP TABLE IF EXISTS " + temp1TableName
-	qr := sqlh.Exec(db, sqlh.ExecNonScalar, sql)
+	qr := sqlh.Exec(sc.Db, sqlh.ExecNonScalar, sql)
 	if qr.Error() != nil {
 		return qr.Error()
 	}
@@ -54,7 +51,7 @@ func (sc *Scheduler) generate() error {
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Generating data on temporary table")
 
 	sql = "CREATE TABLE " + temp1TableName + " AS " + text
-	qr = sqlh.Exec(db, sqlh.ExecNonScalar, sql)
+	qr = sqlh.Exec(sc.Db, sqlh.ExecNonScalar, sql)
 	if qr.Error() != nil {
 		return qr.Error()
 	}
@@ -65,7 +62,7 @@ func (sc *Scheduler) generate() error {
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Rename ready table to temp_2 table")
 
 	sql = "RENAME TABLE " + readyTableName + " TO " + temp2TableName
-	qr = sqlh.Exec(db, sqlh.ExecNonScalar, sql)
+	qr = sqlh.Exec(sc.Db, sqlh.ExecNonScalar, sql)
 	if qr.Error() != nil {
 		return qr.Error()
 	}
@@ -74,16 +71,7 @@ func (sc *Scheduler) generate() error {
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Rename temp_1 table to ready table")
 
 	sql = "RENAME TABLE " + temp1TableName + " TO " + readyTableName
-	qr = sqlh.Exec(db, sqlh.ExecNonScalar, sql)
-	if qr.Error() != nil {
-		return qr.Error()
-	}
-
-	// Rename temp_2 to temp_1
-	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Rename temp_2 table to temp_1 table")
-
-	sql = "RENAME TABLE " + temp2TableName + " TO " + temp1TableName
-	qr = sqlh.Exec(db, sqlh.ExecNonScalar, sql)
+	qr = sqlh.Exec(sc.Db, sqlh.ExecNonScalar, sql)
 	if qr.Error() != nil {
 		return qr.Error()
 	}
@@ -100,11 +88,12 @@ func (sc *Scheduler) run() {
 	}
 }
 
-func ScheduleRun(filePath string) *Scheduler {
+func ScheduleRun(filePath string, db *sql.DB) *Scheduler {
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Starting Scheduler")
 
 	sc := &Scheduler{}
 	sc.FilePath = filePath
+	sc.Db = db
 
 	s := gocron.NewScheduler()
 	s.Every(1).Day().At("23:00").Do(sc.run)
