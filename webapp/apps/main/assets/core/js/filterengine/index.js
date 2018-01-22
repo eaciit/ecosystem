@@ -75,13 +75,40 @@ filter.loadAll = function () {
 }
 
 var engine = {}
-engine.resultData = ko.observableArray()
 engine.savedParam = ko.observable({})
 engine.nextRun = ko.observable({})
 
-engine.gridConfig = {
-  data: engine.resultData,
+engine.grid = {}
+engine.grid.datas = ko.observableArray()
+engine.grid.maxRow = ko.observable(0)
+engine.grid.limit = 10
+engine.grid.offset = ko.observable(0)
+
+engine.grid.pagerData = new kendo.data.DataSource({
+  transport: {
+    read: function (operation) {
+      var data = operation.data.data || [];
+      operation.success(data);
+    }
+  },
+  pageSize: engine.grid.limit
+})
+
+engine.grid.pageChanged = function (data) {
+  engine.grid.offset((parseInt(data.index) - 1) * engine.grid.limit)
+  engine.load()
+}
+
+engine.grid.changed = function (data) {
+  engine.detail.groupName(this.dataItem(this.select()[0]).cust_group_name)
+  engine.loadDetail()
+}
+
+engine.grid.config = {
+  data: engine.grid.datas,
   noRecords: "No data available.",
+  selectable: "row",
+  change: engine.grid.changed,
   columns: [{
       field: "cust_group_name",
       title: "Anchor Group Name"
@@ -109,6 +136,69 @@ engine.gridConfig = {
     {
       template: '<div class="text-right"> #= kendo.toString(total_transaction_amount, "n") # </div>',
       field: "total_transaction_amount",
+      title: "USD Amount",
+      width: 250
+    }
+  ]
+}
+
+engine.detail = {}
+engine.detail.groupName = ko.observable("")
+engine.detail.datas = ko.observableArray()
+engine.detail.maxRow = ko.observable(0)
+engine.detail.limit = 10
+engine.detail.offset = ko.observable(0)
+
+engine.detail.pagerData = new kendo.data.DataSource({
+  transport: {
+    read: function (operation) {
+      var data = operation.data.data || [];
+      operation.success(data);
+    }
+  },
+  pageSize: engine.detail.limit
+})
+
+engine.detail.pageChanged = function (data) {
+  engine.detail.offset((parseInt(data.index) - 1) * engine.detail.limit)
+  engine.loadDetail()
+}
+
+engine.detail.config = {
+  data: engine.detail.datas,
+  noRecords: "No data available.",
+  columns: [{
+      field: "cust_group_name",
+      title: "Group Name"
+    },
+    {
+      field: "cust_long_name",
+      title: "Cust-Long Name",
+      width: 150
+    },
+    {
+      field: "cust_coi",
+      title: "Cust-COI",
+      width: 150
+    },
+    {
+      field: "product_code",
+      title: "Product Category",
+      width: 150
+    },
+    {
+      field: "cpty_long_name",
+      title: "CP-Long Name",
+      width: 150
+    },
+    {
+      field: "transaction_number",
+      title: "No. of Transaction",
+      width: 150
+    },
+    {
+      template: '<div class="text-right"> #= kendo.toString(total_amount, "n") # </div>',
+      field: "total_amount",
       title: "USD Amount",
       width: 250
     }
@@ -224,7 +314,7 @@ engine.generateTable = function () {
     showCancelButton: true,
     confirmButtonText: 'Yes, execute now',
     cancelButtonText: 'No, execute later'
-  }, function(result) {
+  }, function (result) {
     param.executeNow = result
 
     viewModel.ajaxPostCallback("/main/filterengine/generatetable", param, function (data) {
@@ -246,8 +336,35 @@ engine.getNextRun = function () {
 }
 
 engine.load = function () {
-  viewModel.ajaxPostCallback("/main/filterengine/getresult", {}, function (data) {
-    engine.resultData(data)
+  var param = {
+    offset: engine.grid.offset,
+    limit: engine.grid.limit
+  }
+
+  viewModel.ajaxPostCallback("/main/filterengine/getresult", param, function (data) {
+    engine.grid.maxRow(data.max)
+    engine.grid.datas(data.rows)
+
+    engine.grid.pagerData.read({
+      data: Array.from(Array(data.max).keys())
+    })
+  })
+}
+
+engine.loadDetail = function() {
+  var param = {
+    groupName: engine.detail.groupName(),
+    offset: engine.detail.offset,
+    limit: engine.detail.limit
+  }
+
+  viewModel.ajaxPostCallback("/main/filterengine/getresultdetail", param, function(data) {
+    engine.detail.maxRow(data.max)
+    engine.detail.datas(data.rows)
+
+    engine.detail.pagerData.read({
+      data: Array.from(Array(data.max).keys())
+    })
   })
 }
 

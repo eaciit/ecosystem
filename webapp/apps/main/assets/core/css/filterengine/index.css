@@ -45,7 +45,7 @@
 .grid-container {
   margin-top: 10px;
 }
-
+/* 
 .k-grid-header th {
   background-color: #22313F !important;
   color: white !important;
@@ -59,7 +59,7 @@
 
 .k-grid-content tr:hover td {
   background-color: #6BB9F0 !important;
-}
+} */
 
 .alert.alert-info {
   background-image: none !important;

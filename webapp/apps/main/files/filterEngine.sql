@@ -14,6 +14,7 @@
 		cust_long_name, 
 		cust_coi,
 		cust_sci_leid,
+		product_code,
 		cpty_group_name,
 		cpty_long_name,
 		cpty_coi,
@@ -25,7 +26,7 @@
 		WHERE 
 		customer_role IN ('BUYER', 'DRAWEE')
 		AND product_code IN ('VPrP', 'TPM')
-		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 8
+		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 9
 		 AND transaction_year = 2016
 		
 		GROUP BY 
@@ -33,6 +34,7 @@
 		cust_long_name, 
 		cust_coi,
 		cust_sci_leid,
+		product_code,
 		cpty_group_name,
 		cpty_long_name,
 		cpty_coi,
@@ -54,6 +56,7 @@
 		cust_long_name, 
 		cust_coi,
 		cust_sci_leid,
+		product_code,
 		cpty_group_name,
 		cpty_long_name,
 		cpty_coi,
@@ -65,7 +68,7 @@
 		WHERE 
 		customer_role IN ('BUYER', 'DRAWEE')
 		AND product_code IN ('VPrP', 'TPM')
-		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 8
+		AND SUBSTRING(cpty_credit_grade, 1, CHAR_LENGTH(cpty_credit_grade)-1) <= 9
 		 AND transaction_year = 2016
 		
 		GROUP BY 
@@ -73,6 +76,7 @@
 		cust_long_name, 
 		cust_coi,
 		cust_sci_leid,
+		product_code,
 		cpty_group_name,
 		cpty_long_name,
 		cpty_coi,

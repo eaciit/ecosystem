@@ -25,6 +25,7 @@ type FilterEnginePayload struct {
 	TotalFlow         string
 	CreditRating      string
 	Limit             int
+	Offset            int
 	DateType          string
 	YearMonth         int
 	ExecuteNow        bool
@@ -133,6 +134,7 @@ func (c *FilterEngineController) GenerateTable(k *knot.WebContext) interface{} {
 		cust_long_name, 
 		cust_coi,
 		cust_sci_leid,
+		product_code,
 		cpty_group_name,
 		cpty_long_name,
 		cpty_coi,
@@ -152,6 +154,7 @@ func (c *FilterEngineController) GenerateTable(k *knot.WebContext) interface{} {
 		cust_long_name, 
 		cust_coi,
 		cust_sci_leid,
+		product_code,
 		cpty_group_name,
 		cpty_long_name,
 		cpty_coi,
@@ -214,6 +217,23 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 	}
 
 	tableName := "re_ecosys_ready"
+	sqlMax := `
+		SELECT
+		COUNT(DISTINCT cust_group_name) AS max_row
+		FROM ` + tableName
+
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sqlMax)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+	defer qr.Close()
+
+	resultsMax := []tk.M{}
+	err = qr.Fetch(&resultsMax, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
 	sql := `
 		SELECT
 		cust_group_name,
@@ -231,7 +251,11 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
 
-	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if payload.Offset > 0 {
+		sql += " OFFSET " + strconv.Itoa(payload.Offset)
+	}
+
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
 	}
@@ -243,7 +267,79 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 		c.SetResultError(err.Error(), nil)
 	}
 
-	return c.SetResultOK(results)
+	return c.SetResultOK(tk.M{
+		"max":  resultsMax[0].Get("max_row"),
+		"rows": results,
+	})
+}
+
+func (c *FilterEngineController) GetResultDetail(k *knot.WebContext) interface{} {
+	c.SetResponseTypeAJAX(k)
+	if !c.ValidateAccessOfRequestedURL(k) {
+		return nil
+	}
+
+	payload := struct {
+		GroupName string
+		Limit     int
+		Offset    int
+	}{}
+
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultError(err.Error(), nil)
+	}
+
+	tableName := "re_ecosys_ready"
+	sqlMax := `
+		SELECT
+		COUNT(1) AS max_row
+		FROM ` + tableName + `
+		WHERE cust_group_name = "` + payload.GroupName + `"`
+
+	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sqlMax)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+	defer qr.Close()
+
+	resultsMax := []tk.M{}
+	err = qr.Fetch(&resultsMax, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	sql := `
+		SELECT *
+		FROM ` + tableName + `
+		WHERE cust_group_name = "` + payload.GroupName + `"
+		ORDER BY total_amount DESC
+	`
+
+	if payload.Limit > 0 {
+		sql += " LIMIT " + strconv.Itoa(payload.Limit)
+	}
+
+	if payload.Offset > 0 {
+		sql += " OFFSET " + strconv.Itoa(payload.Offset)
+	}
+
+	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
+	if qr.Error() != nil {
+		c.SetResultError(qr.Error().Error(), nil)
+	}
+	defer qr.Close()
+
+	results := []tk.M{}
+	err = qr.Fetch(&results, 0)
+	if err != nil {
+		c.SetResultError(err.Error(), nil)
+	}
+
+	return c.SetResultOK(tk.M{
+		"max":  resultsMax[0].Get("max_row"),
+		"rows": results,
+	})
 }
 
 func (c *FilterEngineController) GetSchedulerNextRun(k *knot.WebContext) interface{} {
