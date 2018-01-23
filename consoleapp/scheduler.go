@@ -64,7 +64,7 @@ func (sc *Scheduler) generate() error {
 	sql = "RENAME TABLE " + readyTableName + " TO " + temp2TableName
 	qr = sqlh.Exec(sc.Db, sqlh.ExecNonScalar, sql)
 	if qr.Error() != nil {
-		fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Failed to rename ready table to temp_2 table.", err.Error())
+		fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Failed to rename ready table to temp_2 table.", qr.Error())
 	}
 
 	// Rename temp_1 to ready table
@@ -84,7 +84,7 @@ func (sc *Scheduler) generate() error {
 	sql = "RENAME TABLE " + temp2TableName + " TO " + temp1TableName
 	qr = sqlh.Exec(sc.Db, sqlh.ExecNonScalar, sql)
 	if qr.Error() != nil {
-		fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Failed to rename rtemp_2 table to ready temp_1 table.", err.Error())
+		fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: Failed to rename rtemp_2 table to ready temp_1 table.", qr.Error())
 	}
 
 	fmt.Println("-----> RECOMENDED ENGINE SCHEDULER: DONE!")
