@@ -94,7 +94,7 @@ filter.role = [{
 filter.selectedRole = ko.observable("")
 
 filter.selectedDateType = "Y"
-filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
+filter.selectedDate = ko.observable(moment("2016", "YYYY").toDate())
 
 // Filter booking country
 filter.bookingCountry = {}

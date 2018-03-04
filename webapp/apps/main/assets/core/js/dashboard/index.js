@@ -99,7 +99,7 @@ filter.flow = [{
 filter.selectedFlow = ko.observable(0)
 
 filter.selectedDateType = ko.observable("Y")
-filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
+filter.selectedDate = ko.observable(moment("2016", "YYYY").toDate())
 
 // Filter booking country
 filter.bookingCountry = {}
@@ -583,9 +583,10 @@ dashboard.showMapDetails = function (i) {
   $("#tradetabs").hide()
   dashboard.country(dashboard.activeEntities().name)
   dashboard.name(dashboard.activeEntities().entities[i])
+  viewModel.globalFilter.allFilter({
+    entityName: dashboard.name()
+  })
   $("#mapDetailModal").modal("show")
-  popup.close()
-  popup.element.kendoStop(true, true)
 }
 
 dashboard.getEntityDetail = function (entityName, changetradeorcash) {

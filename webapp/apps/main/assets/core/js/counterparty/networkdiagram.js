@@ -147,7 +147,7 @@ filter.flow = [{
 filter.selectedFlow = ko.observable(0)
 
 filter.selectedDateType = "Y"
-filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
+filter.selectedDate = ko.observable(moment("2016", "YYYY").toDate())
 
 filter.selectedFilters = ko.computed(function () {
   var yearMonth = 0

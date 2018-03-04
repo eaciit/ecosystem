@@ -47,7 +47,7 @@ filter.creditRatings = ko.observableArray([
 filter.selectedCreditRating = ko.observable("<= 8")
 
 filter.selectedDateType = "Y"
-filter.selectedDate = ko.observable(moment().subtract(1, "years").toDate())
+filter.selectedDate = ko.observable(moment("2016", "YYYY").toDate())
 
 filter.switchDateType = function (data, event) {
   $(event.target).siblings().removeClass("active")
