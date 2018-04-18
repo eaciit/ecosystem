@@ -107,7 +107,7 @@ func (c *CounterPartyController) GetTopEntities(key string, payload *CounterPart
 	if payload.Limit > 0 {
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
-
+	tk.Println("counterparty.go->getTopEntites-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -198,7 +198,7 @@ func (c *CounterPartyController) NetworkDiagramSQL(payload *CounterPartyPayload)
 	}
 
 	sql += " ORDER BY total DESC"
-
+	tk.Println("counterparty.go->NetworkDiagram-> ", sql)
 	return sql, len(entities)
 }
 
@@ -332,7 +332,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramData(k *knot.WebContext)
 
 	sql += ` GROUP BY cpty_long_name, cust_bank, cpty_bank, product_category 
 	ORDER BY total DESC`
-
+	tk.Println("counterparty.go->GetDetailNetworkDiagramData-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -406,6 +406,7 @@ func (c *CounterPartyController) GetDetailNetworkDiagramCSV(k *knot.WebContext) 
 	}
 
 	sql += ` ORDER BY amount DESC`
+	tk.Println("counterparty.go->GetDetailNetworkDiagramCSV-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -514,6 +515,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplier(k *knot.WebContext) int
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
 
+	tk.Println("counterparty.go->GetNetworkBuyerSupplier-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -571,6 +573,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierProducts(k *knot.WebCont
   AND ` + c.commonWhereClause() + `
   GROUP BY transaction_month`
 
+	tk.Println("counterparty.go->GetNetworkBuyerSupplierProducts-> ", sql)
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -624,6 +627,7 @@ func (c *CounterPartyController) GetNetworkBuyerSupplierDetail(k *knot.WebContex
   GROUP BY cpty_coi, cpty_long_name, cpty_bank, product_category
   ORDER BY total DESC`
 
+	tk.Println("counterparty.go->GetNetworkBuyerSupplierDetail-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)

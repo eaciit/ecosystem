@@ -39,6 +39,7 @@ func (c *AuthController) DoLogin(k *knot.WebContext) interface{} {
 	}
 
 	sql := "SELECT * FROM eaciit_user WHERE username = '" + payload.Username + "'"
+	tk.Println("auth.go->DoLogin-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)

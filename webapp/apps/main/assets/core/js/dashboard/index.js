@@ -335,6 +335,7 @@ filter.loadGroups = function () {
 }
 
 filter.loadEntities = function () {
+  console.log("getentities");
   viewModel.ajaxPostCallback("/main/master/getentities", {
     groupName: filter.selectedGroupName()
   }, function (data) {
@@ -364,6 +365,15 @@ filter.loadFromURI = function () {
   } else if (uriFilter.dateType == "MONTH") {
     $("button[data-target='#month']").click()
   }
+  if(uriFilter.groupName != ""){
+    var $comboBox_groupName = $("#filter-GroupName").data("kendoComboBox")
+    $comboBox_groupName.value(filter.selectedGroupName());
+    $comboBox_groupName.dataSource.filter({
+                field: 'value',
+                operator: 'eq',
+                value: filter.selectedGroupName()
+    });
+  }
 }
 
 filter.loadAll = function () {
@@ -375,12 +385,16 @@ filter.loadAll = function () {
     // Enable this if you want the filter to be realtime
     // dashboard.loadAllData()
   })
-
+   
+  filter.selectedGroupName.valueHasMutated();
   filter.selectedGroupName.subscribe(function (nv) {
+    if(nv == "" || nv == undefined) return;
     filter.loadEntities()
   })
-
-  filter.loadGroups()
+  // filter.groupName.subscribe(function (nv) { 
+  //    $("#filter-GroupName").data("kendoComboBox").value(filter.selectedGroupName());
+  // })
+  // filter.loadGroups()
 
   dashboard.activeEntity.subscribe(function (nv) {
     viewModel.globalFilter.allFilter({

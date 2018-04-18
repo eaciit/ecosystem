@@ -125,7 +125,7 @@ func (c *MissedFlowController) GetMissedFlowSQL(payload *MissedFlowPayload) stri
 	if payload.Limit > 0 {
 		sql += " LIMIT " + strconv.Itoa(payload.Limit)
 	}
-
+	tk.Println("missedflow.go->GetMissedFlowSQL-> ", sql)
 	return sql
 }
 

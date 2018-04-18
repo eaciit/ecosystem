@@ -224,7 +224,7 @@ func (c *DashboardController) GetMapData(k *knot.WebContext) interface{} {
 	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY cust_coi, cust_long_name ORDER BY cust_long_name`
-
+	tk.Println("dashboard.go->GetMapData-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -256,6 +256,7 @@ func (c *DashboardController) GetDomicileData(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `
 	AND ` + c.isNTBClause() + ` <> "NA"`
+	tk.Println("dashboard.go->GetDomicileData-> ", sql)
 
 	sql += c.FilterClauseDefault(payload)
 
@@ -333,6 +334,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		sql += c.FilterClauseDefault(payload)
 
 		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
+		tk.Println("dashboard.go->GetEntityDetail->TRADE->INWARD-> ", sql)
 
 		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 		if qr.Error() != nil {
@@ -353,6 +355,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		sql += c.FilterClauseDefault(payload)
 
 		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
+		tk.Println("dashboard.go->GetEntityDetail->TRADE->OUTWARD-> ", sql)
 
 		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 		if qr.Error() != nil {
@@ -383,6 +386,7 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 
 		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
 
+		tk.Println("dashboard.go->GetEntityDetail->CASH->EXPORT-> ", sql)
 		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 		if qr.Error() != nil {
 			c.SetResultError(qr.Error().Error(), nil)
@@ -403,6 +407,8 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 
 		sql += ` GROUP BY product ORDER BY value DESC LIMIT 3`
 
+		tk.Println("dashboard.go->GetEntityDetail->CASH->IMPORT-> ", sql)
+
 		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 		if qr.Error() != nil {
 			c.SetResultError(qr.Error().Error(), nil)
@@ -422,6 +428,8 @@ func (c *DashboardController) GetEntityDetail(k *knot.WebContext) interface{} {
 		sql += c.FilterClauseDefault(payload)
 
 		sql += ` GROUP BY product ORDER BY value`
+
+		tk.Println("dashboard.go->GetEntityDetail->CASH->OTHER-> ", sql)
 
 		qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 		if qr.Error() != nil {
@@ -471,6 +479,8 @@ func (c *DashboardController) GetETB(k *knot.WebContext) interface{} {
 
 	sql += c.FilterClauseDefault(payload)
 
+	tk.Println("dashboard.go->GetETB-> ", sql)
+
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -511,6 +521,8 @@ func (c *DashboardController) GetBuyer(k *knot.WebContext) interface{} {
 
 	sql += c.FilterClauseDefault(payload)
 
+	tk.Println("dashboard.go->GetBuyer-> ", sql)
+
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -550,6 +562,7 @@ func (c *DashboardController) GetSeller(k *knot.WebContext) interface{} {
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
 	sql += c.FilterClauseDefault(payload)
+	tk.Println("dashboard.go->GetSeller-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -590,6 +603,7 @@ func (c *DashboardController) GetInFlow(k *knot.WebContext) interface{} {
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
 	sql += c.FilterClauseDefault(payload)
+	tk.Println("dashboard.go->GetInFlow-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -630,6 +644,7 @@ func (c *DashboardController) GetOutFlow(k *knot.WebContext) interface{} {
 	AND ` + c.isNTBClause() + ` <> "NA"`
 
 	sql += c.FilterClauseDefault(payload)
+	tk.Println("dashboard.go->GetOutFlow-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -666,6 +681,7 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeETB0-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -687,6 +703,7 @@ func (c *DashboardController) GetPeriodChangeETB(k *knot.WebContext) interface{}
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeETB1-> ", sql)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -730,6 +747,7 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeBuyer0-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -751,6 +769,7 @@ func (c *DashboardController) GetPeriodChangeBuyer(k *knot.WebContext) interface
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeBuyer1-> ", sql)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -794,6 +813,7 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeSeller0-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -815,6 +835,7 @@ func (c *DashboardController) GetPeriodChangeSeller(k *knot.WebContext) interfac
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeSeller1-> ", sql)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -858,6 +879,7 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeInFlow0-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -879,6 +901,7 @@ func (c *DashboardController) GetPeriodChangeInFlow(k *knot.WebContext) interfac
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeInFlow1-> ", sql)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -922,6 +945,7 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.ToYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeOutFlow0-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -943,6 +967,7 @@ func (c *DashboardController) GetPeriodChangeOutFlow(k *knot.WebContext) interfa
 	sql += c.FilterClause(payload, true)
 
 	sql += ` AND transaction_month <= ` + strconv.Itoa(payload.FromYearMonth)
+	tk.Println("dashboard.go->GetPeriodChangeOutFlow1-> ", sql)
 
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -980,6 +1005,7 @@ func (c *DashboardController) GetChartETB(k *knot.WebContext) interface{} {
 	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
+	tk.Println("dashboard.go->GetChartETB-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1022,6 +1048,7 @@ func (c *DashboardController) GetChartBuyer(k *knot.WebContext) interface{} {
 	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
+	tk.Println("dashboard.go->GetChartBuyer-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1064,6 +1091,7 @@ func (c *DashboardController) GetChartSeller(k *knot.WebContext) interface{} {
 	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
+	tk.Println("dashboard.go->GetChartSeller-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1106,6 +1134,7 @@ func (c *DashboardController) GetChartInFlow(k *knot.WebContext) interface{} {
 	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
+	tk.Println("dashboard.go->GetChartInFlow-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
@@ -1148,6 +1177,7 @@ func (c *DashboardController) GetChartOutFlow(k *knot.WebContext) interface{} {
 	sql += c.FilterClauseDefault(payload)
 
 	sql += ` GROUP BY transaction_month ORDER BY transaction_month`
+	tk.Println("dashboard.go->GetChartOutFlow-> ", sql)
 
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {

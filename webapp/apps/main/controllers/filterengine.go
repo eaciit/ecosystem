@@ -193,6 +193,7 @@ func (c *FilterEngineController) GenerateTable(k *knot.WebContext) interface{} {
 		ON TA.` + groupKey + ` = TB.` + groupKey + `
 	`
 
+	tk.Println("filterengine.go->GenerateTable-> ", sql)
 	type ForgetMe struct{}
 	filePath := helper.GetAppBasePath(ForgetMe{}) + "/files/filterEngine.sql"
 
@@ -258,7 +259,7 @@ func (c *FilterEngineController) GetResult(k *knot.WebContext) interface{} {
 	if payload.Offset > 0 {
 		sql += " OFFSET " + strconv.Itoa(payload.Offset)
 	}
-
+	tk.Println("filterengine.go->GetResult-> ", sql)
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -297,6 +298,7 @@ func (c *FilterEngineController) DownloadResult(k *knot.WebContext) interface{} 
 		GROUP BY cust_group_name
 		ORDER BY total_transaction_amount DESC
 	`
+	tk.Println("filterengine.go->DownloadResult-> ", sql)
 
 	rows, _ := c.Db.Query(sql)
 
@@ -359,6 +361,7 @@ func (c *FilterEngineController) GetResultDetail(k *knot.WebContext) interface{}
 		sql += " OFFSET " + strconv.Itoa(payload.Offset)
 	}
 
+	tk.Println("filterengine.go->GetResultDetail-> ", sql)
 	qr = sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -393,7 +396,7 @@ func (c *FilterEngineController) DownloadResultDetail(k *knot.WebContext) interf
 		WHERE cust_group_name = "` + groupName + `"
 		ORDER BY total_amount DESC
 	`
-
+	tk.Println("filterengine.go->DownloadResultDetail-> ", sql)
 	rows, _ := c.Db.Query(sql)
 
 	k.Writer.Header().Set("Content-type", "text/csv")

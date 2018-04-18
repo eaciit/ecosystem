@@ -22,8 +22,38 @@
 <div class="row" id="setarea">
   <div class="row">
     <div class="col-lg-12 filter-container">
-      <div class="menu-missedflow">
-        <select style="width:180px" data-bind="kendoDropDownList: { optionLabel : 'Group Name', data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
+      <div class="menu-missedflow input-combobox" >
+        <!-- <select style="width:180px" data-bind="kendoDropDownList: { optionLabel : 'Group Name', data: filter.groupNames, value: filter.selectedGroupName, filter: 'contains'}"></select>
+ -->
+        <select id="filter-GroupName" 
+                style="width:180px" 
+                data-bind="kendoComboBox: {
+                  placeholder: 'Group Name',
+                  optionLabel : 'Group Name',  
+                  data: filter.groupNames(),
+                  value:   filter.selectedGroupName(),
+                  filter: 'contains',
+                  autoBind: false,
+                  minLength: 3,
+                  dataSource: {
+                    serverFiltering: true,
+                    transport: {
+                      read:function(option){ 
+                        console.log(option);
+                        var q = option.data.filter.filters[0].value;
+                        viewModel.ajaxPostCallback('/main/master/getgroups', {search: q}, function (data) {
+                          filter.groupNames(_.map(data, 'value'))
+                          filter.selectedGroupName.valueHasMutated()
+                          option.success(filter.groupNames())
+                        })
+                      },
+                    }
+                  },
+                  select: function(e){
+                    filter.selectedGroupName(e.dataItem);
+                  },
+                }">
+        </select>
       </div>
       <div class="menu-missedflow">
         <select style="width:180px" data-bind="kendoDropDownList: {data: filter.entities,value: filter.selectedEntity,filter: 'contains'}"></select>
