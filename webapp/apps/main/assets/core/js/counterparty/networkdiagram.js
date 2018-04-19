@@ -223,7 +223,7 @@ filter.loadFromURI = function () {
   filter.selectedProductCategory(uriFilter.productCategory)
   filter.selectedLimit(uriFilter.limit)
   filter.selectedFlow(uriFilter.flowAbove)
-  
+
   if (uriFilter.dateType == "YEAR" || uriFilter.dateType == "MONTH") {
     filter.selectedDate(moment(uriFilter.yearMonth, uriFilter.dateType == "YEAR" ? "YYYY" : "YYYYMM").toDate())
   }
@@ -233,13 +233,13 @@ filter.loadFromURI = function () {
   } else if (uriFilter.dateType == "MONTH") {
     $("button[data-target='#month']").click()
   }
-  if(uriFilter.groupName != ""){
+  if (uriFilter.groupName != "") {
     var $comboBox_groupName = $("#filter-GroupName").data("kendoComboBox")
     $comboBox_groupName.value(filter.selectedGroupName());
     $comboBox_groupName.dataSource.filter({
-                field: 'value',
-                operator: 'eq',
-                value: filter.selectedGroupName()
+      field: 'value',
+      operator: 'eq',
+      value: filter.selectedGroupName()
     });
   }
 }
@@ -263,7 +263,7 @@ filter.loadAll = function () {
   filter.loadFromURI()
 
   filter.selectedGroupName.subscribe(function (nv) {
-    if(nv == "" || nv == undefined) return;
+    if (nv == "" || nv == undefined) return;
     counterparty.activeGroupName(nv)
     filter.loadEntities()
   })
