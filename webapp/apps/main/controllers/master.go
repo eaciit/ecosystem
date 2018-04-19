@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strings"
+
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/sqlh"
 	tk "github.com/eaciit/toolkit"
@@ -19,21 +21,24 @@ func (c *MasterController) GetGroups(k *knot.WebContext) interface{} {
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
 	}
-	frm := struct {
+	payload := struct {
 		Search string
 	}{}
-	err := k.GetPayload(&frm)
+
+	err := k.GetPayload(&payload)
 	if err != nil {
 		return nil
 	}
-	if len(frm.Search) < 3 {
+
+	if len(payload.Search) < 3 {
 		return c.SetResultOK([]tk.M{})
 	}
+
 	sql := `SELECT DISTINCT cust_group_name
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
 	AND ` + c.commonWhereClause() + `
-	AND lcase(cust_group_name) LIKE '%` + frm.Search + `%' 
+	AND cust_group_name LIKE '%` + strings.ToUpper(payload.Search) + `%' 
   ORDER BY cust_group_name`
 
 	tk.Println("master.go->GetGroups-> ", sql)
