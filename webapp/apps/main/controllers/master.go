@@ -19,12 +19,24 @@ func (c *MasterController) GetGroups(k *knot.WebContext) interface{} {
 	if !c.ValidateAccessOfRequestedURL(k) {
 		return nil
 	}
-
+	frm := struct {
+		Search string
+	}{}
+	err := k.GetPayload(&frm)
+	if err != nil {
+		return nil
+	}
+	if len(frm.Search) < 3 {
+		return c.SetResultOK([]tk.M{})
+	}
 	sql := `SELECT DISTINCT cust_group_name
   FROM ` + c.tableName() + ` 
   WHERE ` + c.isNTBClause() + ` <> "NA" 
-	AND ` + c.commonWhereClause() + ` ORDER BY cust_group_name`
+	AND ` + c.commonWhereClause() + `
+	AND lcase(cust_group_name) LIKE '%` + frm.Search + `%' 
+  ORDER BY cust_group_name`
 
+	tk.Println("master.go->GetGroups-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -32,7 +44,7 @@ func (c *MasterController) GetGroups(k *knot.WebContext) interface{} {
 	defer qr.Close()
 
 	results := []tk.M{}
-	err := qr.Fetch(&results, 0)
+	err = qr.Fetch(&results, 0)
 	if err != nil {
 		c.SetResultError(err.Error(), nil)
 	}
@@ -66,6 +78,7 @@ func (c *MasterController) GetEntities(k *knot.WebContext) interface{} {
 	AND cust_group_name = "` + payload.GroupName + `" 
   AND ` + c.commonWhereClause() + ` ORDER BY cust_long_name`
 
+	tk.Println("master.go->GetEntities-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)
@@ -99,6 +112,7 @@ func (c *MasterController) GetBookingCountries(k *knot.WebContext) interface{} {
   FROM ` + c.tableName() + ` 
   WHERE ` + c.commonWhereClause() + `ORDER BY booking_country`
 
+	tk.Println("master.go->GetBookingCountries-> ", sql)
 	qr := sqlh.Exec(c.Db, sqlh.ExecQuery, sql)
 	if qr.Error() != nil {
 		c.SetResultError(qr.Error().Error(), nil)

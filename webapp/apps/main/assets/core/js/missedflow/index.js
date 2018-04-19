@@ -316,6 +316,15 @@ filter.loadFromURI = function () {
   } else if (uriFilter.dateType == "MONTH") {
     $("button[data-target='#month']").click()
   }
+  if(uriFilter.groupName != ""){
+    var $comboBox_groupName = $("#filter-GroupName").data("kendoComboBox")
+    $comboBox_groupName.value(filter.selectedGroupName());
+    $comboBox_groupName.dataSource.filter({
+                field: 'value',
+                operator: 'eq',
+                value: filter.selectedGroupName()
+    });
+  }
 }
 
 filter.loadAll = function () {
@@ -325,7 +334,8 @@ filter.loadAll = function () {
     missedflow.activeEntityName(nv)
   })
 
-  filter.selectedGroupName.subscribe(function () {
+  filter.selectedGroupName.subscribe(function (nv) {
+    if(nv == "" && nv == undefined) return;
     filter.loadEntities()
   })
 
@@ -339,7 +349,7 @@ filter.loadAll = function () {
 
   filter.loadFromURI()
 
-  filter.loadGroupNames()
+  // filter.loadGroupNames()
   missedflow.loadGraphData()
 }
 

@@ -384,3 +384,16 @@ body:not(.page-login) .layout-container .layout-content {
 .filter-group.multiselect {
   outline: none;
 }
+
+.input-combobox::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: white;
+    opacity: 1; /* Firefox */
+}
+
+.input-combobox:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: white;
+}
+
+.input-combobox::-ms-input-placeholder { /* Microsoft Edge */
+    color: white;
+}
